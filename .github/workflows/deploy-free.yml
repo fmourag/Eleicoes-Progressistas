@@ -1,0 +1,109 @@
+name: Deploy Free-Tier
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Install Python Dependencies
+        run: |
+          pip install -r services/matching/requirements.txt
+          pip install pytest
+
+      - name: Lint & Sanity Check
+        run: |
+          npm run lint --if-present
+          ! grep -rn "quiz" docs/ || (echo "Encontrada referencia a quiz em docs!" && exit 1)
+          ! grep -rn "core_scores" docs/ || (echo "Encontrada referencia a core_scores em docs!" && exit 1)
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Run Jest Unit Tests (NestJS API)
+        run: npm --prefix apps/api run test --if-present
+
+      - name: Run Pytest (Matching Service)
+        run: cd services/matching && pytest tests/ --if-present
+
+  migrate-database:
+    needs: validate-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Run Prisma Migrate Deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma db push --schema=apps/api/prisma/schema.prisma --skip-generate
+
+  deploy-web-cloudflare:
+    needs: validate-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Build Web Bundle
+        run: npm run build:web -w @np/mobile
+        env:
+          EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
+          EXPO_PUBLIC_PIX_KEY: ${{ secrets.EXPO_PUBLIC_PIX_KEY }}
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy apps/mobile/dist --project-name=eleicoes-progressistas
+
+  deploy-api-render:
+    needs: migrate-database
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy Hook
+        if: secrets.RENDER_DEPLOY_HOOK_URL != ''
+        run: |
+          curl -s -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+
+  notify-sentry:
+    needs: [deploy-web-cloudflare, deploy-api-render]
+    if: always() && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Sentry Release
+        if: secrets.SENTRY_AUTH_TOKEN != ''
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          environment: production
+          version: ${{ github.ref_name }}

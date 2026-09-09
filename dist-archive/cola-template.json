@@ -1,0 +1,65 @@
+{
+  "title": "Cola Eleitoral - Eleições Gerais 2026",
+  "instruction": "Preencha os números dos seus candidatos para levar no dia da votação.",
+  "fields": [
+    {
+      "order": 1,
+      "cargo": "DEPUTADO_FEDERAL",
+      "label": "Deputado(a) Federal",
+      "digits": 4,
+      "candidateName": "",
+      "party": "",
+      "number": ""
+    },
+    {
+      "order": 2,
+      "cargo": "DEPUTADO_ESTADUAL",
+      "label": "Deputado(a) Estadual / Distrital",
+      "digits": 5,
+      "candidateName": "",
+      "party": "",
+      "number": ""
+    },
+    {
+      "order": 3,
+      "cargo": "SENADOR_1",
+      "label": "Primeiro(a) Senador(a)",
+      "digits": 3,
+      "candidateName": "",
+      "party": "",
+      "number": ""
+    },
+    {
+      "order": 4,
+      "cargo": "SENADOR_2",
+      "label": "Segundo(a) Senador(a)",
+      "digits": 3,
+      "candidateName": "",
+      "party": "",
+      "number": ""
+    },
+    {
+      "order": 5,
+      "cargo": "GOVERNADOR",
+      "label": "Governador(a)",
+      "digits": 2,
+      "candidateName": "",
+      "party": "",
+      "number": ""
+    },
+    {
+      "order": 6,
+      "cargo": "PRESIDENTE",
+      "label": "Presidente(a) da República",
+      "digits": 2,
+      "candidateName": "",
+      "party": "",
+      "number": ""
+    }
+  ],
+  "metadata": {
+    "year": 2026,
+    "app": "Eleições Progressistas",
+    "version": "2.2.0"
+  }
+}

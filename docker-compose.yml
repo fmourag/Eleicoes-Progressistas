@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: eleicoes_progressistas
+      POSTGRES_USER: np_user
+      POSTGRES_PASSWORD: np_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  matching:
+    build: ./services/matching
+    ports:
+      - "8002:8001"
+    environment:
+      DATABASE_URL: postgresql://np_user:np_password@db:5432/eleicoes_progressistas
+      REDIS_URL: redis://redis:6379
+      API_KEY: local-dev-key
+    depends_on:
+      - db
+      - redis
+
+  api:
+    build: ./apps/api
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://np_user:np_password@db:5432/eleicoes_progressistas
+      JWT_SECRET: local-dev-secret-change-in-production-min-64-chars
+      MATCHING_SERVICE_URL: http://matching:8001
+      MATCHING_API_KEY: local-dev-key
+      REDIS_URL: redis://redis:6379
+      CORS_ORIGINS: http://localhost:8081
+    depends_on:
+      - db
+      - matching
+
+volumes:
+  pgdata:

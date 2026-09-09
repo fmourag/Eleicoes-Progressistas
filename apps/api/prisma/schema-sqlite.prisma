@@ -1,0 +1,397 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────
+
+enum UserLevel {
+  VOTER
+  ANALYST
+  ADMIN
+}
+
+enum Cargo {
+  VEREADOR
+  PREFEITO
+  VICE_PREFEITO
+  DEPUTADO_ESTADUAL
+  GOVERNADOR
+  VICE_GOVERNADOR
+  SENADOR
+  DEPUTADO_FEDERAL
+  PRESIDENTE
+  VICE_PRESIDENTE
+}
+
+enum ElectionLevel {
+  MUNICIPAL
+  ESTADUAL
+  FEDERAL
+}
+
+enum CandidaturaStatus {
+  EM_ANALISE
+  DEFERIDO
+  INDEFERIDO
+  CASSADO
+  RENUNCIA
+}
+
+enum TranslationStatus {
+  PENDING
+  TRANSLATED
+  FAILED
+}
+
+// ─── Models ──────────────────────────────────────────
+
+model User {
+  id            String    @id @default(uuid()) 
+  email         String    @unique
+  passwordHash  String
+  cep           String
+  municipality  String
+  state         String
+  level         UserLevel @default(VOTER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  savedCandidates SavedCandidate[]
+
+  @@map("users")
+}
+
+model Candidate {
+  id                  String            @id @default(uuid()) 
+  tseId               String
+  electionYear        Int               @default(2026)
+  name                String
+  socialName          String?
+  viceName            String?
+  party               String
+  partyNumber         Int
+  numeroUrna          String?
+  cargo               Cargo
+  level               ElectionLevel
+  candidaturaStatus   CandidaturaStatus @default(EM_ANALISE)
+  dataRegistro        DateTime          @default(now())
+  dataJuntaElectoral DateTime?
+  municipality        String
+  state               String
+  cpfHash             String
+  photoUrl            String?
+  fichaLimpa          Boolean           @default(false)
+  financedBy          Json?
+  votingHistory       Json?
+  proposals           Json?
+  governmentPlanUrl   String?
+  governmentPlanSummary String?
+  profileScores       Json?             // { p1: float, ..., p13: float }
+  electionResult      ElectionResult?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  matchResults    MatchResult[]
+  savedCandidates SavedCandidate[]
+  proposalsRel    Proposal[]
+  integrityFlags  IntegrityFlag[]
+  candidateVotes  CandidateVote[]
+  pledges         Pledge[]
+
+  @@unique([tseId, electionYear])
+  @@index([electionYear])
+  @@index([candidaturaStatus])
+  @@index([municipality, state, cargo])
+  @@index([level])
+  @@map("candidates")
+}
+
+model MatchResult {
+  id          String   @id @default(uuid()) 
+  deviceHash  String   // SHA-256 do dispositivo, NUNCA user_id
+  candidateId String   
+  score       Float
+  createdAt   DateTime @default(now())
+
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+
+  @@index([deviceHash])
+  @@index([candidateId, score(sort: Desc)])
+  @@index([createdAt])
+  @@map("match_results")
+}
+
+model SavedCandidate {
+  id          String   @id @default(uuid()) 
+  userId      String   
+  candidateId String   
+  savedAt     DateTime @default(now())
+
+  user        User      @relation(fields: [userId], references: [id])
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+
+  @@unique([userId, candidateId])
+  @@map("saved_candidates")
+}
+
+model Proposal {
+  id                String            @id @default(uuid()) 
+  candidateId       String            
+  pillar            String
+  title             String
+  description       String
+  translatedText    String?
+  translationStatus TranslationStatus @default(PENDING)
+  translationError  String?
+  source            String            @default("SEED")
+  version           Int               @default(1)
+  createdAt         DateTime          @default(now())
+
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([candidateId, pillar])
+  @@index([translationStatus])
+  @@map("proposals")
+}
+
+model IntegrityFlag {
+  id          String    @id @default(uuid()) 
+  candidateId String    
+  source      String
+  flagType    String
+  description String
+  severity    String
+  date        DateTime?
+  resolved    Boolean   @default(false)
+  referenceUrl String?
+  createdAt   DateTime  @default(now())
+
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([candidateId, source])
+  @@map("integrity_flags")
+}
+
+enum AdvertiserStatus {
+  PROPOSTA
+  EM_ANALISE
+  APROVADO
+  RECUSADO
+  ATIVO
+  ENCERRADO
+}
+
+model Advertiser {
+  id              String           @id @default(uuid())
+  name            String
+  cnpj            String           @unique
+  category        String           // "ONG", "COOPERATIVA", "EMPRESA_SUSTENTAVEL", "SINDICATO", "INSTITUTO", etc.
+  pillarAlignment Json             // ["p3", "p5", "p12"] — pilares alinhados
+  status          AdvertiserStatus @default(PROPOSTA)
+  contactName     String?
+  contactEmail    String?
+  applicationNote String?
+  isActive        Boolean          @default(true)
+  isApproved      Boolean          @default(false) // Requer aprovação manual
+  startDate       DateTime         @default(now())
+  endDate         DateTime?
+  contractValue   Float?           // Valor do contrato para transparência
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  ads             Ad[]
+  
+  @@index([isActive, isApproved])
+  @@index([status])
+  @@map("advertisers")
+}
+
+model Ad {
+  id            String   @id @default(uuid())
+  advertiserId  String
+  format        AdFormat
+  title         String
+  description   String
+  imageUrl      String?
+  targetUrl     String
+  pillar        String?  // Para PILAR_SPONSOR (ex: "p3")
+  screen        String?  // "matching", "search", "matching_result"
+  startDate     DateTime?
+  endDate       DateTime?
+  impressions   Int      @default(0)
+  clicks        Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  advertiser    Advertiser @relation(fields: [advertiserId], references: [id], onDelete: Cascade)
+  
+  @@index([format, isActive, screen])
+  @@index([pillar, isActive])
+  @@map("ads")
+}
+
+enum AdFormat {
+  CARD_APOIO      // Final da lista de matching (máx 1 por sessão)
+  BANNER          // Topo do feed de busca (80px altura)
+  PILAR_SPONSOR   // Contextual na tela de resultados do matching
+  COLA_FOOTER     // Rodapé do PDF da colinha
+}
+
+model AdOptOut {
+  id         String   @id @default(uuid())
+  deviceHash String   @unique // SHA-256 do dispositivo
+  optedOutAt DateTime @default(now())
+  expiresAt  DateTime // 30 dias depois
+  
+  @@index([deviceHash])
+  @@index([expiresAt])
+  @@map("ad_opt_outs")
+}
+
+model DonationEvent {
+  id          String   @id @default(uuid())
+  provider    String
+  eventId     String   @unique
+  amountCents Int
+  createdAt   DateTime @default(now())
+
+  @@map("donation_events")
+}
+
+enum ApiKeyTier {
+  FREE
+  PAID
+}
+
+model ApiKey {
+  id           String     @id @default(uuid())
+  keyHash      String     @unique          // SHA-256 da chave; chave plena só na criação
+  tier         ApiKeyTier @default(FREE)
+  contactEmail String?                     // uso: gestão da chave/abuso; nunca exposto publicamente
+  purpose      String?                     // declaração de uso (pesquisa, jornalismo...)
+  dailyLimit   Int        @default(1000)   // FREE 1000 | PAID 10000
+  usageCount   Int        @default(0)
+  usageResetAt DateTime   @default(now())
+  isActive     Boolean    @default(true)
+  expiresAt    DateTime?                   // PAID: renovação mensal; FREE: null
+  createdAt    DateTime   @default(now())
+
+  @@index([tier, isActive])
+  @@map("api_keys")
+}
+
+enum ElectionResult {
+  ELEITO
+  NAO_ELEITO
+  SUPLENTE
+}
+
+enum VoteChoice {
+  SIM
+  NAO
+  ABSTENCAO
+  AUSENTE
+}
+
+enum PledgeStatus {
+  PROPOSTA
+  EM_ANDAMENTO
+  CUMPRIDA
+  QUEBRADA
+}
+
+model LegislativeVote {
+  id             String          @id @default(uuid())
+  house          String          // "CAMARA" | "SENADO"
+  externalId     String          @unique
+  date           DateTime
+  description    String
+  summaryUrl     String          // link oficial da votação (auditabilidade)
+  pillarMapping  Json?           // ["p3","p9"]
+  mappedBy       String?         // "LLM" | "ADMIN"
+  createdAt      DateTime        @default(now())
+  candidateVotes CandidateVote[]
+
+  @@index([date])
+  @@map("legislative_votes")
+}
+
+model CandidateVote {
+  id          String          @id @default(uuid())
+  candidateId String
+  voteId      String
+  choice      VoteChoice
+
+  candidate   Candidate       @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  vote        LegislativeVote @relation(fields: [voteId], references: [id], onDelete: Cascade)
+
+  @@unique([candidateId, voteId])
+  @@index([voteId])
+  @@map("candidate_votes")
+}
+
+model Pledge {
+  id          String       @id @default(uuid())
+  candidateId String
+  text        String
+  pillar      String
+  status      PledgeStatus @default(PROPOSTA)
+  evidenceUrl String?
+  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime     @default(now())
+
+  candidate   Candidate    @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([candidateId, status])
+  @@map("pledges")
+}
+
+enum ReportOrderStatus {
+  SOLICITADO
+  PAGO
+  ENTREGUE
+  CANCELADO
+}
+
+model ReportProduct {
+  id            String        @id @default(uuid())
+  slug          String        @unique
+  title         String
+  description   String
+  category      String        // "PRIORIDADES", "COMPROMETIMENTO", "PROMESSAS", "FINANCIAMENTO"
+  priceCents    Int
+  publicSummary String        // teaser público, só agregados
+  createdAt     DateTime      @default(now())
+  orders        ReportOrder[]
+
+  @@map("report_products")
+}
+
+model ReportOrder {
+  id          String            @id @default(uuid())
+  productId   String
+  buyerOrg    String
+  buyerEmail  String            // contato B2B; finalidade: entrega e nota; nunca exposto
+  status      ReportOrderStatus @default(SOLICITADO)
+  paymentRef  String?           // id da transação PIX confirmada offline
+  deliveredAt DateTime?
+  createdAt   DateTime          @default(now())
+  product     ReportProduct     @relation(fields: [productId], references: [id])
+
+  @@index([status])
+  @@map("report_orders")
+}
+
+model AggregateCounter {
+  id        String   @id @default(uuid())
+  key       String   @unique // ex: "rank:p3:SP:2026-09-08" — SEM identificadores de dispositivo/sessão
+  count     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@map("aggregate_counters")
+}
+

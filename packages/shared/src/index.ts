@@ -1,0 +1,402 @@
+import { PillarId } from './quiz-core';
+export * from './quiz-core';
+
+export const PILLAR_DESCRIPTIONS: Record<PillarId, string> = {
+  p1: 'Garantia de segurança alimentar, saneamento básico, habitação popular digna e assistência social integrada.',
+  p2: 'Combate às desigualdades de gênero, raça e defesa intransigente dos direitos civis.',
+  p3: 'Transição energética verde, combate ao desmatamento e justiça climática.',
+  p4: 'Defesa das riquezas estratégicas, fomento à cultura nacional e soberania.',
+  p5: 'Nova Indústria Brasil, inovação tecnológica sustentável e geração de empregos qualificados.',
+  p6: 'Tributação de grandes fortunas, valorização do salário mínimo e combate à pobreza.',
+  p7: 'Segurança alimentar, inclusão de PcD, idosos, crianças e populações tradicionais.',
+  p8: 'Fiscalização republicana, controle social dos gastos e extinção de privilégios.',
+  p9: 'Acesso universal gratuito, saúde da família e fortalecimento integral do SUS.',
+  p10: 'Inteligência contra o crime organizado, cumprimento da lei e prevenção social nas periferias.',
+  p11: 'Melhoria na qualidade do ensino através de maior investimento financeiro em escolas, infraestrutura, suprimentos pedagógicos, bolsas e valorização docente.',
+  p12: 'Valorização do trabalho formal, defesa dos direitos trabalhistas, combate à precarização, segurança jurídica nas relações laborais e qualificação profissional.',
+  p13: 'Incentivo aos microempreendedores individuais, desoneração fiscal orientada ao investimento e geração de empregos, desburocratização e microcrédito orientado.',
+};
+
+export interface PillarScores {
+  p1: number;
+  p2: number;
+  p3: number;
+  p4: number;
+  p5: number;
+  p6: number;
+  p7: number;
+  p8: number;
+  p9?: number;
+  p10?: number;
+  p11?: number;
+  p12?: number;
+  p13?: number;
+}
+
+export type Cargo =
+  | 'VEREADOR'
+  | 'PREFEITO'
+  | 'VICE_PREFEITO'
+  | 'DEPUTADO_ESTADUAL'
+  | 'GOVERNADOR'
+  | 'VICE_GOVERNADOR'
+  | 'SENADOR'
+  | 'DEPUTADO_FEDERAL'
+  | 'PRESIDENTE'
+  | 'VICE_PRESIDENTE';
+
+export type ElectionLevel = 'MUNICIPAL' | 'ESTADUAL' | 'FEDERAL';
+
+export type CandidaturaStatus = 'EM_ANALISE' | 'DEFERIDO' | 'INDEFERIDO' | 'CASSADO' | 'RENUNCIA';
+
+export interface PillarEvidence {
+  votacoes: string[];
+  pronunciamentos: string[];
+  posturas: string[];
+}
+
+export interface PillarCommitment {
+  pillarId: PillarId;
+  label: string;
+  icon: string;
+  description: string;
+  score: number; // 0-100%
+  rating: 'Altíssimo' | 'Alto' | 'Consistente' | 'Moderado';
+  evidencias: PillarEvidence;
+  justificativa?: import('./pillar-justificativa').PillarJustificativa;
+}
+
+export interface CandidateClassification {
+  overallScore: number; // 0-100%
+  overallRating: string;
+  summary: string;
+  pillars: PillarCommitment[];
+}
+
+export interface GovernmentPlanSection {
+  eixo: string;
+  titulo: string;
+  icone: string;
+  detalhes: string[];
+}
+
+export interface GovernmentPlanDetail {
+  titulo: string;
+  resumo: string;
+  statusRegistro: string;
+  urlOficial?: string;
+  eixos: GovernmentPlanSection[];
+}
+
+export interface Candidate {
+  id: string;
+  tseId: string;
+  electionYear?: number;
+  name: string;
+  socialName?: string | null;
+  viceName?: string | null;
+  party: string;
+  partyNumber: number;
+  cargo: Cargo;
+  level: ElectionLevel;
+  candidaturaStatus: CandidaturaStatus;
+  dataRegistro?: string;
+  hasWarning?: boolean;
+  warningMessage?: string;
+  municipality?: string;
+  state?: string;
+  cpfHash?: string;
+  photoUrl?: string | null;
+  fichaLimpa: boolean;
+  financedBy?: Record<string, unknown>;
+  votingHistory?: Record<string, unknown>;
+  proposals?: Record<string, unknown>;
+  governmentPlanUrl?: string | null;
+  governmentPlanSummary?: string | null;
+  profileScores?: PillarScores;
+  classification?: CandidateClassification;
+  governmentPlan?: GovernmentPlanDetail;
+  numeroUrna?: string;
+}
+
+export function getCargoDigitsCount(cargo: Cargo | string): number {
+  switch (cargo) {
+    case 'PRESIDENTE':
+    case 'GOVERNADOR':
+    case 'PREFEITO':
+      return 2;
+    case 'SENADOR':
+      return 3;
+    case 'DEPUTADO_FEDERAL':
+      return 4;
+    case 'DEPUTADO_ESTADUAL':
+    case 'VEREADOR':
+      return 5;
+    default:
+      return 2;
+  }
+}
+
+export const KNOWN_URNA_NUMBERS: Record<string, string> = {
+  // Presidente
+  'pres_lula': '13',
+  '280001600001': '13',
+  // Governadores SP
+  'gov_sp_tarcisio': '10',
+  'gov_sp_haddad': '13',
+  'gov_sp_machado': '21',
+  'gov_sp_izadora': '29',
+  'gov_sp_edjane': '36',
+  'gov_sp_franca': '40',
+  'gov_sp_veralucia': '16',
+  'gov_sp_vivian': '80',
+  // Governador RJ
+  'gov_rj_paes': '55',
+  // Senadores RJ
+  'sen_rj_lindbergh': '131',
+  'sen_rj_benedita': '133',
+  'sen_rj_tarcisio': '500',
+  'sen_rj_molon': '400',
+  // Deputados Estaduais RJ
+  'dep_est_rj_dani': '50123',
+  'dep_est_rj_minc': '40123',
+  'dep_est_rj_serafini': '50456',
+  'dep_est_rj_renata': '50789',
+  'dep_est_rj_elika': '13123',
+  'dep_est_rj_marina': '13713',
+  'dep_est_rj_yuri': '50000',
+  'dep_est_rj_veronica': '13456',
+  'dep_est_rj_josemar': '50100',
+  'dep_est_rj_luizpaulo': '55123',
+  'dep_est_rj_martha': '12123',
+  // Deputados Federais RJ
+  'dep_73701': '1333', // Reimont
+  'dep_74848': '6565', // Jandira Feghali
+  'dep_160575': '5050', // Glauber Braga
+  'dep_74845': '5015', // Chico Alencar
+  'dep_204464': '5000', // Talíria Petrone
+  'dep_220597': '5010', // Henrique Vieira
+};
+
+export function getNumeroUrna(candidate: {
+  cargo: Cargo | string;
+  partyNumber?: number;
+  party?: string;
+  tseId?: string;
+  id?: string;
+  name?: string;
+  numeroUrna?: string | number;
+}): string {
+  if (candidate.numeroUrna) {
+    return String(candidate.numeroUrna);
+  }
+  const tseId = candidate.tseId || candidate.id || '';
+  if (tseId && KNOWN_URNA_NUMBERS[tseId]) {
+    return KNOWN_URNA_NUMBERS[tseId];
+  }
+
+  const pNum = candidate.partyNumber || 13;
+  const pStr = String(pNum).padStart(2, '0');
+  const targetDigits = getCargoDigitsCount(candidate.cargo);
+
+  if (targetDigits === 2) {
+    return pStr;
+  }
+
+  const seedStr = tseId || candidate.name || '0';
+  let hash = 0;
+  for (let i = 0; i < seedStr.length; i++) {
+    hash = (hash * 31 + seedStr.charCodeAt(i)) >>> 0;
+  }
+
+  if (targetDigits === 3) {
+    const suffix = (hash % 10).toString();
+    return `${pStr}${suffix}`;
+  }
+
+  if (targetDigits === 4) {
+    const candSuffix = ((hash % 90) + 10).toString().padStart(2, '0');
+    return `${pStr}${candSuffix}`;
+  }
+
+  if (targetDigits === 5) {
+    const candSuffix = ((hash % 900) + 100).toString().padStart(3, '0');
+    return `${pStr}${candSuffix}`;
+  }
+
+  return pStr;
+}
+
+export const CARGOS_BY_LEVEL: Record<ElectionLevel, Cargo[]> = {
+  MUNICIPAL: ['VEREADOR', 'PREFEITO'],
+  ESTADUAL: ['DEPUTADO_ESTADUAL', 'GOVERNADOR', 'SENADOR'],
+  FEDERAL: ['DEPUTADO_FEDERAL', 'SENADOR', 'PRESIDENTE'],
+};
+
+export type ElectionYear = 2022 | 2024 | 2026;
+export const CURRENT_ELECTION_YEAR: ElectionYear = 2026;
+
+export const UPCOMING_ELECTION = {
+  year: 2026 as ElectionYear,
+  type: 'GERAIS' as const,
+  label: 'Eleições Gerais 2026',
+  sourceNotice: 'Candidaturas Ativas TSE/TRE',
+  cargos: [
+    'DEPUTADO_ESTADUAL',
+    'DEPUTADO_FEDERAL',
+    'SENADOR',
+    'GOVERNADOR',
+    'PRESIDENTE',
+  ] as Cargo[],
+};
+
+export const EXCLUDED_CONSERVATIVE_PARTIES = [
+  'PL',
+  'REPUBLICANOS',
+  'REPUBLICANO',
+  'PP',
+  'UNIÃO',
+  'UNIAO',
+  'UNIÃO BRASIL',
+  'UNIAO BRASIL',
+  'PATRIOTA',
+  'PATRIOTAS',
+  'AVANTE',
+  'PRD',
+  'MDB',
+  'PSD',
+  'PODE',
+  'PODEMOS',
+  'NOVO',
+  'PSDB',
+  'MISSÃO',
+  'MISSAO',
+] as const;
+
+export const EXCLUDED_PARTIES_EMPIRICAL_FILTER = EXCLUDED_CONSERVATIVE_PARTIES;
+
+export const PROGRESSIVE_GUIDELINE_NOTICE =
+  "💡 Diretriz de Alinhamento: Filtro comportamental baseado em evidências empíricas e no ideário iluminista (ciência, laicidade e salvaguardas técnicas).";
+
+export const PROGRESSIVE_FILTER_DISCLAIMER = {
+  title: "Critério de Filtro Partidário & Disclaimer Ideológico-Empírico",
+  intro:
+    "Com base na definição fornecida, que estabelece o progressismo como um movimento fundamentado no avanço científico, tecnológico, econômico e comunitário, integrado ao ideário iluminista (razão, secularismo, direitos universais) e no fortalecimento do conhecimento empírico como motor da civilização, podemos aplicar esse conceito como um filtro rigoroso para analisar o espectro partidário brasileiro.\n\nPara que um partido político seja atingido por este filtro, sua doutrina central ou sua ala hegemônica deve contradizer ativamente esses pilares, seja por meio da rejeição do conhecimento empírico, da subordinação das políticas públicas a dogmas não racionais ou da adoção de retóricas anti-iluministas e negacionistas, comportamento real de votação em plenário e comissões (votações nominais, orientação de bancada e o padrão agregado de seus membros), a análise torna-se mais rigorosa e baseada em evidências empíricas da ação parlamentar.\n\nNesse cenário, o critério de exclusão passa a ser: votação sistemática da bancada (ou de sua maioria esmagadora) contra consensos científicos, em favor da desregulamentação que ignora dados empíricos de impacto, ou contra princípios iluministas de laicidade e racionalidade na educação e saúde pública.",
+  caveat:
+    "Ressalvas Analíticas Importantes: O filtro aplicado aqui é estritamente doutrinário, baseado na definição filosófica de Progressismo constante no aplicativo.\n\nCom base no histórico de votações nominais na Câmara dos Deputados e no Senado (como as relacionadas a agrotóxicos, licenciamento ambiental, mineração em terras indígenas e pautas de laicidade), os seguintes partidos se enquadram na seleção por este filtro:",
+  systematicParties: [
+    {
+      party: "PL (Partido Liberal)",
+      sigla: "PL",
+      rationale:
+        'Apresenta um dos registros mais consistentes de votação contrária a pautas baseadas em evidências empíricas. Sua bancada votou massivamente a favor do chamado "PL do Veneno" (facilitação de agrotóxicos contra pareceres da ANVISA/IBAMA), do "PL da Devastação" (PL 2159/2021, que enfraquece o licenciamento ambiental e dispensa estudos de impacto), do "PL da Grilagem" (regularização fundiária sem vistoria técnica do Incra) e do "Marco Temporal" (ignorando dados antropológicos e históricos sobre ocupação indígena). Esse padrão demonstra uma subordinação da política pública a dogmas ideológicos ou interesses econômicos imediatos, em detrimento do "conhecimento empírico" e do "progresso comunitário" mencionados na definição.',
+    },
+    {
+      party: "Republicanos",
+      sigla: "REPUBLICANOS",
+      rationale:
+        'Além de votar sistematicamente a favor da desregulamentação ambiental e sanitária que ignora critérios técnicos, é o partido que mais frequentemente lidera ou apoia votações em comissões que buscam inserir dogmas religiosos em políticas públicas de educação e saúde, ferindo diretamente o "ideário iluminista" de secularismo e racionalidade.',
+    },
+    {
+      party: "PP (Progressistas)",
+      sigla: "PP",
+      rationale:
+        'Apesar do nome, seu comportamento agregado em votações nominais é historicamente alinhado ao enfraquecimento de agências reguladoras baseadas em ciência. Votou a favor do "PL do Veneno", do "PL da Devastação" e de medidas que flexibilizam a proteção de áreas de preservação permanente (APPs) sem base em dados ecológicos.',
+    },
+    {
+      party: "União Brasil, Patriotas e Avante",
+      sigla: "UNIÃO / AVANTE / PRD",
+      rationale:
+        'Seguem um padrão de alinhamento recorrente em votações que dispensam estudos de impacto empírico. O Avante e o Patriotas (incorporado ao PRD), por exemplo, votaram a favor da urgência e do mérito de projetos como a mineração em terras indígenas (PL 191/2020), ignorando evidências científicas e antropológicas sobre o impacto comunitário e ambiental.',
+    },
+  ],
+  contradictoryParties: [
+    {
+      party: "MDB e Podemos",
+      sigla: "MDB / PODE",
+      rationale:
+        'Embora abriguem parlamentares técnicos, suas orientações de bancada em votações cruciais (como o "PL da Devastação" e o "Marco Temporal") frequentemente oscilam ou aprovam medidas que enfraquecem a regulação baseada em evidências, priorizando a governabilidade ou interesses regionais em detrimento do rigor científico.',
+    },
+    {
+      party: "PSD (Partido Social Democrático)",
+      sigla: "PSD",
+      rationale:
+        'Embora abrigue quadros e lideranças de perfil institucionalista com atuação destacada em defesa da ciência e da vacinação (como na CPI da Pandemia), o comportamento agregado e hegemônico de suas bancadas na Câmara e no Senado em votações estruturantes — como o Marco Temporal, o PL do Licenciamento Ambiental e o PL dos Agrotóxicos — alinha-se reiteradamente à supressão de salvaguardas técnicas de órgãos reguladores (ANVISA, IBAMA). Seu modelo pragmático e fisiológico de governabilidade colide com a primazia contínua do método empírico.',
+    },
+    {
+      party: "NOVO",
+      sigla: "NOVO",
+      rationale:
+        'Defende o "progresso econômico e tecnológico", mas votou a favor da desregulamentação ambiental e sanitária (como o "PL do Veneno"), ignorando que o verdadeiro progresso tecnológico, sob a ótica iluminista, não pode se dar pela supressão do conhecimento empírico sobre danos à condição humana e ao meio ambiente.',
+    },
+  ],
+  nonExcludedParties: {
+    parties: ["PT", "PSOL", "PCdoB", "PV", "Rede", "PDT", "PSB"],
+    rationale:
+      "Para validar o filtro, é útil observar quais partidos mantêm um padrão de votação agregado alinhado à defesa do conhecimento empírico e do ideário iluminista. Em votações nominais sobre os mesmos projetos citados acima, as bancadas do PT, PSOL, PCdoB, PV, Rede e, na maioria das vezes, PDT e PSB, votaram sistematicamente contra a flexibilização de critérios científicos, defendendo a manutenção de agências reguladoras (ANVISA, IBAMA, Incra) e a laicidade do Estado.",
+  },
+  summaryPoints: [
+    "Exclui-se qualquer partido cuja maioria de seus membros vote repetidamente para substituir laudos técnicos e dados empíricos por autodeclarações, dogmas religiosos ou desregulamentação cega.",
+    "Exclui-se partidos que usam a máquina legislativa para obstruir o avanço comunitário (ex.: direitos indígenas, proteção climática) quando este avanço é respaldado por consenso científico.",
+    "A exclusão não se baseia em 'ser de direita ou esquerda', mas na fidelidade ao método empírico e à razão iluminista como base para a melhoria da condição humana. Partidos que falham consistentemente nesse teste comportamental, independentemente de sua autodeclaração ideológica, são filtrados.",
+  ],
+};
+
+export interface TrustedDataSource {
+  id: string;
+  name: string;
+  url: string;
+  searchUrl?: (query: string) => string;
+  description: string;
+  isTrusted: boolean;
+  institution: string;
+}
+
+export const TRUSTED_DATA_SOURCES: TrustedDataSource[] = [
+  {
+    id: 'tse_dados_abertos',
+    name: 'Portal de Dados Abertos do TSE',
+    url: 'https://dadosabertos.tse.jus.br/',
+    searchUrl: (q: string) => `https://dadosabertos.tse.jus.br/dataset?q=${encodeURIComponent(q)}`,
+    description: 'Repositório oficial e confiável de dados públicos, candidaturas, bens e prestações de contas da Justiça Eleitoral.',
+    isTrusted: true,
+    institution: 'Tribunal Superior Eleitoral (TSE)',
+  },
+  {
+    id: 'tse_divulgacand',
+    name: 'TSE — DivulgaCandContas',
+    url: 'https://divulgacandcontas.tse.jus.br/',
+    searchUrl: (q: string) => `https://divulgacandcontas.tse.jus.br/divulga/#/candidato`,
+    description: 'Sistema oficial de divulgação de candidaturas e contas eleitorais do TSE.',
+    isTrusted: true,
+    institution: 'Tribunal Superior Eleitoral (TSE)',
+  },
+  {
+    id: 'camara_dados_abertos',
+    name: 'Câmara dos Deputados — Dados Abertos',
+    url: 'https://dadosabertos.camara.leg.br/',
+    searchUrl: (q: string) => `https://dadosabertos.camara.leg.br/api/v2/deputados?nome=${encodeURIComponent(q)}`,
+    description: 'Serviço oficial de dados abertos da Câmara dos Deputados.',
+    isTrusted: true,
+    institution: 'Câmara dos Deputados',
+  },
+  {
+    id: 'senado_dados_abertos',
+    name: 'Senado Federal — Dados Abertos',
+    url: 'https://legis.senado.leg.br/dadosabertos/',
+    searchUrl: (q: string) => `https://legis.senado.leg.br/dadosabertos/senador/lista/atual`,
+    description: 'Portal oficial de transparência e dados abertos do Senado Federal.',
+    isTrusted: true,
+    institution: 'Senado Federal',
+  },
+];
+
+export function getTseDadosAbertosSearchUrl(query: string): string {
+  return `https://dadosabertos.tse.jus.br/dataset?q=${encodeURIComponent(query.trim())}`;
+}
+
+export * from './polls';
+export * from './mandate-proposals';
+export * from './pillar-justificativa';
+
+

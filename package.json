@@ -1,0 +1,55 @@
+{
+  "name": "eleicoes-progressistas",
+  "version": "2.2.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev": "npx turbo dev",
+    "dev:quick": "set DATABASE_URL=file:./dev.db&& set NODE_ENV=development&& set DB_PROVIDER=sqlite&& set USE_LOCAL_MATCHING=true&& npm run dev -w @np/api",
+    "seed:quick": "set DATABASE_URL=file:./dev.db&& set NODE_ENV=development&& set DB_PROVIDER=sqlite&& cd apps/api && npx prisma db push --schema=prisma/schema-sqlite.prisma && npx prisma generate --schema=prisma/schema-sqlite.prisma && npx tsx prisma/seed.ts",
+    "sync:real": "set DATABASE_URL=file:./dev.db&& set NODE_ENV=development&& set DB_PROVIDER=sqlite&& cd apps/api && npx tsx ../../scripts/sync-real-candidates.ts",
+    "setup:quick": "npm install && npm run seed:quick",
+    "dev:api": "turbo dev --filter=@np/api",
+    "dev:mobile": "turbo dev --filter=@np/mobile",
+    "dev:matching": "turbo dev --filter=@np/matching",
+    "docs:sync": "npx tsx scripts/sync-docs.ts",
+    "docs:watch": "npx tsx scripts/watch-docs.ts",
+    "build": "npx tsx scripts/sync-docs.ts && turbo build",
+    "build:api": "npm run build -w @np/api",
+    "start:lite": "node apps/api/dist/main.js",
+    "prepare:lite": "npm run build -w @np/shared && npm run build:web -w @np/mobile && npm run build:api",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "db:migrate": "cd apps/api && npx prisma migrate dev",
+    "db:generate": "cd apps/api && npx prisma generate",
+    "db:push": "cd apps/api && npx prisma db push",
+    "db:seed": "cd apps/api && npx prisma db seed",
+    "db:studio": "cd apps/api && npx prisma studio",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "release:prepare": "npm run typecheck && npm run test && npm run prepare:lite",
+    "release:deploy": "npx wrangler pages deploy apps/mobile/dist --project-name=eleicoes-progressistas",
+    "release:rollback": "git revert HEAD --no-edit && git push origin main",
+    "release:archive": "node -e \"const http=require('http'); const req=http.request('http://localhost:3000/api/ops/mode',{method:'POST',headers:{'Content-Type':'application/json','x-admin-key':process.env.ADMIN_SECRET||'dev-secret'}},(res)=>console.log('Modo alterado: '+res.statusCode)); req.write(JSON.stringify({mode:'archive'})); req.end();\""
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} apps/api/prisma/seed.ts"
+  },
+  "devDependencies": {
+    "@expo/cli": "~0.22.0",
+    "expo": "~52.0.0",
+    "tsx": "^4.19.0",
+    "turbo": "^2.4.0",
+    "typescript": "^5.7.3"
+  },
+  "overrides": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "packageManager": "npm@10.9.0"
+}

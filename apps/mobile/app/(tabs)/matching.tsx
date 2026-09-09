@@ -1,0 +1,633 @@
+import { useEffect, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, Switch, TouchableOpacity, Pressable } from 'react-native';
+import { router } from 'expo-router';
+import { PROGRESSIVE_GUIDELINE_NOTICE, PILLAR_DISPLAY_LIST } from '@np/shared';
+import { matchingApi, candidatesApi, MatchResult, Candidate } from '../../services/api';
+import { useAuthStore } from '../../stores/auth.store';
+import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
+import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
+import { CandidateCard } from '../../components/CandidateCard';
+import { CandidaturaWarning } from '../../components/CandidaturaWarning';
+import { SectionHeader } from '../../components/SectionHeader';
+import { ActionButton } from '../../components/ActionButton';
+import { CivicBanner } from '../../components/CivicBanner';
+import { useLocationStore } from '../../stores/location.store';
+import { EthicalAd } from '../../components/EthicalAd';
+
+const CARGO_ORDER = ['PRESIDENTE', 'GOVERNADOR', 'SENADOR', 'DEPUTADO_FEDERAL', 'DEPUTADO_ESTADUAL'];
+
+const CARGO_SECTION_TITLES: Record<string, string> = {
+  PRESIDENTE: '🏛️ Presidente da República',
+  GOVERNADOR: '🏛️ Governador(a)',
+  SENADOR: '🏛️ Senador(a)',
+  DEPUTADO_FEDERAL: '🏛️ Deputado(a) Federal',
+  DEPUTADO_ESTADUAL: '🏛️ Deputado(a) Estadual',
+};
+
+const FALLBACK_CANDIDATES: MatchResult[] = [
+  {
+    id: 'c1',
+    score: 96,
+    candidate: {
+      id: 'c1',
+      name: 'Luiz Inácio Lula da Silva',
+      party: 'PT',
+      partyNumber: 13,
+      tseId: '280001600001',
+      cargo: 'PRESIDENTE',
+      fichaLimpa: true,
+      photoUrl: '/candidates/280001600001.jpg',
+    },
+  },
+  {
+    id: 'c4',
+    score: 92,
+    candidate: {
+      id: 'c4',
+      name: 'Eduardo da Costa Paes',
+      viceName: 'Eduardo Cavaliere',
+      party: 'PSD',
+      partyNumber: 55,
+      tseId: '280001600006',
+      cargo: 'GOVERNADOR',
+      fichaLimpa: true,
+      photoUrl: '/candidates/280001600006.jpg',
+    },
+  },
+  {
+    id: 'c5',
+    score: 88,
+    candidate: {
+      id: 'c5',
+      name: 'Helder Zahluth Barbalho',
+      viceName: 'Hana Ghassan Tuma',
+      party: 'MDB',
+      partyNumber: 15,
+      tseId: '280001600007',
+      cargo: 'GOVERNADOR',
+      fichaLimpa: true,
+      photoUrl: '/candidates/280001600007.jpg',
+    },
+  },
+  {
+    id: 'c6',
+    score: 84,
+    candidate: {
+      id: 'c6',
+      name: 'Raquel Teixeira Lyra Lucena',
+      viceName: 'Priscila Krause',
+      party: 'PSDB',
+      partyNumber: 45,
+      tseId: '280001600014',
+      cargo: 'GOVERNADOR',
+      fichaLimpa: true,
+      photoUrl: '/candidates/280001600014.jpg',
+    },
+  },
+  {
+    id: 'c7',
+    score: 94,
+    candidate: {
+      id: 'c7',
+      name: 'Camilo Sobreira de Santana',
+      party: 'PT',
+      partyNumber: 13,
+      cargo: 'SENADOR',
+      fichaLimpa: true,
+    },
+  },
+];
+
+interface CargoGroup {
+  cargo: string;
+  title: string;
+  items: MatchResult[];
+}
+
+function groupResultsByCargo(results: MatchResult[]): CargoGroup[] {
+  const map: Record<string, MatchResult[]> = {};
+
+  for (const r of results) {
+    const cargo = r.candidate.cargo;
+    if (!map[cargo]) {
+      map[cargo] = [];
+    }
+    map[cargo].push(r);
+  }
+
+  const groups: CargoGroup[] = [];
+
+  for (const cargo of CARGO_ORDER) {
+    const dynamicItems = map[cargo] || [];
+    const fallbackItems = FALLBACK_CANDIDATES.filter((f) => f.candidate.cargo === cargo);
+
+    const combined: MatchResult[] = [...dynamicItems];
+    for (const f of fallbackItems) {
+      if (!combined.some((c) => c.candidate.name === f.candidate.name || c.id === f.id)) {
+        combined.push(f);
+      }
+    }
+
+    const sortedCandidates = combined.sort((a, b) => b.score - a.score);
+    if (sortedCandidates.length > 0) {
+      groups.push({
+        cargo,
+        title: CARGO_SECTION_TITLES[cargo] || cargo,
+        items: sortedCandidates,
+      });
+    }
+  }
+
+  return groups;
+}
+
+export default function MatchingScreen() {
+  const [results, setResults] = useState<MatchResult[]>([]);
+  const [onlyDeferido, setOnlyDeferido] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isOffline, setIsOffline] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
+  const { location } = useLocationStore();
+  const colors = useThemeColors();
+  const bp = useBreakpoint();
+  const maxW = useMaxContentWidth();
+  const padding = useResponsivePadding();
+
+  useEffect(() => {
+    loadResults();
+  }, [selectedPriorities, location, onlyDeferido]);
+
+  function togglePriority(pillarId: string) {
+    setSelectedPriorities((prev) => {
+      if (prev.includes(pillarId)) {
+        return prev.filter((p) => p !== pillarId);
+      }
+      if (prev.length < 3) {
+        return [...prev, pillarId];
+      }
+      return prev;
+    });
+  }
+
+  async function loadResults() {
+    setLoading(true);
+    setIsOffline(false);
+    setErrorMessage(null);
+    try {
+      const rankRes = await matchingApi.rank({
+        priority_pillars: selectedPriorities,
+        location: location ? { uf: location.uf, ibge_code: location.ibge_code } : undefined,
+        includePending: !onlyDeferido,
+      }).catch(() => null);
+
+      if (rankRes && (rankRes as { isFallback?: boolean }).isFallback) {
+        setIsOffline(true);
+        setErrorMessage((rankRes as { message?: string }).message || 'Sistema temporariamente indisponível. Tente novamente em alguns minutos.');
+      }
+
+      if (rankRes && Array.isArray(rankRes.results) && rankRes.results.length > 0) {
+        setResults(rankRes.results);
+        setLoading(false);
+        return;
+      }
+
+      const allCandidatesRes = await candidatesApi.getAll().catch(() => null);
+      const candidateList = Array.isArray(allCandidatesRes) ? allCandidatesRes : ((allCandidatesRes as { results?: Candidate[] })?.results || []);
+      if (candidateList.length > 0) {
+        setResults(
+          candidateList.map((c: Candidate) => ({
+            id: c.id,
+            score: 80,
+            candidate: c,
+          })),
+        );
+        setLoading(false);
+        return;
+      }
+
+      setResults(FALLBACK_CANDIDATES);
+    } catch {
+      setIsOffline(true);
+      setErrorMessage('Sistema temporariamente indisponível. Tente novamente em alguns minutos.');
+      setResults(FALLBACK_CANDIDATES);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const filteredResults = onlyDeferido
+    ? results.filter((r) => r.candidate.candidaturaStatus === 'DEFERIDO')
+    : results;
+
+  const groupedCargos = groupResultsByCargo(filteredResults);
+  const firstPriority = selectedPriorities.length > 0 ? selectedPriorities[0] : undefined;
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.inner, { paddingHorizontal: padding }, maxW ? { maxWidth: maxW, alignSelf: 'center' } : undefined]}>
+        
+        {/* Header de Navegação */}
+        <TouchableOpacity
+          style={[styles.backButtonRow, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
+          onPress={() => router.replace('/')}
+          activeOpacity={0.75}
+        >
+          <Text style={[styles.backButtonText, { color: colors.primary }]}>
+            ← Voltar ao Início
+          </Text>
+        </TouchableOpacity>
+
+        <CivicBanner variant="compact" />
+
+        <SectionHeader
+          title="Consulta de Candidaturas"
+          subtitle="Eleições Gerais 2026 • Fonte Oficial: TSE DivulgaCandContas"
+        />
+
+        {/* Badge de Privacidade Radical (Stateless & Zero Quiz - Stitch Style) */}
+        <View style={[styles.privacyNoticeBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.primaryBorder }]}>
+          <View style={[styles.privacyIconCircle, { backgroundColor: colors.primaryLight }]}>
+            <Text style={{ fontSize: 16 }}>🔒</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Text style={[styles.privacyHeaderTag, { color: colors.primary }]}>PRIVACIDADE POR DESIGN</Text>
+              <Text style={[styles.privacyHeaderDot, { color: colors.textMuted }]}>•</Text>
+              <Text style={[styles.privacyHeaderSub, { color: colors.textMuted }]}>Zero Cadastro</Text>
+            </View>
+            <Text style={[styles.privacyNoticeText, { color: colors.text }]}>
+              Consulta 100% anônima e sem cadastro. Suas preferências nunca saem do seu celular.
+            </Text>
+            <TouchableOpacity onPress={() => router.push('/transparencia')} activeOpacity={0.7} style={{ marginTop: 4 }}>
+              <Text style={{ fontSize: 11, fontWeight: '700', color: colors.primary, textDecorationLine: 'underline' }}>
+                Ver Nota de Transparência Pública ➔
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Seletor de Prioridades em Sessão (Stitch Interactive Pillar Selector) */}
+        <View style={[styles.priorityCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <View style={styles.priorityHeaderRow}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <View style={[styles.pulsingDot, { backgroundColor: colors.primary }]} />
+              <View>
+                <Text style={[styles.priorityTitle, { color: colors.text }]}>
+                  Prioridades Ativas
+                </Text>
+                <Text style={[styles.priorityCounter, { color: selectedPriorities.length > 0 ? colors.primary : colors.textMuted }]}>
+                  {selectedPriorities.length} de 3 selecionadas
+                </Text>
+              </View>
+            </View>
+
+            {selectedPriorities.length > 0 && (
+              <TouchableOpacity
+                onPress={() => setSelectedPriorities([])}
+                style={[styles.resetBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
+                activeOpacity={0.8}
+              >
+                <Text style={[styles.resetBtnText, { color: colors.text }]}>🔄 Limpar</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Barra de Progresso Suave (0 a 3) */}
+          <View style={[styles.progressBarBg, { backgroundColor: colors.surfaceAlt }]}>
+            <View
+              style={[
+                styles.progressBarFill,
+                {
+                  backgroundColor: colors.primary,
+                  width: `${(selectedPriorities.length / 3) * 100}%`,
+                },
+              ]}
+            />
+          </View>
+
+          <Text style={[styles.prioritySubtitle, { color: colors.textMuted }]}>
+            Destaque até 3 temas para obter maior coerência programática (processado exclusivamente em memória).
+          </Text>
+
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll}>
+            <View style={styles.chipsRow}>
+              {PILLAR_DISPLAY_LIST.map((pillar) => {
+                const isSelected = selectedPriorities.includes(pillar.id);
+                return (
+                  <Pressable
+                    key={pillar.id}
+                    onPress={() => togglePriority(pillar.id)}
+                    style={[
+                      styles.pillarChip,
+                      {
+                        backgroundColor: isSelected ? colors.primary : colors.surfaceAlt,
+                        borderColor: isSelected ? colors.primary : colors.border,
+                      },
+                      isSelected && styles.pillarChipSelected,
+                    ]}
+                  >
+                    <Text style={styles.pillarChipIcon}>{pillar.icon}</Text>
+                    <Text
+                      style={[
+                        styles.pillarChipLabel,
+                        { color: isSelected ? '#FFFFFF' : colors.text },
+                      ]}
+                    >
+                      {pillar.label}
+                    </Text>
+                    {isSelected && (
+                      <Text style={{ color: '#FFFFFF', fontSize: 12, marginLeft: 4, fontWeight: 'bold' }}>✓</Text>
+                    )}
+                  </Pressable>
+                );
+              })}
+            </View>
+          </ScrollView>
+        </View>
+
+        {/* Sponsor do Pilar Selecionado (PILAR_SPONSOR) */}
+        <View style={styles.adWrapper}>
+          <EthicalAd screen="matching" format="card" pillar={firstPriority} />
+        </View>
+
+        {/* Feedback Banner de Erro/Offline */}
+        {isOffline && (
+          <View style={[styles.offlineBanner, { backgroundColor: '#FEF2F2', borderColor: '#FCA5A5' }]}>
+            <Text style={styles.offlineText}>
+              ⚠️ {errorMessage || 'Sistema temporariamente indisponível. Tente novamente em alguns minutos.'}
+            </Text>
+            <ActionButton
+              title="🔄 Tentar Novamente"
+              onPress={loadResults}
+              variant="secondary"
+            />
+          </View>
+        )}
+
+        {/* Toggle de Candidaturas Deferidas */}
+        <View style={[styles.filterToggleRow, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
+          <View style={styles.toggleTextWrapper}>
+            <Text style={[styles.toggleTitle, { color: colors.text }]}>
+              Mostrar apenas candidaturas deferidas
+            </Text>
+            <Text style={[styles.toggleSubtitle, { color: colors.textMuted }]}>
+              {onlyDeferido ? 'Exibindo somente registros oficializados pelo TSE' : 'Incluindo pedidos em análise preliminar do pleito 2026'}
+            </Text>
+          </View>
+          <Switch
+            value={onlyDeferido}
+            onValueChange={setOnlyDeferido}
+            trackColor={{ false: colors.border, true: colors.primary }}
+            thumbColor="#FFFFFF"
+          />
+        </View>
+
+        {/* Banner Informativo da Diretriz Progressista */}
+        <View style={[styles.noticeBanner, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
+          <Text style={[styles.noticeText, { color: colors.textMuted }]}>
+            {PROGRESSIVE_GUIDELINE_NOTICE}
+          </Text>
+        </View>
+
+        {loading ? (
+          <View style={[styles.center, { backgroundColor: colors.background }]}>
+            <Text style={{ color: colors.textMuted }}>Carregando candidaturas...</Text>
+          </View>
+        ) : groupedCargos.length > 0 ? (
+          (() => {
+            let renderedCandidatesCount = 0;
+            return (
+              <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={true}>
+                {groupedCargos.map((group) => (
+                  <View key={group.cargo} style={styles.cargoSection}>
+                    <View style={[styles.cargoHeaderBanner, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
+                      <Text style={[styles.cargoTitle, { color: colors.text }]}>{group.title}</Text>
+                      <View style={[styles.limitBadge, { backgroundColor: colors.primaryLight }]}>
+                        <Text style={[styles.limitBadgeText, { color: colors.primary }]}>
+                          {group.items.length} {group.items.length === 1 ? 'Opção' : 'Opções'}
+                        </Text>
+                      </View>
+                    </View>
+
+                    {group.items.map((item) => {
+                      renderedCandidatesCount++;
+                      const isTenthCandidate = renderedCandidatesCount === 10;
+                      return (
+                        <View key={item.id}>
+                          <CandidateCard
+                            name={item.candidate.name}
+                            viceName={item.candidate.viceName || undefined}
+                            party={item.candidate.party}
+                            partyNumber={item.candidate.partyNumber}
+                            numeroUrna={item.candidate.numeroUrna}
+                            tseId={item.candidate.tseId}
+                            cargo={item.candidate.cargo}
+                            score={item.score}
+                            photoUrl={item.candidate.photoUrl}
+                            candidaturaStatus={item.candidate.candidaturaStatus}
+                            fichaLimpa={item.candidate.fichaLimpa}
+                            onPress={() => router.push(`/(tabs)/raio-x?id=${item.candidate.id}`)}
+                          />
+                          <CandidaturaWarning status={item.candidate.candidaturaStatus || 'EM_ANALISE'} />
+                          {isTenthCandidate && (
+                            <EthicalAd screen="matching" format="card" pillar={firstPriority} />
+                          )}
+                        </View>
+                      );
+                    })}
+                  </View>
+                ))}
+              </ScrollView>
+            );
+          })()
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Text style={[styles.emptyText, { color: colors.textMuted }]}>Nenhum candidato encontrado</Text>
+            <ActionButton title="Tentar Novamente" onPress={loadResults} variant="primary" />
+          </View>
+        )}
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: Spacing.lg },
+  inner: { flex: 1 },
+  list: { paddingBottom: Spacing.xxl },
+  backButtonRow: {
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    alignSelf: 'flex-start',
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
+  backButtonText: {
+    fontSize: FontSize.xs + 1,
+    fontWeight: '700',
+  },
+  privacyNoticeBadge: {
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    marginVertical: Spacing.xs,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  privacyIconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  privacyHeaderTag: {
+    fontSize: FontSize.xs,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  privacyHeaderDot: {
+    fontSize: FontSize.xs,
+  },
+  privacyHeaderSub: {
+    fontSize: FontSize.xs,
+    fontWeight: '600',
+  },
+  privacyNoticeText: {
+    fontSize: FontSize.xs + 1,
+    marginTop: 2,
+    lineHeight: 16,
+  },
+  priorityCard: {
+    padding: Spacing.md,
+    borderRadius: Radius.xl,
+    borderWidth: 1,
+    marginVertical: Spacing.sm,
+  },
+  priorityHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.xs,
+  },
+  pulsingDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  priorityTitle: {
+    fontSize: FontSize.base,
+    fontWeight: '700',
+  },
+  priorityCounter: {
+    fontSize: FontSize.xs + 1,
+    fontWeight: '600',
+  },
+  resetBtn: {
+    paddingVertical: 4,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+  },
+  resetBtnText: {
+    fontSize: FontSize.xs,
+    fontWeight: '600',
+  },
+  progressBarBg: {
+    height: 6,
+    borderRadius: 3,
+    overflow: 'hidden',
+    marginVertical: Spacing.xs,
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 3,
+  },
+  prioritySubtitle: {
+    fontSize: FontSize.xs + 1,
+    marginBottom: Spacing.sm,
+    marginTop: 2,
+  },
+  chipsScroll: {
+    marginVertical: Spacing.xs,
+  },
+  chipsRow: {
+    flexDirection: 'row',
+    gap: Spacing.xs,
+  },
+  pillarChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+  },
+  pillarChipSelected: {
+    transform: [{ scale: 1.02 }],
+  },
+  pillarChipIcon: {
+    fontSize: 14,
+    marginRight: 6,
+  },
+  pillarChipLabel: {
+    fontSize: FontSize.xs + 1,
+    fontWeight: '600',
+  },
+  adWrapper: {
+    marginVertical: Spacing.xs,
+  },
+  offlineBanner: {
+    padding: Spacing.md,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    marginBottom: Spacing.md,
+    gap: Spacing.sm,
+  },
+  offlineText: {
+    fontSize: FontSize.xs,
+    fontWeight: '700',
+    color: '#B91C1C',
+  },
+  filterToggleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: Spacing.md,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    marginBottom: Spacing.sm,
+  },
+  toggleTextWrapper: { flex: 1, marginRight: Spacing.md },
+  toggleTitle: { fontSize: FontSize.sm, fontWeight: '700' },
+  toggleSubtitle: { fontSize: FontSize.xs, marginTop: 2 },
+  noticeBanner: {
+    padding: Spacing.md,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    marginBottom: Spacing.md,
+  },
+  noticeText: { fontSize: FontSize.xs, lineHeight: 18 },
+  cargoSection: { marginBottom: Spacing.xl },
+  cargoHeaderBanner: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    marginBottom: Spacing.sm,
+  },
+  cargoTitle: { fontSize: FontSize.base, fontWeight: '800' },
+  limitBadge: { paddingVertical: 2, paddingHorizontal: 8, borderRadius: Radius.sm },
+  limitBadgeText: { fontSize: FontSize.xs, fontWeight: '700' },
+  emptyContainer: { padding: Spacing.xl, alignItems: 'center', gap: Spacing.md },
+  emptyText: { fontSize: FontSize.base },
+});

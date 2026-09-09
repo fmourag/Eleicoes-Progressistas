@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: eleicoes-progressistas-api
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build -w @np/shared && npm run build:api
+    startCommand: node apps/api/dist/main.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: APP_MODE
+        value: full
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: '*'
+      - key: REDIS_ENABLED
+        value: 'false'
+      - key: USE_LOCAL_MATCHING
+        value: 'true'
+      - key: PIX_KEY
+        sync: false
+      - key: PIX_WEBHOOK_SECRET
+        sync: false
+      - key: ADMIN_SECRET
+        sync: false
