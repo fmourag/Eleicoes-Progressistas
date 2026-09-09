@@ -5,8 +5,7 @@ import { AdminGuard } from '../auth/admin.guard';
 import { ConfigService } from '@nestjs/config';
 import { VoteMappingDto } from './dto/vote-mapping.dto';
 import { UpdatePledgeDto } from './dto/update-pledge.dto';
-import { UpdateCandidateResultDto } from './dto/update-result.dto';
-import { ElectionResult } from '@prisma/client';
+import { UpdateCandidateResultDto, ElectionResult } from './dto/update-result.dto';
 
 describe('WatchdogController - /api/watchdog', () => {
   let controller: WatchdogController;

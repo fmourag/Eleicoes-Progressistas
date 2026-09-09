@@ -1,5 +1,11 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
-import { PledgeStatus } from '@prisma/client';
+
+export enum PledgeStatus {
+  PROPOSTA = 'PROPOSTA',
+  EM_ANDAMENTO = 'EM_ANDAMENTO',
+  CUMPRIDA = 'CUMPRIDA',
+  QUEBRADA = 'QUEBRADA',
+}
 
 export class UpdatePledgeDto {
   @IsNotEmpty({ message: 'O status da promessa é obrigatório' })

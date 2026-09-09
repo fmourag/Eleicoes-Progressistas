@@ -1,5 +1,10 @@
 import { IsEnum, IsNotEmpty } from 'class-validator';
-import { ElectionResult } from '@prisma/client';
+
+export enum ElectionResult {
+  ELEITO = 'ELEITO',
+  NAO_ELEITO = 'NAO_ELEITO',
+  SUPLENTE = 'SUPLENTE',
+}
 
 export class UpdateCandidateResultDto {
   @IsNotEmpty({ message: 'O resultado eleitoral é obrigatório' })

@@ -1,4 +1,4 @@
-import { expect } from '@jest/globals';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import { WatchdogService } from './watchdog.service';
 import { WatchdogSyncService } from './watchdog-sync.service';
@@ -9,7 +9,7 @@ describe('WatchdogService & WatchdogSyncService', () => {
   let service: WatchdogService;
   let syncService: WatchdogSyncService;
 
-  const mockPrismaService = {
+  const mockPrismaService: any = {
     candidate: {
       findUnique: jest.fn(),
       findMany: jest.fn(),

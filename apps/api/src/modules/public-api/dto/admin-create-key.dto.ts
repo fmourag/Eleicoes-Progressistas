@@ -1,5 +1,9 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString, IsEnum, IsNumber, IsDateString } from 'class-validator';
-import { ApiKeyTier } from '@prisma/client';
+
+export enum ApiKeyTier {
+  FREE = 'FREE',
+  PAID = 'PAID',
+}
 
 export class AdminCreateKeyDto {
   @IsEmail({}, { message: 'Formato de e-mail inválido' })

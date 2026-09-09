@@ -1,9 +1,26 @@
 import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
-import { VoteChoice, PledgeStatus, ElectionResult } from '@prisma/client';
 import { UpdatePledgeDto } from './dto/update-pledge.dto';
 
-export { VoteChoice, PledgeStatus, ElectionResult };
+export enum VoteChoice {
+  SIM = 'SIM',
+  NAO = 'NAO',
+  ABSTENCAO = 'ABSTENCAO',
+  AUSENTE = 'AUSENTE',
+}
+
+export enum PledgeStatus {
+  PROPOSTA = 'PROPOSTA',
+  EM_ANDAMENTO = 'EM_ANDAMENTO',
+  CUMPRIDA = 'CUMPRIDA',
+  QUEBRADA = 'QUEBRADA',
+}
+
+export enum ElectionResult {
+  ELEITO = 'ELEITO',
+  NAO_ELEITO = 'NAO_ELEITO',
+  SUPLENTE = 'SUPLENTE',
+}
 
 export interface WatchdogAlertItem {
   candidateId: string;
@@ -133,7 +150,7 @@ export class WatchdogService {
             candidateName: cv.candidate.name,
             voteDescription: cv.vote.description,
             pillar: p,
-            choice: cv.choice,
+            choice: cv.choice as unknown as VoteChoice,
             summaryUrl: cv.vote.summaryUrl,
             date: cv.vote.date,
           });
@@ -306,13 +323,13 @@ export class WatchdogService {
     return this.prisma.pledge.update({
       where: { id },
       data: {
-        status: dto.status,
+        status: dto.status as any,
         evidenceUrl: dto.evidenceUrl || pledge.evidenceUrl,
       },
     });
   }
 
-  async adminUpdateCandidateResult(candidateId: string, electionResult: ElectionResult) {
+  async adminUpdateCandidateResult(candidateId: string, electionResult: ElectionResult | string) {
     const candidate = await this.prisma.candidate.findUnique({
       where: { id: candidateId },
     });
@@ -323,7 +340,7 @@ export class WatchdogService {
 
     return this.prisma.candidate.update({
       where: { id: candidateId },
-      data: { electionResult },
+      data: { electionResult: electionResult as any },
       select: {
         id: true,
         name: true,
