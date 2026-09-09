@@ -1,7 +1,7 @@
 ---
 title: "Documentação de Segurança"
 version: "2.2.0"
-last_updated: "2026-09-08"
+last_updated: "2026-09-10"
 ---
 
 # Documentação de Segurança
@@ -112,9 +112,8 @@ const { data, error } = await supabase.auth.getUser(token);
 CREATE POLICY "candidates_public_read" ON candidates FOR SELECT USING (true);
 CREATE POLICY "candidates_admin_write" ON candidates FOR INSERT USING (auth.jwt()->>'role' = 'admin');
 
--- Match results: apenas device owner
-CREATE POLICY "matches_device_only" ON match_results
-  FOR ALL USING (true);  -- anonymized, no user_id
+-- Match results: legado sem escrita ativa (matching stateless em memória /api/matching/rank)
+-- CREATE POLICY "matches_device_only" ON match_results FOR ALL USING (true);
 ```
 
 #### Validação de Input

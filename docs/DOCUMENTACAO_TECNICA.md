@@ -1,7 +1,7 @@
 ---
 title: "Documentação Técnica"
 version: "2.2.0"
-last_updated: "2026-09-08"
+last_updated: "2026-09-10"
 ---
 
 # Documentação Técnica
@@ -167,7 +167,7 @@ model Candidate {
   @@map("candidates")
 }
 
-model MatchResult {
+model MatchResult { // legado: sem escrita do /api/matching/rank (stateless)
   id          String   @id @default(uuid()) @db.Uuid
   deviceHash  String   // SHA-256 do dispositivo, NUNCA user_id
   candidateId String   @db.Uuid
@@ -293,7 +293,7 @@ model Ad {
 enum AdFormat {
   CARD_APOIO      // Final da lista de matching (máx 1 por sessão)
   BANNER          // Topo do feed de busca (80px altura)
-  PILAR_SPONSOR   // Contextual na tela de resultados do matching
+  PILAR_SPONSOR   // Contextual na tela de matching (1ª prioridade)
   COLA_FOOTER     // Rodapé do PDF da colinha
 }
 
