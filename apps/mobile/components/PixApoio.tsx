@@ -16,12 +16,6 @@ const PRESET_VALUES = [
 
 export function PixApoio({ compact = false }: PixApoioProps) {
   const pixKey = process.env.EXPO_PUBLIC_PIX_KEY;
-
-  // Falha silenciosa se a variável de ambiente não estiver definida
-  if (!pixKey) {
-    return null;
-  }
-
   const colors = useThemeColors();
   const [selectedValue, setSelectedValue] = useState('15.00');
   const [customValue, setCustomValue] = useState('');
@@ -30,6 +24,7 @@ export function PixApoio({ compact = false }: PixApoioProps) {
 
   // Gera o QR Code com base na chave PIX
   useEffect(() => {
+    if (!pixKey) return;
     QRCode.toDataURL(pixKey, {
       width: 200,
       margin: 2,
@@ -41,6 +36,11 @@ export function PixApoio({ compact = false }: PixApoioProps) {
       .then(setQrDataUrl)
       .catch(() => {});
   }, [pixKey]);
+
+  // Falha silenciosa se a variável de ambiente não estiver definida
+  if (!pixKey) {
+    return null;
+  }
 
   async function handleCopyPix() {
     if (!pixKey) return;

@@ -25,6 +25,12 @@ jobs:
       - name: Install Node Dependencies
         run: npm ci
 
+      - name: Build Shared Package
+        run: npm run build -w @np/shared
+
+      - name: Generate Prisma Client
+        run: npx prisma generate --schema=apps/api/prisma/schema.prisma
+
       - name: Install Python Dependencies
         run: |
           pip install -r services/matching/requirements.txt
@@ -59,7 +65,12 @@ jobs:
       - name: Run Prisma Migrate Deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: npx prisma db push --schema=apps/api/prisma/schema.prisma --skip-generate
+        run: |
+          if [ -n "$DATABASE_URL" ]; then
+            npx prisma db push --schema=apps/api/prisma/schema.prisma --skip-generate
+          else
+            echo "DATABASE_URL secret is not set, skipping database migration step."
+          fi
 
   deploy-web-cloudflare:
     needs: validate-and-test
@@ -71,12 +82,20 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - name: Build Shared Package
+        run: npm run build -w @np/shared
+      - name: Generate Prisma Client
+        run: npx prisma generate --schema=apps/api/prisma/schema.prisma
       - name: Build Web Bundle
         run: npm run build:web -w @np/mobile
         env:
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
           EXPO_PUBLIC_PIX_KEY: ${{ secrets.EXPO_PUBLIC_PIX_KEY }}
       - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        if: env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -88,9 +107,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Render Deploy Hook
-        if: secrets.RENDER_DEPLOY_HOOK_URL != ''
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        if: env.RENDER_DEPLOY_HOOK_URL != ''
         run: |
-          curl -s -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+          curl -s -X POST "$RENDER_DEPLOY_HOOK_URL"
 
   notify-sentry:
     needs: [deploy-web-cloudflare, deploy-api-render]
@@ -98,12 +119,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Create Sentry Release
-        if: secrets.SENTRY_AUTH_TOKEN != ''
-        uses: getsentry/action-release@v1
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        if: env.SENTRY_AUTH_TOKEN != ''
+        uses: getsentry/action-release@v1
         with:
           environment: production
           version: ${{ github.ref_name }}
