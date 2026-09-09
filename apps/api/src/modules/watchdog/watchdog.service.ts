@@ -3,6 +3,8 @@ import { PrismaService } from '../common/prisma.service';
 import { VoteChoice, PledgeStatus, ElectionResult } from '@prisma/client';
 import { UpdatePledgeDto } from './dto/update-pledge.dto';
 
+export { VoteChoice, PledgeStatus, ElectionResult };
+
 export interface WatchdogAlertItem {
   candidateId: string;
   candidateName: string;
@@ -56,7 +58,7 @@ export class WatchdogService {
     return {
       candidate,
       totalVotes: candidateVotes.length,
-      votes: candidateVotes.map((cv) => {
+      votes: candidateVotes.map((cv: { choice: string; vote: any }) => {
         let pillars: string[] = [];
         if (Array.isArray(cv.vote.pillarMapping)) {
           pillars = cv.vote.pillarMapping as string[];

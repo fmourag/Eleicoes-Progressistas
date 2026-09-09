@@ -1,8 +1,9 @@
+import { expect } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import { WatchdogService } from './watchdog.service';
 import { WatchdogSyncService } from './watchdog-sync.service';
 import { PrismaService } from '../common/prisma.service';
-import { VoteChoice, PledgeStatus } from '@prisma/client';
+import { VoteChoice, PledgeStatus } from './watchdog.service';
 
 describe('WatchdogService & WatchdogSyncService', () => {
   let service: WatchdogService;
