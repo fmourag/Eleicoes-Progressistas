@@ -49,7 +49,7 @@ jobs:
         run: npm --prefix apps/api run test --if-present
 
       - name: Run Pytest (Matching Service)
-        run: cd services/matching && pytest tests/ --if-present
+        run: cd services/matching && pytest tests/ -v
 
   migrate-database:
     needs: validate-and-test
