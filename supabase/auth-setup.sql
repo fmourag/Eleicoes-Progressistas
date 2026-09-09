@@ -28,7 +28,7 @@ CREATE POLICY "proposals_admin_write" ON proposals
 -- 4. Políticas para Anúncios Éticos (Leitura Pública de Ativos)
 DROP POLICY IF EXISTS "ads_public_read" ON ads;
 CREATE POLICY "ads_public_read" ON ads
-  FOR SELECT USING (is_active = true);
+  FOR SELECT USING ("isActive" = true);
 
 -- 5. Opt-out Anônimo (Inserção Pública sem leitura de outros)
 DROP POLICY IF EXISTS "ad_opt_out_insert" ON ad_opt_outs;
