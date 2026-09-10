@@ -14,13 +14,21 @@
       },
       "ios": {
         "simulator": true
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://eleicoes-progressistas.onrender.com",
+        "EXPO_PUBLIC_PIX_KEY": "contato@eleicoesprogressistas.org.br"
       }
     },
     "production": {
       "android": {
         "buildType": "app-bundle"
       },
-      "ios": {}
+      "ios": {},
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://eleicoes-progressistas.onrender.com",
+        "EXPO_PUBLIC_PIX_KEY": "contato@eleicoesprogressistas.org.br"
+      }
     }
   },
   "submit": {
