@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#1B5E20"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.eleicoesprogressistas.app"
@@ -28,6 +30,17 @@
       "bundler": "metro",
       "favicon": "./assets/icon.png"
     },
-    "plugins": ["expo-router"]
+    "plugins": [
+      "expo-router"
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "706fc29e-9d78-48f7-8a1e-69c738dc9c3c"
+      }
+    },
+    "owner": "fmourag"
   }
 }
