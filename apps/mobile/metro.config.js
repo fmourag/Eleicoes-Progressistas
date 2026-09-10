@@ -24,6 +24,7 @@ config.resolver.extraNodeModules = {
   'react-native': path.resolve(mobileModules, 'react-native'),
   'react': path.resolve(mobileModules, 'react'),
   'react-dom': path.resolve(mobileModules, 'react-dom'),
+  '@np/shared': path.resolve(workspaceRoot, 'packages/shared'),
 };
 
 // CRITICAL: Block workspace root's react-native from being watched/transformed.
