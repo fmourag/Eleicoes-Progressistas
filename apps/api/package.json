@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch src/main.ts",
-    "build": "tsc --skipLibCheck --noEmitOnError false || exit 0",
+    "build": "tsc -p tsconfig.build.json --skipLibCheck --noEmitOnError false || exit 0",
     "start": "node dist/main",
     "start:prod": "node dist/main",
     "lint": "echo \"lint: eslint not configured, skipping\"",
