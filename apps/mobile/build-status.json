@@ -1,0 +1,49 @@
+{
+  "id": "a8413f2a-afb8-4886-98e6-2831c9b0153b",
+  "status": "ERRORED",
+  "platform": "ANDROID",
+  "error": {
+    "errorCode": "UNKNOWN_ERROR",
+    "message": "Unknown error. See logs of the Prebuild build phase for more information."
+  },
+  "artifacts": {},
+  "fingerprint": {
+    "id": "01a08b62-5450-7493-a702-f7b7cb9ce712",
+    "hash": "11d2898779defeea5399e9f493859aba19a57429"
+  },
+  "initiatingActor": {
+    "id": "2790be66-b3d3-46c0-8870-2c8c0d15c440",
+    "displayName": "fmourag"
+  },
+  "logFiles": [
+    "https://storage.googleapis.com/eas-workflows-production/logs/706fc29e-9d78-48f7-8a1e-69c738dc9c3c/a8413f2a-afb8-4886-98e6-2831c9b0153b/2026-09-10T13%3A18%3A01Z-64daad7c-befd-4fac-a345-1a1cb71b7c26.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260910%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260910T132515Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=42d654fd1b07a8c4862c9588dd91bcec2279cb48520cead11761f53c29bba4aba595ed49ba28e6895f08866ec71f6e1af2e7a885b7e482a9ad66fbaee43cc3288aad6fecc474a3f2cc7818df3335d7b59b92ed84a763e82ad4ab189b65896a46489dd11e811a14cf96a3a52115ef315040d1cbe90f971c69bbf76166ee86f523a38423dc7d3549e0b8cb294c837a0941c27e04a7f52fa57f50566ad1fff1955f5eb376bb70f94f458eed419b50a8b9072ecf75b68ce35304b2d94c1e7f22b9f340080d551291add328c7b6c008558e598aaa3d7b270df664469dcfe2dfd9dfd6e5bdb47eb6c9500d5a4c1e3fc9f4153b0107b557e3fd9f3e9a413ceab894acd8"
+  ],
+  "app": {
+    "id": "706fc29e-9d78-48f7-8a1e-69c738dc9c3c",
+    "name": "eleicoes-progressistas",
+    "slug": "eleicoes-progressistas",
+    "ownerAccount": {
+      "id": "17cd55d5-0fa0-46e4-8a7a-233f84334002",
+      "name": "fmourag"
+    }
+  },
+  "distribution": "INTERNAL",
+  "buildProfile": "preview",
+  "appIdentifier": "com.eleicoesprogressistas.app",
+  "sdkVersion": "52.0.0",
+  "appVersion": "2.2.0",
+  "appBuildVersion": "1",
+  "gitCommitHash": "3134cc556133881ebd404588a44694d35a27ec37",
+  "gitCommitMessage": "build(mobile): fix eas.json (remove comments, add EXPO_PUBLIC env for preview/production)",
+  "priority": "NORMAL_PLUS",
+  "createdAt": "2026-09-10T12:54:32.218Z",
+  "updatedAt": "2026-09-10T13:18:54.300Z",
+  "completedAt": "2026-09-10T13:18:54.110Z",
+  "expirationDate": "2026-09-24T12:54:32.260Z",
+  "isForIosSimulator": false,
+  "metrics": {
+    "buildWaitTime": 4931,
+    "buildQueueTime": 1409262,
+    "buildDuration": 47699
+  }
+}

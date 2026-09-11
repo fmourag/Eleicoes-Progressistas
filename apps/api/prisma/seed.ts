@@ -21,7 +21,6 @@ const EXCLUDED_CONSERVATIVE_PARTIES = [
   'PATRIOTAS',
   'AVANTE',
   'PRD',
-  'MDB',
   'PODE',
   'PODEMOS',
   'NOVO',
@@ -79,7 +78,7 @@ function generateScores(party: string, cargo: string): Record<string, number> {
   if (['PSD', 'CIDADANIA', 'PMB'].includes(p)) {
     return { p1: 0.85, p2: 0.80, p3: 0.82, p4: 0.85, p5: 0.85, p6: 0.78, p7: 0.80, p8: 0.82, p9: 0.85, p10: 0.85, p11: 0.85, p12: 0.80, p13: 0.88 };
   }
-  if (['REPUBLICANOS', 'PL', 'NOVO', 'PP', 'UNIÃO', 'PRD', 'PATRIOTA', 'AVANTE', 'MDB', 'PODE', 'PODEMOS', 'PSDB'].includes(p)) {
+  if (['REPUBLICANOS', 'PL', 'NOVO', 'PP', 'UNIÃO', 'PRD', 'PATRIOTA', 'AVANTE', 'PODE', 'PODEMOS', 'PSDB'].includes(p)) {
     return { p1: 0.32, p2: 0.28, p3: 0.22, p4: 0.35, p5: 0.40, p6: 0.20, p7: 0.24, p8: 0.30, p9: 0.32, p10: 0.35, p11: 0.30, p12: 0.25, p13: 0.45 };
   }
   return { p1: 0.88, p2: 0.85, p3: 0.85, p4: 0.75, p5: 0.80, p6: 0.85, p7: 0.88, p8: 0.80, p9: 0.90, p10: 0.85, p11: 0.88, p12: 0.86, p13: 0.88 };
@@ -130,35 +129,45 @@ async function fetchSenators() {
 
 const REAL_GOVERNORS = [
   // Região Norte
-  { tseId: 'gov_ac_jorge', name: 'Jorge Ney Viana Macedo Neves', socialName: 'Jorge Viana', viceName: 'Marcus Alexandre', party: 'PT', state: 'AC', municipality: 'Rio Branco', photoUrl: '/candidates/gov_ac_jorge.jpg' },
-  { tseId: 'gov_ap_clecio', name: 'Clécio Luís Vilhena Vieira', socialName: 'Clécio Luís', viceName: 'Antônio Teles Júnior', party: 'SOLIDARIEDADE', state: 'AP', municipality: 'Macapá', photoUrl: '/candidates/gov_ap_clecio.jpg' },
-  { tseId: 'gov_am_braga', name: 'Carlos Eduardo de Souza Braga', socialName: 'Eduardo Braga', viceName: 'Anne Moura', party: 'MDB', state: 'AM', municipality: 'Manaus', photoUrl: '/candidates/gov_am_braga.jpg' },
-  { tseId: 'gov_pa_helder', name: 'Helder Zahluth Barbalho', socialName: 'Helder Barbalho', viceName: 'Hana Ghassan Tuma', party: 'MDB', state: 'PA', municipality: 'Belém', photoUrl: '/candidates/gov_pa_helder.jpg' },
-  { tseId: 'gov_ro_daniel', name: 'Daniel Pereira', socialName: 'Daniel Pereira', viceName: 'Anselmo de Jesus', party: 'SOLIDARIEDADE', state: 'RO', municipality: 'Porto Velho', photoUrl: '/candidates/gov_ro_daniel.jpg' },
-  { tseId: 'gov_rr_teresa', name: 'Maria Teresa Saenz Surita Jucá', socialName: 'Teresa Surita', viceName: 'Édio Lopes', party: 'MDB', state: 'RR', municipality: 'Boa Vista', photoUrl: '/candidates/gov_rr_teresa.jpg' },
-  { tseId: 'gov_to_mourao', name: 'Paulo Roberto Mourão', socialName: 'Paulo Mourão', viceName: 'Professora Germana Pires', party: 'PT', state: 'TO', municipality: 'Palmas', photoUrl: '/candidates/gov_to_mourao.jpg' },
+  { tseId: 'gov_ac_jorge', name: 'Jorge Ney Viana Macedo Neves', socialName: 'Jorge Viana', viceName: 'Marcus Alexandre', party: 'PT', state: 'AC', municipality: 'Rio Branco', photoUrl: '/candidates/gov_ac_jorge.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  { tseId: 'gov_ap_clecio', name: 'Clécio Luís Vilhena Vieira', socialName: 'Clécio Luís', viceName: 'Antônio Teles Júnior', party: 'SOLIDARIEDADE', state: 'AP', municipality: 'Macapá', photoUrl: '/candidates/gov_ap_clecio.jpg', numeroUrna: '77', status: 'DEFERIDO' },
+  { tseId: 'gov_am_marcelo', name: 'Marcelo Ramos Rodrigues', socialName: 'Marcelo Ramos', viceName: 'Anne Moura', party: 'PT', state: 'AM', municipality: 'Manaus', photoUrl: '/candidates/gov_am_marcelo.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  { tseId: 'gov_pa_beto', name: 'Beto Faro', socialName: 'Beto Faro', viceName: 'Edmilson Rodrigues', party: 'PT', state: 'PA', municipality: 'Belém', photoUrl: '/candidates/gov_pa_beto.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  { tseId: 'gov_ro_daniel', name: 'Daniel Pereira', socialName: 'Daniel Pereira', viceName: 'Anselmo de Jesus', party: 'SOLIDARIEDADE', state: 'RO', municipality: 'Porto Velho', photoUrl: '/candidates/gov_ro_daniel.jpg', numeroUrna: '77', status: 'DEFERIDO' },
+  { tseId: 'gov_rr_evangelista', name: 'Evangelista Siqueira', socialName: 'Evangelista Siqueira', viceName: 'Professora Socorro', party: 'PT', state: 'RR', municipality: 'Boa Vista', photoUrl: '/candidates/gov_rr_evangelista.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  { tseId: 'gov_to_mourao', name: 'Paulo Roberto Mourão', socialName: 'Paulo Mourão', viceName: 'Professora Germana Pires', party: 'PT', state: 'TO', municipality: 'Palmas', photoUrl: '/candidates/gov_to_mourao.jpg', numeroUrna: '13', status: 'DEFERIDO' },
 
   // Região Nordeste
-  { tseId: 'gov_al_dantas', name: 'Paulo Suruagy do Amaral Dantas', socialName: 'Paulo Dantas', viceName: 'José Wanderley Neto', party: 'MDB', state: 'AL', municipality: 'Maceió', photoUrl: '/candidates/gov_al_dantas.jpg' },
-  { tseId: 'gov_ba_jeronimo', name: 'Jerônimo Rodrigues Souza', socialName: 'Jerônimo Rodrigues', viceName: 'Geraldo Júnior', party: 'PT', state: 'BA', municipality: 'Salvador', photoUrl: '/candidates/gov_ba_jeronimo.jpg' },
-  { tseId: 'gov_ce_elmano', name: 'Elmano de Freitas da Costa', socialName: 'Elmano de Freitas', viceName: 'Jade Romero', party: 'PT', state: 'CE', municipality: 'Fortaleza', photoUrl: '/candidates/gov_ce_elmano.jpg' },
-  { tseId: 'gov_ma_brandao', name: 'Carlos Orleans Brandão Júnior', socialName: 'Carlos Brandão', viceName: 'Felipe Camarão', party: 'PSB', state: 'MA', municipality: 'São Luís', photoUrl: '/candidates/gov_ma_brandao.jpg' },
-  { tseId: 'gov_pb_azevedo', name: 'João Azevêdo Lins Filho', socialName: 'João Azevêdo', viceName: 'Lucas Ribeiro', party: 'PSB', state: 'PB', municipality: 'João Pessoa', photoUrl: '/candidates/gov_pb_azevedo.jpg' },
-  { tseId: 'gov_pe_cabral', name: 'Danilo Jorge de Barros Cabral', socialName: 'Danilo Cabral', viceName: 'Luciana Santos', party: 'PSB', state: 'PE', municipality: 'Recife', photoUrl: '/candidates/gov_pe_cabral.jpg' },
-  { tseId: 'gov_pi_rafael', name: 'Rafael Tajra Fonteles', socialName: 'Rafael Fonteles', viceName: 'Themístocles Filho', party: 'PT', state: 'PI', municipality: 'Teresina', photoUrl: '/candidates/gov_pi_rafael.jpg' },
-  { tseId: 'gov_rn_fatima', name: 'Maria de Fátima Bezerra', socialName: 'Fátima Bezerra', viceName: 'Walter Alves', party: 'PT', state: 'RN', municipality: 'Natal', photoUrl: '/candidates/gov_rn_fatima.jpg' },
-  { tseId: 'gov_se_mitidieri', name: 'Fábio Cruz Mitidieri', socialName: 'Fábio Mitidieri', viceName: 'Zezinho Sobral', party: 'PSD', state: 'SE', municipality: 'Aracaju', photoUrl: '/candidates/gov_se_mitidieri.jpg' },
+  { tseId: 'gov_al_ronaldo', name: 'Ronaldo Medeiros', socialName: 'Ronaldo Medeiros', viceName: 'Paulão', party: 'PT', state: 'AL', municipality: 'Maceió', photoUrl: '/candidates/gov_al_ronaldo.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  { tseId: 'gov_ba_jeronimo', name: 'Jerônimo Rodrigues Souza', socialName: 'Jerônimo Rodrigues', viceName: 'Geraldo Júnior', party: 'PT', state: 'BA', municipality: 'Salvador', photoUrl: '/candidates/gov_ba_jeronimo.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  { tseId: 'gov_ce_elmano', name: 'Elmano de Freitas da Costa', socialName: 'Elmano de Freitas', viceName: 'Jade Romero', party: 'PT', state: 'CE', municipality: 'Fortaleza', photoUrl: '/candidates/gov_ce_elmano.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  { tseId: 'gov_ma_brandao', name: 'Carlos Orleans Brandão Júnior', socialName: 'Carlos Brandão', viceName: 'Felipe Camarão', party: 'PSB', state: 'MA', municipality: 'São Luís', photoUrl: '/candidates/gov_ma_brandao.jpg', numeroUrna: '40', status: 'DEFERIDO' },
+  { tseId: 'gov_pb_azevedo', name: 'João Azevêdo Lins Filho', socialName: 'João Azevêdo', viceName: 'Lucas Ribeiro', party: 'PSB', state: 'PB', municipality: 'João Pessoa', photoUrl: '/candidates/gov_pb_azevedo.jpg', numeroUrna: '40', status: 'DEFERIDO' },
+  { tseId: 'gov_pe_cabral', name: 'Danilo Jorge de Barros Cabral', socialName: 'Danilo Cabral', viceName: 'Luciana Santos', party: 'PSB', state: 'PE', municipality: 'Recife', photoUrl: '/candidates/gov_pe_cabral.jpg', numeroUrna: '40', status: 'DEFERIDO' },
+  { tseId: 'gov_pi_rafael', name: 'Rafael Tajra Fonteles', socialName: 'Rafael Fonteles', viceName: 'Themístocles Filho', party: 'PT', state: 'PI', municipality: 'Teresina', photoUrl: '/candidates/gov_pi_rafael.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  { tseId: 'gov_rn_fatima', name: 'Maria de Fátima Bezerra', socialName: 'Fátima Bezerra', viceName: 'Walter Alves', party: 'PT', state: 'RN', municipality: 'Natal', photoUrl: '/candidates/gov_rn_fatima.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  { tseId: 'gov_se_rogerio', name: 'Rogério Carvalho Santos', socialName: 'Rogério Carvalho', viceName: 'Sérgio Reis', party: 'PT', state: 'SE', municipality: 'Aracaju', photoUrl: '/candidates/gov_se_rogerio.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  { tseId: 'gov_se_mitidieri', name: 'Fábio Cruz Mitidieri', socialName: 'Fábio Mitidieri', viceName: 'Zezinho Sobral', party: 'PSD', state: 'SE', municipality: 'Aracaju', photoUrl: '/candidates/gov_se_mitidieri.jpg', numeroUrna: '55', status: 'DEFERIDO' },
 
   // Região Centro-Oeste
-  { tseId: 'gov_df_grass', name: 'Leandro Antonio Grass Peixoto', socialName: 'Leandro Grass', viceName: 'Olgamir Amancia', party: 'PV', state: 'DF', municipality: 'Brasília', photoUrl: '/candidates/gov_df_grass.jpg' },
-  { tseId: 'gov_go_wolmir', name: 'Wolmir Therezio Amado', socialName: 'Professor Wolmir Amado', viceName: 'Fernando Tibúrcio', party: 'PT', state: 'GO', municipality: 'Goiânia', photoUrl: '/candidates/gov_go_wolmir.jpg' },
-  { tseId: 'gov_mt_natasha', name: 'Natasha Slhessarenko', socialName: 'Dra. Natasha Slhessarenko', viceName: 'Vinicius Hugueney', party: 'PSB', state: 'MT', municipality: 'Cuiabá', photoUrl: '/candidates/gov_mt_natasha.jpg' },
-  { tseId: 'gov_ms_giselle', name: 'Giselle Marques de Araújo', socialName: 'Giselle Marques', viceName: 'Mário Fonseca', party: 'PT', state: 'MS', municipality: 'Campo Grande', photoUrl: '/candidates/gov_ms_giselle.jpg' },
+  { tseId: 'gov_df_grass', name: 'Leandro Antonio Grass Peixoto', socialName: 'Leandro Grass', viceName: 'Olgamir Amancia', party: 'PV', state: 'DF', municipality: 'Brasília', photoUrl: '/candidates/gov_df_grass.jpg', numeroUrna: '43', status: 'DEFERIDO' },
+  { tseId: 'gov_go_wolmir', name: 'Wolmir Therezio Amado', socialName: 'Professor Wolmir Amado', viceName: 'Fernando Tibúrcio', party: 'PT', state: 'GO', municipality: 'Goiânia', photoUrl: '/candidates/gov_go_wolmir.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  { tseId: 'gov_mt_natasha', name: 'Natasha Slhessarenko', socialName: 'Dra. Natasha Slhessarenko', viceName: 'Vinicius Hugueney', party: 'PSB', state: 'MT', municipality: 'Cuiabá', photoUrl: '/candidates/gov_mt_natasha.jpg', numeroUrna: '40', status: 'DEFERIDO' },
+  { tseId: 'gov_ms_giselle', name: 'Giselle Marques de Araújo', socialName: 'Giselle Marques', viceName: 'Mário Fonseca', party: 'PT', state: 'MS', municipality: 'Campo Grande', photoUrl: '/candidates/gov_ms_giselle.jpg', numeroUrna: '13', status: 'DEFERIDO' },
 
   // Região Sudeste
-  { tseId: 'gov_es_casagrande', name: 'José Renato Casagrande', socialName: 'Renato Casagrande', viceName: 'Ricardo Ferraço', party: 'PSB', state: 'ES', municipality: 'Vitória', photoUrl: '/candidates/gov_es_casagrande.jpg' },
-  { tseId: 'gov_mg_silveira', name: 'Alexandre Silveira de Oliveira', socialName: 'Alexandre Silveira', viceName: 'Paulo Brant', party: 'PSD', state: 'MG', municipality: 'Belo Horizonte', photoUrl: '/candidates/gov_mg_silveira.jpg' },
-  { tseId: 'gov_rj_paes', name: 'Eduardo da Costa Paes', socialName: 'Eduardo Paes', viceName: 'Eduardo Cavaliere', party: 'PSD', state: 'RJ', municipality: 'Rio de Janeiro', photoUrl: '/candidates/gov_rj_paes.jpg' },
+  { tseId: 'gov_es_casagrande', name: 'José Renato Casagrande', socialName: 'Renato Casagrande', viceName: 'Ricardo Ferraço', party: 'PSB', state: 'ES', municipality: 'Vitória', photoUrl: '/candidates/gov_es_casagrande.jpg', numeroUrna: '40', status: 'DEFERIDO' },
+  { tseId: 'gov_mg_silveira', name: 'Alexandre Silveira de Oliveira', socialName: 'Alexandre Silveira', viceName: 'Paulo Brant', party: 'PSD', state: 'MG', municipality: 'Belo Horizonte', photoUrl: '/candidates/gov_mg_silveira.jpg', numeroUrna: '55', status: 'DEFERIDO' },
+  { tseId: 'gov_mg_rogerio', name: 'Rogério Correia Machado', socialName: 'Rogério Correia', viceName: 'Bella Gonçalves', party: 'PT', state: 'MG', municipality: 'Belo Horizonte', photoUrl: '/candidates/gov_mg_rogerio.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  
+  // Rio de Janeiro (RJ) - Ampla frente democrática e progressista
+  { tseId: 'gov_rj_paes', name: 'Eduardo da Costa Paes', socialName: 'Eduardo Paes', viceName: 'Eduardo Cavaliere', party: 'PSD', state: 'RJ', municipality: 'Rio de Janeiro', photoUrl: '/candidates/gov_rj_paes.jpg', numeroUrna: '55', status: 'DEFERIDO' },
+  { tseId: 'gov_rj_siri', name: 'William Siri', socialName: 'William Siri', viceName: 'Bárbara Sinedino', party: 'PSOL', state: 'RJ', municipality: 'Rio de Janeiro', photoUrl: '/candidates/gov_rj_siri.jpg', numeroUrna: '50', status: 'DEFERIDO' },
+  { tseId: 'gov_rj_neves', name: 'Rodrigo Neves Barreto', socialName: 'Rodrigo Neves', viceName: 'Felipe Peixoto', party: 'PDT', state: 'RJ', municipality: 'Niterói', photoUrl: '/candidates/gov_rj_neves.jpg', numeroUrna: '12', status: 'DEFERIDO' },
+  { tseId: 'gov_rj_juliete', name: 'Juliete Pantoja', socialName: 'Juliete Pantoja', viceName: 'Juliana Alves', party: 'UP', state: 'RJ', municipality: 'Rio de Janeiro', photoUrl: '/candidates/gov_rj_juliete.jpg', numeroUrna: '80', status: 'EM_ANALISE' },
+  { tseId: 'gov_rj_cyro', name: 'Cyro Garcia', socialName: 'Cyro Garcia', viceName: 'Glauber Silva', party: 'PSTU', state: 'RJ', municipality: 'Rio de Janeiro', photoUrl: '/candidates/gov_rj_cyro.jpg', numeroUrna: '16', status: 'EM_ANALISE' },
+
+  // São Paulo (SP)
   { tseId: 'gov_sp_franca', name: 'Márcio Luiz França Gomes', socialName: 'Márcio França', viceName: 'Juliano Medeiros', party: 'PSB', state: 'SP', municipality: 'São Paulo', photoUrl: '/candidates/gov_sp_franca.jpg', numeroUrna: '40', status: 'DEFERIDO' },
   { tseId: 'gov_sp_haddad', name: 'Fernando Haddad', socialName: 'Fernando Haddad', viceName: 'Lúcia França', party: 'PT', state: 'SP', municipality: 'São Paulo', photoUrl: '/candidates/gov_sp_haddad.jpg', numeroUrna: '13', status: 'EM_ANALISE' },
   { tseId: 'gov_sp_vivian', name: 'Vivian Mendes da Silva', socialName: 'Vivian Mendes', viceName: 'Tito Flávio', party: 'UP', state: 'SP', municipality: 'São Paulo', photoUrl: '/candidates/gov_sp_vivian.jpg', numeroUrna: '80', status: 'EM_ANALISE' },
@@ -168,9 +177,9 @@ const REAL_GOVERNORS = [
   { tseId: 'gov_sp_edjane', name: 'Edjane Lima de Sousa', socialName: 'Edjane Lima', viceName: 'Reinaldo Santos', party: 'AGIR', state: 'SP', municipality: 'São Paulo', photoUrl: '/candidates/gov_sp_edjane.jpg', numeroUrna: '36', status: 'EM_ANALISE' },
 
   // Região Sul
-  { tseId: 'gov_pr_requiao', name: 'Roberto Requião de Mello e Silva', socialName: 'Roberto Requião', viceName: 'Jorge Samek', party: 'PT', state: 'PR', municipality: 'Curitiba', photoUrl: '/candidates/gov_pr_requiao.jpg' },
-  { tseId: 'gov_rs_pretto', name: 'Edegar Pretto', socialName: 'Edegar Pretto', viceName: 'Pedro Ruas', party: 'PT', state: 'RS', municipality: 'Porto Alegre', photoUrl: '/candidates/gov_rs_pretto.jpg' },
-  { tseId: 'gov_sc_decio', name: 'Décio Nery de Lima', socialName: 'Décio Lima', viceName: 'Marcio Búrigo', party: 'PT', state: 'SC', municipality: 'Florianópolis', photoUrl: '/candidates/gov_sc_decio.jpg' },
+  { tseId: 'gov_pr_requiao', name: 'Roberto Requião de Mello e Silva', socialName: 'Roberto Requião', viceName: 'Jorge Samek', party: 'PT', state: 'PR', municipality: 'Curitiba', photoUrl: '/candidates/gov_pr_requiao.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  { tseId: 'gov_rs_pretto', name: 'Edegar Pretto', socialName: 'Edegar Pretto', viceName: 'Pedro Ruas', party: 'PT', state: 'RS', municipality: 'Porto Alegre', photoUrl: '/candidates/gov_rs_pretto.jpg', numeroUrna: '13', status: 'DEFERIDO' },
+  { tseId: 'gov_sc_decio', name: 'Décio Nery de Lima', socialName: 'Décio Lima', viceName: 'Marcio Búrigo', party: 'PT', state: 'SC', municipality: 'Florianópolis', photoUrl: '/candidates/gov_sc_decio.jpg', numeroUrna: '13', status: 'DEFERIDO' },
 ];
 
 const REAL_SENATORS = [

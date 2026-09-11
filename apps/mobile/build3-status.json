@@ -1,0 +1,51 @@
+- Fetching the buildÔÇª
+ÔêÜ Found a matching build for the project @fmourag/eleicoes-progressistas
+{
+  "id": "5ed38855-a7ec-4d77-bd76-c43a00fb98f6",
+  "status": "ERRORED",
+  "platform": "ANDROID",
+  "error": {
+    "errorCode": "UNKNOWN_ERROR",
+    "message": "Unknown error. See logs of the Bundle JavaScript build phase for more information."
+  },
+  "artifacts": {},
+  "fingerprint": {
+    "id": "01a08b88-a0b6-7ee3-a4cd-a96a766c2e11",
+    "hash": "0de63dc8b8e7a864a85ae8fe62c94a6eccea4cf0"
+  },
+  "initiatingActor": {
+    "id": "2790be66-b3d3-46c0-8870-2c8c0d15c440",
+    "displayName": "fmourag"
+  },
+  "logFiles": [
+    "https://storage.googleapis.com/eas-workflows-production/logs/706fc29e-9d78-48f7-8a1e-69c738dc9c3c/5ed38855-a7ec-4d77-bd76-c43a00fb98f6/2026-09-10T21%3A02%3A38Z-71ea0b1a-22e4-4084-931e-66e52cd7b18e.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260910%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260910T211016Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=3facf587e9bd83608fbb46c4afefa63a0be2fa40c4b11a74190e9019af5bdeb6779dbc496b5e7cc820d7a1b05a1be2416fa2624b5e9ef4891c2c8398f039c94e7a448322046cad8094ada424ff938c81c09e0c202212cdfe056a25e19fee90e8f8b97e638b5133b1866dba912433937d1712dc621dfafb24bc55c2f2cc765e664d9b930a1a79bd31a1f408fc1db0c63ed2f5f56f46ea1556742397458cae29e44368c911bb125d78ca824ae631e01c40633ef82268f75a5215d05ae2942d702d8380d04a8513abd494c2b62f8939158f1e78fe571896eb2d5b64cd76e89739a6972beb231264f2ab662ac7ddfc75a2330c7989ba9ae44d087f911fad122028a1"
+  ],
+  "app": {
+    "id": "706fc29e-9d78-48f7-8a1e-69c738dc9c3c",
+    "name": "eleicoes-progressistas",
+    "slug": "eleicoes-progressistas",
+    "ownerAccount": {
+      "id": "17cd55d5-0fa0-46e4-8a7a-233f84334002",
+      "name": "fmourag"
+    }
+  },
+  "distribution": "INTERNAL",
+  "buildProfile": "preview",
+  "appIdentifier": "com.eleicoesprogressistas.app",
+  "sdkVersion": "52.0.0",
+  "appVersion": "2.2.0",
+  "appBuildVersion": "1",
+  "gitCommitHash": "56cdc2d23725e0b9c50d01e20e3ad79f5f72bd4a",
+  "gitCommitMessage": "fix(mobile): fix Metro monorepo config to prevent react-native version collision\n\n- Add resolver.nodeModulesPaths to prioritize apps/mobile/node_modules\n- Add resolver.extraNodeModules to force react-native 0.76.9 resolution\n- Add resolver.blockList to prevent RN 0.87.x from workspace root being transformed\n- Fixes EAS build EAGER_BUNDLE failure (hermes-parser SyntaxError on RN 0.87.x files)\n\nRoot cause: workspace root node_modules has react-native 0.87.x alongside\nexpo/metro-config 0.23.x hermes-parser which cannot parse its TypeScript syntax.\nMobile app requires react-native 0.76.9 (Expo SDK 52).",
+  "priority": "NORMAL_PLUS",
+  "createdAt": "2026-09-10T20:23:48.485Z",
+  "updatedAt": "2026-09-10T21:04:04.785Z",
+  "completedAt": "2026-09-10T21:04:04.573Z",
+  "expirationDate": "2026-09-24T20:23:48.516Z",
+  "isForIosSimulator": false,
+  "metrics": {
+    "buildWaitTime": 3912,
+    "buildQueueTime": 2330874,
+    "buildDuration": 81302
+  }
+}

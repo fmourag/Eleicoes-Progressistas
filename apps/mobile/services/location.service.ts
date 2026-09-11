@@ -1,46 +1,124 @@
+import { Platform } from 'react-native';
+import * as Location from 'expo-location';
 import { UserLocation } from '../stores/location.store';
 
-// Mapeamento padrão de capitais / municípios principais para fallback e IBGE codes
-const IBGE_MAP: Record<string, { uf: string; municipality: string; ibge_code: string }> = {
-  SP: { uf: 'SP', municipality: 'São Paulo', ibge_code: '3550308' },
-  MG: { uf: 'MG', municipality: 'Belo Horizonte', ibge_code: '3106200' },
+// Mapeamento padrão das 27 UFs para capitais e códigos IBGE
+export const IBGE_MAP: Record<string, { uf: string; municipality: string; ibge_code: string }> = {
+  AC: { uf: 'AC', municipality: 'Rio Branco', ibge_code: '1200401' },
+  AL: { uf: 'AL', municipality: 'Maceió', ibge_code: '2704302' },
+  AP: { uf: 'AP', municipality: 'Macapá', ibge_code: '1600309' },
+  AM: { uf: 'AM', municipality: 'Manaus', ibge_code: '1302603' },
   BA: { uf: 'BA', municipality: 'Salvador', ibge_code: '2927408' },
-  RJ: { uf: 'RJ', municipality: 'Rio de Janeiro', ibge_code: '3304557' },
+  CE: { uf: 'CE', municipality: 'Fortaleza', ibge_code: '2304400' },
+  DF: { uf: 'DF', municipality: 'Brasília', ibge_code: '5300108' },
+  ES: { uf: 'ES', municipality: 'Vitória', ibge_code: '3205309' },
+  GO: { uf: 'GO', municipality: 'Goiânia', ibge_code: '5208707' },
+  MA: { uf: 'MA', municipality: 'São Luís', ibge_code: '2111300' },
+  MT: { uf: 'MT', municipality: 'Cuiabá', ibge_code: '5103403' },
+  MS: { uf: 'MS', municipality: 'Campo Grande', ibge_code: '5002704' },
+  MG: { uf: 'MG', municipality: 'Belo Horizonte', ibge_code: '3106200' },
+  PA: { uf: 'PA', municipality: 'Belém', ibge_code: '1501402' },
+  PB: { uf: 'PB', municipality: 'João Pessoa', ibge_code: '2507507' },
   PR: { uf: 'PR', municipality: 'Curitiba', ibge_code: '4106902' },
+  PE: { uf: 'PE', municipality: 'Recife', ibge_code: '2611606' },
+  PI: { uf: 'PI', municipality: 'Teresina', ibge_code: '2211001' },
+  RJ: { uf: 'RJ', municipality: 'Rio de Janeiro', ibge_code: '3304557' },
+  RN: { uf: 'RN', municipality: 'Natal', ibge_code: '2408102' },
   RS: { uf: 'RS', municipality: 'Porto Alegre', ibge_code: '4314902' },
+  RO: { uf: 'RO', municipality: 'Porto Velho', ibge_code: '1100205' },
+  RR: { uf: 'RR', municipality: 'Boa Vista', ibge_code: '1400100' },
+  SC: { uf: 'SC', municipality: 'Florianópolis', ibge_code: '4205407' },
+  SP: { uf: 'SP', municipality: 'São Paulo', ibge_code: '3550308' },
+  SE: { uf: 'SE', municipality: 'Aracaju', ibge_code: '2800308' },
+  TO: { uf: 'TO', municipality: 'Palmas', ibge_code: '1721000' },
 };
 
-const DEFAULT_LOCATION: UserLocation = IBGE_MAP.SP!;
+const STATE_NAME_TO_UF: Record<string, string> = {
+  Acre: 'AC', Alagoas: 'AL', Amapá: 'AP', Amapa: 'AP',
+  Amazonas: 'AM', Bahia: 'BA', Ceará: 'CE', Ceara: 'CE',
+  'Distrito Federal': 'DF', 'Espírito Santo': 'ES', 'Espirito Santo': 'ES',
+  Goiás: 'GO', Goias: 'GO', Maranhão: 'MA', Maranhao: 'MA',
+  'Mato Grosso': 'MT', 'Mato Grosso do Sul': 'MS', 'Minas Gerais': 'MG',
+  Pará: 'PA', Para: 'PA', Paraíba: 'PB', Paraiba: 'PB',
+  Paraná: 'PR', Parana: 'PR', Pernambuco: 'PE', Piauí: 'PI', Piaui: 'PI',
+  'Rio de Janeiro': 'RJ', 'Rio Grande do Norte': 'RN', 'Rio Grande do Sul': 'RS',
+  Rondônia: 'RO', Rondonia: 'RO', Roraima: 'RR', 'Santa Catarina': 'SC',
+  'São Paulo': 'SP', 'Sao Paulo': 'SP', Sergipe: 'SE', Tocantins: 'TO',
+};
+
+const DEFAULT_LOCATION: UserLocation = IBGE_MAP.RJ!;
 
 export async function requestUserCoordinates(): Promise<{ latitude: number; longitude: number }> {
-  return new Promise((resolve, reject) => {
-    if (typeof window !== 'undefined' && 'geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          resolve({
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-          });
-        },
-        (err) => {
-          reject(new Error(err.message || 'Geolocalização não permitida pelo navegador'));
-        },
-        { timeout: 10000, enableHighAccuracy: false }
-      );
-    } else {
-      reject(new Error('Geolocalização não suportada no dispositivo'));
-    }
+  if (Platform.OS === 'web') {
+    return new Promise((resolve, reject) => {
+      if (typeof window !== 'undefined' && 'geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+          (err) => reject(new Error(err.message || 'Geolocalização não permitida pelo navegador')),
+          { timeout: 8000, enableHighAccuracy: false }
+        );
+      } else {
+        reject(new Error('Geolocalização não suportada neste navegador'));
+      }
+    });
+  }
+
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== 'granted') {
+    throw new Error('Permissão de localização não autorizada no dispositivo');
+  }
+
+  const loc = await Location.getCurrentPositionAsync({
+    accuracy: Location.Accuracy.Balanced,
   });
+
+  return {
+    latitude: loc.coords.latitude,
+    longitude: loc.coords.longitude,
+  };
 }
 
 export async function resolveLocationFromCoords(lat: number, lng: number): Promise<UserLocation> {
+  // 1. Tentar geocodificação nativa do Expo Location no dispositivo móvel
+  if (Platform.OS !== 'web') {
+    try {
+      const geoResults = await Location.reverseGeocodeAsync({ latitude: lat, longitude: lng });
+      if (geoResults && geoResults.length > 0) {
+        const item = geoResults[0];
+        const rawRegion = item.region || item.subregion || '';
+        const city = item.city || item.subregion || item.district || 'Rio de Janeiro';
+        let uf = (rawRegion.length === 2 ? rawRegion.toUpperCase() : STATE_NAME_TO_UF[rawRegion]) || '';
+
+        if (!uf && item.isoCountryCode === 'BR' && rawRegion) {
+          const match = Object.keys(STATE_NAME_TO_UF).find((k) =>
+            rawRegion.toLowerCase().includes(k.toLowerCase())
+          );
+          if (match) uf = STATE_NAME_TO_UF[match];
+        }
+
+        if (uf && IBGE_MAP[uf]) {
+          return {
+            uf,
+            municipality: city || IBGE_MAP[uf].municipality,
+            ibge_code: IBGE_MAP[uf].ibge_code,
+            latitude: lat,
+            longitude: lng,
+          };
+        }
+      }
+    } catch {
+      // Continua para o fallback via Nominatim
+    }
+  }
+
+  // 2. Fallback via Nominatim OpenStreetMap
   try {
     const response = await fetch(
       `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`,
       {
         headers: {
           'Accept-Language': 'pt-BR,pt;q=0.9',
-          'User-Agent': 'NorteProgressistaApp/1.0',
+          'User-Agent': 'EleicoesProgressistas/2.2.0',
         },
       }
     );
@@ -49,12 +127,14 @@ export async function resolveLocationFromCoords(lat: number, lng: number): Promi
       const data = await response.json();
       const address = data.address || {};
       const state = address.state || '';
-      const city = address.city || address.town || address.municipality || address.village || 'São Paulo';
+      const city = address.city || address.town || address.municipality || address.village || 'Rio de Janeiro';
 
-      // Extrai UF (2 letras) se disponível
-      const ufCode = (address['ISO3166-2-lvl4']?.split('-')[1] || state.substring(0, 2)).toUpperCase();
+      let ufCode = (address['ISO3166-2-lvl4']?.split('-')[1] || '').toUpperCase();
+      if (!ufCode || ufCode.length !== 2) {
+        ufCode = STATE_NAME_TO_UF[state] || state.substring(0, 2).toUpperCase();
+      }
+
       const mapped = IBGE_MAP[ufCode];
-
       if (mapped) {
         return {
           ...mapped,
@@ -65,15 +145,15 @@ export async function resolveLocationFromCoords(lat: number, lng: number): Promi
       }
 
       return {
-        uf: ufCode.length === 2 ? ufCode : 'SP',
+        uf: ufCode.length === 2 && IBGE_MAP[ufCode] ? ufCode : 'RJ',
         municipality: city,
-        ibge_code: '3550308',
+        ibge_code: '3304557',
         latitude: lat,
         longitude: lng,
       };
     }
   } catch {
-    // Retorna localização padrão se a API de geocodificação inversa estiver indisponível
+    // Retorna fallback padrão
   }
 
   return { ...DEFAULT_LOCATION, latitude: lat, longitude: lng };

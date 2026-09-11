@@ -22,8 +22,9 @@ foreach ($t in $testers) {
     Write-Host "Destinatario: $nome ($email - $org)" -ForegroundColor Green
     Write-Host "----------------------------------------------------------------" -ForegroundColor Yellow
     Write-Host "WHATSAPP / TELEGRAM:" -ForegroundColor White
-    Write-Host "🇧🇷 $nome, você foi selecionado(a) para o Beta Fechado do Eleições Progressistas 2026! 📱 Instale em 2 min: https://eleicoes-progressistas.pages.dev/beta 🔐 SHA-256: $hash — São 5 min de teste que fortalecem a democracia. Feedback: contato@eleicoesprogressistas.org.br`n" -ForegroundColor Gray
+    Write-Host "🇧🇷 $nome, você foi selecionado(a) para o Beta Fechado do Eleições Progressistas 2026! 📱 Instale em 2 min: https://eleicoes-progressistas.onrender.com/beta 🔐 SHA-256: $hash — São 5 min de teste que fortalecem a democracia. Feedback: contato@eleicoesprogressistas.org.br`n" -ForegroundColor Gray
     
     Write-Host "ASSUNTO E-MAIL: 🇧🇷 Convite: Beta Fechado — Eleições Progressistas 2026" -ForegroundColor White
-    Write-Host "CORPO: Olá $nome ($org), acesse https://eleicoes-progressistas.pages.dev/beta para baixar o APK verificado ($hash).`n" -ForegroundColor Gray
+    Write-Host "CORPO: Olá $nome ($org), acesse https://eleicoes-progressistas.onrender.com/beta para baixar o APK verificado ($hash).`n" -ForegroundColor Gray
 }
+

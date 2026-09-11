@@ -52,7 +52,7 @@ describe('MatchingService - Stateless Ranking & Party Exclusion', () => {
     expect(EXCLUDED_CONSERVATIVE_PARTIES).toContain('NOVO');
     expect(EXCLUDED_CONSERVATIVE_PARTIES).toContain('PP');
     expect(EXCLUDED_CONSERVATIVE_PARTIES).toContain('AVANTE');
-    expect(EXCLUDED_CONSERVATIVE_PARTIES).toContain('MDB');
+    expect(EXCLUDED_CONSERVATIVE_PARTIES).toContain('UNIÃO');
     expect(EXCLUDED_CONSERVATIVE_PARTIES).toContain('PODEMOS');
   });
 

@@ -263,8 +263,6 @@ export const EXCLUDED_CONSERVATIVE_PARTIES = [
   'PATRIOTAS',
   'AVANTE',
   'PRD',
-  'MDB',
-  'PSD',
   'PODE',
   'PODEMOS',
   'NOVO',

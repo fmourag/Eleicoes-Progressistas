@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 260" width="960" height="260">
+  <defs>
+    <linearGradient id="carmimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E53E3E" />
+      <stop offset="100%" stop-color="#9B2C2C" />
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="125%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#9B2C2C" flood-opacity="0.22" />
+    </filter>
+  </defs>
+
+  <!-- Container de Fundo Transparente / Suporte Institucional -->
+  <rect width="960" height="260" fill="none" />
+
+  <!-- === BLOCO DO ÍCONE / EMBLEMA CÍVICO (Esquerda) === -->
+  <g transform="translate(24, 25)">
+    <!-- Squircle Carmim -->
+    <rect x="0" y="0" width="210" height="210" rx="48" fill="url(#carmimGrad)" filter="url(#softShadow)" />
+    <!-- Borda sutil de realce interno -->
+    <rect x="0" y="0" width="210" height="210" rx="48" fill="none" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="2.5" />
+
+    <!-- Símbolo Urna / Cédula / Estrela / Checagem -->
+    <g transform="translate(105, 95)">
+      <!-- Cédula / Urna em Perspectiva Dinâmica -->
+      <path d="M-42,28 L-16,-34 L16,-34 L42,28 Z" fill="#FFFFFF" fill-opacity="0.96" />
+      <!-- Fenda central / Raio Carmim -->
+      <path d="M-21,28 L0,-22 L21,28 Z" fill="url(#carmimGrad)" />
+      
+      <!-- Estrela Guia / Farol Democrático -->
+      <path d="M0,-48 L4.5,-38 L14.5,-37 L7,-30 L9,-20 L0,-25.5 L-9,-20 L-7,-30 L-14.5,-37 L-4.5,-38 Z" fill="url(#goldGrad)" />
+      
+      <!-- Checkmark / Ficha Limpa Esmeralda -->
+      <path d="M-32,42 L-8,64 L38,18" fill="none" stroke="url(#emeraldGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+  </g>
+
+  <!-- Divisória Elegante Sutil -->
+  <line x1="270" y1="48" x2="270" y2="212" stroke="#E2E8F0" stroke-width="2" stroke-linecap="round" />
+
+  <!-- === BLOCO TIPOGRÁFICO HORIZONTAL (Direita) === -->
+  <g transform="translate(305, 0)">
+    <!-- Badge Cívico 2026 / Ficha Limpa -->
+    <g transform="translate(0, 48)">
+      <rect x="0" y="0" width="168" height="28" rx="14" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="1" />
+      <circle cx="14" cy="14" r="4.5" fill="#DC2626" />
+      <text x="26" y="18.5" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="700" font-size="11.5" fill="#991B1B" letter-spacing="1">ELEIÇÕES 2026</text>
+
+      <rect x="178" y="0" width="138" height="28" rx="14" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1" />
+      <circle cx="192" cy="14" r="4.5" fill="#059669" />
+      <text x="204" y="18.5" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="700" font-size="11.5" fill="#065F46" letter-spacing="0.5">FICHA LIMPA</text>
+    </g>
+
+    <!-- Nome da Marca: ELEIÇÕES PROGRESSISTAS -->
+    <text x="0" y="132" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" font-size="44" fill="#1E293B" letter-spacing="-0.5">
+      Eleições <tspan fill="#C53030">Progressistas</tspan>
+    </text>
+
+    <!-- Slogan Oficial: Opção 3 Selecionada -->
+    <g transform="translate(0, 172)">
+      <!-- Ícone marcador gráfico sutil em carmim / esmeralda -->
+      <circle cx="8" cy="-6" r="4" fill="#059669" />
+      <text x="24" y="0" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="600" font-size="21" fill="#475569" letter-spacing="0.2">
+        Cheque o passado. <tspan font-weight="700" fill="#0F172A">Escolha o futuro.</tspan>
+      </text>
+    </g>
+
+    <!-- Linha de credibilidade: Código Aberto e Independente -->
+    <text x="0" y="208" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="500" font-size="12" fill="#94A3B8" letter-spacing="1.2">
+      TECNOLOGIA CÍVICA AUDITÁVEL • 100% INDEPENDENTE
+    </text>
+  </g>
+</svg>

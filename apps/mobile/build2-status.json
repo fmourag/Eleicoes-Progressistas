@@ -1,0 +1,49 @@
+{
+  "id": "527e34a7-60b7-4d48-8d05-09a75ed7dc98",
+  "status": "ERRORED",
+  "platform": "ANDROID",
+  "error": {
+    "errorCode": "UNKNOWN_ERROR",
+    "message": "Unknown error. See logs of the Bundle JavaScript build phase for more information."
+  },
+  "artifacts": {},
+  "fingerprint": {
+    "id": "01a08b88-a0b6-7ee3-a4cd-a96a766c2e11",
+    "hash": "0de63dc8b8e7a864a85ae8fe62c94a6eccea4cf0"
+  },
+  "initiatingActor": {
+    "id": "2790be66-b3d3-46c0-8870-2c8c0d15c440",
+    "displayName": "fmourag"
+  },
+  "logFiles": [
+    "https://storage.googleapis.com/eas-workflows-production/logs/706fc29e-9d78-48f7-8a1e-69c738dc9c3c/527e34a7-60b7-4d48-8d05-09a75ed7dc98/2026-09-10T14%3A19%3A45Z-a3e23027-1404-44ca-8ba0-8228eda60fc5.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260910%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260910T200550Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=567f6cbc3c80140ee58902c74f23ed8b6dd318598c748201219638dd0b68c546e0c364c474d481929add10e3219bfb5af5052e6c9dd8a8c5af2429da3d6e9161c77a70bb2ac17d0694bd458d61503cb24ea61b65ea0880368462ac4072b6db21ec5949b202f93d3bf9731fa9d44fa4b73adc914d93420e64e5c2de5840aed5858d97491b10112303c813990b6c84452f3f85146ccd2becb95693c5dbc3e1baac218dd25f4df702c0559e52dd65f7d542cd9f62c1a0bf05e8cacfe7dc1e344af2ffbcbfc14aa5d23b50e711202e43050f39fffdcc40fa2195d03e5d007eab34a1c1163e8cd7c95176c58ab030fa3cab16820f362466f32da7f604ec032813a091"
+  ],
+  "app": {
+    "id": "706fc29e-9d78-48f7-8a1e-69c738dc9c3c",
+    "name": "eleicoes-progressistas",
+    "slug": "eleicoes-progressistas",
+    "ownerAccount": {
+      "id": "17cd55d5-0fa0-46e4-8a7a-233f84334002",
+      "name": "fmourag"
+    }
+  },
+  "distribution": "INTERNAL",
+  "buildProfile": "preview",
+  "appIdentifier": "com.eleicoesprogressistas.app",
+  "sdkVersion": "52.0.0",
+  "appVersion": "2.2.0",
+  "appBuildVersion": "1",
+  "gitCommitHash": "5336b70198e65c87a32a3347ab2b89858a4d33bc",
+  "gitCommitMessage": "build(mobile): add missing PNG assets (icon, adaptive-icon, splash) generated from SVG",
+  "priority": "NORMAL_PLUS",
+  "createdAt": "2026-09-10T13:36:22.151Z",
+  "updatedAt": "2026-09-10T14:21:13.605Z",
+  "completedAt": "2026-09-10T14:21:13.415Z",
+  "expirationDate": "2026-09-24T13:36:22.186Z",
+  "isForIosSimulator": false,
+  "metrics": {
+    "buildWaitTime": 5003,
+    "buildQueueTime": 2602654,
+    "buildDuration": 83607
+  }
+}
