@@ -81,35 +81,45 @@ function generateScores(party: string, cargo: string): Record<string, number> {
 
 async function fetchFederalDeputies() {
   console.log('📡 Buscando Deputados Federais em exercício na API Oficial da Câmara...');
-  const res = await fetch('https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome', {
-    headers: { Accept: 'application/json', 'User-Agent': 'EleicoesProgressistas/2.2.0' },
-  });
-  if (!res.ok) throw new Error(`Erro API Câmara: ${res.status}`);
-  const json: any = await res.json();
-  const dados: any[] = json.dados || [];
+  try {
+    const res = await fetch('https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome', {
+      headers: { Accept: 'application/json', 'User-Agent': 'EleicoesProgressistas/2.2.0' },
+    });
+    if (!res.ok) throw new Error(`Erro API Câmara: ${res.status}`);
+    const json: any = await res.json();
+    const dados: any[] = json.dados || [];
 
-  const progressive = dados.filter(
-    (d) => d.siglaPartido && !EXCLUDED_CONSERVATIVE_PARTIES.includes(d.siglaPartido.toUpperCase())
-  );
-  console.log(`✅ ${progressive.length} Deputados Federais progressistas e democráticos obtidos.`);
-  return progressive;
+    const progressive = dados.filter(
+      (d) => d.siglaPartido && !EXCLUDED_CONSERVATIVE_PARTIES.includes(d.siglaPartido.toUpperCase())
+    );
+    console.log(`✅ ${progressive.length} Deputados Federais progressistas e democráticos obtidos.`);
+    return progressive;
+  } catch (err) {
+    console.warn('Falha na API da Câmara (usando dados locais):', (err as Error).message);
+    return [];
+  }
 }
 
 async function fetchSenators() {
   console.log('📡 Buscando Senadores da República em exercício na API Oficial do Senado...');
-  const res = await fetch('https://legis.senado.leg.br/dadosabertos/senador/lista/atual.json', {
-    headers: { Accept: 'application/json', 'User-Agent': 'EleicoesProgressistas/2.2.0' },
-  });
-  if (!res.ok) throw new Error(`Erro API Senado: ${res.status}`);
-  const json: any = await res.json();
-  const parl: any[] = json.ListaParlamentarEmExercicio?.Parlamentares?.Parlamentar || [];
+  try {
+    const res = await fetch('https://legis.senado.leg.br/dadosabertos/senador/lista/atual.json', {
+      headers: { Accept: 'application/json', 'User-Agent': 'EleicoesProgressistas/2.2.0' },
+    });
+    if (!res.ok) throw new Error(`Erro API Senado: ${res.status}`);
+    const json: any = await res.json();
+    const parl: any[] = json.ListaParlamentarEmExercicio?.Parlamentares?.Parlamentar || [];
 
-  const progressive = parl.filter((s) => {
-    const party = s.IdentificacaoParlamentar?.SiglaPartidoParlamentar?.toUpperCase();
-    return party && !EXCLUDED_CONSERVATIVE_PARTIES.includes(party);
-  });
-  console.log(`✅ ${progressive.length} Senadores progressistas e democráticos obtidos.`);
-  return progressive;
+    const progressive = parl.filter((s) => {
+      const party = s.IdentificacaoParlamentar?.SiglaPartidoParlamentar?.toUpperCase();
+      return party && !EXCLUDED_CONSERVATIVE_PARTIES.includes(party);
+    });
+    console.log(`✅ ${progressive.length} Senadores progressistas e democráticos obtidos.`);
+    return progressive;
+  } catch (err) {
+    console.warn('Falha na API do Senado (usando dados locais):', (err as Error).message);
+    return [];
+  }
 }
 
 const REAL_GOVERNORS = [
