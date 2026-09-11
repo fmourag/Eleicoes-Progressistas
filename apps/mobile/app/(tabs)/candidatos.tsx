@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { PROGRESSIVE_GUIDELINE_NOTICE, EXCLUDED_CONSERVATIVE_PARTIES, getTseDadosAbertosSearchUrl, isCandidateAllowedInProgressiveRoll } from '@np/shared';
-import { candidatesApi } from '../../services/api';
+import { candidatesApi, retryWithBackoff } from '../../services/api';
 import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
 import { CandidateCard } from '../../components/CandidateCard';
@@ -153,18 +153,33 @@ export default function CandidatosScreen() {
     setIsOffline(false);
     setErrorMessage(null);
     try {
-      const res = await candidatesApi.getAll().catch(() => null);
+      const res = await retryWithBackoff(
+        async () => {
+          const apiRes = await candidatesApi.getAll();
+          if (apiRes && !Array.isArray(apiRes) && (apiRes as { isFallback?: boolean }).isFallback) {
+            throw new Error((apiRes as { message?: string }).message || 'Servidor indisponível');
+          }
+          return apiRes;
+        },
+        3,
+        1500
+      ).catch(() => null);
+
       if (res && !Array.isArray(res) && (res as { isFallback?: boolean }).isFallback) {
         setIsOffline(true);
-        setErrorMessage((res as { message?: string }).message || 'Sistema temporariamente indisponível. Tente novamente em alguns minutos.');
+        setErrorMessage((res as { message?: string }).message || 'Servidor temporariamente em inicialização. Toque em tentar novamente.');
         setCandidates([]);
         return;
       }
       const list = Array.isArray(res) ? res : ((res as { results?: CandidateListItem[] })?.results ?? []);
+      if (list.length === 0 && !res) {
+        setIsOffline(true);
+        setErrorMessage('Não foi possível conectar ao servidor eleitoral após 3 tentativas. Verifique sua conexão ou tente novamente.');
+      }
       setCandidates(list as CandidateListItem[]);
     } catch {
       setIsOffline(true);
-      setErrorMessage('Sistema temporariamente indisponível. Tente novamente em alguns minutos.');
+      setErrorMessage('Não foi possível carregar os candidatos do TSE no momento. Toque no botão abaixo para tentar novamente.');
       setCandidates([]);
     } finally {
       setLoading(false);
@@ -323,10 +338,13 @@ export default function CandidatosScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
+      <View style={[styles.center, { backgroundColor: colors.background, padding: Spacing.xl }]}>
         <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={{ color: colors.textMuted, marginTop: Spacing.sm }}>
-          Carregando candidaturas progressistas...
+        <Text style={{ color: colors.text, fontSize: FontSize.md, fontWeight: '600', marginTop: Spacing.md, textAlign: 'center' }}>
+          Carregando candidaturas oficiais do TSE...
+        </Text>
+        <Text style={{ color: colors.textMuted, fontSize: FontSize.sm, marginTop: Spacing.xs, textAlign: 'center', maxWidth: 320 }}>
+          Aguardando servidor seguro. Caso seja o primeiro acesso, o carregamento pode levar até 60s.
         </Text>
       </View>
     );
@@ -611,31 +629,45 @@ export default function CandidatosScreen() {
           </View>
         ) : (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyIcon}>🔍</Text>
+            <Text style={styles.emptyIcon}>{isOffline ? '⚠️' : '🔍'}</Text>
             <Text style={[styles.emptyTitle, { color: colors.text }]}>
-              Nenhum candidato encontrado
+              {isOffline ? 'Falha ao Conectar com o Servidor Eleitoral' : 'Nenhum candidato encontrado'}
             </Text>
             <Text style={[styles.emptyText, { color: colors.textMuted }]}>
-              Não foram localizadas candidaturas para os critérios e localização atuais.
+              {isOffline
+                ? (errorMessage || 'Não foi possível carregar os dados eleitorais. Toque no botão abaixo para tentar novamente.')
+                : 'Não foram localizadas candidaturas para os critérios e localização atuais.'}
             </Text>
             <View style={styles.emptyActionsRow}>
-              {hasActiveFilters && (
+              {isOffline ? (
                 <TouchableOpacity
                   style={[styles.emptyActionBtn, { backgroundColor: colors.primary }]}
-                  onPress={handleClearFilters}
+                  onPress={loadCandidates}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.emptyActionBtnText}>↺ Limpar Filtros e Busca</Text>
+                  <Text style={styles.emptyActionBtnText}>↺ Tentar Novamente</Text>
                 </TouchableOpacity>
-              )}
-              {location?.uf && !showAllStates && (
-                <TouchableOpacity
-                  style={[styles.emptyActionBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border, borderWidth: 1 }]}
-                  onPress={() => setShowAllStates(true)}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.emptyActionBtnText, { color: colors.primary }]}>🇧🇷 Ver Todo o Brasil</Text>
-                </TouchableOpacity>
+              ) : (
+                <>
+                  {hasActiveFilters && (
+                    <TouchableOpacity
+                      style={[styles.emptyActionBtn, { backgroundColor: colors.primary }]}
+                      onPress={handleClearFilters}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={styles.emptyActionBtnText}>↺ Limpar Filtros e Busca</Text>
+                    </TouchableOpacity>
+                  )}
+                  {location?.uf && !showAllStates && (
+                    <TouchableOpacity
+                      style={[styles.emptyActionBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border, borderWidth: 1 }]}
+                      onPress={() => setShowAllStates(true)}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={[styles.emptyActionBtnText, { color: colors.primary }]}>🇧🇷 Ver Todo o Brasil</Text>
+                    </TouchableOpacity>
+                  )}
+                </>
               )}
             </View>
           </View>

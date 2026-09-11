@@ -166,6 +166,9 @@ model Candidate {
   @@index([electionYear])
   @@index([candidaturaStatus])
   @@index([municipality, state, cargo])
+  @@index([cargo, state])
+  @@index([state])
+  @@index([party])
   @@index([level])
   @@map("candidates")
 }

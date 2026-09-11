@@ -411,9 +411,18 @@ export function buildGovernmentPlanDetail(candidate: any): GovernmentPlanDetail 
 
 @Injectable()
 export class CandidatesService {
+  private candidatesCache = new Map<string, { data: any; expiresAt: number }>();
+  private readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos de cache em memória
+
   constructor(@Inject(PrismaService) private prisma: PrismaService) {}
 
   async findByLocation(municipality?: string, state?: string, cargo?: string, party?: string, search?: string) {
+    const cacheKey = `cand:${municipality || ''}:${state || ''}:${cargo || ''}:${party || ''}:${search || ''}`;
+    const cached = this.candidatesCache.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      return cached.data;
+    }
+
     const upcomingCargos = UPCOMING_ELECTION.cargos as Cargo[];
 
     try {
@@ -505,7 +514,7 @@ export class CandidatesService {
         orderBy: { name: 'asc' },
       });
 
-      return candidates.map((c: any) => {
+      const result = candidates.map((c: any) => {
         const scores = c.profileScores || {};
         const vals = Object.values(scores).filter((v) => typeof v === 'number') as number[];
         let overallCommitmentScore = 88;
@@ -519,6 +528,13 @@ export class CandidatesService {
           overallCommitmentScore,
         };
       });
+
+      this.candidatesCache.set(cacheKey, {
+        data: result,
+        expiresAt: Date.now() + this.CACHE_TTL_MS,
+      });
+
+      return result;
     } catch (error) {
       console.warn(`[CandidatesService] Database error or offline: ${(error as Error).message}`);
       return {

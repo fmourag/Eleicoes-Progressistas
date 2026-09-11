@@ -129,7 +129,32 @@ export function getCandidatePhotoUrl(photoUrl?: string | null, tseId?: string | 
   return '';
 }
 
-export async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
+export const DEFAULT_API_TIMEOUT = 60000;
+
+export async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries = 3,
+  baseDelayMs = 1000
+): Promise<T> {
+  let lastError: any;
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (i === maxRetries - 1) break;
+      const delay = baseDelayMs * Math.pow(2, i); // 1s, 2s, 4s
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  throw lastError;
+}
+
+export async function apiRequest<T>(
+  path: string,
+  options: RequestInit & { timeout?: number } = {}
+): Promise<T> {
+  const timeoutMs = options.timeout ?? DEFAULT_API_TIMEOUT;
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...((options.headers as Record<string, string>) ?? {}),
@@ -139,15 +164,32 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
     headers['Authorization'] = `Bearer ${authToken}`;
   }
 
+  const controller = new AbortController();
+  const timeoutTimer = setTimeout(() => {
+    controller.abort();
+  }, timeoutMs);
+
   let res: Response;
   try {
     res = await fetch(`${API_URL}${path}`, {
       ...options,
       headers,
+      signal: controller.signal,
     });
   } catch (err) {
-    console.warn(`[API] Falha de conexão ao acessar ${path}:`, (err as Error).message);
-    throw new Error('Servidor temporariamente indisponível. Tente novamente em alguns minutos.');
+    clearTimeout(timeoutTimer);
+    const isAbort = (err as Error)?.name === 'AbortError';
+    console.warn(
+      `[API] ${isAbort ? 'Timeout de conexão (60s)' : 'Falha de conexão'} ao acessar ${path}:`,
+      (err as Error).message
+    );
+    throw new Error(
+      isAbort
+        ? 'O servidor demorou mais que 60 segundos para responder (inicialização de serviço). Tente novamente em instantes.'
+        : 'Servidor temporariamente indisponível. Tente novamente em alguns minutos.'
+    );
+  } finally {
+    clearTimeout(timeoutTimer);
   }
 
   if (!res.ok) {
@@ -159,7 +201,7 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
 }
 
 export const api = {
-  get: <T>(path: string, config?: { params?: Record<string, any> }) => {
+  get: <T>(path: string, config?: { params?: Record<string, any>; timeout?: number }) => {
     let url = path;
     if (config?.params) {
       const sp = new URLSearchParams();
@@ -169,10 +211,14 @@ export const api = {
       const qs = sp.toString();
       if (qs) url += (url.includes('?') ? '&' : '?') + qs;
     }
-    return apiRequest<T>(url);
+    return apiRequest<T>(url, { timeout: config?.timeout });
   },
-  post: <T>(path: string, body?: unknown) =>
-    apiRequest<T>(path, { method: 'POST', body: body !== undefined ? JSON.stringify(body) : undefined }),
+  post: <T>(path: string, body?: unknown, config?: { timeout?: number }) =>
+    apiRequest<T>(path, {
+      method: 'POST',
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+      timeout: config?.timeout,
+    }),
 };
 
 export const authApi = {
