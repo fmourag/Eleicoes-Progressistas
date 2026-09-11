@@ -1,13 +1,19 @@
-const API_URL = process.env.EXPO_PUBLIC_API_URL ?? (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+import { Platform } from 'react-native';
+import { CandidateClassification, GovernmentPlanDetail, CandidatePollResult } from '@np/shared';
 
+const PRODUCTION_API_URL = 'https://eleicoes-progressistas.onrender.com';
+
+const API_URL =
+  process.env.EXPO_PUBLIC_API_URL ||
+  (Platform.OS === 'web' && typeof window !== 'undefined' && window.location?.origin
+    ? window.location.origin
+    : PRODUCTION_API_URL);
 
 let authToken: string | null = null;
 
 export function setAuthToken(token: string | null) {
   authToken = token;
 }
-
-import { CandidateClassification, GovernmentPlanDetail, CandidatePollResult } from '@np/shared';
 
 export interface Candidate {
   id: string;
@@ -27,6 +33,9 @@ export interface Candidate {
   state?: string;
   electionYear?: number;
   photoUrl?: string;
+  coalition?: string | null;
+  isProgressiveSupported?: boolean;
+  supportedBy?: string | null;
   governmentPlanUrl?: string;
   governmentPlanSummary?: string;
   overallCommitmentScore?: number;
@@ -102,20 +111,20 @@ export interface RaioXData {
 }
 
 export function getCandidatePhotoUrl(photoUrl?: string | null, tseId?: string | null): string {
+  if (!photoUrl && !tseId) return '';
+  const base = API_URL.replace(/\/+$/, '');
+
   if (photoUrl && photoUrl.startsWith('http')) {
     return photoUrl;
   }
   if (photoUrl && photoUrl.startsWith('/')) {
-    if (typeof window !== 'undefined') {
-      return photoUrl;
-    }
-    return `${API_URL}${photoUrl}`;
+    return `${base}${photoUrl}`;
+  }
+  if (photoUrl) {
+    return `${base}/candidates/${photoUrl}`;
   }
   if (tseId) {
-    if (typeof window !== 'undefined') {
-      return `/candidates/${tseId}.jpg`;
-    }
-    return `${API_URL}/candidates/${tseId}.jpg`;
+    return `${base}/candidates/${tseId}.jpg`;
   }
   return '';
 }

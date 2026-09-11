@@ -12,7 +12,7 @@ import {
   Linking,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { PROGRESSIVE_GUIDELINE_NOTICE, EXCLUDED_CONSERVATIVE_PARTIES, getTseDadosAbertosSearchUrl } from '@np/shared';
+import { PROGRESSIVE_GUIDELINE_NOTICE, EXCLUDED_CONSERVATIVE_PARTIES, getTseDadosAbertosSearchUrl, isCandidateAllowedInProgressiveRoll } from '@np/shared';
 import { candidatesApi } from '../../services/api';
 import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
@@ -42,6 +42,9 @@ interface CandidateListItem {
   state?: string;
   municipality?: string;
   photoUrl?: string;
+  coalition?: string | null;
+  isProgressiveSupported?: boolean;
+  supportedBy?: string | null;
   fichaLimpa: boolean;
   candidaturaStatus?: 'EM_ANALISE' | 'DEFERIDO' | 'INDEFERIDO' | 'CASSADO' | 'RENUNCIA';
   overallCommitmentScore?: number;
@@ -224,8 +227,7 @@ export default function CandidatosScreen() {
   // Presidente: Circunscrição nacional (todo cidadão vota)
   // Governador, Senador, Deputado Federal, Deputado Estadual: Circunscrição estadual (eleitores da respectiva UF votam)
   const byLocation = useMemo(() => {
-    const excludedList = (EXCLUDED_CONSERVATIVE_PARTIES as readonly string[]).map((p) => p.toUpperCase());
-    let list = candidates.filter((c) => !excludedList.includes((c.party ?? '').toUpperCase()));
+    let list = candidates.filter((c) => isCandidateAllowedInProgressiveRoll(c));
 
     if (!location?.uf || showAllStates) return list;
 
@@ -594,6 +596,9 @@ export default function CandidatosScreen() {
                       cargo={item.cargo}
                       score={item.overallCommitmentScore}
                       photoUrl={item.photoUrl}
+                      coalition={item.coalition}
+                      isProgressiveSupported={item.isProgressiveSupported}
+                      supportedBy={item.supportedBy}
                       candidaturaStatus={item.candidaturaStatus}
                       fichaLimpa={item.fichaLimpa}
                       onPress={() => router.push(`/(tabs)/raio-x?id=${item.id}`)}

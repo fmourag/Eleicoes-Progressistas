@@ -19,6 +19,9 @@ interface CandidateCardProps {
   cargo: string;
   score?: number;
   photoUrl?: string;
+  coalition?: string | null;
+  isProgressiveSupported?: boolean;
+  supportedBy?: string | null;
   candidaturaStatus?: 'EM_ANALISE' | 'DEFERIDO' | 'INDEFERIDO' | 'CASSADO' | 'RENUNCIA';
   fichaLimpa?: boolean;
   onPress: () => void;
@@ -55,6 +58,9 @@ export function CandidateCard({
   cargo,
   score,
   photoUrl,
+  coalition,
+  isProgressiveSupported,
+  supportedBy,
   candidaturaStatus = 'EM_ANALISE',
   fichaLimpa,
   onPress,
@@ -71,6 +77,7 @@ export function CandidateCard({
   const showImage = Boolean(resolvedPhoto) && !imageError;
   const isPending = candidaturaStatus === 'EM_ANALISE';
   const votingNumber = numeroUrna || getNumeroUrna({ cargo, partyNumber, party, tseId, name });
+  const hasAlliance = isProgressiveSupported || Boolean(supportedBy) || Boolean(coalition);
 
   function handleToggleCola(e: any) {
     e.stopPropagation?.();
@@ -181,7 +188,7 @@ export function CandidateCard({
               </Text>
             </View>
 
-            {/* Número de Urna Eletrônica (identificação numérica específica para votar) */}
+            {/* Número de Urna Eletrônica */}
             <View style={[styles.urnaBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
               <Text style={styles.urnaBadgeIcon}>🗳️</Text>
               <Text style={[styles.urnaBadgeLabel, { color: colors.textMuted }]}>Urna:</Text>
@@ -207,6 +214,15 @@ export function CandidateCard({
               </Text>
             </View>
           </View>
+
+          {/* Alliance / Coalition / Support Badge if applicable */}
+          {hasAlliance && (
+            <View style={[styles.allianceBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.primaryBorder }]}>
+              <Text style={[styles.allianceBadgeText, { color: colors.primary }]} numberOfLines={1}>
+                🤝 {supportedBy || coalition || 'Apoio de Coligação Progressista'}
+              </Text>
+            </View>
+          )}
 
           {/* Bottom Card Row: Ficha Limpa & Cola Button */}
           <View style={styles.bottomCardRow}>
@@ -405,6 +421,18 @@ const styles = StyleSheet.create({
   },
   statusBadgeText: {
     fontSize: 11,
+    fontWeight: '700',
+  },
+  allianceBadge: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    marginTop: 2,
+    alignSelf: 'flex-start',
+  },
+  allianceBadgeText: {
+    fontSize: 10,
     fontWeight: '700',
   },
   tseText: {

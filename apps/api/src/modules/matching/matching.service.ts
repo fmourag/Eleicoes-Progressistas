@@ -46,6 +46,9 @@ interface CandidateLite {
   level?: string;
   state: string;
   municipality?: string;
+  coalition?: string | null;
+  isProgressiveSupported?: boolean;
+  supportedBy?: string | null;
   candidaturaStatus: string;
   dataRegistro?: Date;
   fichaLimpa: boolean;
@@ -166,6 +169,9 @@ export class MatchingService {
             level: candidate.level,
             state: candidate.state,
             municipality: candidate.municipality,
+            coalition: candidate.coalition,
+            isProgressiveSupported: candidate.isProgressiveSupported,
+            supportedBy: candidate.supportedBy,
             candidaturaStatus: candidate.candidaturaStatus,
             fichaLimpa: candidate.fichaLimpa,
             photoUrl: candidate.photoUrl,
@@ -239,14 +245,22 @@ export class MatchingService {
     const targetYear = UPCOMING_ELECTION.year;
     const allowedStatus = includePending ? ['DEFERIDO', 'EM_ANALISE'] : ['DEFERIDO'];
 
+    const progressivePartyFilter = {
+      OR: [
+        { party: { notIn: excludedParties } },
+        { isProgressiveSupported: true },
+        { supportedBy: { not: null } },
+      ],
+    };
+
     try {
       const presidentialCandidates = await this.prisma.candidate.findMany({
         where: {
           cargo: 'PRESIDENTE',
           electionYear: targetYear,
           candidaturaStatus: { in: allowedStatus as any },
-          party: { notIn: excludedParties },
           fichaLimpa: true,
+          ...progressivePartyFilter,
         } as any,
         select: {
           id: true,
@@ -260,6 +274,9 @@ export class MatchingService {
           cargo: true,
           state: true,
           municipality: true,
+          coalition: true,
+          isProgressiveSupported: true,
+          supportedBy: true,
           candidaturaStatus: true,
           dataRegistro: true,
           fichaLimpa: true,
@@ -276,8 +293,8 @@ export class MatchingService {
           cargo: { in: stateCargos as any },
           electionYear: targetYear,
           candidaturaStatus: { in: allowedStatus as any },
-          party: { notIn: excludedParties },
           fichaLimpa: true,
+          ...progressivePartyFilter,
         } as any,
         select: {
           id: true,
@@ -291,6 +308,9 @@ export class MatchingService {
           cargo: true,
           state: true,
           municipality: true,
+          coalition: true,
+          isProgressiveSupported: true,
+          supportedBy: true,
           candidaturaStatus: true,
           dataRegistro: true,
           fichaLimpa: true,
@@ -313,9 +333,9 @@ export class MatchingService {
               ...(uf ? { state: uf } : {}),
               electionYear: targetYear,
               candidaturaStatus: { in: allowedStatus as any },
-              party: { notIn: excludedParties },
               fichaLimpa: true,
               id: { notIn: Array.from(combinedMap.keys()) },
+              ...progressivePartyFilter,
             } as any,
             select: {
               id: true,
@@ -327,6 +347,11 @@ export class MatchingService {
               partyNumber: true,
               photoUrl: true,
               cargo: true,
+              state: true,
+              municipality: true,
+              coalition: true,
+              isProgressiveSupported: true,
+              supportedBy: true,
               candidaturaStatus: true,
               dataRegistro: true,
               fichaLimpa: true,

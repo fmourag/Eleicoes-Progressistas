@@ -25,6 +25,9 @@ const EXCLUDED_CONSERVATIVE_PARTIES = [
   'PODEMOS',
   'NOVO',
   'PSDB',
+  'PSD',
+  'MDB',
+  'PMDB',
   'MISSÃO',
   'MISSAO',
 ];
@@ -130,10 +133,10 @@ async function fetchSenators() {
 const REAL_GOVERNORS = [
   // Região Norte
   { tseId: 'gov_ac_jorge', name: 'Jorge Ney Viana Macedo Neves', socialName: 'Jorge Viana', viceName: 'Marcus Alexandre', party: 'PT', state: 'AC', municipality: 'Rio Branco', photoUrl: '/candidates/gov_ac_jorge.jpg', numeroUrna: '13', status: 'DEFERIDO' },
-  { tseId: 'gov_ap_clecio', name: 'Clécio Luís Vilhena Vieira', socialName: 'Clécio Luís', viceName: 'Antônio Teles Júnior', party: 'SOLIDARIEDADE', state: 'AP', municipality: 'Macapá', photoUrl: '/candidates/gov_ap_clecio.jpg', numeroUrna: '77', status: 'DEFERIDO' },
+  { tseId: 'gov_ap_clecio', name: 'Clécio Luís Vilhena Vieira', socialName: 'Clécio Luís', viceName: 'Antônio Teles Júnior', party: 'SOLIDARIEDADE', state: 'AP', municipality: 'Macapá', photoUrl: '/candidates/gov_ap_clecio.jpg', numeroUrna: '77', status: 'DEFERIDO', coalition: 'Frente Popular Amapaense (Solidariedade, PT, PCdoB, PV, PSB)', isProgressiveSupported: true, supportedBy: 'Coligação com Federação Brasil da Esperança' },
   { tseId: 'gov_am_marcelo', name: 'Marcelo Ramos Rodrigues', socialName: 'Marcelo Ramos', viceName: 'Anne Moura', party: 'PT', state: 'AM', municipality: 'Manaus', photoUrl: '/candidates/gov_am_marcelo.jpg', numeroUrna: '13', status: 'DEFERIDO' },
   { tseId: 'gov_pa_beto', name: 'Beto Faro', socialName: 'Beto Faro', viceName: 'Edmilson Rodrigues', party: 'PT', state: 'PA', municipality: 'Belém', photoUrl: '/candidates/gov_pa_beto.jpg', numeroUrna: '13', status: 'DEFERIDO' },
-  { tseId: 'gov_ro_daniel', name: 'Daniel Pereira', socialName: 'Daniel Pereira', viceName: 'Anselmo de Jesus', party: 'SOLIDARIEDADE', state: 'RO', municipality: 'Porto Velho', photoUrl: '/candidates/gov_ro_daniel.jpg', numeroUrna: '77', status: 'DEFERIDO' },
+  { tseId: 'gov_ro_daniel', name: 'Daniel Pereira', socialName: 'Daniel Pereira', viceName: 'Anselmo de Jesus', party: 'SOLIDARIEDADE', state: 'RO', municipality: 'Porto Velho', photoUrl: '/candidates/gov_ro_daniel.jpg', numeroUrna: '77', status: 'DEFERIDO', coalition: 'Frente Democrática de Rondônia (Solidariedade, PT, PSB, PCdoB)', isProgressiveSupported: true, supportedBy: 'Coligação Progressista' },
   { tseId: 'gov_rr_evangelista', name: 'Evangelista Siqueira', socialName: 'Evangelista Siqueira', viceName: 'Professora Socorro', party: 'PT', state: 'RR', municipality: 'Boa Vista', photoUrl: '/candidates/gov_rr_evangelista.jpg', numeroUrna: '13', status: 'DEFERIDO' },
   { tseId: 'gov_to_mourao', name: 'Paulo Roberto Mourão', socialName: 'Paulo Mourão', viceName: 'Professora Germana Pires', party: 'PT', state: 'TO', municipality: 'Palmas', photoUrl: '/candidates/gov_to_mourao.jpg', numeroUrna: '13', status: 'DEFERIDO' },
 
@@ -147,7 +150,7 @@ const REAL_GOVERNORS = [
   { tseId: 'gov_pi_rafael', name: 'Rafael Tajra Fonteles', socialName: 'Rafael Fonteles', viceName: 'Themístocles Filho', party: 'PT', state: 'PI', municipality: 'Teresina', photoUrl: '/candidates/gov_pi_rafael.jpg', numeroUrna: '13', status: 'DEFERIDO' },
   { tseId: 'gov_rn_fatima', name: 'Maria de Fátima Bezerra', socialName: 'Fátima Bezerra', viceName: 'Walter Alves', party: 'PT', state: 'RN', municipality: 'Natal', photoUrl: '/candidates/gov_rn_fatima.jpg', numeroUrna: '13', status: 'DEFERIDO' },
   { tseId: 'gov_se_rogerio', name: 'Rogério Carvalho Santos', socialName: 'Rogério Carvalho', viceName: 'Sérgio Reis', party: 'PT', state: 'SE', municipality: 'Aracaju', photoUrl: '/candidates/gov_se_rogerio.jpg', numeroUrna: '13', status: 'DEFERIDO' },
-  { tseId: 'gov_se_mitidieri', name: 'Fábio Cruz Mitidieri', socialName: 'Fábio Mitidieri', viceName: 'Zezinho Sobral', party: 'PSD', state: 'SE', municipality: 'Aracaju', photoUrl: '/candidates/gov_se_mitidieri.jpg', numeroUrna: '55', status: 'DEFERIDO' },
+  { tseId: 'gov_se_mitidieri', name: 'Fábio Cruz Mitidieri', socialName: 'Fábio Mitidieri', viceName: 'Zezinho Sobral', party: 'PSD', state: 'SE', municipality: 'Aracaju', photoUrl: '/candidates/gov_se_mitidieri.jpg', numeroUrna: '55', status: 'DEFERIDO', coalition: 'Frente Ampla Sergipe (PSD, PT, PCdoB, PV, PSB)', isProgressiveSupported: true, supportedBy: 'Coligação com PT e PSB' },
 
   // Região Centro-Oeste
   { tseId: 'gov_df_grass', name: 'Leandro Antonio Grass Peixoto', socialName: 'Leandro Grass', viceName: 'Olgamir Amancia', party: 'PV', state: 'DF', municipality: 'Brasília', photoUrl: '/candidates/gov_df_grass.jpg', numeroUrna: '43', status: 'DEFERIDO' },
@@ -157,11 +160,11 @@ const REAL_GOVERNORS = [
 
   // Região Sudeste
   { tseId: 'gov_es_casagrande', name: 'José Renato Casagrande', socialName: 'Renato Casagrande', viceName: 'Ricardo Ferraço', party: 'PSB', state: 'ES', municipality: 'Vitória', photoUrl: '/candidates/gov_es_casagrande.jpg', numeroUrna: '40', status: 'DEFERIDO' },
-  { tseId: 'gov_mg_silveira', name: 'Alexandre Silveira de Oliveira', socialName: 'Alexandre Silveira', viceName: 'Paulo Brant', party: 'PSD', state: 'MG', municipality: 'Belo Horizonte', photoUrl: '/candidates/gov_mg_silveira.jpg', numeroUrna: '55', status: 'DEFERIDO' },
+  { tseId: 'gov_mg_silveira', name: 'Alexandre Silveira de Oliveira', socialName: 'Alexandre Silveira', viceName: 'Paulo Brant', party: 'PSD', state: 'MG', municipality: 'Belo Horizonte', photoUrl: '/candidates/gov_mg_silveira.jpg', numeroUrna: '55', status: 'DEFERIDO', coalition: 'Frente Minas da Esperança (PSD, PT, PSB, PCdoB, PV)', isProgressiveSupported: true, supportedBy: 'Aliança com Federação Brasil da Esperança' },
   { tseId: 'gov_mg_rogerio', name: 'Rogério Correia Machado', socialName: 'Rogério Correia', viceName: 'Bella Gonçalves', party: 'PT', state: 'MG', municipality: 'Belo Horizonte', photoUrl: '/candidates/gov_mg_rogerio.jpg', numeroUrna: '13', status: 'DEFERIDO' },
   
   // Rio de Janeiro (RJ) - Ampla frente democrática e progressista
-  { tseId: 'gov_rj_paes', name: 'Eduardo da Costa Paes', socialName: 'Eduardo Paes', viceName: 'Eduardo Cavaliere', party: 'PSD', state: 'RJ', municipality: 'Rio de Janeiro', photoUrl: '/candidates/gov_rj_paes.jpg', numeroUrna: '55', status: 'DEFERIDO' },
+  { tseId: 'gov_rj_paes', name: 'Eduardo da Costa Paes', socialName: 'Eduardo Paes', viceName: 'Eduardo Cavaliere', party: 'PSD', state: 'RJ', municipality: 'Rio de Janeiro', photoUrl: '/candidates/gov_rj_paes.jpg', numeroUrna: '55', status: 'DEFERIDO', coalition: 'Frente Democrática Carioca (PSD, PT, PCdoB, PV, PSB, PDT)', isProgressiveSupported: true, supportedBy: 'Aliança com PT, PSB, PDT e Governo Federal' },
   { tseId: 'gov_rj_siri', name: 'William Siri', socialName: 'William Siri', viceName: 'Bárbara Sinedino', party: 'PSOL', state: 'RJ', municipality: 'Rio de Janeiro', photoUrl: '/candidates/gov_rj_siri.jpg', numeroUrna: '50', status: 'DEFERIDO' },
   { tseId: 'gov_rj_neves', name: 'Rodrigo Neves Barreto', socialName: 'Rodrigo Neves', viceName: 'Felipe Peixoto', party: 'PDT', state: 'RJ', municipality: 'Niterói', photoUrl: '/candidates/gov_rj_neves.jpg', numeroUrna: '12', status: 'DEFERIDO' },
   { tseId: 'gov_rj_juliete', name: 'Juliete Pantoja', socialName: 'Juliete Pantoja', viceName: 'Juliana Alves', party: 'UP', state: 'RJ', municipality: 'Rio de Janeiro', photoUrl: '/candidates/gov_rj_juliete.jpg', numeroUrna: '80', status: 'EM_ANALISE' },
@@ -680,6 +683,192 @@ const REAL_SENATORS = [
   },
 ];
 
+const REAL_FEDERAL_DEPUTIES = [
+  // Acre (AC)
+  { tseId: 'dep_74075', name: 'Maria Perpétua de Almeida', socialName: 'Perpétua Almeida', party: 'PCDOB', state: 'AC', photoUrl: '/candidates/dep_74075.jpg', numeroUrna: '6565' },
+  { tseId: 'dep_178832', name: 'Leonardo Couto de Brito', socialName: 'Léo de Brito', party: 'PT', state: 'AC', photoUrl: '/candidates/dep_178832.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_ac_marcus', name: 'Marcus Alexandre Médici Aguiar', socialName: 'Marcus Alexandre', party: 'MDB', state: 'AC', photoUrl: '', numeroUrna: '1515', isProgressiveSupported: true, supportedBy: 'Apoio: PT, PCdoB, PV, PSB' },
+
+  // Alagoas (AL)
+  { tseId: 'dep_171623', name: 'Paulo Fernando dos Santos', socialName: 'Paulão', party: 'PT', state: 'AL', photoUrl: '/candidates/dep_171623.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_al_ronaldo', name: 'Ronaldo Medeiros', socialName: 'Ronaldo Medeiros', party: 'PT', state: 'AL', photoUrl: '/candidates/ale_al_ronaldo.jpg', numeroUrna: '1300' },
+  { tseId: 'dep_al_rafael', name: 'Rafael de Góes Brito', socialName: 'Rafael Brito', party: 'MDB', state: 'AL', photoUrl: '', numeroUrna: '1515', isProgressiveSupported: true, supportedBy: 'Apoio: PT, PV, PCdoB' },
+
+  // Amazonas (AM)
+  { tseId: 'dep_74079', name: 'Vanessa Grazziotin', socialName: 'Vanessa Grazziotin', party: 'PCDOB', state: 'AM', photoUrl: '/candidates/dep_74079.jpg', numeroUrna: '6565' },
+  { tseId: 'dep_204488', name: 'Marcelo Ramos Rodrigues', socialName: 'Marcelo Ramos', party: 'PT', state: 'AM', photoUrl: '/candidates/gov_am_marcelo.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_am_sinesio', name: 'Sinésio da Silva Campos', socialName: 'Sinésio Campos', party: 'PT', state: 'AM', photoUrl: '/candidates/ale_am_sinesio.jpg', numeroUrna: '1300' },
+  { tseId: 'dep_am_sidney', name: 'Sidney Ricardo de Oliveira Leite', socialName: 'Sidney Leite', party: 'PSD', state: 'AM', photoUrl: '', numeroUrna: '5555', isProgressiveSupported: true, supportedBy: 'Apoio: Frente Democrática do Amazonas' },
+
+  // Amapá (AP)
+  { tseId: 'dep_204495', name: 'Camilo Capiberibe', socialName: 'Camilo Capiberibe', party: 'PSB', state: 'AP', photoUrl: '/candidates/dep_204495.jpg', numeroUrna: '4040' },
+  { tseId: 'dep_160538', name: 'Marcivânia da Rocha Flexa', socialName: 'Professora Marcivânia', party: 'PCDOB', state: 'AP', photoUrl: '/candidates/dep_160538.jpg', numeroUrna: '6565' },
+  { tseId: 'dep_220565', name: 'Dorinaldo Barbosa Malafaia', socialName: 'Dorinaldo Malafaia', party: 'PDT', state: 'AP', photoUrl: '/candidates/dep_220565.jpg', numeroUrna: '1212' },
+  { tseId: 'dep_ap_acacio', name: 'Acácio da Silva Favacho Neto', socialName: 'Acácio Favacho', party: 'MDB', state: 'AP', photoUrl: '', numeroUrna: '1515', isProgressiveSupported: true, supportedBy: 'Apoio: Solidariedade, PSB, PT' },
+
+  // Bahia (BA)
+  { tseId: 'dep_178857', name: 'Jorge José Santos Pereira Solla', socialName: 'Jorge Solla', party: 'PT', state: 'BA', photoUrl: '/candidates/dep_178857.jpg', numeroUrna: '1355' },
+  { tseId: 'dep_160569', name: 'Waldenor Alves Pereira Filho', socialName: 'Waldenor Pereira', party: 'PT', state: 'BA', photoUrl: '/candidates/dep_160569.jpg', numeroUrna: '1322' },
+  { tseId: 'dep_160610', name: 'Valmir Carlos da Assunção', socialName: 'Valmir Assunção', party: 'PT', state: 'BA', photoUrl: '/candidates/dep_160610.jpg', numeroUrna: '1310' },
+  { tseId: 'dep_74057', name: 'Alice Portugal', socialName: 'Alice Portugal', party: 'PCDOB', state: 'BA', photoUrl: '/candidates/dep_74057.jpg', numeroUrna: '6565' },
+  { tseId: 'dep_74060', name: 'Daniel Almeida', socialName: 'Daniel Almeida', party: 'PCDOB', state: 'BA', photoUrl: '/candidates/dep_74060.jpg', numeroUrna: '6555' },
+  { tseId: 'dep_74041', name: 'Lídice da Mata e Souza', socialName: 'Lídice da Mata', party: 'PSB', state: 'BA', photoUrl: '/candidates/dep_74041.jpg', numeroUrna: '4040' },
+  { tseId: 'dep_69871', name: 'João Carlos Bacelar Batista', socialName: 'Bacelar', party: 'PV', state: 'BA', photoUrl: '/candidates/dep_69871.jpg', numeroUrna: '4343' },
+  { tseId: 'dep_220585', name: 'Ivoneide de Souza Caetano', socialName: 'Ivoneide Caetano', party: 'PT', state: 'BA', photoUrl: '/candidates/dep_220585.jpg', numeroUrna: '1333' },
+  { tseId: 'dep_74140', name: 'Josias Gomes da Rocha', socialName: 'Josias Gomes', party: 'PT', state: 'BA', photoUrl: '/candidates/dep_74140.jpg', numeroUrna: '1312' },
+  { tseId: 'dep_204553', name: 'José Cerqueira de Santana Neto', socialName: 'Zé Neto', party: 'PT', state: 'BA', photoUrl: '/candidates/dep_204553.jpg', numeroUrna: '1314' },
+
+  // Ceará (CE)
+  { tseId: 'dep_141464', name: 'José Nobre Guimarães', socialName: 'José Guimarães', party: 'PT', state: 'CE', photoUrl: '/candidates/dep_141464.jpg', numeroUrna: '1322' },
+  { tseId: 'dep_178866', name: 'Luizianne de Oliveira Lins', socialName: 'Luizianne Lins', party: 'PT', state: 'CE', photoUrl: '/candidates/dep_178866.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_204533', name: 'Célio Studart Rocha', socialName: 'Célio Studart', party: 'PSD', state: 'CE', photoUrl: '/candidates/dep_204533.jpg', numeroUrna: '5555', isProgressiveSupported: true, supportedBy: 'Coligação Brasil da Esperança CE / Apoio PT/PSB' },
+  { tseId: 'dep_204541', name: 'Idilvan José de Alencar Ojima', socialName: 'Idilvan Alencar', party: 'PDT', state: 'CE', photoUrl: '/candidates/dep_204541.jpg', numeroUrna: '1222' },
+  { tseId: 'dep_204557', name: 'Mauro Benevides Filho', socialName: 'Mauro Filho', party: 'PDT', state: 'CE', photoUrl: '/candidates/dep_204557.jpg', numeroUrna: '1234' },
+  { tseId: 'dep_141450', name: 'José Airton Félix Cirilo da Silva', socialName: 'José Airton Cirilo', party: 'PT', state: 'CE', photoUrl: '/candidates/dep_141450.jpg', numeroUrna: '1333' },
+  { tseId: 'dep_74478', name: 'Eunício Lopes de Oliveira', socialName: 'Eunício Oliveira', party: 'MDB', state: 'CE', photoUrl: '/candidates/dep_74478.jpg', numeroUrna: '1515', isProgressiveSupported: true, supportedBy: 'Coligação Ceará da Esperança / Apoio PT' },
+
+  // Distrito Federal (DF)
+  { tseId: 'dep_160575_df', name: 'Erika Jucene Kokay', socialName: 'Erika Kokay', party: 'PT', state: 'DF', photoUrl: '/candidates/dep_141518.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_220556', name: 'Reginaldo Veras Coelho', socialName: 'Prof. Reginaldo Veras', party: 'PV', state: 'DF', photoUrl: '/candidates/dep_220556.jpg', numeroUrna: '4343' },
+  { tseId: 'dep_df_grass', name: 'Leandro Antonio Grass Peixoto', socialName: 'Leandro Grass', party: 'PV', state: 'DF', photoUrl: '/candidates/gov_df_grass.jpg', numeroUrna: '4300' },
+
+  // Espírito Santo (ES)
+  { tseId: 'dep_178873', name: 'Helder Ignacio Salomão', socialName: 'Helder Salomão', party: 'PT', state: 'ES', photoUrl: '/candidates/dep_178873.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_220578', name: 'Jackeline Rocha Oliveira', socialName: 'Jack Rocha', party: 'PT', state: 'ES', photoUrl: '/candidates/dep_220578.jpg', numeroUrna: '1300' },
+  { tseId: 'dep_es_camila', name: 'Camila Valadão', socialName: 'Camila Valadão', party: 'PSOL', state: 'ES', photoUrl: '', numeroUrna: '5050' },
+
+  // Goiás (GO)
+  { tseId: 'dep_74371', name: 'Rubens Otoni Vieira Oliveira', socialName: 'Rubens Otoni', party: 'PT', state: 'GO', photoUrl: '/candidates/dep_74371.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_220537', name: 'Adriana Accorsi Gomes', socialName: 'Delegada Adriana Accorsi', party: 'PT', state: 'GO', photoUrl: '/candidates/dep_220537.jpg', numeroUrna: '1300' },
+  { tseId: 'dep_go_edward', name: 'Edward Madureira Brasil', socialName: 'Professor Edward', party: 'PT', state: 'GO', photoUrl: '', numeroUrna: '1333' },
+
+  // Maranhão (MA)
+  { tseId: 'dep_178887', name: 'Rubens Pereira Júnior', socialName: 'Rubens Pereira Jr.', party: 'PT', state: 'MA', photoUrl: '/candidates/dep_178887.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_204489', name: 'Márcio Biquer de Castro Jerry', socialName: 'Márcio Jerry', party: 'PCDOB', state: 'MA', photoUrl: '/candidates/dep_204489.jpg', numeroUrna: '6565' },
+  { tseId: 'dep_220561', name: 'Duarte dos Santos Gonçalves Jeronimo', socialName: 'Duarte Jr.', party: 'PSB', state: 'MA', photoUrl: '/candidates/dep_220561.jpg', numeroUrna: '4040' },
+
+  // Minas Gerais (MG)
+  { tseId: 'dep_74161', name: 'Reginaldo Lázaro de Oliveira Lopes', socialName: 'Reginaldo Lopes', party: 'PT', state: 'MG', photoUrl: '/candidates/dep_74161.jpg', numeroUrna: '1312' },
+  { tseId: 'dep_204480', name: 'Rogério Correia Machado', socialName: 'Rogério Correia', party: 'PT', state: 'MG', photoUrl: '/candidates/gov_mg_rogerio.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_74160', name: 'Patrus Ananias de Sousa', socialName: 'Patrus Ananias', party: 'PT', state: 'MG', photoUrl: '/candidates/dep_74160.jpg', numeroUrna: '1310' },
+  { tseId: 'dep_220573', name: 'Duda Salabert Rosa', socialName: 'Duda Salabert', party: 'PDT', state: 'MG', photoUrl: '/candidates/dep_220573.jpg', numeroUrna: '1212' },
+  { tseId: 'dep_220548', name: 'Dandara Tonantzin Silva Castro', socialName: 'Dandara', party: 'PT', state: 'MG', photoUrl: '/candidates/dep_220548.jpg', numeroUrna: '1304' },
+  { tseId: 'dep_220571', name: 'Miguel Ângelo de Andrade', socialName: 'Miguel Ângelo', party: 'PT', state: 'MG', photoUrl: '/candidates/dep_220571.jpg', numeroUrna: '1333' },
+  { tseId: 'dep_74158', name: 'Odair José da Cunha', socialName: 'Odair Cunha', party: 'PT', state: 'MG', photoUrl: '/candidates/dep_74158.jpg', numeroUrna: '1398' },
+  { tseId: 'dep_160556', name: 'João Carlos Siqueira', socialName: 'Padre João', party: 'PT', state: 'MG', photoUrl: '/candidates/dep_160556.jpg', numeroUrna: '1315' },
+
+  // Mato Grosso do Sul (MS)
+  { tseId: 'dep_220555', name: 'Camila Jara Oliveira', socialName: 'Camila Jara', party: 'PT', state: 'MS', photoUrl: '/candidates/dep_220555.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_74376', name: 'Vander Loubet', socialName: 'Vander Loubet', party: 'PT', state: 'MS', photoUrl: '/candidates/dep_74376.jpg', numeroUrna: '1310' },
+  { tseId: 'dep_ms_zeca', name: 'José Orcírio Miranda dos Santos', socialName: 'Zeca do PT', party: 'PT', state: 'MS', photoUrl: '', numeroUrna: '1333' },
+
+  // Mato Grosso (MT)
+  { tseId: 'dep_204431', name: 'Rosa Neide Sandes de Almeida', socialName: 'Professora Rosa Neide', party: 'PT', state: 'MT', photoUrl: '/candidates/dep_204431.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_mt_natasha', name: 'Natasha Slhessarenko', socialName: 'Dra. Natasha', party: 'PSB', state: 'MT', photoUrl: '/candidates/gov_mt_natasha.jpg', numeroUrna: '4040' },
+  { tseId: 'dep_mt_barranco', name: 'Valdir Barranco', socialName: 'Valdir Barranco', party: 'PT', state: 'MT', photoUrl: '', numeroUrna: '1300' },
+
+  // Pará (PA)
+  { tseId: 'dep_204492', name: 'Airton Antônio Faleiro', socialName: 'Airton Faleiro', party: 'PT', state: 'PA', photoUrl: '/candidates/dep_204492.jpg', numeroUrna: '1355' },
+  { tseId: 'dep_220554', name: 'Dilvanda de Jesus Faro', socialName: 'Dilvanda Faro', party: 'PT', state: 'PA', photoUrl: '/candidates/dep_220554.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_pa_edmilson', name: 'Edmilson Brito Rodrigues', socialName: 'Edmilson Rodrigues', party: 'PSOL', state: 'PA', photoUrl: '', numeroUrna: '5050' },
+  { tseId: 'dep_pa_henderson', name: 'Henderson Lira Pinto', socialName: 'Henderson Pinto', party: 'MDB', state: 'PA', photoUrl: '', numeroUrna: '1515', isProgressiveSupported: true, supportedBy: 'Apoio: Frente Popular do Pará / PT / PSB' },
+
+  // Paraíba (PB)
+  { tseId: 'dep_74084', name: 'Luiz Couto', socialName: 'Luiz Couto', party: 'PT', state: 'PB', photoUrl: '/candidates/dep_74084.jpg', numeroUrna: '1333' },
+  { tseId: 'dep_204412', name: 'Frei Anastácio Ribeiro', socialName: 'Frei Anastácio', party: 'PT', state: 'PB', photoUrl: '/candidates/dep_204412.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_204426', name: 'Gervásio Agripino Maia', socialName: 'Gervásio Maia', party: 'PSB', state: 'PB', photoUrl: '/candidates/dep_204426.jpg', numeroUrna: '4040' },
+
+  // Pernambuco (PE)
+  { tseId: 'dep_204445', name: 'Túlio Gadêlha Sales de Melo', socialName: 'Túlio Gadêlha', party: 'REDE', state: 'PE', photoUrl: '/candidates/dep_204445.jpg', numeroUrna: '1818' },
+  { tseId: 'dep_204436', name: 'Carlos Veras', socialName: 'Carlos Veras', party: 'PT', state: 'PE', photoUrl: '/candidates/dep_204436.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_220643', name: 'Maria Arraes de Alencar', socialName: 'Maria Arraes', party: 'SOLIDARIEDADE', state: 'PE', photoUrl: '/candidates/dep_220643.jpg', numeroUrna: '7777' },
+  { tseId: 'dep_73808', name: 'Renildo Vasconcelos Calheiros', socialName: 'Renildo Calheiros', party: 'PCDOB', state: 'PE', photoUrl: '/candidates/dep_73808.jpg', numeroUrna: '6565' },
+  { tseId: 'dep_220686', name: 'Pedro Campos', socialName: 'Pedro Campos', party: 'PSB', state: 'PE', photoUrl: '/candidates/dep_220686.jpg', numeroUrna: '4040' },
+  { tseId: 'dep_220650', name: 'Lucas Cavalcanti Ramos', socialName: 'Lucas Ramos', party: 'PSB', state: 'PE', photoUrl: '/candidates/dep_220650.jpg', numeroUrna: '4013' },
+  { tseId: 'dep_220570', name: 'Eriberto Medeiros', socialName: 'Eriberto Medeiros', party: 'PSB', state: 'PE', photoUrl: '/candidates/dep_220570.jpg', numeroUrna: '4000' },
+
+  // Piauí (PI)
+  { tseId: 'dep_220581', name: 'Francisco de Assis de Oliveira Costa', socialName: 'Dr. Francisco Costa', party: 'PT', state: 'PI', photoUrl: '/candidates/dep_220581.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_220576', name: 'Florentino Alves Veras Neto', socialName: 'Florentino Neto', party: 'PT', state: 'PI', photoUrl: '/candidates/dep_220576.jpg', numeroUrna: '1333' },
+  { tseId: 'dep_178884', name: 'Merlong Solano Nogueira', socialName: 'Merlong Solano', party: 'PT', state: 'PI', photoUrl: '/candidates/dep_178884.jpg', numeroUrna: '1355' },
+  { tseId: 'dep_191923', name: 'Flávio Rodrigues Nogueira', socialName: 'Flávio Nogueira', party: 'PT', state: 'PI', photoUrl: '/candidates/dep_191923.jpg', numeroUrna: '1300' },
+  { tseId: 'dep_pi_castro', name: 'Castro Neto', socialName: 'Castro Neto', party: 'PSD', state: 'PI', photoUrl: '', numeroUrna: '5555', isProgressiveSupported: true, supportedBy: 'Coligação Juntos pelo Piauí / Apoio PT' },
+
+  // Paraná (PR)
+  { tseId: 'dep_220542', name: 'Ana Carolina Dartora', socialName: 'Carol Dartora', party: 'PT', state: 'PR', photoUrl: '/candidates/dep_220542.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_160535', name: 'José Carlos Becker de Oliveira e Silva', socialName: 'Zeca Dirceu', party: 'PT', state: 'PR', photoUrl: '/candidates/dep_160535.jpg', numeroUrna: '1322' },
+  { tseId: 'dep_74043', name: 'Gleisi Helena Hoffmann', socialName: 'Gleisi Hoffmann', party: 'PT', state: 'PR', photoUrl: '/candidates/dep_74043.jpg', numeroUrna: '1310' },
+  { tseId: 'dep_178927', name: 'Aliel Machado Bark', socialName: 'Aliel Machado', party: 'PV', state: 'PR', photoUrl: '/candidates/dep_178927.jpg', numeroUrna: '4343' },
+  { tseId: 'dep_220698', name: 'Tadeu Veneri', socialName: 'Tadeu Veneri', party: 'PT', state: 'PR', photoUrl: '/candidates/dep_220698.jpg', numeroUrna: '1399' },
+  { tseId: 'dep_220574', name: 'Elton Welter', socialName: 'Elton Welter', party: 'PT', state: 'PR', photoUrl: '/candidates/dep_220574.jpg', numeroUrna: '1344' },
+
+  // Rio de Janeiro (RJ)
+  { tseId: 'dep_73701', name: 'Reimont Luiz Otoni Cunha', socialName: 'Reimont', party: 'PT', state: 'RJ', photoUrl: '/candidates/dep_73701.jpg', numeroUrna: '1333' },
+  { tseId: 'dep_74848', name: 'Jandira Feghali', socialName: 'Jandira Feghali', party: 'PCDOB', state: 'RJ', photoUrl: '/candidates/dep_74848.jpg', numeroUrna: '6565' },
+  { tseId: 'dep_160575', name: 'Glauber de Medeiros Braga', socialName: 'Glauber Braga', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/dep_160575.jpg', numeroUrna: '5050' },
+  { tseId: 'dep_74845', name: 'Francisco Javier Alfaya Rodrigues', socialName: 'Chico Alencar', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/dep_74845.jpg', numeroUrna: '5015' },
+  { tseId: 'dep_204464', name: 'Talíria Petrone Soares', socialName: 'Talíria Petrone', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/dep_204464.jpg', numeroUrna: '5000' },
+  { tseId: 'dep_220597', name: 'Henrique Vieira dos Santos', socialName: 'Pastor Henrique Vieira', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/dep_220597.jpg', numeroUrna: '5010' },
+  { tseId: 'dep_220553', name: 'Dimas Silva Gadelha Júnior', socialName: 'Dimas Gadelha', party: 'PT', state: 'RJ', photoUrl: '/candidates/dep_220553.jpg', numeroUrna: '1340' },
+  { tseId: 'dep_74856', name: 'Laura Carneiro', socialName: 'Laura Carneiro', party: 'PSD', state: 'RJ', photoUrl: '/candidates/dep_74856.jpg', numeroUrna: '5555', isProgressiveSupported: true, supportedBy: 'Apoio Frente Ampla Democrática RJ / Coligação Eduardo Paes' },
+  { tseId: 'dep_220713', name: 'Washington Luiz Cardoso Siqueira', socialName: 'Washington Quaquá', party: 'PT', state: 'RJ', photoUrl: '/candidates/dep_220713.jpg', numeroUrna: '1313' },
+
+  // Rio Grande do Norte (RN)
+  { tseId: 'dep_204453', name: 'Natália Bastos Bonavides', socialName: 'Natália Bonavides', party: 'PT', state: 'RN', photoUrl: '/candidates/dep_204453.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_178895', name: 'Fernando Wanderley Vargas da Silva', socialName: 'Fernando Mineiro', party: 'PT', state: 'RN', photoUrl: '/candidates/dep_178895.jpg', numeroUrna: '1310' },
+  { tseId: 'dep_rn_samanda', name: 'Samanda Alves', socialName: 'Samanda Alves', party: 'PT', state: 'RN', photoUrl: '', numeroUrna: '1333' },
+
+  // Rondônia (RO)
+  { tseId: 'dep_ro_fatima', name: 'Fátima Cleide Rodrigues da Silva', socialName: 'Fátima Cleide', party: 'PT', state: 'RO', photoUrl: '/candidates/ale_ro_fatima.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_ro_cujui', name: 'Ramon Cujuí', socialName: 'Ramon Cujuí', party: 'PT', state: 'RO', photoUrl: '/candidates/dep_ro_cujui.jpg', numeroUrna: '1300' },
+  { tseId: 'dep_ro_anselmo', name: 'Anselmo de Jesus', socialName: 'Anselmo de Jesus', party: 'PT', state: 'RO', photoUrl: '', numeroUrna: '1333' },
+
+  // Roraima (RR)
+  { tseId: 'dep_rr_tito', name: 'Tito Barichello', socialName: 'Delegado Tito Barichello', party: 'PT', state: 'RR', photoUrl: '', numeroUrna: '1313' },
+  { tseId: 'dep_rr_evangelista', name: 'Evangelista Siqueira', socialName: 'Evangelista Siqueira', party: 'PT', state: 'RR', photoUrl: '/candidates/gov_rr_evangelista.jpg', numeroUrna: '1300' },
+  { tseId: 'dep_rr_socorro', name: 'Maria do Socorro', socialName: 'Professora Socorro', party: 'PT', state: 'RR', photoUrl: '', numeroUrna: '1333' },
+
+  // Rio Grande do Sul (RS)
+  { tseId: 'dep_74398', name: 'Maria do Rosário Nunes', socialName: 'Maria do Rosário', party: 'PT', state: 'RS', photoUrl: '/candidates/dep_74398.jpg', numeroUrna: '1370' },
+  { tseId: 'dep_160508', name: 'Elvino José Bohn Gass', socialName: 'Bohn Gass', party: 'PT', state: 'RS', photoUrl: '/candidates/dep_160508.jpg', numeroUrna: '1320' },
+  { tseId: 'dep_160553', name: 'Dionilso Marcon', socialName: 'Marcon', party: 'PT', state: 'RS', photoUrl: '/candidates/dep_160553.jpg', numeroUrna: '1355' },
+  { tseId: 'dep_220545', name: 'Daiana Santos', socialName: 'Daiana Santos', party: 'PCDOB', state: 'RS', photoUrl: '/candidates/dep_220545.jpg', numeroUrna: '6565' },
+  { tseId: 'dep_220551', name: 'Denise da Silva Pessôa', socialName: 'Denise Pessôa', party: 'PT', state: 'RS', photoUrl: '/candidates/dep_220551.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_204407', name: 'Fernanda Melchionna e Silva', socialName: 'Fernanda Melchionna', party: 'PSOL', state: 'RS', photoUrl: '/candidates/dep_204407.jpg', numeroUrna: '5050' },
+  { tseId: 'dep_73486', name: 'Pompeo de Mattos', socialName: 'Pompeo de Mattos', party: 'PDT', state: 'RS', photoUrl: '/candidates/dep_73486.jpg', numeroUrna: '1212' },
+  { tseId: 'dep_220532', name: 'Alexandre Lindenmeyer', socialName: 'Alexandre Lindenmeyer', party: 'PT', state: 'RS', photoUrl: '/candidates/dep_220532.jpg', numeroUrna: '1300' },
+
+  // Santa Catarina (SC)
+  { tseId: 'dep_220533', name: 'Ana Paula Lima', socialName: 'Ana Paula Lima', party: 'PT', state: 'SC', photoUrl: '/candidates/dep_220533.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_160604', name: 'Pedro Francisco Uczai', socialName: 'Pedro Uczai', party: 'PT', state: 'SC', photoUrl: '/candidates/dep_160604.jpg', numeroUrna: '1350' },
+  { tseId: 'dep_sc_marquito', name: 'Marcos José de Abreu', socialName: 'Marquito', party: 'PSOL', state: 'SC', photoUrl: '/candidates/ale_sc_marquito.jpg', numeroUrna: '5050' },
+
+  // Sergipe (SE)
+  { tseId: 'dep_178970', name: 'João Daniel Santos Silva Farofa', socialName: 'João Daniel', party: 'PT', state: 'SE', photoUrl: '/candidates/dep_178970.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_se_marcio', name: 'Márcio Costa Macêdo', socialName: 'Márcio Macêdo', party: 'PT', state: 'SE', photoUrl: '', numeroUrna: '1300' },
+  { tseId: 'dep_se_fabio', name: 'Fábio Mitidieri', socialName: 'Fábio Mitidieri', party: 'PSD', state: 'SE', photoUrl: '/candidates/gov_se_mitidieri.jpg', numeroUrna: '5555', isProgressiveSupported: true, supportedBy: 'Frente Popular Sergipana / Apoio PT/PCdoB' },
+
+  // São Paulo (SP)
+  { tseId: 'dep_220637', name: 'Guilherme Castro Boulos', socialName: 'Guilherme Boulos', party: 'PSOL', state: 'SP', photoUrl: '/candidates/dep_220637.jpg', numeroUrna: '5010' },
+  { tseId: 'dep_220569', name: 'Erika Hilton', socialName: 'Erika Hilton', party: 'PSOL', state: 'SP', photoUrl: '/candidates/dep_220569.jpg', numeroUrna: '5000' },
+  { tseId: 'dep_204534', name: 'Tabata Claudia Amaral de Pontes', socialName: 'Tabata Amaral', party: 'PSB', state: 'SP', photoUrl: '/candidates/dep_204534.jpg', numeroUrna: '4000' },
+  { tseId: 'dep_73604', name: 'Rui Falcão', socialName: 'Rui Falcão', party: 'PT', state: 'SP', photoUrl: '/candidates/dep_73604.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_141398', name: 'Carlos Alberto Rolim Zarattini', socialName: 'Carlos Zarattini', party: 'PT', state: 'SP', photoUrl: '/candidates/dep_141398.jpg', numeroUrna: '1322' },
+  { tseId: 'dep_178986', name: 'Nilto Ignácio Tatto', socialName: 'Nilto Tatto', party: 'PT', state: 'SP', photoUrl: '/candidates/dep_178986.jpg', numeroUrna: '1310' },
+  { tseId: 'dep_220614', name: 'Francisco Daniel Celeguim de Morais', socialName: 'Kiko Celeguim', party: 'PT', state: 'SP', photoUrl: '/candidates/dep_220614.jpg', numeroUrna: '1312' },
+  { tseId: 'dep_74784', name: 'Luiza Erundina de Sousa', socialName: 'Luiza Erundina', party: 'PSOL', state: 'SP', photoUrl: '/candidates/dep_74784.jpg', numeroUrna: '5050' },
+  { tseId: 'dep_220604', name: 'Juliana Cardoso', socialName: 'Juliana Cardoso', party: 'PT', state: 'SP', photoUrl: '/candidates/dep_220604.jpg', numeroUrna: '1304' },
+  { tseId: 'dep_204501', name: 'Alencar Santana Braga', socialName: 'Alencar Santana', party: 'PT', state: 'SP', photoUrl: '/candidates/dep_204501.jpg', numeroUrna: '1300' },
+  { tseId: 'dep_73433', name: 'Arlindo Chinaglia Júnior', socialName: 'Arlindo Chinaglia', party: 'PT', state: 'SP', photoUrl: '/candidates/dep_73433.jpg', numeroUrna: '1340' },
+  { tseId: 'dep_74262', name: 'Vicente Paulo da Silva', socialName: 'Vicentinho', party: 'PT', state: 'SP', photoUrl: '/candidates/dep_74262.jpg', numeroUrna: '1333' },
+  { tseId: 'dep_220598', name: 'Jilmar Augustinho Tatto', socialName: 'Jilmar Tatto', party: 'PT', state: 'SP', photoUrl: '/candidates/dep_220598.jpg', numeroUrna: '1355' },
+
+  // Tocantins (TO)
+  { tseId: 'dep_to_celio', name: 'Célio Alves de Moura', socialName: 'Célio Moura', party: 'PT', state: 'TO', photoUrl: '/candidates/dep_to_celio.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_to_mourao', name: 'Paulo Roberto Mourão', socialName: 'Paulo Mourão', party: 'PT', state: 'TO', photoUrl: '/candidates/gov_to_mourao.jpg', numeroUrna: '1300' },
+  { tseId: 'dep_to_germana', name: 'Germana Pires', socialName: 'Professora Germana', party: 'PT', state: 'TO', photoUrl: '', numeroUrna: '1333' },
+];
+
 const REAL_STATE_DEPUTIES = [
   // Região Norte
   { tseId: 'ale_ac_edvaldo', name: 'Edvaldo de Magalhães Paula', socialName: 'Edvaldo Magalhães', party: 'PCDOB', state: 'AC', municipality: 'Rio Branco', photoUrl: '/candidates/ale_ac_edvaldo.jpg' },
@@ -780,6 +969,7 @@ async function main() {
       viceName: 'Geraldo José Rodrigues Alckmin Filho',
       party: 'PT',
       partyNumber: 13,
+      numeroUrna: '13',
       cargo: 'PRESIDENTE' as Cargo,
       level: 'FEDERAL' as ElectionLevel,
       candidaturaStatus: 'DEFERIDO' as CandidaturaStatus,
@@ -788,6 +978,9 @@ async function main() {
       cpfHash: 'hash_tse_lula_2026',
       fichaLimpa: true,
       photoUrl: '/candidates/280001600001.jpg',
+      coalition: 'Brasil da Esperança (PT, PCdoB, PV, PSB, PSOL, Rede, Solidariedade, Avante, PDT)',
+      isProgressiveSupported: true,
+      supportedBy: 'Frente Ampla Democrática e Progressista',
       governmentPlanUrl: 'https://divulgacandcontas.tse.jus.br/',
       governmentPlanSummary: 'Diretrizes do Plano de Governo: Reconstrução social, reindustrialização verde, fortalecimento do SUS, Pé-de-Meia e transição ecológica justa.',
       profileScores: { p1: 0.96, p2: 0.95, p3: 0.90, p4: 0.85, p5: 0.85, p6: 0.98, p7: 0.95, p8: 0.88, p9: 0.96, p10: 0.88, p11: 0.96, p12: 0.98, p13: 0.92 },
@@ -821,6 +1014,9 @@ async function main() {
         cpfHash: `hash_tse_${g.tseId}_2026`,
         fichaLimpa: true,
         photoUrl: g.photoUrl,
+        coalition: (g as any).coalition || null,
+        isProgressiveSupported: (g as any).isProgressiveSupported !== undefined ? (g as any).isProgressiveSupported : true,
+        supportedBy: (g as any).supportedBy || null,
         governmentPlanUrl: 'https://divulgacandcontas.tse.jus.br/',
         governmentPlanSummary: `Diretrizes de Governo Estadual para o ${g.state}: Foco em desenvolvimento regional, educação pública de qualidade, segurança cidadã e fortalecimento da saúde básica.`,
         profileScores: scores,
@@ -862,6 +1058,9 @@ async function main() {
         cpfHash: `hash_tse_${s.tseId}_2026`,
         fichaLimpa: true,
         photoUrl: s.photoUrl || '',
+        coalition: (s as any).coalition || null,
+        isProgressiveSupported: (s as any).isProgressiveSupported !== undefined ? (s as any).isProgressiveSupported : true,
+        supportedBy: (s as any).supportedBy || null,
         governmentPlanUrl: 'https://divulgacandcontas.tse.jus.br/',
         governmentPlanSummary: s.governmentPlanSummary || `Mandato no Senado Federal pelo estado de ${s.state}: Defesa do pacto federativo, desenvolvimento sustentável e direitos constitucionais.`,
         profileScores: scores,
@@ -905,6 +1104,9 @@ async function main() {
         cpfHash: `hash_tse_${tseId}_2026`,
         fichaLimpa: true,
         photoUrl,
+        coalition: null,
+        isProgressiveSupported: true,
+        supportedBy: null,
         governmentPlanUrl: p.UrlPaginaParlamentar || 'https://www.senado.leg.br',
         governmentPlanSummary: `Atuação no Senado Federal: Representação do estado de ${state} na defesa do pacto federativo, desenvolvimento sustentável e direitos constitucionais.`,
         profileScores: scores,
@@ -925,16 +1127,61 @@ async function main() {
     220598, // Tarcísio Motta (Disputa o Senado pelo RJ)
   ]);
 
-  // 4. Deputados Federais
+  // 4. Deputados Federais (Base Real Estática e Abrangente de Todos os 27 Estados do Brasil + Integração Oficial da Câmara)
+  const insertedDepTseIds = new Set<string>();
+
+  for (const fd of REAL_FEDERAL_DEPUTIES) {
+    const scores = generateScores(fd.party, 'DEPUTADO_FEDERAL');
+    const pNumber = getPartyNumber(fd.party);
+    const numeroUrna = (fd as any).numeroUrna || String(pNumber);
+
+    await prisma.candidate.create({
+      data: {
+        tseId: fd.tseId,
+        electionYear: 2026,
+        name: fd.name,
+        socialName: fd.socialName,
+        party: fd.party,
+        partyNumber: pNumber,
+        numeroUrna,
+        cargo: 'DEPUTADO_FEDERAL' as Cargo,
+        level: 'FEDERAL' as ElectionLevel,
+        candidaturaStatus: 'DEFERIDO' as CandidaturaStatus,
+        municipality: (fd as any).municipality || 'Brasília',
+        state: fd.state,
+        cpfHash: `hash_tse_${fd.tseId}_2026`,
+        fichaLimpa: true,
+        photoUrl: fd.photoUrl || '',
+        coalition: (fd as any).coalition || null,
+        isProgressiveSupported: (fd as any).isProgressiveSupported || false,
+        supportedBy: (fd as any).supportedBy || null,
+        governmentPlanUrl: 'https://www.camara.leg.br',
+        governmentPlanSummary: `Mandato Parlamentar Federal na Câmara dos Deputados: Atuação na bancada de ${fd.state} na formulação de leis sociais, econômicas e de defesa da cidadania.`,
+        profileScores: scores,
+        proposals: [
+          { pillar: 'p2', title: 'Direitos Trabalhistas, Emprego Digno e Cidadania', description: 'Defesa do salário digno, valorização do trabalhador e proteção social.' },
+          { pillar: 'p1', title: 'Investimentos em Educação Pública, Saúde e Ciência', description: 'Garantia de recursos constitucionais para universidades públicas e saúde.' },
+        ],
+      },
+    });
+    insertedDepTseIds.add(fd.tseId);
+    totalInseridos++;
+  }
+
+  // Complementa com a API da Câmara dos Deputados quando disponível
   for (const d of camaraDeputies) {
     if (DEPUTIES_RUNNING_FOR_SENATE.has(d.id)) {
       continue;
     }
     const tseId = `dep_${d.id}`;
+    if (insertedDepTseIds.has(tseId)) {
+      continue;
+    }
+
     const party = d.siglaPartido || 'PT';
     const state = d.siglaUf || 'SP';
     const scores = generateScores(party, 'DEPUTADO_FEDERAL');
-    const photoUrl = d.urlFoto || '';
+    const photoUrl = d.urlFoto || `/candidates/${tseId}.jpg`;
 
     await prisma.candidate.create({
       data: {
@@ -952,6 +1199,9 @@ async function main() {
         cpfHash: `hash_tse_${tseId}_2026`,
         fichaLimpa: true,
         photoUrl,
+        coalition: null,
+        isProgressiveSupported: true,
+        supportedBy: null,
         governmentPlanUrl: d.uri || 'https://www.camara.leg.br',
         governmentPlanSummary: `Mandato Parlamentar Federal na Câmara dos Deputados: Atuação na bancada de ${state} na formulação de leis sociais, econômicas e de defesa da cidadania.`,
         profileScores: scores,
@@ -961,47 +1211,8 @@ async function main() {
         ],
       },
     });
+    insertedDepTseIds.add(tseId);
     totalInseridos++;
-  }
-
-  const insertedDepStates = new Set(camaraDeputies.map((d) => d.siglaUf?.toUpperCase()));
-  const FALLBACK_FEDERAL_DEPUTIES = [
-    { tseId: 'dep_ro_fatima', name: 'Fátima Cleide Rodrigues da Silva', socialName: 'Fátima Cleide', party: 'PT', state: 'RO', municipality: 'Porto Velho' },
-    { tseId: 'dep_ro_cujui', name: 'Ramon Cujuí', socialName: 'Ramon Cujuí', party: 'PT', state: 'RO', municipality: 'Porto Velho' },
-    { tseId: 'dep_rr_tito', name: 'Tito Barichello', socialName: 'Delegado Tito Barichello', party: 'PT', state: 'RR', municipality: 'Boa Vista' },
-    { tseId: 'dep_to_celio', name: 'Célio Alves de Moura', socialName: 'Célio Moura', party: 'PT', state: 'TO', municipality: 'Palmas' },
-  ];
-
-  for (const fd of FALLBACK_FEDERAL_DEPUTIES) {
-    if (!insertedDepStates.has(fd.state)) {
-      const scores = generateScores(fd.party, 'DEPUTADO_FEDERAL');
-      await prisma.candidate.create({
-        data: {
-          tseId: fd.tseId,
-          electionYear: 2026,
-          name: fd.name,
-          socialName: fd.socialName,
-          party: fd.party,
-          partyNumber: getPartyNumber(fd.party),
-          cargo: 'DEPUTADO_FEDERAL' as Cargo,
-          level: 'FEDERAL' as ElectionLevel,
-          candidaturaStatus: 'DEFERIDO' as CandidaturaStatus,
-          municipality: fd.municipality || 'Brasília',
-          state: fd.state,
-          cpfHash: `hash_tse_${fd.tseId}_2026`,
-          fichaLimpa: true,
-          photoUrl: '',
-          governmentPlanUrl: 'https://www.camara.leg.br',
-          governmentPlanSummary: `Mandato Parlamentar Federal na Câmara dos Deputados: Atuação na bancada de ${fd.state} em defesa dos direitos sociais.`,
-          profileScores: scores,
-          proposals: [
-            { pillar: 'p2', title: 'Defesa dos Direitos Sociais e Cidadania', description: 'Proteção ao trabalhador e seguridade social.' },
-            { pillar: 'p1', title: 'Investimentos em Saúde e Educação Pública', description: 'Garantia de recursos para infraestrutura e serviços essenciais.' },
-          ],
-        },
-      });
-      totalInseridos++;
-    }
   }
 
   // 5. Deputados Estaduais
@@ -1023,6 +1234,9 @@ async function main() {
         cpfHash: `hash_tse_${ed.tseId}_2026`,
         fichaLimpa: true,
         photoUrl: ed.photoUrl,
+        coalition: (ed as any).coalition || null,
+        isProgressiveSupported: (ed as any).isProgressiveSupported !== undefined ? (ed as any).isProgressiveSupported : true,
+        supportedBy: (ed as any).supportedBy || null,
         governmentPlanUrl: 'https://divulgacandcontas.tse.jus.br/',
         governmentPlanSummary: `Mandato Estadual na Assembleia Legislativa de ${ed.state}: Legislação e fiscalização dos serviços públicos de saúde, transporte, educação e direitos humanos.`,
         profileScores: scores,

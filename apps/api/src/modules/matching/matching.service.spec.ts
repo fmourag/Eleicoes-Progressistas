@@ -69,10 +69,10 @@ describe('MatchingService - Stateless Ranking & Party Exclusion', () => {
 
     for (const [queryArg] of calls) {
       expect(queryArg.where).toBeDefined();
-      expect(queryArg.where.party).toBeDefined();
-      expect(queryArg.where.party.notIn).toBeDefined();
-      expect(queryArg.where.party.notIn).toContain('REPUBLICANOS');
-      expect(queryArg.where.party.notIn).toEqual(expect.arrayContaining([...EXCLUDED_CONSERVATIVE_PARTIES]));
+      const partyNotIn = queryArg.where.party?.notIn || queryArg.where.OR?.[0]?.party?.notIn;
+      expect(partyNotIn).toBeDefined();
+      expect(partyNotIn).toContain('REPUBLICANOS');
+      expect(partyNotIn).toEqual(expect.arrayContaining([...EXCLUDED_CONSERVATIVE_PARTIES]));
     }
   });
 
@@ -138,8 +138,13 @@ describe('MatchingService - Stateless Ranking & Party Exclusion', () => {
     ];
 
     mockPrismaService.candidate.findMany.mockImplementation((args: any) => {
-      const excluded = args?.where?.party?.notIn || [];
-      return Promise.resolve(fakeCandidates.filter((c) => !excluded.includes(c.party)));
+      const excluded = args?.where?.party?.notIn || args?.where?.OR?.[0]?.party?.notIn || [];
+      return Promise.resolve(
+        fakeCandidates.filter((c: any) => {
+          if (c.isProgressiveSupported || c.supportedBy) return true;
+          return !excluded.includes(c.party);
+        })
+      );
     });
 
     const result = await service.rank({

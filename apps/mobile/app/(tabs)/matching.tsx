@@ -425,6 +425,9 @@ export default function MatchingScreen() {
                             cargo={item.candidate.cargo}
                             score={item.score}
                             photoUrl={item.candidate.photoUrl}
+                            coalition={item.candidate.coalition}
+                            isProgressiveSupported={item.candidate.isProgressiveSupported}
+                            supportedBy={item.candidate.supportedBy}
                             candidaturaStatus={item.candidate.candidaturaStatus}
                             fichaLimpa={item.candidate.fichaLimpa}
                             onPress={() => router.push(`/(tabs)/raio-x?id=${item.candidate.id}`)}

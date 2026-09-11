@@ -422,14 +422,15 @@ export class CandidatesService {
         cargo: cargo ? (cargo as Cargo) : { in: upcomingCargos },
         electionYear: UPCOMING_ELECTION.year,
         fichaLimpa: true,
-        party: { notIn: excludedParties },
+        OR: [
+          { party: { notIn: excludedParties } },
+          { isProgressiveSupported: true },
+          { supportedBy: { not: null } },
+        ],
       };
 
       if (party && party.trim()) {
         const cleanParty = party.trim().toUpperCase();
-        if (excludedParties.includes(cleanParty)) {
-          return [];
-        }
         whereClause.party = cleanParty;
       }
 
@@ -492,6 +493,9 @@ export class CandidatesService {
           state: true,
           municipality: true,
           photoUrl: true,
+          coalition: true,
+          isProgressiveSupported: true,
+          supportedBy: true,
           fichaLimpa: true,
           tseId: true,
           candidaturaStatus: true,
@@ -544,6 +548,9 @@ export class CandidatesService {
         municipality: true,
         state: true,
         photoUrl: true,
+        coalition: true,
+        isProgressiveSupported: true,
+        supportedBy: true,
         fichaLimpa: true,
         proposals: true,
         governmentPlanUrl: true,
@@ -589,6 +596,9 @@ export class CandidatesService {
         municipality: true,
         electionYear: true,
         photoUrl: true,
+        coalition: true,
+        isProgressiveSupported: true,
+        supportedBy: true,
         tseId: true,
         candidaturaStatus: true,
         dataRegistro: true,

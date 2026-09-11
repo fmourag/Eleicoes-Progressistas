@@ -70,6 +70,9 @@ A plataforma opera no modelo **Consulta por Prioridades (100% stateless e Coleta
 | `votingHistory` | CEPESP + TSE Resultados | CEPESP: `/candidatos?ano={ano}&cargo={cargo}` | Anual | Série temporal de votos |
 | `proposals` | Brasil.io + TSE Programa | Brasil.io: `/propostas/`; TSE programa eleitoral | Anual | Normalizar por pilar |
 | `profileScores` | Calculado | — | Sob demanda | Algoritmo de scoring (13 pilares) |
+| `coalition` | TSE DivulgaCandContas | `composicao_coligacao` | Anual | Nome/Composição da coligação |
+| `isProgressiveSupported` | TSE / Registros Partidários | Declarado / Atos de apoio | Sob demanda | Boolean indicando apoio de partidos progressistas |
+| `supportedBy` | TSE / Registros Partidários | Atos de apoio | Sob demanda | Detalhes dos partidos/frentes que apoiam |
 
 #### 2.2 User
 | Campo Prisma | Fonte | Endpoint | Freq. | Transformação |

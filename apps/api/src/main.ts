@@ -115,10 +115,26 @@ async function bootstrap() {
     res.send(BETA_HTML);
   });
 
+  const apiPublicDir = existsSync(join(__dirname, '..', 'public'))
+    ? join(__dirname, '..', 'public')
+    : join(process.cwd(), 'apps', 'api', 'public');
+
+  if (existsSync(apiPublicDir)) {
+    app.useStaticAssets(apiPublicDir, {
+      prefix: '/',
+      maxAge: 86400000 * 7,
+      setHeaders: (res: Response) => {
+        res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+      },
+    });
+    logger.log(`API public assets served from ${apiPublicDir}`);
+  }
+
   const webDist = join(__dirname, '..', '..', 'mobile', 'dist');
   if (existsSync(webDist)) {
     app.useStaticAssets(webDist);
-    expressApp.get(/^\/(?!api|privacidade|beta).*/, (_req: Request, res: Response) => {
+    expressApp.get(/^\/(?!api|privacidade|beta|candidates).*/, (_req: Request, res: Response) => {
       res.sendFile(join(webDist, 'index.html'));
     });
   } else {

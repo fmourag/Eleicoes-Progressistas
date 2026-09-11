@@ -117,6 +117,9 @@ export interface Candidate {
   classification?: CandidateClassification;
   governmentPlan?: GovernmentPlanDetail;
   numeroUrna?: string;
+  coalition?: string | null;
+  isProgressiveSupported?: boolean;
+  supportedBy?: string | null;
 }
 
 export function getCargoDigitsCount(cargo: Cargo | string): number {
@@ -267,9 +270,52 @@ export const EXCLUDED_CONSERVATIVE_PARTIES = [
   'PODEMOS',
   'NOVO',
   'PSDB',
+  'PSD',
+  'MDB',
+  'PMDB',
   'MISSÃO',
   'MISSAO',
 ] as const;
+
+export const PROGRESSIVE_COALITION_CORE_PARTIES = [
+  'PT',
+  'PSOL',
+  'PCdoB',
+  'PCDOB',
+  'PV',
+  'REDE',
+  'PDT',
+  'PSB',
+  'UP',
+  'PCB',
+  'PCO',
+  'PSTU',
+] as const;
+
+export function isCandidateAllowedInProgressiveRoll(candidate: {
+  party: string;
+  isProgressiveSupported?: boolean;
+  supportedBy?: string | null;
+  coalition?: string | null;
+}): boolean {
+  if (candidate.isProgressiveSupported) return true;
+  if (candidate.supportedBy && candidate.supportedBy.trim().length > 0) return true;
+
+  const partyUpper = (candidate.party || '').trim().toUpperCase();
+  const isExcluded = (EXCLUDED_CONSERVATIVE_PARTIES as readonly string[]).includes(partyUpper);
+  if (!isExcluded) return true;
+
+  // If candidate is from an excluded party, allow if they are part of a progressive alliance/coalition
+  if (candidate.coalition) {
+    const coalUpper = candidate.coalition.toUpperCase();
+    const hasProgressivePartner = PROGRESSIVE_COALITION_CORE_PARTIES.some((p) =>
+      coalUpper.includes(p)
+    );
+    if (hasProgressivePartner) return true;
+  }
+
+  return false;
+}
 
 export const EXCLUDED_PARTIES_EMPIRICAL_FILTER = EXCLUDED_CONSERVATIVE_PARTIES;
 

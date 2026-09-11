@@ -148,6 +148,9 @@ model Candidate {
   governmentPlanUrl   String?
   governmentPlanSummary String?
   profileScores       Json?             // { p1: float, ..., p13: float }
+  coalition           String?
+  isProgressiveSupported Boolean          @default(false)
+  supportedBy         String?
   electionResult      ElectionResult?
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
