@@ -7,6 +7,7 @@ import { Request, Response, json, urlencoded } from 'express';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { GlobalHttpExceptionFilter } from './modules/common/http-exception.filter';
+import { PRIVACY_HTML, BETA_HTML } from './modules/common/static-pages';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -104,11 +105,20 @@ async function bootstrap() {
     }),
   );
 
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.get('/privacidade', (_req: Request, res: Response) => {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(PRIVACY_HTML);
+  });
+  expressApp.get('/beta', (_req: Request, res: Response) => {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(BETA_HTML);
+  });
+
   const webDist = join(__dirname, '..', '..', 'mobile', 'dist');
   if (existsSync(webDist)) {
     app.useStaticAssets(webDist);
-    const expressApp = app.getHttpAdapter().getInstance();
-    expressApp.get(/^\/(?!api).*/, (_req: Request, res: Response) => {
+    expressApp.get(/^\/(?!api|privacidade|beta).*/, (_req: Request, res: Response) => {
       res.sendFile(join(webDist, 'index.html'));
     });
   } else {
