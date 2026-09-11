@@ -228,7 +228,7 @@ export default function RaioXScreen() {
   const planSummary = candidate.governmentPlanSummary || data.governmentPlanSummary;
   const photoUrl = candidate.photoUrl || data.photoUrl;
   const tseId = candidate.tseId || data.tseId;
-  const resolvedPhoto = getCandidatePhotoUrl(photoUrl, tseId);
+  const resolvedPhoto = getCandidatePhotoUrl(photoUrl, tseId, cargo, name, candidate.id || data.id);
 
   const isExecutiveCargo = ['PRESIDENTE', 'GOVERNADOR', 'PREFEITO'].includes(cargo);
   const classification = data.classification ?? candidate.classification;

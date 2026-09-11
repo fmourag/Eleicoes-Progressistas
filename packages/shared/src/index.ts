@@ -435,6 +435,114 @@ export const TRUSTED_DATA_SOURCES: TrustedDataSource[] = [
   },
 ];
 
+export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
+  // Presidente
+  '280001600001': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Luiz_In%C3%A1cio_Lula_da_Silva_%282023%29.jpg/480px-Luiz_In%C3%A1cio_Lula_da_Silva_%282023%29.jpg',
+  
+  // Governadores
+  'gov_rj_paes': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Eduardo_Paes_em_2021.jpg/480px-Eduardo_Paes_em_2021.jpg',
+  'gov_sp_haddad': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Fernando_Haddad_em_2023.jpg/480px-Fernando_Haddad_em_2023.jpg',
+  'gov_sp_franca': 'https://www.camara.leg.br/internet/deputado/bandep/160535.jpg',
+  'gov_ba_jeronimo': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Jer%C3%B4nimo_Rodrigues_%282023%29.jpg/480px-Jer%C3%B4nimo_Rodrigues_%282023%29.jpg',
+  'gov_ce_elmano': 'https://www.camara.leg.br/internet/deputado/bandep/204554.jpg',
+  'gov_pi_rafael': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Rafael_Fonteles_em_2023.jpg/480px-Rafael_Fonteles_em_2023.jpg',
+  'gov_rn_fatima': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/5529.jpg',
+  'gov_pb_azevedo': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Jo%C3%A3o_Azev%C3%AAdo_em_2019.jpg/480px-Jo%C3%A3o_Azev%C3%AAdo_em_2019.jpg',
+  'gov_ma_brandao': 'https://www.camara.leg.br/internet/deputado/bandep/141408.jpg',
+  'gov_es_casagrande': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/4525.jpg',
+  'gov_ap_clecio': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Cl%C3%A9cio_Lu%C3%ADs_em_2023.jpg/480px-Cl%C3%A9cio_Lu%C3%ADs_em_2023.jpg',
+  'gov_ac_jorge': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/4981.jpg',
+  'gov_am_marcelo': 'https://www.camara.leg.br/internet/deputado/bandep/204552.jpg',
+  'gov_pa_beto': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/141335.jpg',
+  'gov_mg_silveira': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/5386.jpg',
+  'gov_mg_rogerio': 'https://www.camara.leg.br/internet/deputado/bandep/204481.jpg',
+  'gov_rj_neves': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Rodrigo_Neves_%282017%29.jpg/480px-Rodrigo_Neves_%282017%29.jpg',
+  'gov_pr_requiao': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/24.jpg',
+  'gov_rs_pretto': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Edegar_Pretto_em_2022.jpg/480px-Edegar_Pretto_em_2022.jpg',
+  'gov_sc_decio': 'https://www.camara.leg.br/internet/deputado/bandep/141413.jpg',
+  'gov_df_grass': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Leandro_Grass_em_2022.jpg/480px-Leandro_Grass_em_2022.jpg',
+  'gov_pe_cabral': 'https://www.camara.leg.br/internet/deputado/bandep/160528.jpg',
+  'gov_se_mitidieri': 'https://www.camara.leg.br/internet/deputado/bandep/178969.jpg',
+  'gov_se_rogerio': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/5979.jpg',
+  'gov_to_mourao': 'https://www.camara.leg.br/internet/deputado/bandep/74044.jpg',
+
+  // Senadores
+  'sen_rj_molon': 'https://www.camara.leg.br/internet/deputado/bandep/160511.jpg',
+  'sen_rj_lindbergh': 'https://www.camara.leg.br/internet/deputado/bandep/74858.jpg',
+  'sen_rj_benedita': 'https://www.camara.leg.br/internet/deputado/bandep/73701.jpg',
+  'sen_rj_tarcisio': 'https://www.camara.leg.br/internet/deputado/bandep/220598.jpg',
+
+  // Lideranças Estaduais / Deputados Estaduais
+  'ale_rj_renatasouza': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Renata_Souza_em_2022.jpg/480px-Renata_Souza_em_2022.jpg',
+  'ale_rj_carlosminc': 'https://www.camara.leg.br/internet/deputado/bandep/74045.jpg',
+  'ale_sp_suplicy': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/38.jpg',
+  'ale_rs_lucianagenro': 'https://www.camara.leg.br/internet/deputado/bandep/74844.jpg',
+  'ale_pr_renatofreitas': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Renato_Freitas_em_2023.jpg/480px-Renato_Freitas_em_2023.jpg',
+  'ale_ba_lidice': 'https://www.camara.leg.br/internet/deputado/bandep/74352.jpg',
+  'ale_pe_daniportela': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Dani_Portela_em_2023.jpg/480px-Dani_Portela_em_2023.jpg',
+  'ale_am_sinesio': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Sin%C3%A9sio_Campos.jpg/480px-Sin%C3%A9sio_Campos.jpg',
+  'ale_ac_edvaldo': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Edvaldo_Magalh%C3%A3es.jpg/480px-Edvaldo_Magalh%C3%A3es.jpg',
+  'ale_mg_bellagoncalves': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Bella_Gon%C3%A7alves_em_2023.jpg/480px-Bella_Gon%C3%A7alves_em_2023.jpg',
+  'ale_rj_flavioserafini': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Fl%C3%A1vio_Serafini_em_2022.jpg/480px-Fl%C3%A1vio_Serafini_em_2022.jpg',
+  'ale_sp_helou': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Marina_Helou_em_2020.jpg/480px-Marina_Helou_em_2020.jpg',
+};
+
+/**
+ * Resolve a melhor URL de foto disponível para um candidato:
+ * 1. URL direta válida e acessível (HTTPS/HTTP)
+ * 2. Mapeamento parlamentar oficial conhecido (Câmara, Senado, etc.)
+ * 3. Foto isolada da Câmara dos Deputados (para IDs dep_{id})
+ * 4. Foto isolada do Senado Federal (para IDs sen_{id})
+ * 5. Foto oficial de urna/campanha no portal DivulgaCandContas do TSE
+ */
+export function resolveCandidatePhotoUrl(candidate: {
+  photoUrl?: string | null;
+  tseId?: string | null;
+  cargo?: string | null;
+  name?: string | null;
+  id?: string | null;
+}): string {
+  const photoUrl = candidate.photoUrl?.trim() || '';
+  const tseId = (candidate.tseId?.trim() || candidate.id?.trim() || '');
+
+  // 1. Se já for uma URL HTTP/HTTPS externa válida
+  if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
+    return photoUrl.replace(/^http:\/\//i, 'https://');
+  }
+
+  // 2. Mapeamento explícito de fotos parlamentares e lideranças nacionais
+  if (tseId && KNOWN_PARLIAMENTARY_PHOTOS[tseId]) {
+    return KNOWN_PARLIAMENTARY_PHOTOS[tseId];
+  }
+
+  // Se photoUrl contiver referência a arquivo conhecido (ex: /candidates/gov_rj_paes.jpg)
+  const cleanPhotoKey = photoUrl.replace(/^\/?candidates\//, '').replace(/\.jpg$/i, '');
+  if (cleanPhotoKey && KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]) {
+    return KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey];
+  }
+
+  // 3. Resolução isolada de Deputados Federais na API/Portal da Câmara dos Deputados
+  const depMatch = tseId.match(/^dep_(\d+)$/) || photoUrl.match(/dep_(\d+)/);
+  if (depMatch && depMatch[1]) {
+    return `https://www.camara.leg.br/internet/deputado/bandep/${depMatch[1]}.jpg`;
+  }
+
+  // 4. Resolução isolada de Senadores no Portal do Senado Federal
+  const senMatch = tseId.match(/^sen_(\d+)$/) || photoUrl.match(/sen_(\d+)/);
+  if (senMatch && senMatch[1]) {
+    return `https://www.senado.leg.br/senadores/img/fotos-oficiais/${senMatch[1]}.jpg`;
+  }
+
+  // 5. Fallback para Foto Oficial de Campanha no TSE (DivulgaCandContas)
+  const isNumericTseId = /^\d+$/.test(tseId) || /^\d+$/.test(cleanPhotoKey);
+  if (isNumericTseId) {
+    const numId = /^\d+$/.test(tseId) ? tseId : cleanPhotoKey;
+    return `https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto/2045202026/${numId}`;
+  }
+
+  return '';
+}
+
 export function getTseDadosAbertosSearchUrl(query: string): string {
   return `https://dadosabertos.tse.jus.br/dataset?q=${encodeURIComponent(query.trim())}`;
 }
@@ -442,5 +550,6 @@ export function getTseDadosAbertosSearchUrl(query: string): string {
 export * from './polls';
 export * from './mandate-proposals';
 export * from './pillar-justificativa';
+
 
 

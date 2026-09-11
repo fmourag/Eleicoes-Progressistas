@@ -73,7 +73,7 @@ export function CandidateCard({
   const { isCandidateSelected, addOrReplaceCandidate, removeCandidate } = useColaStore();
   const selectedForCola = id ? isCandidateSelected(id) : false;
 
-  const resolvedPhoto = getCandidatePhotoUrl(photoUrl, tseId);
+  const resolvedPhoto = getCandidatePhotoUrl(photoUrl, tseId, cargo, name, id);
   const showImage = Boolean(resolvedPhoto) && !imageError;
   const isPending = candidaturaStatus === 'EM_ANALISE';
   const votingNumber = numeroUrna || getNumeroUrna({ cargo, partyNumber, party, tseId, name });
@@ -93,7 +93,7 @@ export function CandidateCard({
         party,
         partyNumber,
         numeroUrna: votingNumber,
-        photoUrl,
+        photoUrl: resolvedPhoto || photoUrl,
         tseId,
         state,
         fichaLimpa,
@@ -146,11 +146,11 @@ export function CandidateCard({
         {/* Main Details */}
         <View style={styles.detailsContainer}>
           <View style={styles.headerRow}>
-            <Text style={[styles.name, { color: colors.text }, bp === 'desktop' && styles.nameDesktop]} numberOfLines={1}>
+            <Text style={[styles.name, { color: colors.text }, bp === 'desktop' && styles.nameDesktop]} numberOfLines={2}>
               {name}
             </Text>
-            <View style={styles.headerBadgesRow}>
-              {score !== undefined && (
+            {score !== undefined && (
+              <View style={styles.headerBadgesRow}>
                 <View
                   style={[
                     styles.scoreBadge,
@@ -165,12 +165,12 @@ export function CandidateCard({
                     ⚡ {Math.round(score)}% Match
                   </Text>
                 </View>
-              )}
-            </View>
+              </View>
+            )}
           </View>
 
           {viceName ? (
-            <Text style={[styles.viceText, { color: colors.textMuted }]}>
+            <Text style={[styles.viceText, { color: colors.textMuted }]} numberOfLines={1}>
               Vice: {viceName}
             </Text>
           ) : null}
@@ -339,13 +339,15 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    gap: 6,
     marginBottom: 2,
   },
   name: {
-    fontSize: FontSize.lg,
+    fontSize: FontSize.base + 1,
     fontWeight: 'bold',
     flex: 1,
+    lineHeight: 20,
   },
   nameDesktop: {
     fontSize: FontSize.xl,
@@ -357,14 +359,14 @@ const styles = StyleSheet.create({
   },
   scoreBadge: {
     borderRadius: Radius.full,
-    paddingHorizontal: Spacing.sm + 2,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
     marginLeft: Spacing.xs,
+    flexShrink: 0,
   },
   scoreText: {
-    color: '#FFFFFF',
     fontWeight: '800',
-    fontSize: FontSize.base,
+    fontSize: FontSize.xs + 1,
   },
   cargoText: {
     fontSize: FontSize.sm,
@@ -375,7 +377,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
-    gap: Spacing.xs,
+    gap: 4,
     marginBottom: 2,
   },
   partyBadge: {
@@ -447,19 +449,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
+    flexShrink: 0,
   },
   bottomCardRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 6,
     marginTop: 6,
     paddingTop: 4,
   },
   colaBtn: {
-    paddingVertical: 4,
-    paddingHorizontal: Spacing.sm,
+    paddingVertical: 5,
+    paddingHorizontal: Spacing.sm + 2,
     borderRadius: Radius.md,
     borderWidth: 1,
+    flexShrink: 0,
   },
   colaBtnText: {
     fontSize: 11,

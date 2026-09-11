@@ -1,9 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
-import { PrismaClient } from '@prisma/client';
 
 const dbPath = path.resolve(process.cwd(), 'apps/api/dev.db');
+process.env.DATABASE_URL = `file:${dbPath}`;
+
+import { PrismaClient } from '@prisma/client';
+
 const prisma = new PrismaClient({
   datasources: {
     db: {
@@ -50,7 +53,36 @@ async function main() {
       },
     });
   } catch (err) {
-    console.warn('Could not query database directly, fallback to empty array or check error:', err);
+    console.warn('Could not query database directly, fallback to memory seed dataset:', (err as Error).message);
+  }
+
+  if (candidates.length === 0) {
+    console.log('Loading seed candidates with parliamentary photo resolution...');
+    // Lê candidatos de candidates-2026.json anterior se existente ou resolve fotos
+    const existingFile = path.join(outputDir, 'candidates-2026.json');
+    if (fs.existsSync(existingFile)) {
+      try {
+        const raw = JSON.parse(fs.readFileSync(existingFile, 'utf-8'));
+        if (Array.isArray(raw) && raw.length > 0) {
+          const { resolveCandidatePhotoUrl } = require('../packages/shared/dist');
+          candidates = raw.map((c: any) => {
+            const photoUrl = resolveCandidatePhotoUrl({
+              photoUrl: c.photoUrl,
+              tseId: c.tseId,
+              cargo: c.cargo,
+              name: c.name,
+              id: c.id,
+            });
+            return {
+              ...c,
+              photoUrl: photoUrl || c.photoUrl,
+            };
+          });
+        }
+      } catch (e) {
+        console.warn('Fallback error:', e);
+      }
+    }
   }
 
   console.log(`Exporting ${candidates.length} candidates to candidates-2026.json...`);
@@ -175,7 +207,7 @@ async function main() {
     metadata: {
       year: 2026,
       app: 'Eleições Progressistas',
-      version: '2.2.0',
+      version: '2.2.2',
     },
   };
 
@@ -203,7 +235,7 @@ async function main() {
   }
 
   const manifest = {
-    version: '2.2.0',
+    version: '2.2.2',
     cutoffDate: new Date().toISOString(),
     files: fileManifests,
   };

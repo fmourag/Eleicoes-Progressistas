@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { View } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 import { useBreakpoint, useMaxContentWidth } from '../../utils/responsive';
 import { useThemeColors, FontSize, Spacing } from '../../utils/theme';
 import { ThemeToggle } from '../../components/ThemeToggle';
@@ -26,12 +26,18 @@ export default function TabsLayout() {
                 <ThemeToggle />
               </View>
             ),
-            tabBarLabelStyle: { fontSize: isDesktop ? FontSize.xl : FontSize.md },
-            tabBarIcon: () => null,
+            tabBarLabelStyle: {
+              fontSize: isDesktop ? 14 : 11,
+              fontWeight: '700',
+              marginTop: 1,
+            },
             tabBarStyle: {
               backgroundColor: colors.surface,
               borderTopColor: colors.border,
-              ...(isDesktop ? { flexDirection: 'row', justifyContent: 'center', height: 56 } : {}),
+              height: Platform.OS === 'ios' ? 84 : 60,
+              paddingBottom: Platform.OS === 'ios' ? 24 : 6,
+              paddingTop: 6,
+              ...(isDesktop ? { flexDirection: 'row', justifyContent: 'center', height: 60 } : {}),
             },
           }}
         >
@@ -40,7 +46,8 @@ export default function TabsLayout() {
             options={{
               title: 'Candidatos',
               headerShown: false,
-              tabBarLabel: '🏛️ Candidatos',
+              tabBarLabel: 'Candidatos',
+              tabBarIcon: () => <Text style={{ fontSize: 18 }}>🏛️</Text>,
             }}
           />
           <Tabs.Screen
@@ -48,7 +55,8 @@ export default function TabsLayout() {
             options={{
               title: 'Prioridades',
               headerShown: false,
-              tabBarLabel: '🎯 Prioridades',
+              tabBarLabel: 'Prioridades',
+              tabBarIcon: () => <Text style={{ fontSize: 18 }}>🎯</Text>,
             }}
           />
           <Tabs.Screen
@@ -56,7 +64,8 @@ export default function TabsLayout() {
             options={{
               title: 'Minha Cola',
               headerShown: false,
-              tabBarLabel: '📝 Minha Cola',
+              tabBarLabel: 'Minha Cola',
+              tabBarIcon: () => <Text style={{ fontSize: 18 }}>📝</Text>,
             }}
           />
           <Tabs.Screen
@@ -64,7 +73,8 @@ export default function TabsLayout() {
             options={{
               title: 'Raio-X',
               headerShown: false,
-              tabBarLabel: '🔍 Raio-X',
+              tabBarLabel: 'Raio-X',
+              tabBarIcon: () => <Text style={{ fontSize: 18 }}>🔍</Text>,
             }}
           />
           <Tabs.Screen name="perfil" options={{ href: null }} />

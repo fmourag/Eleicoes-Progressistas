@@ -264,7 +264,7 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
               const cand = selectedCandidates[seq.key];
 
               if (cand) {
-                const resolvedPhoto = getCandidatePhotoUrl(cand.photoUrl, cand.tseId);
+                const resolvedPhoto = getCandidatePhotoUrl(cand.photoUrl, cand.tseId, cand.cargo, cand.name, cand.id);
                 const digits = cand.numeroUrna.split('');
 
                 return (

@@ -1,4 +1,5 @@
 import { PrismaClient, Cargo, ElectionLevel, CandidaturaStatus } from '@prisma/client';
+import { resolveCandidatePhotoUrl } from '../../../packages/shared/src/index';
 
 const prisma = new PrismaClient({
   datasources: {
@@ -977,7 +978,7 @@ async function main() {
       state: 'SP',
       cpfHash: 'hash_tse_lula_2026',
       fichaLimpa: true,
-      photoUrl: '/candidates/280001600001.jpg',
+      photoUrl: resolveCandidatePhotoUrl({ tseId: '280001600001', photoUrl: '/candidates/280001600001.jpg', name: 'Lula', cargo: 'PRESIDENTE' }),
       coalition: 'Brasil da Esperança (PT, PCdoB, PV, PSB, PSOL, Rede, Solidariedade, Avante, PDT)',
       isProgressiveSupported: true,
       supportedBy: 'Frente Ampla Democrática e Progressista',
@@ -1013,7 +1014,7 @@ async function main() {
         state: g.state,
         cpfHash: `hash_tse_${g.tseId}_2026`,
         fichaLimpa: true,
-        photoUrl: g.photoUrl,
+        photoUrl: resolveCandidatePhotoUrl({ tseId: g.tseId, photoUrl: g.photoUrl, cargo: 'GOVERNADOR', name: g.name }),
         coalition: (g as any).coalition || null,
         isProgressiveSupported: (g as any).isProgressiveSupported !== undefined ? (g as any).isProgressiveSupported : true,
         supportedBy: (g as any).supportedBy || null,
@@ -1057,7 +1058,7 @@ async function main() {
         state: s.state,
         cpfHash: `hash_tse_${s.tseId}_2026`,
         fichaLimpa: true,
-        photoUrl: s.photoUrl || '',
+        photoUrl: resolveCandidatePhotoUrl({ tseId: s.tseId, photoUrl: s.photoUrl, cargo: 'SENADOR', name: s.name }),
         coalition: (s as any).coalition || null,
         isProgressiveSupported: (s as any).isProgressiveSupported !== undefined ? (s as any).isProgressiveSupported : true,
         supportedBy: (s as any).supportedBy || null,
@@ -1083,7 +1084,12 @@ async function main() {
     const tseId = `sen_${p.CodigoParlamentar}`;
     if (insertedSenIds.has(tseId)) continue;
 
-    const photoUrl = p.UrlFotoParlamentar?.replace('http://', 'https://') || '';
+    const photoUrl = resolveCandidatePhotoUrl({
+      tseId,
+      photoUrl: p.UrlFotoParlamentar?.replace('http://', 'https://'),
+      cargo: 'SENADOR',
+      name: nomeCompleto,
+    });
     const scores = generateScores(party, 'SENADOR');
     const numeroUrna = `${getPartyNumber(party)}0`;
 
@@ -1134,6 +1140,12 @@ async function main() {
     const scores = generateScores(fd.party, 'DEPUTADO_FEDERAL');
     const pNumber = getPartyNumber(fd.party);
     const numeroUrna = (fd as any).numeroUrna || String(pNumber);
+    const photoUrl = resolveCandidatePhotoUrl({
+      tseId: fd.tseId,
+      photoUrl: fd.photoUrl,
+      cargo: 'DEPUTADO_FEDERAL',
+      name: fd.name,
+    });
 
     await prisma.candidate.create({
       data: {
@@ -1151,7 +1163,7 @@ async function main() {
         state: fd.state,
         cpfHash: `hash_tse_${fd.tseId}_2026`,
         fichaLimpa: true,
-        photoUrl: fd.photoUrl || '',
+        photoUrl,
         coalition: (fd as any).coalition || null,
         isProgressiveSupported: (fd as any).isProgressiveSupported || false,
         supportedBy: (fd as any).supportedBy || null,
@@ -1181,7 +1193,12 @@ async function main() {
     const party = d.siglaPartido || 'PT';
     const state = d.siglaUf || 'SP';
     const scores = generateScores(party, 'DEPUTADO_FEDERAL');
-    const photoUrl = d.urlFoto || `/candidates/${tseId}.jpg`;
+    const photoUrl = resolveCandidatePhotoUrl({
+      tseId,
+      photoUrl: d.urlFoto,
+      cargo: 'DEPUTADO_FEDERAL',
+      name: d.nome,
+    });
 
     await prisma.candidate.create({
       data: {
@@ -1218,6 +1235,13 @@ async function main() {
   // 5. Deputados Estaduais
   for (const ed of REAL_STATE_DEPUTIES) {
     const scores = generateScores(ed.party, 'DEPUTADO_ESTADUAL');
+    const photoUrl = resolveCandidatePhotoUrl({
+      tseId: ed.tseId,
+      photoUrl: ed.photoUrl,
+      cargo: 'DEPUTADO_ESTADUAL',
+      name: ed.name,
+    });
+
     await prisma.candidate.create({
       data: {
         tseId: ed.tseId,
@@ -1233,7 +1257,7 @@ async function main() {
         state: ed.state,
         cpfHash: `hash_tse_${ed.tseId}_2026`,
         fichaLimpa: true,
-        photoUrl: ed.photoUrl,
+        photoUrl,
         coalition: (ed as any).coalition || null,
         isProgressiveSupported: (ed as any).isProgressiveSupported !== undefined ? (ed as any).isProgressiveSupported : true,
         supportedBy: (ed as any).supportedBy || null,

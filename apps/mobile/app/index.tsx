@@ -105,7 +105,7 @@ export default function HomeScreen() {
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 <Text style={[styles.brandTitle, { color: colors.text }]}>Eleições Progressistas</Text>
                 <View style={[styles.versionBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.warning }]}>
-                  <Text style={[styles.versionBadgeText, { color: colors.warning }]}>v2.2.0</Text>
+                  <Text style={[styles.versionBadgeText, { color: colors.warning }]}>v2.2.2</Text>
                 </View>
               </View>
               <Text style={[styles.brandSub, { color: colors.textMuted }]}>Cheque o passado. Escolha o futuro.</Text>
@@ -700,7 +700,8 @@ const styles = StyleSheet.create({
     borderRadius: Radius.xl,
     borderWidth: 1,
     padding: Spacing.md,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
+    gap: 4,
   },
   navCardIconBox: {
     width: 44,

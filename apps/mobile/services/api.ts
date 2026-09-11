@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import { CandidateClassification, GovernmentPlanDetail, CandidatePollResult } from '@np/shared';
+import { CandidateClassification, GovernmentPlanDetail, CandidatePollResult, resolveCandidatePhotoUrl } from '@np/shared';
 
 const PRODUCTION_API_URL = 'https://eleicoes-progressistas.onrender.com';
 
@@ -110,13 +110,26 @@ export interface RaioXData {
   pollResult?: CandidatePollResult;
 }
 
-export function getCandidatePhotoUrl(photoUrl?: string | null, tseId?: string | null): string {
-  if (!photoUrl && !tseId) return '';
-  const base = API_URL.replace(/\/+$/, '');
-
-  if (photoUrl && photoUrl.startsWith('http')) {
-    return photoUrl;
+export function getCandidatePhotoUrl(
+  photoUrl?: string | null,
+  tseId?: string | null,
+  cargo?: string | null,
+  name?: string | null,
+  id?: string | null
+): string {
+  // 1. Tenta resolver via inteligência parlamentar e TSE de @np/shared
+  const resolved = resolveCandidatePhotoUrl({ photoUrl, tseId, cargo, name, id });
+  if (resolved) {
+    return resolved;
   }
+
+  // 2. Se for uma URL externa
+  if (photoUrl && (photoUrl.startsWith('http://') || photoUrl.startsWith('https://'))) {
+    return photoUrl.replace(/^http:\/\//i, 'https://');
+  }
+
+  // 3. Fallback para API do backend caso seja relativo
+  const base = API_URL.replace(/\/+$/, '');
   if (photoUrl && photoUrl.startsWith('/')) {
     return `${base}${photoUrl}`;
   }

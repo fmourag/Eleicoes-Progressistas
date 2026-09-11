@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
-import { ElectionLevel, Cargo, CARGOS_BY_LEVEL, UPCOMING_ELECTION, EXCLUDED_CONSERVATIVE_PARTIES, CandidateClassification, PillarCommitment, GovernmentPlanDetail, getNumeroUrna, computeCandidatePollResult, resolveCandidateMandateProposals, buildPillarJustificativa } from '@np/shared';
+import { ElectionLevel, Cargo, CARGOS_BY_LEVEL, UPCOMING_ELECTION, EXCLUDED_CONSERVATIVE_PARTIES, CandidateClassification, PillarCommitment, GovernmentPlanDetail, getNumeroUrna, computeCandidatePollResult, resolveCandidateMandateProposals, buildPillarJustificativa, resolveCandidatePhotoUrl } from '@np/shared';
 import { OFFICIAL_ELECTION_POLLS } from './data/election-polls.data';
 
 export function buildCandidateClassification(candidate: any): CandidateClassification {
@@ -522,8 +522,16 @@ export class CandidatesService {
           const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
           overallCommitmentScore = Math.round(avg <= 1 ? avg * 100 : avg);
         }
+        const resolvedPhoto = resolveCandidatePhotoUrl({
+          photoUrl: c.photoUrl,
+          tseId: c.tseId,
+          cargo: c.cargo,
+          name: c.name,
+          id: c.id,
+        });
         return {
           ...c,
+          photoUrl: resolvedPhoto || c.photoUrl,
           numeroUrna: c.numeroUrna || getNumeroUrna(c),
           overallCommitmentScore,
         };
@@ -574,9 +582,18 @@ export class CandidatesService {
       } as any,
     });
     if (!candidate) return null;
+    const cAny = candidate as any;
+    const resolvedPhoto = resolveCandidatePhotoUrl({
+      photoUrl: cAny.photoUrl,
+      tseId: cAny.tseId,
+      cargo: cAny.cargo,
+      name: cAny.name,
+      id: cAny.id,
+    });
     return {
       ...candidate,
-      numeroUrna: (candidate as any).numeroUrna || getNumeroUrna(candidate as any),
+      photoUrl: resolvedPhoto || cAny.photoUrl,
+      numeroUrna: cAny.numeroUrna || getNumeroUrna(cAny),
     };
   }
 
@@ -665,8 +682,17 @@ export class CandidatesService {
       candidate
     );
 
+    const resolvedPhoto = resolveCandidatePhotoUrl({
+      photoUrl: candidate.photoUrl,
+      tseId: candidate.tseId,
+      cargo: candidate.cargo,
+      name: candidate.name,
+      id: candidate.id,
+    });
+
     return {
       ...candidate,
+      photoUrl: resolvedPhoto || candidate.photoUrl,
       proposals: resolvedProposals,
       numeroUrna,
       hasWarning,

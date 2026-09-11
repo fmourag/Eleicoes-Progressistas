@@ -16,7 +16,7 @@ export const PRIVACY_HTML = `<!DOCTYPE html>
 </head>
 <body>
     <h1>Política de Privacidade — Eleições Progressistas</h1>
-    <div class="meta"><strong>Vigência:</strong> 10 de setembro de 2026 • <strong>Versão:</strong> 2.2.0</div>
+    <div class="meta"><strong>Vigência:</strong> 11 de setembro de 2026 • <strong>Versão:</strong> 2.2.2</div>
 
     <div class="card">
         <strong>Compromisso Central:</strong> O <em>Eleições Progressistas</em> opera sob o <strong>Princípio da Coleta Zero</strong> de dados políticos e pessoais. A plataforma foi desenhada para garantir o exercício do voto consciente com sigilo e transparência absolutos.
@@ -81,7 +81,7 @@ export const BETA_HTML = `<!DOCTYPE html>
 </head>
 <body>
     <div class="header">
-        <span class="badge">BETA FECHADO v2.2.1</span>
+        <span class="badge">BETA FECHADO v2.2.2</span>
         <h1>Eleições Progressistas 2026</h1>
         <p class="subtitle">Instalação direta para testadores e auditores cívicos</p>
     </div>
