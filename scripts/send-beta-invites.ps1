@@ -1,6 +1,6 @@
 # scripts/send-beta-invites.ps1
 $csvPath = "docs/testers-beta.csv"
-$hash = "7E61EE06F782DFF49B517DF6A486AE85B7CE7FDC4A79886C49AF7AFD4E1BB789"
+$hash = "c99d481b43032aeca3e0c88a22da5504b668ccbe1f7716ac8f98d31b3a79d200"
 
 if (!(Test-Path $csvPath)) {
     Write-Host "[ERRO] Arquivo $csvPath não encontrado!" -ForegroundColor Red

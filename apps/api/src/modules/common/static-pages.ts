@@ -81,15 +81,15 @@ export const BETA_HTML = `<!DOCTYPE html>
 </head>
 <body>
     <div class="header">
-        <span class="badge">BETA FECHADO v2.2.0</span>
+        <span class="badge">BETA FECHADO v2.2.1</span>
         <h1>Eleições Progressistas 2026</h1>
         <p class="subtitle">Instalação direta para testadores e auditores cívicos</p>
     </div>
 
     <div class="qr-box">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Fexpo.dev%2Fartifacts%2Feas%2Fi98yWifkjiVUziUocuoeHY5yJ1wMsqgUv346HfCOi40.apk" alt="QR Code Download APK">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Fexpo.dev%2Fartifacts%2Feas%2FCy83mrtlCFpIRNLDR1KxEpPkD7XEcTspGZyLVsk1JH8.apk" alt="QR Code Download APK">
         <p style="margin-bottom: 16px; color: #555;">Escaneie com a câmera do celular ou clique abaixo:</p>
-        <a href="https://expo.dev/artifacts/eas/i98yWifkjiVUziUocuoeHY5yJ1wMsqgUv346HfCOi40.apk" class="btn">⬇️ Baixar APK (61,44 MB)</a>
+        <a href="https://expo.dev/artifacts/eas/Cy83mrtlCFpIRNLDR1KxEpPkD7XEcTspGZyLVsk1JH8.apk" class="btn">⬇️ Baixar APK v2.2.1 (61,44 MB)</a>
     </div>
 
     <div class="steps">
@@ -103,7 +103,7 @@ export const BETA_HTML = `<!DOCTYPE html>
 
     <div class="hash-box">
         <strong>🔐 Verificação de Integridade (SHA-256):</strong><br>
-        7686A9EEDBE6C0EC2463AD59557583612A6CBBEB49BB0963285DF28F04553351
+        c99d481b43032aeca3e0c88a22da5504b668ccbe1f7716ac8f98d31b3a79d200
     </div>
 
     <p style="font-size: 13px; color: #666; text-align: center;">
