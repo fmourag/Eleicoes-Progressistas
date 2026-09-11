@@ -8,9 +8,9 @@
 
 ## 📦 Dados do Pacote
 
-- **Link Direto do APK:** [Download APK v2.2.0 (60,96 MB)](https://expo.dev/artifacts/eas/mHdPF_T7H0rdtdDQlve0wJMTDHCOimMWcvbbd2DOHXA.apk)
+- **Link Direto do APK:** [Download APK v2.2.0 (61,44 MB)](https://expo.dev/artifacts/eas/i98yWifkjiVUziUocuoeHY5yJ1wMsqgUv346HfCOi40.apk)
 - **Landing Page de Instalação:** https://eleicoes-progressistas.pages.dev/beta
-- **Verificação de Integridade (SHA-256):** `7E61EE06F782DFF49B517DF6A486AE85B7CE7FDC4A79886C49AF7AFD4E1BB789`
+- **Verificação de Integridade (SHA-256):** `7686A9EEDBE6C0EC2463AD59557583612A6CBBEB49BB0963285DF28F04553351`
 - **Política de Privacidade:** https://eleicoes-progressistas.pages.dev/privacidade
 
 ---
@@ -29,12 +29,12 @@
 
 ### 🟢 WhatsApp
 ```text
-🇧🇷 [NOME], você foi selecionado(a) para o Beta Fechado do Eleições Progressistas 2026! 📱 Instale em 2 min: https://eleicoes-progressistas.pages.dev/beta 🔐 SHA-256: 7E61EE06F782DFF49B517DF6A486AE85B7CE7FDC4A79886C49AF7AFD4E1BB789 — São 5 min de teste que fortalecem a democracia. Feedback: contato@eleicoesprogressistas.org.br
+🇧🇷 [NOME], você foi selecionado(a) para o Beta Fechado do Eleições Progressistas 2026! 📱 Instale em 2 min: https://eleicoes-progressistas.pages.dev/beta 🔐 SHA-256: 7686A9EEDBE6C0EC2463AD59557583612A6CBBEB49BB0963285DF28F04553351 — São 5 min de teste que fortalecem a democracia. Feedback: contato@eleicoesprogressistas.org.br
 ```
 
 ### 🔵 Telegram
 ```text
-🇧🇷 [NOME], você foi selecionado(a) para o Beta Fechado do Eleições Progressistas 2026! 📱 Instale em 2 min: https://eleicoes-progressistas.pages.dev/beta 🔐 SHA-256: 7E61EE06F782DFF49B517DF6A486AE85B7CE7FDC4A79886C49AF7AFD4E1BB789 — São 5 min de teste que fortalecem a democracia. Feedback: contato@eleicoesprogressistas.org.br
+🇧🇷 [NOME], você foi selecionado(a) para o Beta Fechado do Eleições Progressistas 2026! 📱 Instale em 2 min: https://eleicoes-progressistas.pages.dev/beta 🔐 SHA-256: 7686A9EEDBE6C0EC2463AD59557583612A6CBBEB49BB0963285DF28F04553351 — São 5 min de teste que fortalecem a democracia. Feedback: contato@eleicoesprogressistas.org.br
 ```
 
 ### ✉️ E-mail
@@ -49,7 +49,7 @@ Você foi selecionado(a) para participar do Beta Fechado do Eleições Progressi
 https://eleicoes-progressistas.pages.dev/beta
 
 🔐 Verificação de Integridade (SHA-256):
-7E61EE06F782DFF49B517DF6A486AE85B7CE7FDC4A79886C49AF7AFD4E1BB789
+7686A9EEDBE6C0EC2463AD59557583612A6CBBEB49BB0963285DF28F04553351
 
 Principais recursos para testar:
 • Busca e listagem de 336 candidatos (27 UFs)

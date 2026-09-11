@@ -87,9 +87,9 @@ export const BETA_HTML = `<!DOCTYPE html>
     </div>
 
     <div class="qr-box">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Fexpo.dev%2Fartifacts%2Feas%2FmHdPF_T7H0rdtdDQlve0wJMTDHCOimMWcvbbd2DOHXA.apk" alt="QR Code Download APK">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Fexpo.dev%2Fartifacts%2Feas%2Fi98yWifkjiVUziUocuoeHY5yJ1wMsqgUv346HfCOi40.apk" alt="QR Code Download APK">
         <p style="margin-bottom: 16px; color: #555;">Escaneie com a câmera do celular ou clique abaixo:</p>
-        <a href="https://expo.dev/artifacts/eas/mHdPF_T7H0rdtdDQlve0wJMTDHCOimMWcvbbd2DOHXA.apk" class="btn">⬇️ Baixar APK (60,96 MB)</a>
+        <a href="https://expo.dev/artifacts/eas/i98yWifkjiVUziUocuoeHY5yJ1wMsqgUv346HfCOi40.apk" class="btn">⬇️ Baixar APK (61,44 MB)</a>
     </div>
 
     <div class="steps">
@@ -103,7 +103,7 @@ export const BETA_HTML = `<!DOCTYPE html>
 
     <div class="hash-box">
         <strong>🔐 Verificação de Integridade (SHA-256):</strong><br>
-        7E61EE06F782DFF49B517DF6A486AE85B7CE7FDC4A79886C49AF7AFD4E1BB789
+        7686A9EEDBE6C0EC2463AD59557583612A6CBBEB49BB0963285DF28F04553351
     </div>
 
     <p style="font-size: 13px; color: #666; text-align: center;">
