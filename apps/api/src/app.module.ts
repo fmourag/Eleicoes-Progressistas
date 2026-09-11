@@ -17,6 +17,7 @@ import { PublicApiModule } from './modules/public-api/public-api.module';
 import { WatchdogModule } from './modules/watchdog/watchdog.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { OpsController } from './modules/common/ops.controller';
+import { PagesController } from './modules/common/pages.controller';
 import { OpsModeService } from './modules/common/ops-mode.service';
 import { OpsModeGuard } from './modules/common/ops-mode.guard';
 import { APP_GUARD } from '@nestjs/core';
@@ -46,7 +47,7 @@ import { APP_GUARD } from '@nestjs/core';
     WatchdogModule,
     ReportsModule,
   ],
-  controllers: [HealthController, OpsController],
+  controllers: [HealthController, OpsController, PagesController],
   providers: [
     OpsModeService,
     {
