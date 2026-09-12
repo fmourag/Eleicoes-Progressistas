@@ -15,7 +15,7 @@ import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { useBreakpoint } from '../utils/responsive';
 import { useColaStore, ColaCandidate } from '../stores/cola.store';
 import { useLocationStore } from '../stores/location.store';
-import { getCandidatePhotoUrl } from '../services/api';
+import { getCandidatePhotoUrl, API_URL } from '../services/api';
 import { PixApoio } from './PixApoio';
 
 interface ColaModalProps {
@@ -61,7 +61,7 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
   const userUf = location?.uf || 'BR';
   const userMun = location?.municipality || '';
 
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+  const apiUrl = API_URL;
   const pdfViewUrl = `${apiUrl}/api/cola/pdf?ids=${encodeURIComponent(selectedIds)}&state=${encodeURIComponent(userUf)}&municipality=${encodeURIComponent(userMun)}`;
   const pdfDownloadUrl = `${apiUrl}/api/cola/pdf/download?ids=${encodeURIComponent(selectedIds)}&state=${encodeURIComponent(userUf)}&municipality=${encodeURIComponent(userMun)}`;
 

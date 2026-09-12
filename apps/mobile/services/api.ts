@@ -3,11 +3,21 @@ import { CandidateClassification, GovernmentPlanDetail, CandidatePollResult, res
 
 const PRODUCTION_API_URL = 'https://eleicoes-progressistas.onrender.com';
 
-export const API_URL =
-  process.env.EXPO_PUBLIC_API_URL ||
-  (Platform.OS === 'web' && typeof window !== 'undefined' && window.location?.origin
-    ? window.location.origin
-    : PRODUCTION_API_URL);
+export const API_URL = (() => {
+  if (process.env.EXPO_PUBLIC_API_URL) {
+    return process.env.EXPO_PUBLIC_API_URL.replace(/\/+$/, '');
+  }
+  if (Platform.OS === 'web' && typeof window !== 'undefined' && window.location?.hostname) {
+    const host = window.location.hostname;
+    if (host.includes('pages.dev') || host.includes('eleicoesprogressistas') || host.includes('onrender.com')) {
+      return PRODUCTION_API_URL;
+    }
+    if (host === 'localhost' || host === '127.0.0.1') {
+      return window.location.port === '3000' ? window.location.origin : 'http://localhost:3000';
+    }
+  }
+  return PRODUCTION_API_URL;
+})();
 
 let authToken: string | null = null;
 

@@ -79,22 +79,64 @@ async function bootstrap() {
   // Filtro Global de Exceções: oculta stack traces e detalhes de BD em respostas HTTP
   app.useGlobalFilters(new GlobalHttpExceptionFilter());
 
-  // Configuração segura de CORS
-  const configuredOrigins = process.env.CORS_ORIGINS
+  // Configuração flexível e segura de CORS
+  const defaultAllowedOrigins = [
+    'https://eleicoes-progressistas.pages.dev',
+    'https://eleicoes-progressistas.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:8081',
+    'http://localhost:19006',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:8081',
+    'http://127.0.0.1:19006',
+  ];
+
+  const envOrigins = process.env.CORS_ORIGINS
     ? process.env.CORS_ORIGINS.split(',').map((o) => o.trim()).filter(Boolean)
-    : ['http://localhost:3000', 'http://localhost:8081', 'http://127.0.0.1:3000', 'http://127.0.0.1:8081'];
+    : [];
+
+  const allAllowedOrigins = [...new Set([...defaultAllowedOrigins, ...envOrigins])];
 
   app.enableCors({
-    origin: isProduction ? configuredOrigins : (origin, callback) => {
-      // Em desenvolvimento, aceita origens locais e da lista configurada
-      if (!origin || configuredOrigins.includes(origin) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Não permitido pelo CORS'));
+    origin: (origin, callback) => {
+      // Permite requisições sem origin (mobile nativo, apps desktop, cURL, server-to-server)
+      if (!origin) {
+        return callback(null, true);
       }
+
+      // Origens explícitas permitidas
+      if (allAllowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // Padrões dinâmicos autorizados (Cloudflare Pages *.pages.dev, Render *.onrender.com, domínios do app e localhost)
+      const isAllowedPattern =
+        /^https:\/\/([a-zA-Z0-9_-]+\.)*pages\.dev$/.test(origin) ||
+        /^https:\/\/([a-zA-Z0-9_-]+\.)*onrender\.com$/.test(origin) ||
+        /^https:\/\/([a-zA-Z0-9_-]+\.)*eleicoesprogressistas\.(org\.br|com\.br|app)$/.test(origin) ||
+        /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+
+      if (isAllowedPattern) {
+        return callback(null, true);
+      }
+
+      logger.warn(`[CORS Bloqueado] Origem não autorizada: ${origin}`);
+      callback(null, false);
     },
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key', 'x-admin-token', 'x-cron-secret', 'x-device-hash', 'x-webhook-secret'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'x-admin-key',
+      'x-admin-token',
+      'x-cron-secret',
+      'x-device-hash',
+      'x-webhook-secret',
+      'x-client-version',
+      'x-request-id',
+      'Accept',
+    ],
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
   });
 
   app.useGlobalPipes(

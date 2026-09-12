@@ -518,7 +518,7 @@ export default function ManualDoUsuarioScreen() {
               <Text style={{ fontSize: 20 }}>📜</Text>
               <View style={{ flex: 1 }}>
                 <Text style={[styles.supportBtnTitle, { color: colors.text }]}>Nota de Transparência</Text>
-                <Text style={[styles.supportBtnSub, { color: colors.textMuted }]}>LGPD & Diretrizes v2.2.0</Text>
+                <Text style={[styles.supportBtnSub, { color: colors.textMuted }]}>LGPD & Diretrizes v2.2.2</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -527,7 +527,7 @@ export default function ManualDoUsuarioScreen() {
         {/* Rodapé de Encerramento */}
         <View style={styles.footerNotice}>
           <Text style={[styles.footerText, { color: colors.textMuted }]}>
-            Eleições Progressistas v2.2.0 • Tecnologia Cívica Auditável • 100% Independente
+            Eleições Progressistas v2.2.2 • Tecnologia Cívica Auditável • 100% Independente
           </Text>
         </View>
       </View>

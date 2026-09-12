@@ -173,10 +173,10 @@ export const KNOWN_URNA_NUMBERS: Record<string, string> = {
   'dep_est_rj_luizpaulo': '55123',
   'dep_est_rj_martha': '12123',
   // Deputados Federais RJ
-  'dep_73701': '1333', // Reimont
+  'dep_220606': '1333', // Reimont
   'dep_74848': '6565', // Jandira Feghali
-  'dep_160575': '5050', // Glauber Braga
-  'dep_74845': '5015', // Chico Alencar
+  'dep_152605': '5050', // Glauber Braga
+  'dep_74171': '5015', // Chico Alencar
   'dep_204464': '5000', // Talíria Petrone
   'dep_220597': '5010', // Henrique Vieira
 };
@@ -474,7 +474,7 @@ export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
 
   // Lideranças Estaduais / Deputados Estaduais
   'ale_rj_renatasouza': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Renata_Souza_em_2022.jpg/480px-Renata_Souza_em_2022.jpg',
-  'ale_rj_carlosminc': 'https://www.camara.leg.br/internet/deputado/bandep/74045.jpg',
+  'ale_rj_carlosminc': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Carlos_Minc_2023.jpg/480px-Carlos_Minc_2023.jpg',
   'ale_sp_suplicy': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/38.jpg',
   'ale_rs_lucianagenro': 'https://www.camara.leg.br/internet/deputado/bandep/74844.jpg',
   'ale_pr_renatofreitas': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Renato_Freitas_em_2023.jpg/480px-Renato_Freitas_em_2023.jpg',

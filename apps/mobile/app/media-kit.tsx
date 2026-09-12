@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { CivicEmblem } from '../components/CivicEmblem';
+import { API_URL } from '../services/api';
 
 const FORMATS = [
   {
@@ -46,7 +47,7 @@ export default function MediaKitScreen() {
   const padding = useResponsivePadding();
 
   function handleOpenTransparency() {
-    const url = 'http://localhost:3000/api/ads/transparency';
+    const url = `${API_URL}/api/ads/transparency`;
     if (typeof window !== 'undefined') {
       window.open(url, '_blank');
     } else {

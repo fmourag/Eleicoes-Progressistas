@@ -4,10 +4,9 @@ import { router } from 'expo-router';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { CivicEmblem } from '../components/CivicEmblem';
+import { API_URL } from '../services/api';
 
-const API_BASE_URL = typeof window !== 'undefined' && window.location.origin
-  ? `${window.location.origin}/api`
-  : 'http://localhost:3000/api';
+const API_BASE_URL = `${API_URL}/api`;
 
 export default function ApiPublicoScreen() {
   const colors = useThemeColors();

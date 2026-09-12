@@ -8,6 +8,7 @@ import { useLocationStore } from '../../stores/location.store';
 import { PixApoio } from '../../components/PixApoio';
 import { ColaModal } from '../../components/ColaModal';
 import { CivicBanner } from '../../components/CivicBanner';
+import { API_URL } from '../../services/api';
 
 const VOTING_SEQUENCE = [
   { key: 'DEPUTADO_FEDERAL', title: 'Deputado(a) Federal', orderLabel: '1º A VOTAR', digits: 4, orderNum: '1º' },
@@ -39,7 +40,7 @@ export default function ColaScreen() {
   const userUf = location?.uf || 'BR';
   const userMun = location?.municipality || '';
 
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+  const apiUrl = API_URL;
   const pdfViewUrl = `${apiUrl}/api/cola/pdf?ids=${encodeURIComponent(selectedIds)}&state=${encodeURIComponent(userUf)}&municipality=${encodeURIComponent(userMun)}`;
   const pdfDownloadUrl = `${apiUrl}/api/cola/pdf/download?ids=${encodeURIComponent(selectedIds)}&state=${encodeURIComponent(userUf)}&municipality=${encodeURIComponent(userMun)}`;
 

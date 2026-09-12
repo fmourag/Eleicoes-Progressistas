@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Pressable, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Pressable, Platform, Linking } from 'react-native';
 import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { PILLAR_DISPLAY_LIST } from '@np/shared';
@@ -12,6 +12,7 @@ import { PrivacyBanner } from '../components/PrivacyBanner';
 import { Dropdown, DropdownOption } from '../components/Dropdown';
 import { useLocationStore } from '../stores/location.store';
 import { fetchMunicipalities } from '../services/location.service';
+import { API_URL } from '../services/api';
 
 const UF_OPTIONS: DropdownOption[] = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG',
@@ -113,6 +114,13 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.topRightControls}>
+            <TouchableOpacity
+              style={[styles.manualBtn, { backgroundColor: '#1B5E20', borderColor: '#2E7D32' }]}
+              onPress={() => Linking.openURL(`${API_URL}/feedback`)}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.manualBtnText, { color: '#ffffff', fontWeight: 'bold' }]}>💬 Feedback</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={[styles.manualBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
               onPress={() => router.push('/manual')}
@@ -465,6 +473,14 @@ export default function HomeScreen() {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() => Linking.openURL(`${API_URL}/feedback`)}
+              activeOpacity={0.7}
+            >
+              <Text style={{ fontSize: FontSize.xs, fontWeight: '700', color: '#1B5E20', textDecorationLine: 'underline' }}>
+                💬 Enviar Feedback de Auditoria
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => router.push('/observatorio')}
               activeOpacity={0.7}
             >
@@ -477,7 +493,7 @@ export default function HomeScreen() {
             💡 Mapeamento independente com dados abertos oficiais do TSE (DivulgaCandContas) e Congresso Nacional.
           </Text>
           <Text style={[styles.footerText, { color: colors.textFaint }]}>
-            Versão 2.2.0 • 100% Anônimo • Código Auditável • Conforme LGPD
+            Versão 2.2.2 • 100% Anônimo • Código Auditável • Conforme LGPD
           </Text>
         </View>
 

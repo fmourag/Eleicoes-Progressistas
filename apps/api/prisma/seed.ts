@@ -804,10 +804,10 @@ const REAL_FEDERAL_DEPUTIES = [
   { tseId: 'dep_220574', name: 'Elton Welter', socialName: 'Elton Welter', party: 'PT', state: 'PR', photoUrl: '/candidates/dep_220574.jpg', numeroUrna: '1344' },
 
   // Rio de Janeiro (RJ)
-  { tseId: 'dep_73701', name: 'Reimont Luiz Otoni Cunha', socialName: 'Reimont', party: 'PT', state: 'RJ', photoUrl: '/candidates/dep_73701.jpg', numeroUrna: '1333' },
+  { tseId: 'dep_220606', name: 'Reimont Luiz Otoni Cunha', socialName: 'Reimont', party: 'PT', state: 'RJ', photoUrl: '/candidates/dep_220606.jpg', numeroUrna: '1333' },
   { tseId: 'dep_74848', name: 'Jandira Feghali', socialName: 'Jandira Feghali', party: 'PCDOB', state: 'RJ', photoUrl: '/candidates/dep_74848.jpg', numeroUrna: '6565' },
-  { tseId: 'dep_160575', name: 'Glauber de Medeiros Braga', socialName: 'Glauber Braga', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/dep_160575.jpg', numeroUrna: '5050' },
-  { tseId: 'dep_74845', name: 'Francisco Javier Alfaya Rodrigues', socialName: 'Chico Alencar', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/dep_74845.jpg', numeroUrna: '5015' },
+  { tseId: 'dep_152605', name: 'Glauber de Medeiros Braga', socialName: 'Glauber Braga', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/dep_152605.jpg', numeroUrna: '5050' },
+  { tseId: 'dep_74171', name: 'Francisco Rodrigues de Alencar Filho', socialName: 'Chico Alencar', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/dep_74171.jpg', numeroUrna: '5015' },
   { tseId: 'dep_204464', name: 'Talíria Petrone Soares', socialName: 'Talíria Petrone', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/dep_204464.jpg', numeroUrna: '5000' },
   { tseId: 'dep_220597', name: 'Henrique Vieira dos Santos', socialName: 'Pastor Henrique Vieira', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/dep_220597.jpg', numeroUrna: '5010' },
   { tseId: 'dep_220553', name: 'Dimas Silva Gadelha Júnior', socialName: 'Dimas Gadelha', party: 'PT', state: 'RJ', photoUrl: '/candidates/dep_220553.jpg', numeroUrna: '1340' },

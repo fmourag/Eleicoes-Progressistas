@@ -5,7 +5,7 @@ import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { PixApoio } from '../components/PixApoio';
 import { CivicBanner } from '../components/CivicBanner';
-import { api } from '../services/api';
+import { api, API_URL } from '../services/api';
 
 interface FinanceCostsData {
   monthlyBudget: {
@@ -39,7 +39,7 @@ export default function ApoieScreen() {
   const [costs, setCosts] = useState<FinanceCostsData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+  const apiUrl = API_URL;
 
   useEffect(() => {
     api.get<FinanceCostsData>('/api/finance/costs')
