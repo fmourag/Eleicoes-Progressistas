@@ -73,7 +73,7 @@ async function bootstrap() {
   );
 
   app.setGlobalPrefix('api', {
-    exclude: ['privacidade', 'beta', 'feedback'],
+    exclude: ['privacidade', 'beta'],
   });
 
   // Filtro Global de Exceções: oculta stack traces e detalhes de BD em respostas HTTP

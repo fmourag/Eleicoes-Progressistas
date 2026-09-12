@@ -14,10 +14,4 @@ export class PagesController {
   getBeta() {
     return BETA_HTML;
   }
-
-  @Get('feedback')
-  @Header('Content-Type', 'text/html; charset=utf-8')
-  getFeedback() {
-    return FEEDBACK_HTML;
-  }
 }
