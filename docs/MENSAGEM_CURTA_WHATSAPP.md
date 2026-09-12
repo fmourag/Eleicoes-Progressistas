@@ -1,0 +1,38 @@
+# Mensagens Curtas para WhatsApp / Telegram — Eleições Progressistas 2026
+
+## 📱 Opção 1: Convite Direto para Auditoria Cívica (Beta Testers)
+
+```text
+🇧🇷 Olá! A versão oficial v2.2.2 do Eleições Progressistas está liberada para homologação cívica.
+
+📱 Link ÚNICO de instalação: https://eleicoes-progressistas.onrender.com/beta
+🔐 SHA-256: 9b8f1a71f1d786eefc711c646785c9ed87338c3957a3bf6926db889bd757d6c7
+
+🔑 Seu Código de Tester: [INFORMAR SEU EP-XXX]
+📝 Envio de Feedback: https://eleicoes-progressistas.onrender.com/feedback (ou direto pelo botão 💬 dentro do app)
+
+Dúvidas ou suporte direto: fmourag@gmail.com
+```
+
+---
+
+## 👥 Opção 2: Divulgação Geral para Grupos de Família e Amigos
+
+```text
+Oi, gente! 🇧🇷
+
+Descobri um app GRATUITO pra ajudar a escolher candidatos nas eleições de outubro. Diferente dos outros:
+
+✅ Não pede cadastro
+✅ Não guarda suas opiniões políticas (Coleta Zero)
+✅ Não tem anúncio (Blackout Eleitoral)
+✅ Mostra COMO cada score foi calculado
+✅ Gera uma "cola eleitoral" oficial em PDF
+
+É código aberto (qualquer um pode auditar) e foi feito pra fortalecer a democracia, não pra vender dados.
+
+Testem e me digam o que acham:
+👉 https://eleicoes-progressistas.pages.dev
+
+Compartilhem com quem ainda tá indeciso! 🗳️
+```
