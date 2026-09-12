@@ -1,54 +1,232 @@
-🇧🇷 ATUALIZAÇÃO v2.2.2 — ELEIÇÕES PROGRESSISTAS 2026
-HOMOLOGAÇÃO DE FOTOS PARLAMENTARES + UI RESPONSIVA
+═══════════════════════════════════════════════════════════════
+   🇧🇷  ELEIÇÕES PROGRESSISTAS 2026  —  HOMOLOGAÇÃO v2.2.2
+   "Cheque o passado. Escolha o futuro."
+═══════════════════════════════════════════════════════════════
 
-Olá, testador(a) cívico(a)! A versão v2.2.2 está disponível para homologação.
+Olá, auditor(a) cívico(a)!
 
-===================================================================
-🚨 REGRA IMPORTANTE:
-O link de download do aplicativo é ÚNICO para todos os participantes:
-👉 https://eleicoes-progressistas.onrender.com/beta
-(🔐 SHA-256: 9b8f1a71f1d786eefc711c646785c9ed87338c3957a3bf6926db889bd757d6c7)
+Você faz parte de um grupo seleto de 50 cidadãos responsáveis pela
+homologação final do aplicativo que vai transformar a forma como
+milhões de brasileiros escolhem seus representantes em 04/10/2026.
 
-O seu código individual (EP-XXX) deve ser informado APENAS no momento
-de enviar o feedback de teste, para sabermos quem testou o quê.
-===================================================================
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-📦 CORREÇÕES APLICADAS NA v2.2.2:
-✓ Resolução nacional de fotos parlamentares (Câmara + Senado Federal)
-✓ Cascata de fallback com fotos de lideranças e dados oficiais do TSE
-✓ Correção do esticamento vertical do card de Prioridades na tela inicial
-✓ Botão "← Início" com largura mínima sem quebra de texto (In-íc-io)
-✓ Nomes de candidatos com até 2 linhas e botão da Cola sem cortes
-✓ Barra de navegação inferior limpa sem truncamento (Candidatos, Prioridades, Minha Cola, Raio-X)
-✓ Cache e resiliência de conexão otimizados
+⚠️ REGRA FUNDAMENTAL DESTE BETA
 
--------------------------------------------------------------------
-📝 COMO ENVIAR SEU FEEDBACK (Escolha a opção mais rápida):
+🔗 LINK ÚNICO DE DOWNLOAD (igual para todos):
+   https://eleicoes-progressistas.onrender.com/beta
 
-🔹 CAMADA 1 (Super rápida — 10 segundos):
-Abra o aplicativo e toque no botão flutuante 💬 no canto inferior direito. O formulário será aberto com seu aparelho já detectado.
+🔑 CÓDIGO INDIVIDUAL (informado APENAS no envio do feedback):
+   Cada auditor(a) recebe um código único (EP-001 a EP-050).
+   Este código só será solicitado ao enviar seu relatório de teste.
 
-🔹 CAMADA 2 (Web — 2 minutos):
-Acesse o formulário web único de homologação:
-👉 https://eleicoes-progressistas.onrender.com/feedback
-Informe seu Código de Tester (ex.: EP-001) e avalie a versão.
+✅ Por que assim? Um único build auditável e replicável por todos.
+   Sua contribuição é identificada pelo seu código no feedback.
 
-🔹 CAMADA 3 (WhatsApp / Telegram — 1 minuto):
-Copie o modelo abaixo, preencha e envie para nosso canal:
-[CÓDIGO TESTER]: EP-XXX
-[DISPOSITIVO]: Modelo do seu celular
-[NOTA NPS 0-10]: 10
-[PROBLEMA]: Nenhum / Fotos / Layout / Lentidão / Crash
-[COMENTÁRIOS]: 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
--------------------------------------------------------------------
-📋 CHECKLIST RÁPIDO DE TESTE (5 min):
-1. Acesse https://eleicoes-progressistas.onrender.com/beta e instale o APK v2.2.2.
-2. Abra a aba Candidatos → confirme as fotos de deputados federais e senadores.
-3. Volte para o Início → confira que o card de Prioridades não está esticado.
-4. Clique em "← Início" → confirme que o texto não quebra verticalmente.
-5. Adicione um candidato à Cola → confirme que o botão não corta o texto.
-6. Envie seu feedback pelo botão 💬 ou pelo link /feedback!
+📥 PASSO 1 — INSTALAÇÃO (3 minutos)
 
-Dúvidas e suporte: contato@eleicoesprogressistas.org.br
-Muito obrigado por fortalecer a democracia brasileira! 🇧🇷
+1. No celular Android, acesse:
+   👉 https://eleicoes-progressistas.onrender.com/beta
+
+2. Toque em "⬇️ Baixar APK (61,44 MB)"
+
+3. Se aparecer alerta "arquivo pode danificar dispositivo":
+   → Toque em "BAIXAR ASSIM MESMO" (padrão do Chrome para APKs)
+
+4. Abra o arquivo e aceite "Permitir desta fonte"
+
+5. Toque em "INSTALAR"
+
+🔐 Verificação de Integridade (SHA-256):
+   9b8f1a71f1d786eefc711c646785c9ed87338c3957a3bf6926db889bd757d6c7
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 PASSO 2 — CHECKLIST DE TESTES (5 minutos)
+
+Execute na ordem e anote o que observou:
+
+[  ] 1. Abra o app → splash verde cívico com badge v2.2.2
+[  ] 2. Vá em "Candidatos" → fotos de deputados e senadores carregam?
+[  ] 3. Procure Chico Alencar, Boulos ou Erika Hilton → foto da Câmara/Senado?
+[  ] 4. Volte ao Início → card de Prioridades sem esticamento vertical?
+[  ] 5. Clique em "← Início" → texto não quebra verticalmente?
+[  ] 6. Adicione 3 candidatos à Cola → botão não corta o texto?
+[  ] 7. Vá em "Minha Cola" → gere o PDF → abre corretamente?
+[  ] 8. Desligue o Wi-Fi → botão "↺ Tentar Novamente" aparece?
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 PASSO 3 — ENVIO DO FEEDBACK (escolha o mais rápido)
+
+┌─────────────────────────────────────────────────────────────┐
+│  MÉTODO 1 — BOTÃO DENTRO DO APP (10 SEGUNDOS)              │
+└─────────────────────────────────────────────────────────────┘
+
+1. Abra o app
+2. Toque no botão verde 💬 (canto inferior direito)
+3. Informe seu código individual (ex: EP-001)
+4. Selecione NPS (0-10) + tipo de problema + descrição
+5. Toque "🚀 Enviar Feedback de Teste"
+6. Guarde seu protocolo FB-XXX
+
+┌─────────────────────────────────────────────────────────────┐
+│  MÉTODO 2 — FORMULÁRIO WEB (2 MINUTOS)                     │
+└─────────────────────────────────────────────────────────────┘
+
+Acesse seu link personalizado (código pré-preenchido):
+
+   👉 https://eleicoes-progressistas.onrender.com/feedback?code=EP-XXX
+
+Substitua EP-XXX pelo seu código individual recebido no convite.
+
+Preencha:
+  • Código do Tester (já pré-preenchido se usar o link acima)
+  • Nota NPS de 0 a 10
+  • Tipo de problema encontrado (ou "Nenhum")
+  • Descrição detalhada (opcional)
+  • Dispositivo (detectado automaticamente)
+
+Toque "🚀 Enviar Feedback de Teste" e guarde seu protocolo FB-XXX.
+
+┌─────────────────────────────────────────────────────────────┐
+│  MÉTODO 3 — WHATSAPP / TELEGRAM (1 MINUTO)                 │
+└─────────────────────────────────────────────────────────────┘
+
+Copie o modelo abaixo, preencha e envie para:
+📱 +55 (11) 99999-9999 [SEU NÚMERO DE SUPORTE]
+
+─────────────────────────────────────────────────────────────
+🐛 FEEDBACK BETA v2.2.2 — AUDITORIA CÍVICA
+
+🔑 Código Tester: [EP-XXX]
+📱 Dispositivo: [MODELO + ANDROID]
+⭐ NPS (0-10): [NOTA]
+🔴 Problema: [NENHUM / FOTOS / LAYOUT / LENTIDÃO / CRASH / OUTRO]
+
+📝 Descrição:
+[O QUE VOCÊ OBSERVOU NOS TESTES]
+
+📸 Evidências: [DESCRIÇÃO DE SCREENSHOTS]
+─────────────────────────────────────────────────────────────
+
+Exemplo preenchido:
+─────────────────────────────────────────────────────────────
+🐛 FEEDBACK BETA v2.2.2 — AUDITORIA CÍVICA
+
+🔑 Código Tester: EP-042
+📱 Dispositivo: Samsung Galaxy S24 Ultra (Android 14)
+⭐ NPS (0-10): 10
+🔴 Problema: NENHUM
+
+📝 Descrição:
+Testei candidatos de SP e RJ. Fotos parlamentares da Câmara
+e Senado carregam em alta definição. UI responsiva, sem
+truncamentos. Gerar PDF da Cola funcionou perfeitamente.
+
+📸 Evidências: Prints da aba Candidatos, Raio-X e PDF gerado
+─────────────────────────────────────────────────────────────
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 POR QUE SUA CONTRIBUIÇÃO IMPORTA
+
+Em 22 dias, 156 milhões de eleitores brasileiros vão às urnas.
+
+Este aplicativo opera sob princípios que outros apps eleitorais
+se recusam a seguir:
+
+  ✓ COLETA ZERO — nenhuma opinião política é armazenada
+  ✓ MATCHING STATELESS — ranking em memória volátil
+  ✓ MEMÓRIA 40/30/30 AUDITÁVEL — você vê como cada score foi formado
+  ✓ BLACKOUT ELEITORAL — zero anúncios até 05/10/2026
+  ✓ CÓDIGO 100% ABERTO — auditável no GitHub
+  ✓ STACK R$ 0/mês — independência financeira total
+
+Seu teste hoje protege a experiência de milhares de eleitores
+que usarão a ferramenta no dia 04/10/2026.
+
+Cada bug que você encontrar é um eleitor que não será enganado.
+Cada sugestão que você enviar é uma camada a mais de transparência.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 DADOS DA HOMOLOGAÇÃO
+
+Versão: 2.2.2 (Build Code 3)
+Data: 11 de setembro de 2026
+Tamanho APK: 61,44 MB
+SHA-256: 9b8f1a71f1d786eefc711c646785c9ed87338c3957a3bf6926db889bd757d6c7
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📞 CANAIS OFICIAIS
+
+• Suporte técnico: contato@eleicoesprogressistas.org.br
+• Código-fonte: github.com/fmourag/Eleicoes-Progressistas
+• Web app: eleicoes-progressistas.pages.dev
+• API pública: eleicoes-progressistas.onrender.com/api/health
+• Privacidade: eleicoes-progressistas.onrender.com/privacidade
+• Feedback web: eleicoes-progressistas.onrender.com/feedback
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⏰ CRONOGRAMA DE HOMOLOGAÇÃO
+
+• HOJE (D+0):    Instalação e testes iniciais
+• D+1 a D+3:     Exploração profunda + feedback estruturado
+• D+4 a D+7:     Correções baseadas nos feedbacks recebidos
+• D+8 a D+14:    Nova rodada de validação com fixes aplicados
+• D+15 a D+21:   Campanha pública de lançamento
+• 04/10/2026:    1º TURNO — app servindo 50.000+ eleitores
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📢 APÓS HOMOLOGAR — COMPARTILHE COM SUA REDE
+
+Quando você confirmar que o app funciona corretamente, ajude a
+difundir a iniciativa. Cada compartilhamento pode impactar
+dezenas de eleitores indecisos.
+
+MODELO PARA WHATSAPP (grupos de família/amigos):
+
+─────────────────────────────────────────────────────────────
+Oi, gente! 🇧🇷
+
+Descobri um app GRATUITO pra ajudar a escolher candidatos
+nas eleições de outubro. Diferente dos outros:
+
+✅ Não pede cadastro
+✅ Não guarda suas opiniões políticas
+✅ Não tem anúncio
+✅ Mostra COMO cada score foi calculado
+✅ Gera uma "cola eleitoral" oficial em PDF
+
+É código aberto (qualquer um pode auditar) e foi feito
+pra fortalecer a democracia, não pra vender dados.
+
+Testem e me digam o que acham:
+👉 eleicoes-progressistas.pages.dev
+
+Compartilhem com quem ainda tá indeciso! 🗳️
+─────────────────────────────────────────────────────────────
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MENSAGEM FINAL
+
+Você não está testando apenas um aplicativo.
+
+Você está validando uma infraestrutura cívica que, em 22 dias,
+pode transformar a forma como milhares de brasileiros exercem
+o direito mais fundamental da democracia: o voto consciente.
+
+Seu protocolo FB-XXX será parte da história desta eleição.
+
+Obrigado por fazer parte.
+
+Equipe Eleições Progressistas 🇧🇷
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
