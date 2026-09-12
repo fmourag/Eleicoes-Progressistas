@@ -7,7 +7,7 @@ import { Request, Response, json, urlencoded } from 'express';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { GlobalHttpExceptionFilter } from './modules/common/http-exception.filter';
-import { PRIVACY_HTML, BETA_HTML } from './modules/common/static-pages';
+import { PRIVACY_HTML, BETA_HTML, FEEDBACK_HTML } from './modules/common/static-pages';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -73,7 +73,7 @@ async function bootstrap() {
   );
 
   app.setGlobalPrefix('api', {
-    exclude: ['privacidade', 'beta'],
+    exclude: ['privacidade', 'beta', 'feedback'],
   });
 
   // Filtro Global de Exceções: oculta stack traces e detalhes de BD em respostas HTTP
@@ -94,7 +94,7 @@ async function bootstrap() {
       }
     },
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key', 'x-cron-secret', 'x-device-hash', 'x-webhook-secret'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key', 'x-admin-token', 'x-cron-secret', 'x-device-hash', 'x-webhook-secret'],
   });
 
   app.useGlobalPipes(
@@ -113,6 +113,10 @@ async function bootstrap() {
   expressApp.get('/beta', (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(BETA_HTML);
+  });
+  expressApp.get('/feedback', (_req: Request, res: Response) => {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(FEEDBACK_HTML);
   });
 
   const apiPublicDir = existsSync(join(__dirname, '..', 'public'))
@@ -134,7 +138,7 @@ async function bootstrap() {
   const webDist = join(__dirname, '..', '..', 'mobile', 'dist');
   if (existsSync(webDist)) {
     app.useStaticAssets(webDist);
-    expressApp.get(/^\/(?!api|privacidade|beta|candidates).*/, (_req: Request, res: Response) => {
+    expressApp.get(/^\/(?!api|privacidade|beta|feedback|candidates).*/, (_req: Request, res: Response) => {
       res.sendFile(join(webDist, 'index.html'));
     });
   } else {
