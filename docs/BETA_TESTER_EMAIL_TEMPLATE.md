@@ -24,7 +24,7 @@ Você foi selecionado(a) para participar do **Beta Fechado** do Eleições Progr
 
 ## 📝 Como reportar bugs e feedback
 
-Envie para: **contato@eleicoesprogressistas.org.br**
+Envie para: **fmourag@gmail.com**
 
 ---
 **Bug Report — Eleições Progressistas v2.2.1**
@@ -48,3 +48,4 @@ Equipe Eleições Progressistas
 ---
 🔗 Web: https://eleicoes-progressistas.onrender.com  
 💻 Código: https://github.com/fmourag/Eleicoes-Progressistas
+

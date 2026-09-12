@@ -25,7 +25,7 @@
 - **Todos os dados de usuários coletados pelo app são criptografados em trânsito?**  
   **RESPOSTA:** **SIM** (Todas as comunicações utilizam HTTPS/TLS 1.3 com HSTS).
 - **Você oferece um mecanismo para que os usuários solicitem a exclusão dos dados?**  
-  **RESPOSTA:** **SIM** (Canal direto de DPO/Encarregado: `contato@eleicoesprogressistas.org.br`).
+  **RESPOSTA:** **SIM** (Canal direto de DPO/Encarregado: `fmourag@gmail.com`).
 
 ---
 
@@ -44,4 +44,5 @@
 
 1. **Criptografia em Trânsito:** Protocolos TLS modernos em todos os endpoints (`https://eleicoes-progressistas.onrender.com`).
 2. **Venda e Cessão de Dados:** **ZERO compartilhamento ou comercialização** com partidos políticos, empresas de publicidade ou terceiros.
-3. **Exclusão de Dados:** Qualquer testador pode solicitar a exclusão total de seus registros de feedback enviando seu código (`EP-XXX`) para `contato@eleicoesprogressistas.org.br`.
+3. **Exclusão de Dados:** Qualquer testador pode solicitar a exclusão total de seus registros de feedback enviando seu código (`EP-XXX`) para `fmourag@gmail.com`.
+

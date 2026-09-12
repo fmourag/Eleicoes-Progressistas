@@ -65,7 +65,7 @@
 🔐 SHA-256: 9b8f1a71f1d786eefc711c646785c9ed87338c3957a3bf6926db889bd757d6c7
 
 ⚠️ Desinstale a versão anterior antes de instalar.
-Feedback: contato@eleicoesprogressistas.org.br
+Feedback: fmourag@gmail.com
 ```
 
 ### ✉️ E-mail
@@ -94,8 +94,9 @@ https://eleicoes-progressistas.onrender.com/beta
 
 ⚠️ Importante: desinstale a versão anterior antes de instalar.
 
-Envie suas impressões para: contato@eleicoesprogressistas.org.br
+Envie suas impressões para: fmourag@gmail.com
 
 Equipe Eleições Progressistas
 https://eleicoes-progressistas.onrender.com/
 ```
+
