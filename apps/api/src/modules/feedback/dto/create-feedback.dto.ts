@@ -2,9 +2,8 @@ import { IsString, IsNotEmpty, IsOptional, IsInt, Min, Max, Matches } from 'clas
 
 export class CreateFeedbackDto {
   @IsString()
-  @IsNotEmpty({ message: 'Código do Tester é obrigatório.' })
-  @Matches(/^EP-\d{3}$/i, { message: 'Código do Tester deve estar no formato EP-001 a EP-0NN.' })
-  testerCode: string;
+  @IsOptional()
+  testerName?: string;
 
   @IsString()
   @IsOptional()

@@ -23,15 +23,10 @@ if ($total -gt 0) {
     Write-Host "`nDistribuição por Tipo de Problema:" -ForegroundColor Yellow
     $feedbacks | Group-Object problema | Select-Object Count, Name | Format-Table -AutoSize
 
-    # Cruzar com testers oficiais
-    $testersCsv = "docs/tester-codes.csv"
-    if (Test-Path $testersCsv) {
-        $allTesters = Import-Csv -Path $testersCsv
-        $respondedCodes = $feedbacks | ForEach-Object { $_.testerCode } | Select-Object -Unique
-        $pending = $allTesters | Where-Object { $respondedCodes -notcontains $_.code }
-        
-        Write-Host "Status de Cobertura dos Testers:" -ForegroundColor Cyan
-        Write-Host "✅ Responderam: $($respondedCodes.Count) / $($allTesters.Count)" -ForegroundColor Green
-        Write-Host "⏳ Pendentes: $($pending.Count) / $($allTesters.Count)" -ForegroundColor Yellow
-    }
+    Write-Host "`nDistribuição por Dispositivo / OS:" -ForegroundColor Cyan
+    $feedbacks | Group-Object device | Select-Object Count, Name | Format-Table -AutoSize
+
+    Write-Host "Últimos 5 Protocolos Registrados:" -ForegroundColor Gray
+    $feedbacks | Select-Object -Last 5 protocol, createdAt, nps, problema | Format-Table -AutoSize
 }
+

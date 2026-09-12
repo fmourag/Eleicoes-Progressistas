@@ -20,11 +20,10 @@
         input[type="text"]:focus, input[type="email"]:focus, select:focus, textarea:focus {
             border-color: #1B5E20; outline: none; box-shadow: 0 0 0 2px rgba(27,94,32,0.15);
         }
-        .code-input { font-family: monospace; font-weight: bold; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; }
         .nps-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
         .nps-btn {
             flex: 1 0 calc(9% - 6px); min-width: 36px; height: 42px; border: 1px solid #ccc; background: #fff; border-radius: 6px;
-            font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justifyContent: center;
+            font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center;
         }
         .nps-btn:hover { background: #f0f7f0; border-color: #1B5E20; }
         .nps-btn.selected { background: #1B5E20; color: #fff; border-color: #1B5E20; }
@@ -36,7 +35,7 @@
         .btn-submit:hover { background: #2E7D32; }
         .btn-submit:disabled { background: #a5d6a7; cursor: not-allowed; }
         .success-box { display: none; background: #E8F5E9; border-left: 5px solid #1B5E20; padding: 24px; border-radius: 8px; text-align: center; }
-        .protocol-badge { display: inline-block; background: #1B5E20; color: #fff; font-family: monospace; font-size: 18px; padding: 6px 16px; border-radius: 6px; margin: 14px 0; }
+        .protocol-badge { display: inline-block; background: #1B5E20; color: #fff; font-family: monospace; font-size: 18px; padding: 6px 16px; border-radius: 6px; margin: 14px 0; word-break: break-all; }
         .error-msg { color: #d32f2f; font-size: 13px; margin-top: 4px; display: none; }
         footer { text-align: center; font-size: 13px; color: #777; margin-top: 30px; border-top: 1px solid #ddd; padding-top: 15px; }
         a { color: #1B5E20; }
@@ -44,9 +43,9 @@
 </head>
 <body>
     <div class="header">
-        <span class="badge">BETA TESTER FEEDBACK</span>
+        <span class="badge">AUDITORIA CÍVICA ABERTA</span>
         <h1>Eleições Progressistas</h1>
-        <p class="subtitle">Avaliação individualizada de homologação e desempenho (v2.2.2)</p>
+        <p class="subtitle">Avaliação e feedback de homologação da versão 2.2.2</p>
     </div>
 
     <div class="card" id="formCard">
@@ -55,10 +54,9 @@
             <input type="hidden" id="nps" name="nps" value="10">
 
             <div class="form-group">
-                <label for="testerCode">Código do Tester *</label>
-                <input type="text" id="testerCode" name="testerCode" class="code-input" placeholder="EP-001" required maxlength="6" pattern="^EP-\d{3}$">
-                <div class="label-desc">Seu código individual de homologação (ex.: EP-001 até EP-050).</div>
-                <div class="error-msg" id="codeError">Por favor, informe um código válido no formato EP-001.</div>
+                <label for="testerName">Seu Nome (para identificação voluntária — Opcional)</label>
+                <input type="text" id="testerName" name="testerName" placeholder="Ex.: Maria Silva ou Auditor Cívico">
+                <div class="label-desc">Opcional: qualquer cidadão pode enviar feedback aberto sem necessidade de cadastro.</div>
             </div>
 
             <div class="form-group">
@@ -116,13 +114,8 @@
             </div>
 
             <div class="form-group">
-                <label for="nome">Seu Nome (Opcional)</label>
-                <input type="text" id="nome" name="nome" placeholder="Opcional para auditoria cívica">
-            </div>
-
-            <div class="form-group">
                 <label for="email">Seu E-mail (Opcional)</label>
-                <input type="email" id="email" name="email" placeholder="Opcional">
+                <input type="email" id="email" name="email" placeholder="Opcional para contato">
             </div>
 
             <button type="submit" class="btn-submit" id="submitBtn">🚀 Enviar Feedback de Teste</button>
@@ -132,9 +125,9 @@
 
     <div class="success-box" id="successBox">
         <h2 style="color: #1B5E20; margin-top: 0;">🎉 Feedback Registrado com Sucesso!</h2>
-        <p>Seu reporte foi auditado e integrado à base de controle de qualidade da versão 2.2.2.</p>
-        <div>Protocolo de Homologação:</div>
-        <div class="protocol-badge" id="protocolBadge">FB-000</div>
+        <p>Seu reporte foi registrado e integrado à base de auditoria cívica da versão 2.2.2.</p>
+        <div>Seu protocolo de feedback é:</div>
+        <div class="protocol-badge" id="protocolBadge">FB-...</div>
         <p style="font-size: 14px; color: #555;">Muito obrigado por contribuir com a democracia e a transparência eleitoral! 🇧🇷</p>
         <p><a href="/beta" style="font-weight: bold; text-decoration: none;">← Voltar para a página de instalação Beta</a></p>
     </div>
@@ -172,13 +165,6 @@
 
             document.getElementById("device").value = dev;
             document.getElementById("androidVersion").value = os;
-
-            // Pré-preenchimento via query param ?code=EP-XXX
-            var params = new URLSearchParams(window.location.search);
-            if (params.has("code")) {
-                var c = params.get("code").trim().toUpperCase();
-                document.getElementById("testerCode").value = c;
-            }
         })();
 
         // Manipulação da escala NPS
@@ -196,30 +182,24 @@
             e.preventDefault();
             var submitBtn = document.getElementById("submitBtn");
             var submitError = document.getElementById("submitError");
-            var codeError = document.getElementById("codeError");
             submitError.style.display = "none";
-            codeError.style.display = "none";
-
-            var code = document.getElementById("testerCode").value.trim().toUpperCase();
-            if (!/^EP-\d{3}$/.test(code)) {
-                codeError.style.display = "block";
-                return;
-            }
 
             submitBtn.disabled = true;
             submitBtn.innerText = "⏳ Enviando dados de teste...";
 
+            var testerNameVal = document.getElementById("testerName").value.trim();
+
             var payload = {
-                testerCode: code,
-                nome: document.getElementById("nome").value || undefined,
-                email: document.getElementById("email").value || undefined,
+                testerName: testerNameVal || undefined,
+                nome: testerNameVal || undefined,
+                email: document.getElementById("email").value.trim() || undefined,
                 device: document.getElementById("device").value,
                 androidVersion: document.getElementById("androidVersion").value || undefined,
                 appVersion: document.getElementById("appVersion").value,
                 nps: parseInt(document.getElementById("nps").value, 10),
                 problema: document.getElementById("problema").value,
-                descricao: document.getElementById("descricao").value || undefined,
-                screenshotDesc: document.getElementById("screenshotDesc").value || undefined
+                descricao: document.getElementById("descricao").value.trim() || undefined,
+                screenshotDesc: document.getElementById("screenshotDesc").value.trim() || undefined
             };
 
             try {
@@ -249,4 +229,3 @@
     </script>
 </body>
 </html>
-

@@ -52,7 +52,7 @@ const dataSafetyContent = `# Declaração de Segurança de Dados (Data Safety) �
 - **Todos os dados de usuários coletados pelo app são criptografados em trânsito?**  
   **RESPOSTA:** **SIM** (Todas as comunicações utilizam HTTPS/TLS 1.3 com HSTS).
 - **Você oferece um mecanismo para que os usuários solicitem a exclusão dos dados?**  
-  **RESPOSTA:** **SIM** (Canal direto de DPO/Encarregado: \`contato@eleicoesprogressistas.org.br\`).
+  **RESPOSTA:** **SIM** (Canal direto de DPO/Encarregado: \`fmourag@gmail.com\`).
 
 ---
 
@@ -60,9 +60,9 @@ const dataSafetyContent = `# Declaração de Segurança de Dados (Data Safety) �
 
 | Tipo de Dado no Google Play | Campo no Schema | Obrigatório ou Opcional? | Finalidade Declarada | Compartilhado com Terceiros? | Tratamento Efêmero? |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Nome** (\`Personal info -> Name\`) | \`nome\` | **Opcional** | Comunicação com o desenvolvedor / Auditoria voluntária | **NÃO** | Não |
+| **Nome** (\`Personal info -> Name\`) | \`nome\` / \`testerName\` | **Opcional** | Comunicação com o desenvolvedor / Auditoria voluntária | **NÃO** | Não |
 | **Endereço de e-mail** (\`Personal info -> Email address\`) | \`email\` | **Opcional** | Comunicação com o desenvolvedor / Retorno de dúvidas técnicas | **NÃO** | Não |
-| **Identificadores de Dispositivo** (\`Device or other IDs\`) | \`device\`, \`androidVersion\`, \`testerCode\` | **Obrigatório no Feedback** | Funcionalidade do app / Diagnóstico e correção de bugs por modelo | **NÃO** | Não |
+| **Identificadores de Dispositivo e Protocolo** (\`Device or other IDs\`) | \`device\`, \`androidVersion\`, \`protocol\` | **Obrigatório no Feedback** | Funcionalidade do app / Diagnóstico, rastreamento de protocolo e correção de bugs por modelo | **NÃO** | Não |
 | **Conteúdo e Avaliação** (\`App info and performance -> Other actions\`) | \`nps\`, \`problema\`, \`descricao\`, \`screenshotDesc\` | **Obrigatório / Opcional** | Análise de estabilidade / Avaliação de qualidade do release | **NÃO** | Não |
 
 ---
@@ -71,7 +71,7 @@ const dataSafetyContent = `# Declaração de Segurança de Dados (Data Safety) �
 
 1. **Criptografia em Trânsito:** Protocolos TLS modernos em todos os endpoints (\`https://eleicoes-progressistas.onrender.com\`).
 2. **Venda e Cessão de Dados:** **ZERO compartilhamento ou comercialização** com partidos políticos, empresas de publicidade ou terceiros.
-3. **Exclusão de Dados:** Qualquer testador pode solicitar a exclusão total de seus registros de feedback enviando seu código (\`EP-XXX\`) para \`contato@eleicoesprogressistas.org.br\`.
+3. **Exclusão de Dados:** Qualquer participante pode solicitar a exclusão total de seus registros de feedback enviando seu protocolo de atendimento (\`FB-...\`) para \`fmourag@gmail.com\`.
 `;
 
 fs.writeFileSync(path.join(docsDir, 'PLAYSTORE_DATA_SAFETY.md'), dataSafetyContent, 'utf-8');

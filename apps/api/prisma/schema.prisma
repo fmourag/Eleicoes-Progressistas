@@ -404,7 +404,8 @@ model AggregateCounter {
 
 model Feedback {
   id             Int      @id @default(autoincrement())
-  testerCode     String
+  protocol       String   @unique
+  testerName     String?
   nome           String?
   email          String?
   device         String
@@ -416,7 +417,7 @@ model Feedback {
   screenshotDesc String?
   createdAt      DateTime @default(now())
 
-  @@index([testerCode])
+  @@index([protocol])
   @@index([createdAt])
 }
 

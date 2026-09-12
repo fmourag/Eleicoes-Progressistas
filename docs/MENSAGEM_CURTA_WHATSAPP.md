@@ -8,8 +8,8 @@
 📱 Link ÚNICO de instalação: https://eleicoes-progressistas.onrender.com/beta
 🔐 SHA-256: 9b8f1a71f1d786eefc711c646785c9ed87338c3957a3bf6926db889bd757d6c7
 
-🔑 Seu Código de Tester: [INFORMAR SEU EP-XXX]
 📝 Envio de Feedback: https://eleicoes-progressistas.onrender.com/feedback (ou direto pelo botão 💬 dentro do app)
+🚀 Ao enviar, seu Protocolo de Atendimento (FB-...) é gerado automaticamente!
 
 Dúvidas ou suporte direto: fmourag@gmail.com
 ```

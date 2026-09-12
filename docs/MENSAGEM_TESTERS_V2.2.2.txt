@@ -16,12 +16,11 @@ milhões de brasileiros escolhem seus representantes em 04/10/2026.
 🔗 LINK ÚNICO DE DOWNLOAD (igual para todos):
    https://eleicoes-progressistas.onrender.com/beta
 
-🔑 CÓDIGO INDIVIDUAL (informado APENAS no envio do feedback):
-   Cada auditor(a) recebe um código único (EP-001 a EP-050).
-   Este código só será solicitado ao enviar seu relatório de teste.
+🔑 PROTOCOLO AUTOMÁTICO DE AUDITORIA:
+   Qualquer cidadão pode auditar e enviar seu feedback.
+   Ao enviar o formulário, um protocolo exclusivo (FB-...) é emitido na hora.
 
-✅ Por que assim? Um único build auditável e replicável por todos.
-   Sua contribuição é identificada pelo seu código no feedback.
+✅ Por que assim? Um único build auditável e aberto a toda a sociedade civil.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -67,41 +66,38 @@ Execute na ordem e anote o que observou:
 
 1. Abra o app
 2. Toque no botão verde 💬 (canto inferior direito)
-3. Informe seu código individual (ex: EP-001)
-4. Selecione NPS (0-10) + tipo de problema + descrição
-5. Toque "🚀 Enviar Feedback de Teste"
-6. Guarde seu protocolo FB-XXX
+3. Selecione NPS (0-10) + tipo de problema + descrição
+4. Toque "🚀 Enviar Feedback de Teste"
+5. Guarde seu protocolo FB-... gerado instantaneamente!
 
 ┌─────────────────────────────────────────────────────────────┐
 │  MÉTODO 2 — FORMULÁRIO WEB (2 MINUTOS)                     │
 └─────────────────────────────────────────────────────────────┘
 
-Acesse seu link personalizado (código pré-preenchido):
+Acesse o formulário web:
 
-   👉 https://eleicoes-progressistas.onrender.com/feedback?code=EP-XXX
-
-Substitua EP-XXX pelo seu código individual recebido no convite.
+   👉 https://eleicoes-progressistas.onrender.com/feedback
 
 Preencha:
-  • Código do Tester (já pré-preenchido se usar o link acima)
+  • Seu Nome (opcional) / E-mail (opcional)
   • Nota NPS de 0 a 10
   • Tipo de problema encontrado (ou "Nenhum")
   • Descrição detalhada (opcional)
   • Dispositivo (detectado automaticamente)
 
-Toque "🚀 Enviar Feedback de Teste" e guarde seu protocolo FB-XXX.
+Toque "🚀 Enviar Feedback de Teste" e guarde seu protocolo FB-....
 
 ┌─────────────────────────────────────────────────────────────┐
 │  MÉTODO 3 — WHATSAPP / TELEGRAM (1 MINUTO)                 │
 └─────────────────────────────────────────────────────────────┘
 
-Copie o modelo abaixo, preencha e envie para:
-📱 +55 (11) 99999-9999 [SEU NÚMERO DE SUPORTE]
+Copie o modelo abaixo, preencha e envie para suporte/comunidade:
+📱 Canal direto / E-mail: fmourag@gmail.com
 
 ─────────────────────────────────────────────────────────────
 🐛 FEEDBACK BETA v2.2.2 — AUDITORIA CÍVICA
 
-🔑 Código Tester: [EP-XXX]
+👤 Nome / Auditor: [SEU NOME - OPCIONAL]
 📱 Dispositivo: [MODELO + ANDROID]
 ⭐ NPS (0-10): [NOTA]
 🔴 Problema: [NENHUM / FOTOS / LAYOUT / LENTIDÃO / CRASH / OUTRO]
@@ -116,7 +112,7 @@ Exemplo preenchido:
 ─────────────────────────────────────────────────────────────
 🐛 FEEDBACK BETA v2.2.2 — AUDITORIA CÍVICA
 
-🔑 Código Tester: EP-042
+👤 Nome / Auditor: Maria Silva (Opcional)
 📱 Dispositivo: Samsung Galaxy S24 Ultra (Android 14)
 ⭐ NPS (0-10): 10
 🔴 Problema: NENHUM
@@ -223,7 +219,7 @@ Você está validando uma infraestrutura cívica que, em 22 dias,
 pode transformar a forma como milhares de brasileiros exercem
 o direito mais fundamental da democracia: o voto consciente.
 
-Seu protocolo FB-XXX será parte da história desta eleição.
+Seu protocolo de auditoria será parte da história desta eleição.
 
 Obrigado por fazer parte.
 

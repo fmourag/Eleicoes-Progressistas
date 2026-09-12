@@ -1,7 +1,12 @@
-import { Injectable, BadRequestException, OnModuleInit, Logger } from '@nestjs/common';
+import { Injectable, OnModuleInit, Logger, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
-import { isValidTesterCode, VALID_TESTER_CODES } from './tester-codes';
+
+function generateProtocol(): string {
+  const timestamp = Date.now();
+  const rand = Math.random().toString(36).substring(2, 6);
+  return `FB-${timestamp}-${rand}`;
+}
 
 @Injectable()
 export class FeedbackService implements OnModuleInit {
@@ -14,7 +19,8 @@ export class FeedbackService implements OnModuleInit {
       await this.prisma.$executeRawUnsafe(`
         CREATE TABLE IF NOT EXISTS "Feedback" (
           "id" SERIAL PRIMARY KEY,
-          "testerCode" VARCHAR(20) NOT NULL,
+          "protocol" VARCHAR(60) NOT NULL UNIQUE,
+          "testerName" TEXT,
           "nome" TEXT,
           "email" TEXT,
           "device" TEXT NOT NULL,
@@ -27,13 +33,21 @@ export class FeedbackService implements OnModuleInit {
           "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
         );
       `);
+      // Se a tabela já existia sem a coluna protocol, adiciona com segurança
+      try {
+        await this.prisma.$executeRawUnsafe(`
+          ALTER TABLE "Feedback" ADD COLUMN IF NOT EXISTS "protocol" VARCHAR(60);
+          ALTER TABLE "Feedback" ADD COLUMN IF NOT EXISTS "testerName" TEXT;
+        `);
+      } catch {}
       this.logger.log('Tabela Feedback garantida no banco de dados (PostgreSQL/compatível).');
     } catch {
       try {
         await this.prisma.$executeRawUnsafe(`
           CREATE TABLE IF NOT EXISTS "Feedback" (
             "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-            "testerCode" TEXT NOT NULL,
+            "protocol" TEXT NOT NULL UNIQUE,
+            "testerName" TEXT,
             "nome" TEXT,
             "email" TEXT,
             "device" TEXT NOT NULL,
@@ -54,19 +68,16 @@ export class FeedbackService implements OnModuleInit {
   }
 
   async create(dto: CreateFeedbackDto) {
-    const code = (dto.testerCode || '').trim().toUpperCase();
-    if (!isValidTesterCode(code)) {
-      throw new BadRequestException(`Código do Tester "${dto.testerCode}" é inválido ou não cadastrado.`);
-    }
-
-    const defaultEmail = VALID_TESTER_CODES[code];
+    const protocol = generateProtocol();
+    const resolvedName = dto.testerName?.trim() || dto.nome?.trim() || null;
 
     try {
       const feedback = await this.prisma.feedback.create({
         data: {
-          testerCode: code,
-          nome: dto.nome?.trim() || null,
-          email: dto.email?.trim() || defaultEmail || null,
+          protocol,
+          testerName: resolvedName,
+          nome: resolvedName,
+          email: dto.email?.trim() || null,
           device: dto.device?.trim() || 'Desconhecido',
           androidVersion: dto.androidVersion?.trim() || null,
           appVersion: dto.appVersion?.trim() || '2.2.2',
@@ -79,21 +90,22 @@ export class FeedbackService implements OnModuleInit {
 
       return {
         id: feedback.id,
-        protocol: `FB-${feedback.id}`,
+        protocol: feedback.protocol,
       };
     } catch (err: any) {
       this.logger.error(`Erro ao salvar feedback via Prisma Client: ${err.message}`, err.stack);
       try {
         const result: any = await this.prisma.$queryRawUnsafe(`
-          INSERT INTO "Feedback" ("testerCode", "nome", "email", "device", "androidVersion", "appVersion", "nps", "problema", "descricao", "screenshotDesc")
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-          RETURNING "id"
-        `, code, dto.nome?.trim() || null, dto.email?.trim() || defaultEmail || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.2', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
+          INSERT INTO "Feedback" ("protocol", "testerName", "nome", "email", "device", "androidVersion", "appVersion", "nps", "problema", "descricao", "screenshotDesc")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+          RETURNING "id", "protocol"
+        `, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.2', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
 
         const newId = result[0]?.id || Date.now();
+        const retProtocol = result[0]?.protocol || protocol;
         return {
           id: newId,
-          protocol: `FB-${newId}`,
+          protocol: retProtocol,
         };
       } catch (sqlErr: any) {
         this.logger.error(`Fallback SQL também falhou: ${sqlErr.message}`);
@@ -113,19 +125,25 @@ export class FeedbackService implements OnModuleInit {
       : 0;
 
     const porProblema: Record<string, number> = {};
-    const porTester: Record<string, number> = {};
 
     for (const f of feedbacks) {
       porProblema[f.problema] = (porProblema[f.problema] || 0) + 1;
-      porTester[f.testerCode] = (porTester[f.testerCode] || 0) + 1;
     }
 
     return {
       total,
       avgNps,
       porProblema,
-      porTester,
-      ultimos: feedbacks.slice(0, 10),
+      ultimos: feedbacks.slice(0, 15).map((f: any) => ({
+        id: f.id,
+        protocol: f.protocol,
+        testerName: f.testerName || f.nome,
+        device: f.device,
+        nps: f.nps,
+        problema: f.problema,
+        descricao: f.descricao,
+        createdAt: f.createdAt,
+      })),
     };
   }
 
@@ -136,8 +154,8 @@ export class FeedbackService implements OnModuleInit {
 
     const header = [
       'id',
-      'testerCode',
-      'nome',
+      'protocol',
+      'testerName',
       'email',
       'device',
       'androidVersion',
@@ -158,8 +176,8 @@ export class FeedbackService implements OnModuleInit {
 
       return [
         f.id,
-        escape(f.testerCode),
-        escape(f.nome),
+        escape(f.protocol),
+        escape(f.testerName || f.nome),
         escape(f.email),
         escape(f.device),
         escape(f.androidVersion),
