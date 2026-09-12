@@ -61,25 +61,45 @@ export class FeedbackService implements OnModuleInit {
 
     const defaultEmail = VALID_TESTER_CODES[code];
 
-    const feedback = await this.prisma.feedback.create({
-      data: {
-        testerCode: code,
-        nome: dto.nome?.trim() || null,
-        email: dto.email?.trim() || defaultEmail || null,
-        device: dto.device?.trim() || 'Desconhecido',
-        androidVersion: dto.androidVersion?.trim() || null,
-        appVersion: dto.appVersion?.trim() || '2.2.2',
-        nps: Number(dto.nps),
-        problema: dto.problema?.trim() || 'nenhum',
-        descricao: dto.descricao?.trim() || null,
-        screenshotDesc: dto.screenshotDesc?.trim() || null,
-      },
-    });
+    try {
+      const feedback = await this.prisma.feedback.create({
+        data: {
+          testerCode: code,
+          nome: dto.nome?.trim() || null,
+          email: dto.email?.trim() || defaultEmail || null,
+          device: dto.device?.trim() || 'Desconhecido',
+          androidVersion: dto.androidVersion?.trim() || null,
+          appVersion: dto.appVersion?.trim() || '2.2.2',
+          nps: Number(dto.nps),
+          problema: dto.problema?.trim() || 'nenhum',
+          descricao: dto.descricao?.trim() || null,
+          screenshotDesc: dto.screenshotDesc?.trim() || null,
+        },
+      });
 
-    return {
-      id: feedback.id,
-      protocol: `FB-${feedback.id}`,
-    };
+      return {
+        id: feedback.id,
+        protocol: `FB-${feedback.id}`,
+      };
+    } catch (err: any) {
+      this.logger.error(`Erro ao salvar feedback via Prisma Client: ${err.message}`, err.stack);
+      try {
+        const result: any = await this.prisma.$queryRawUnsafe(`
+          INSERT INTO "Feedback" ("testerCode", "nome", "email", "device", "androidVersion", "appVersion", "nps", "problema", "descricao", "screenshotDesc")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+          RETURNING "id"
+        `, code, dto.nome?.trim() || null, dto.email?.trim() || defaultEmail || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.2', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
+
+        const newId = result[0]?.id || Date.now();
+        return {
+          id: newId,
+          protocol: `FB-${newId}`,
+        };
+      } catch (sqlErr: any) {
+        this.logger.error(`Fallback SQL também falhou: ${sqlErr.message}`);
+        throw new BadRequestException('Não foi possível registrar o feedback no momento.');
+      }
+    }
   }
 
   async getDashboard() {
