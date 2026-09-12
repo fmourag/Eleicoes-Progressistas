@@ -1,11 +1,57 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, OnModuleInit, Logger } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { isValidTesterCode, VALID_TESTER_CODES } from './tester-codes';
 
 @Injectable()
-export class FeedbackService {
+export class FeedbackService implements OnModuleInit {
+  private readonly logger = new Logger(FeedbackService.name);
+
   constructor(private readonly prisma: PrismaService) {}
+
+  async onModuleInit() {
+    try {
+      await this.prisma.$executeRawUnsafe(`
+        CREATE TABLE IF NOT EXISTS "Feedback" (
+          "id" SERIAL PRIMARY KEY,
+          "testerCode" VARCHAR(20) NOT NULL,
+          "nome" TEXT,
+          "email" TEXT,
+          "device" TEXT NOT NULL,
+          "androidVersion" TEXT,
+          "appVersion" TEXT NOT NULL,
+          "nps" INTEGER NOT NULL,
+          "problema" TEXT NOT NULL,
+          "descricao" TEXT,
+          "screenshotDesc" TEXT,
+          "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      this.logger.log('Tabela Feedback garantida no banco de dados (PostgreSQL/compatível).');
+    } catch {
+      try {
+        await this.prisma.$executeRawUnsafe(`
+          CREATE TABLE IF NOT EXISTS "Feedback" (
+            "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+            "testerCode" TEXT NOT NULL,
+            "nome" TEXT,
+            "email" TEXT,
+            "device" TEXT NOT NULL,
+            "androidVersion" TEXT,
+            "appVersion" TEXT NOT NULL,
+            "nps" INTEGER NOT NULL,
+            "problema" TEXT NOT NULL,
+            "descricao" TEXT,
+            "screenshotDesc" TEXT,
+            "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+          );
+        `);
+        this.logger.log('Tabela Feedback garantida no banco de dados (SQLite).');
+      } catch (err) {
+        this.logger.warn(`Nota na inicialização da tabela Feedback: ${(err as Error).message}`);
+      }
+    }
+  }
 
   async create(dto: CreateFeedbackDto) {
     const code = (dto.testerCode || '').trim().toUpperCase();
