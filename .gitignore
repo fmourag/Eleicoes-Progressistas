@@ -17,6 +17,8 @@ out/
 *.key
 *.mobileprovision
 *.orig.*
+*.apk
+*.aab
 
 # Native
 ios/Pods/
