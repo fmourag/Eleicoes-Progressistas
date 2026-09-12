@@ -15,6 +15,7 @@ export class FeedbackService implements OnModuleInit {
   constructor(private readonly prisma: PrismaService) {}
 
   async onModuleInit() {
+    // 1. PostgreSQL migrations
     try {
       await this.prisma.$executeRawUnsafe(`
         CREATE TABLE IF NOT EXISTS "Feedback" (
@@ -31,39 +32,54 @@ export class FeedbackService implements OnModuleInit {
           "descricao" TEXT,
           "screenshotDesc" TEXT,
           "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
+        )
       `);
-      // Se a tabela já existia sem a coluna protocol, adiciona com segurança
+    } catch {}
+
+    const pgMigrations = [
+      `ALTER TABLE "Feedback" ADD COLUMN IF NOT EXISTS "protocol" VARCHAR(60)`,
+      `ALTER TABLE "Feedback" ADD COLUMN IF NOT EXISTS "testerName" TEXT`,
+      `ALTER TABLE "Feedback" ALTER COLUMN "testerCode" DROP NOT NULL`,
+      `ALTER TABLE "Feedback" ALTER COLUMN "testerCode" SET DEFAULT ''`,
+      `UPDATE "Feedback" SET "protocol" = 'FB-' || "id" WHERE "protocol" IS NULL`,
+    ];
+
+    for (const sql of pgMigrations) {
       try {
-        await this.prisma.$executeRawUnsafe(`
-          ALTER TABLE "Feedback" ADD COLUMN IF NOT EXISTS "protocol" VARCHAR(60);
-          ALTER TABLE "Feedback" ADD COLUMN IF NOT EXISTS "testerName" TEXT;
-        `);
+        await this.prisma.$executeRawUnsafe(sql);
       } catch {}
-      this.logger.log('Tabela Feedback garantida no banco de dados (PostgreSQL/compatível).');
-    } catch {
+    }
+
+    // 2. SQLite migrations
+    try {
+      await this.prisma.$executeRawUnsafe(`
+        CREATE TABLE IF NOT EXISTS "Feedback" (
+          "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+          "protocol" TEXT NOT NULL UNIQUE,
+          "testerName" TEXT,
+          "nome" TEXT,
+          "email" TEXT,
+          "device" TEXT NOT NULL,
+          "androidVersion" TEXT,
+          "appVersion" TEXT NOT NULL,
+          "nps" INTEGER NOT NULL,
+          "problema" TEXT NOT NULL,
+          "descricao" TEXT,
+          "screenshotDesc" TEXT,
+          "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+    } catch {}
+
+    const sqliteMigrations = [
+      `ALTER TABLE "Feedback" ADD COLUMN "protocol" TEXT`,
+      `ALTER TABLE "Feedback" ADD COLUMN "testerName" TEXT`,
+    ];
+
+    for (const sql of sqliteMigrations) {
       try {
-        await this.prisma.$executeRawUnsafe(`
-          CREATE TABLE IF NOT EXISTS "Feedback" (
-            "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-            "protocol" TEXT NOT NULL UNIQUE,
-            "testerName" TEXT,
-            "nome" TEXT,
-            "email" TEXT,
-            "device" TEXT NOT NULL,
-            "androidVersion" TEXT,
-            "appVersion" TEXT NOT NULL,
-            "nps" INTEGER NOT NULL,
-            "problema" TEXT NOT NULL,
-            "descricao" TEXT,
-            "screenshotDesc" TEXT,
-            "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-          );
-        `);
-        this.logger.log('Tabela Feedback garantida no banco de dados (SQLite).');
-      } catch (err) {
-        this.logger.warn(`Nota na inicialização da tabela Feedback: ${(err as Error).message}`);
-      }
+        await this.prisma.$executeRawUnsafe(sql);
+      } catch {}
     }
   }
 
@@ -94,6 +110,11 @@ export class FeedbackService implements OnModuleInit {
       };
     } catch (err: any) {
       this.logger.error(`Erro ao salvar feedback via Prisma Client: ${err.message}`, err.stack);
+
+      try {
+        await this.prisma.$executeRawUnsafe(`ALTER TABLE "Feedback" ALTER COLUMN "testerCode" DROP NOT NULL`);
+      } catch {}
+
       try {
         const result: any = await this.prisma.$queryRawUnsafe(`
           INSERT INTO "Feedback" ("protocol", "testerName", "nome", "email", "device", "androidVersion", "appVersion", "nps", "problema", "descricao", "screenshotDesc")
@@ -108,8 +129,24 @@ export class FeedbackService implements OnModuleInit {
           protocol: retProtocol,
         };
       } catch (sqlErr: any) {
-        this.logger.error(`Fallback SQL também falhou: ${sqlErr.message}`);
-        throw new BadRequestException('Não foi possível registrar o feedback no momento.');
+        this.logger.warn(`Tentando fallback com coluna testerCode caso ainda exista na tabela...`);
+        try {
+          const result: any = await this.prisma.$queryRawUnsafe(`
+            INSERT INTO "Feedback" ("protocol", "testerCode", "testerName", "nome", "email", "device", "androidVersion", "appVersion", "nps", "problema", "descricao", "screenshotDesc")
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+            RETURNING "id", "protocol"
+          `, protocol, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.2', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
+
+          const newId = result[0]?.id || Date.now();
+          const retProtocol = result[0]?.protocol || protocol;
+          return {
+            id: newId,
+            protocol: retProtocol,
+          };
+        } catch (finalSqlErr: any) {
+          this.logger.error(`Fallback SQL final também falhou: ${finalSqlErr.message}`);
+          throw new BadRequestException('Não foi possível registrar o feedback no momento.');
+        }
       }
     }
   }
