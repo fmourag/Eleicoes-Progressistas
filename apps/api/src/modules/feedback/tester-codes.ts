@@ -1,4 +1,4 @@
-﻿// Gerado automaticamente por scripts/generate-tester-codes.ps1
+// Gerado automaticamente por scripts/generate-tester-codes.ps1
 export const VALID_TESTER_CODES: Record<string, string> = {
   'EP-001': 'tester1@eleicoesprogressistas.org.br',
   'EP-002': 'tester2@eleicoesprogressistas.org.br',
@@ -55,6 +55,6 @@ export const VALID_TESTER_CODES: Record<string, string> = {
 export function isValidTesterCode(code: string): boolean {
   if (!code || typeof code !== 'string') return false;
   const normalized = code.trim().toUpperCase();
-  return /^EP-\\d{3}$/.test(normalized) && Boolean(VALID_TESTER_CODES[normalized]);
+  return /^EP-\d{3}$/.test(normalized) && Boolean(VALID_TESTER_CODES[normalized]);
 }
 

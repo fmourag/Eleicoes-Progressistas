@@ -39,7 +39,7 @@ $tsContent = "// Gerado automaticamente por scripts/generate-tester-codes.ps1`n"
 "export function isValidTesterCode(code: string): boolean {`n" +
 "  if (!code || typeof code !== 'string') return false;`n" +
 "  const normalized = code.trim().toUpperCase();`n" +
-"  return /^EP-\\d{3}$/.test(normalized) && Boolean(VALID_TESTER_CODES[normalized]);`n" +
+"  return /^EP-\d{3}$/.test(normalized) && Boolean(VALID_TESTER_CODES[normalized]);`n" +
 "}`n"
 
 Set-Content -Path $tsPath -Value $tsContent -Encoding UTF8
