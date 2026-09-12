@@ -1183,18 +1183,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '500',
   },
-  colaHeaderBtn: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 5,
-    borderRadius: Radius.full,
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  colaHeaderBtnText: {
-    fontSize: FontSize.xs,
-    fontWeight: '700',
-  },
   floatingColaBar: {
     position: 'absolute',
     bottom: 0,

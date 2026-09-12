@@ -1,32 +1,54 @@
-🇧🇷 ATUALIZAÇÃO v2.2.2 — FOTOS PARLAMENTARES + UI RESPONSIVA
+🇧🇷 ATUALIZAÇÃO v2.2.2 — ELEIÇÕES PROGRESSISTAS 2026
+HOMOLOGAÇÃO DE FOTOS PARLAMENTARES + UI RESPONSIVA
 
-Olá testers! Uma nova versão do Eleições Progressistas está disponível
-com correções importantes de cobertura visual e ergonomia mobile.
+Olá, testador(a) cívico(a)! A versão v2.2.2 está disponível para homologação.
 
-📦 CORREÇÕES APLICADAS:
-✓ Fotos oficiais de parlamentares (Câmara + Senado Federal)
-✓ Cascata de fallback quando CDN do TSE está indisponível
-✓ Correção do esticamento vertical na tela inicial
-✓ Botão "← Início" sem quebra de texto
-✓ Nomes de candidatos com até 2 linhas visíveis
-✓ Barra de navegação com labels completos (sem truncamento)
-✓ Cache + retry automático (herdado da v2.2.1)
+===================================================================
+🚨 REGRA IMPORTANTE:
+O link de download do aplicativo é ÚNICO para todos os participantes:
+👉 https://eleicoes-progressistas.onrender.com/beta
+(🔐 SHA-256: 9b8f1a71f1d786eefc711c646785c9ed87338c3957a3bf6926db889bd757d6c7)
 
-🔗 INSTALAÇÃO:
-https://eleicoes-progressistas.onrender.com/beta
+O seu código individual (EP-XXX) deve ser informado APENAS no momento
+de enviar o feedback de teste, para sabermos quem testou o quê.
+===================================================================
 
-🔐 SHA-256 (verificação de integridade):
-9b8f1a71f1d786eefc711c646785c9ed87338c3957a3bf6926db889bd757d6c7
+📦 CORREÇÕES APLICADAS NA v2.2.2:
+✓ Resolução nacional de fotos parlamentares (Câmara + Senado Federal)
+✓ Cascata de fallback com fotos de lideranças e dados oficiais do TSE
+✓ Correção do esticamento vertical do card de Prioridades na tela inicial
+✓ Botão "← Início" com largura mínima sem quebra de texto (In-íc-io)
+✓ Nomes de candidatos com até 2 linhas e botão da Cola sem cortes
+✓ Barra de navegação inferior limpa sem truncamento (Candidatos, Prioridades, Minha Cola, Raio-X)
+✓ Cache e resiliência de conexão otimizados
 
-⚠️ IMPORTANTE: Desinstale a versão anterior antes de instalar a nova.
+-------------------------------------------------------------------
+📝 COMO ENVIAR SEU FEEDBACK (Escolha a opção mais rápida):
 
-📋 CHECKLIST DE TESTE (5 min):
-1. Abra a aba Candidatos → verifique fotos de Chico Alencar, Boulos, Erika Hilton
-2. Navegue para a tela inicial → cards de Prioridades sem esticamento
-3. Toque em "← Início" → texto não quebra verticalmente
-4. Abra um card de candidato → nome completo visível (até 2 linhas)
-5. Verifique barra de navegação → labels "Candidatos", "Prioridades", "Minha Cola"
+🔹 CAMADA 1 (Super rápida — 10 segundos):
+Abra o aplicativo e toque no botão flutuante 💬 no canto inferior direito. O formulário será aberto com seu aparelho já detectado.
 
-📝 FEEDBACK: contato@eleicoesprogressistas.org.br
+🔹 CAMADA 2 (Web — 2 minutos):
+Acesse o formulário web único de homologação:
+👉 https://eleicoes-progressistas.onrender.com/feedback
+Informe seu Código de Tester (ex.: EP-001) e avalie a versão.
 
-Obrigado por fortalecer a democracia brasileira! 🇧🇷
+🔹 CAMADA 3 (WhatsApp / Telegram — 1 minuto):
+Copie o modelo abaixo, preencha e envie para nosso canal:
+[CÓDIGO TESTER]: EP-XXX
+[DISPOSITIVO]: Modelo do seu celular
+[NOTA NPS 0-10]: 10
+[PROBLEMA]: Nenhum / Fotos / Layout / Lentidão / Crash
+[COMENTÁRIOS]: 
+
+-------------------------------------------------------------------
+📋 CHECKLIST RÁPIDO DE TESTE (5 min):
+1. Acesse https://eleicoes-progressistas.onrender.com/beta e instale o APK v2.2.2.
+2. Abra a aba Candidatos → confirme as fotos de deputados federais e senadores.
+3. Volte para o Início → confira que o card de Prioridades não está esticado.
+4. Clique em "← Início" → confirme que o texto não quebra verticalmente.
+5. Adicione um candidato à Cola → confirme que o botão não corta o texto.
+6. Envie seu feedback pelo botão 💬 ou pelo link /feedback!
+
+Dúvidas e suporte: contato@eleicoesprogressistas.org.br
+Muito obrigado por fortalecer a democracia brasileira! 🇧🇷

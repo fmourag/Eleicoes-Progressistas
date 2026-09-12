@@ -401,3 +401,22 @@ model AggregateCounter {
   @@map("aggregate_counters")
 }
 
+model Feedback {
+  id             Int      @id @default(autoincrement())
+  testerCode     String
+  nome           String?
+  email          String?
+  device         String
+  androidVersion String?
+  appVersion     String   @default("2.2.2")
+  nps            Int
+  problema       String
+  descricao      String?
+  screenshotDesc String?
+  createdAt      DateTime @default(now())
+
+  @@index([testerCode])
+  @@index([createdAt])
+}
+
+

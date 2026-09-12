@@ -1,8 +1,9 @@
 import { Tabs } from 'expo-router';
-import { View, Text, Platform } from 'react-native';
+import { View, Text, Platform, TouchableOpacity, Linking } from 'react-native';
 import { useBreakpoint, useMaxContentWidth } from '../../utils/responsive';
 import { useThemeColors, FontSize, Spacing } from '../../utils/theme';
 import { ThemeToggle } from '../../components/ThemeToggle';
+import { API_URL } from '../../services/api';
 
 export default function TabsLayout() {
   const bp = useBreakpoint();
@@ -79,7 +80,35 @@ export default function TabsLayout() {
           />
           <Tabs.Screen name="perfil" options={{ href: null }} />
         </Tabs>
+
+        {/* Botão Flutuante de Feedback dos Testadores */}
+        <TouchableOpacity
+          onPress={() => Linking.openURL(`${API_URL}/feedback`)}
+          activeOpacity={0.8}
+          style={{
+            position: 'absolute',
+            bottom: Platform.OS === 'ios' ? 100 : 76,
+            right: 20,
+            width: 54,
+            height: 54,
+            borderRadius: 27,
+            backgroundColor: '#1B5E20',
+            justifyContent: 'center',
+            alignItems: 'center',
+            elevation: 6,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: 0.25,
+            shadowRadius: 4,
+            zIndex: 999,
+          }}
+          accessibilityLabel="Enviar feedback de teste"
+          accessibilityRole="button"
+        >
+          <Text style={{ fontSize: 24, color: '#fff' }}>💬</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
+

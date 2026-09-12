@@ -1,0 +1,60 @@
+﻿// Gerado automaticamente por scripts/generate-tester-codes.ps1
+export const VALID_TESTER_CODES: Record<string, string> = {
+  'EP-001': 'tester1@eleicoesprogressistas.org.br',
+  'EP-002': 'tester2@eleicoesprogressistas.org.br',
+  'EP-003': 'tester3@eleicoesprogressistas.org.br',
+  'EP-004': 'tester4@eleicoesprogressistas.org.br',
+  'EP-005': 'tester5@eleicoesprogressistas.org.br',
+  'EP-006': 'tester6@eleicoesprogressistas.org.br',
+  'EP-007': 'tester7@eleicoesprogressistas.org.br',
+  'EP-008': 'tester8@eleicoesprogressistas.org.br',
+  'EP-009': 'tester9@eleicoesprogressistas.org.br',
+  'EP-010': 'tester10@eleicoesprogressistas.org.br',
+  'EP-011': 'tester11@eleicoesprogressistas.org.br',
+  'EP-012': 'tester12@eleicoesprogressistas.org.br',
+  'EP-013': 'tester13@eleicoesprogressistas.org.br',
+  'EP-014': 'tester14@eleicoesprogressistas.org.br',
+  'EP-015': 'tester15@eleicoesprogressistas.org.br',
+  'EP-016': 'tester16@eleicoesprogressistas.org.br',
+  'EP-017': 'tester17@eleicoesprogressistas.org.br',
+  'EP-018': 'tester18@eleicoesprogressistas.org.br',
+  'EP-019': 'tester19@eleicoesprogressistas.org.br',
+  'EP-020': 'tester20@eleicoesprogressistas.org.br',
+  'EP-021': 'tester21@eleicoesprogressistas.org.br',
+  'EP-022': 'tester22@eleicoesprogressistas.org.br',
+  'EP-023': 'tester23@eleicoesprogressistas.org.br',
+  'EP-024': 'tester24@eleicoesprogressistas.org.br',
+  'EP-025': 'tester25@eleicoesprogressistas.org.br',
+  'EP-026': 'tester26@eleicoesprogressistas.org.br',
+  'EP-027': 'tester27@eleicoesprogressistas.org.br',
+  'EP-028': 'tester28@eleicoesprogressistas.org.br',
+  'EP-029': 'tester29@eleicoesprogressistas.org.br',
+  'EP-030': 'tester30@eleicoesprogressistas.org.br',
+  'EP-031': 'tester31@eleicoesprogressistas.org.br',
+  'EP-032': 'tester32@eleicoesprogressistas.org.br',
+  'EP-033': 'tester33@eleicoesprogressistas.org.br',
+  'EP-034': 'tester34@eleicoesprogressistas.org.br',
+  'EP-035': 'tester35@eleicoesprogressistas.org.br',
+  'EP-036': 'tester36@eleicoesprogressistas.org.br',
+  'EP-037': 'tester37@eleicoesprogressistas.org.br',
+  'EP-038': 'tester38@eleicoesprogressistas.org.br',
+  'EP-039': 'tester39@eleicoesprogressistas.org.br',
+  'EP-040': 'tester40@eleicoesprogressistas.org.br',
+  'EP-041': 'tester41@eleicoesprogressistas.org.br',
+  'EP-042': 'tester42@eleicoesprogressistas.org.br',
+  'EP-043': 'tester43@eleicoesprogressistas.org.br',
+  'EP-044': 'tester44@eleicoesprogressistas.org.br',
+  'EP-045': 'tester45@eleicoesprogressistas.org.br',
+  'EP-046': 'tester46@eleicoesprogressistas.org.br',
+  'EP-047': 'tester47@eleicoesprogressistas.org.br',
+  'EP-048': 'tester48@eleicoesprogressistas.org.br',
+  'EP-049': 'tester49@eleicoesprogressistas.org.br',
+  'EP-050': 'tester50@eleicoesprogressistas.org.br'
+};
+
+export function isValidTesterCode(code: string): boolean {
+  if (!code || typeof code !== 'string') return false;
+  const normalized = code.trim().toUpperCase();
+  return /^EP-\\d{3}$/.test(normalized) && Boolean(VALID_TESTER_CODES[normalized]);
+}
+

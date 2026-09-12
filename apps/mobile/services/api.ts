@@ -3,7 +3,7 @@ import { CandidateClassification, GovernmentPlanDetail, CandidatePollResult, res
 
 const PRODUCTION_API_URL = 'https://eleicoes-progressistas.onrender.com';
 
-const API_URL =
+export const API_URL =
   process.env.EXPO_PUBLIC_API_URL ||
   (Platform.OS === 'web' && typeof window !== 'undefined' && window.location?.origin
     ? window.location.origin
