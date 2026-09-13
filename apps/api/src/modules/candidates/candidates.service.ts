@@ -706,4 +706,63 @@ export class CandidatesService {
   async getEligibleCargos(level: ElectionLevel) {
     return CARGOS_BY_LEVEL[level] ?? [];
   }
+
+  async resolveCandidatePhotoDynamic(
+    name?: string,
+    state?: string,
+    tseId?: string,
+    cargo?: string,
+  ): Promise<string | null> {
+    if (!name && !tseId) return null;
+
+    // 1. Tenta buscar no banco de dados se já temos a URL cadastrada
+    if (tseId) {
+      const candidate = await this.prisma.candidate.findFirst({
+        where: { OR: [{ tseId }, { id: tseId }] },
+        select: { photoUrl: true, tseId: true, name: true, cargo: true },
+      });
+      if (candidate?.photoUrl && candidate.photoUrl.startsWith('http')) {
+        return candidate.photoUrl;
+      }
+    }
+
+    // 2. Busca na Wikipédia (PageImages API)
+    const searchTerms = [name, name ? name.split(' ').slice(0, 2).join(' ') : null].filter(Boolean) as string[];
+    for (const term of searchTerms) {
+      try {
+        const encoded = encodeURIComponent(term);
+        const res = await fetch(`https://pt.wikipedia.org/w/api.php?action=query&titles=${encoded}&prop=pageimages&format=json&pithumbsize=500`);
+        if (res.ok) {
+          const json = await res.json();
+          const pages = json?.query?.pages;
+          if (pages) {
+            const firstPage = Object.values(pages)[0] as any;
+            if (firstPage?.thumbnail?.source) {
+              const url = firstPage.thumbnail.source;
+              if (url.startsWith('http') && !url.includes('Replace_this_image')) {
+                return url;
+              }
+            }
+          }
+        }
+      } catch {}
+    }
+
+    // 3. Se for Deputado Federal ou tiver nome, busca na API da Câmara dos Deputados
+    if (name) {
+      try {
+        const encoded = encodeURIComponent(name);
+        const res = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados?nome=${encoded}&ordem=ASC&ordenarPor=nome`);
+        if (res.ok) {
+          const json = await res.json();
+          const dep = json?.dados?.[0];
+          if (dep?.urlFoto) {
+            return dep.urlFoto;
+          }
+        }
+      } catch {}
+    }
+
+    return null;
+  }
 }

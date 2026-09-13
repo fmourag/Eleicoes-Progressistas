@@ -1,23 +1,30 @@
 import { Platform } from 'react-native';
-import { CandidateClassification, GovernmentPlanDetail, CandidatePollResult, resolveCandidatePhotoUrl } from '@np/shared';
+import { CandidateClassification, GovernmentPlanDetail, CandidatePollResult, resolveCandidatePhotoUrl, resolveCandidatePhotoFallbackChain } from '@np/shared';
 
 const PRODUCTION_API_URL = 'https://eleicoes-progressistas.onrender.com';
 
-export const API_URL = (() => {
-  if (process.env.EXPO_PUBLIC_API_URL) {
-    return process.env.EXPO_PUBLIC_API_URL.replace(/\/+$/, '');
-  }
-  if (Platform.OS === 'web' && typeof window !== 'undefined' && window.location?.hostname) {
+export function getApiBaseUrl(): string {
+  if (typeof window !== 'undefined' && window.location?.hostname) {
     const host = window.location.hostname;
-    if (host.includes('pages.dev') || host.includes('eleicoesprogressistas') || host.includes('onrender.com')) {
+    // Se estiver rodando na nuvem (Cloudflare Pages, Vercel, domínio próprio, etc.)
+    if (host !== 'localhost' && host !== '127.0.0.1') {
       return PRODUCTION_API_URL;
     }
+    // Se for localhost web
     if (host === 'localhost' || host === '127.0.0.1') {
       return window.location.port === '3000' ? window.location.origin : 'http://localhost:3000';
     }
   }
+
+  const envUrl = process.env.EXPO_PUBLIC_API_URL?.trim();
+  if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
+    return envUrl.replace(/\/+$/, '');
+  }
+
   return PRODUCTION_API_URL;
-})();
+}
+
+export const API_URL = getApiBaseUrl();
 
 let authToken: string | null = null;
 
@@ -120,36 +127,32 @@ export interface RaioXData {
   pollResult?: CandidatePollResult;
 }
 
+export function getCandidatePhotoFallbackChain(params: {
+  photoUrl?: string | null;
+  tseId?: string | null;
+  cargo?: string | null;
+  name?: string | null;
+  id?: string | null;
+  state?: string | null;
+  party?: string | null;
+}): string[] {
+  return resolveCandidatePhotoFallbackChain({
+    ...params,
+    baseUrl: API_URL,
+  });
+}
+
 export function getCandidatePhotoUrl(
   photoUrl?: string | null,
   tseId?: string | null,
   cargo?: string | null,
   name?: string | null,
-  id?: string | null
+  id?: string | null,
+  state?: string | null,
+  party?: string | null
 ): string {
-  // 1. Tenta resolver via inteligência parlamentar e TSE de @np/shared
-  const resolved = resolveCandidatePhotoUrl({ photoUrl, tseId, cargo, name, id });
-  if (resolved) {
-    return resolved;
-  }
-
-  // 2. Se for uma URL externa
-  if (photoUrl && (photoUrl.startsWith('http://') || photoUrl.startsWith('https://'))) {
-    return photoUrl.replace(/^http:\/\//i, 'https://');
-  }
-
-  // 3. Fallback para API do backend caso seja relativo
-  const base = API_URL.replace(/\/+$/, '');
-  if (photoUrl && photoUrl.startsWith('/')) {
-    return `${base}${photoUrl}`;
-  }
-  if (photoUrl) {
-    return `${base}/candidates/${photoUrl}`;
-  }
-  if (tseId) {
-    return `${base}/candidates/${tseId}.jpg`;
-  }
-  return '';
+  const chain = getCandidatePhotoFallbackChain({ photoUrl, tseId, cargo, name, id, state, party });
+  return chain[0] || '';
 }
 
 export const DEFAULT_API_TIMEOUT = 60000;

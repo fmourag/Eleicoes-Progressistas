@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { useBreakpoint } from '../utils/responsive';
 
-import { getCandidatePhotoUrl } from '../services/api';
+import { getCandidatePhotoFallbackChain } from '../services/api';
 import { getNumeroUrna } from '@np/shared';
 import { useColaStore } from '../stores/cola.store';
 
@@ -24,7 +24,7 @@ interface CandidateCardProps {
   supportedBy?: string | null;
   candidaturaStatus?: 'EM_ANALISE' | 'DEFERIDO' | 'INDEFERIDO' | 'CASSADO' | 'RENUNCIA';
   fichaLimpa?: boolean;
-  onPress: () => void;
+  onPress?: () => void;
 }
 
 function formatCargoLabel(cargo: string, hasVice?: boolean): string {
@@ -68,13 +68,42 @@ export function CandidateCard({
   const bp = useBreakpoint();
   const colors = useThemeColors();
   const initials = getInitials(name);
+
+  const fallbackChain = useMemo(() => {
+    return getCandidatePhotoFallbackChain({
+      photoUrl,
+      tseId,
+      cargo,
+      name,
+      id,
+      state,
+      party,
+    });
+  }, [photoUrl, tseId, cargo, name, id, state, party]);
+
+  const [currentSourceIndex, setCurrentSourceIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
+
+  // Reinicia o índice quando os dados do candidato mudam
+  useEffect(() => {
+    setCurrentSourceIndex(0);
+    setImageError(false);
+  }, [photoUrl, tseId, id]);
+
+  const currentPhoto = fallbackChain[currentSourceIndex] || '';
+  const showImage = Boolean(currentPhoto) && !imageError;
+
+  const handleImageError = () => {
+    if (currentSourceIndex < fallbackChain.length - 1) {
+      setCurrentSourceIndex((prev) => prev + 1);
+    } else {
+      setImageError(true);
+    }
+  };
 
   const { isCandidateSelected, addOrReplaceCandidate, removeCandidate } = useColaStore();
   const selectedForCola = id ? isCandidateSelected(id) : false;
 
-  const resolvedPhoto = getCandidatePhotoUrl(photoUrl, tseId, cargo, name, id);
-  const showImage = Boolean(resolvedPhoto) && !imageError;
   const isPending = candidaturaStatus === 'EM_ANALISE';
   const votingNumber = numeroUrna || getNumeroUrna({ cargo, partyNumber, party, tseId, name });
   const hasAlliance = isProgressiveSupported || Boolean(supportedBy) || Boolean(coalition);
@@ -93,7 +122,7 @@ export function CandidateCard({
         party,
         partyNumber,
         numeroUrna: votingNumber,
-        photoUrl: resolvedPhoto || photoUrl,
+        photoUrl: currentPhoto || photoUrl,
         tseId,
         state,
         fichaLimpa,
@@ -125,10 +154,10 @@ export function CandidateCard({
           <View style={[styles.photoContainer, { backgroundColor: colors.surfaceAlt, borderColor: colors.primaryBorder }]}>
             {showImage ? (
               <Image
-                source={{ uri: resolvedPhoto }}
+                source={{ uri: currentPhoto }}
                 style={styles.photoImage}
                 resizeMode="cover"
-                onError={() => setImageError(true)}
+                onError={handleImageError}
               />
             ) : (
               <View style={[styles.avatarFallback, { backgroundColor: colors.primaryLight }]}>

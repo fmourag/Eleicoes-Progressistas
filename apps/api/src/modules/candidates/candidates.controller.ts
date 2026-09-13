@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Param, Query, Body, Inject, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Param, Query, Body, Inject, UseGuards, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { CandidatesService } from './candidates.service';
 import { TseCandidatesService } from './tse-candidates.service';
 import { AdminGuard } from '../auth/admin.guard';
@@ -9,6 +10,21 @@ export class CandidatesController {
     @Inject(CandidatesService) private candidatesService: CandidatesService,
     @Inject(TseCandidatesService) private tseCandidatesService: TseCandidatesService,
   ) {}
+
+  @Get('photo-proxy')
+  async getCandidatePhotoProxy(
+    @Query('name') name?: string,
+    @Query('state') state?: string,
+    @Query('tseId') tseId?: string,
+    @Query('cargo') cargo?: string,
+    @Res() res?: Response,
+  ) {
+    const photoUrl = await this.candidatesService.resolveCandidatePhotoDynamic(name, state, tseId, cargo);
+    if (photoUrl) {
+      return res?.redirect(photoUrl);
+    }
+    return res?.status(404).send({ message: 'Photo not found' });
+  }
 
   @Get()
   async findAll(

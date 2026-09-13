@@ -478,15 +478,102 @@ export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
   'ale_rj_carlosminc': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Carlos_Minc_2022.jpg/500px-Carlos_Minc_2022.jpg',
   'ale_sp_suplicy': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/38.jpg',
   'ale_rs_lucianagenro': 'https://www.camara.leg.br/internet/deputado/bandep/74844.jpg',
-  'ale_pr_renatofreitas': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Renato_Freitas_em_2023.jpg/500px-Renato_Freitas_em_2023.jpg',
-  'ale_ba_lidice': 'https://www.camara.leg.br/internet/deputado/bandep/74352.jpg',
-  'ale_pe_daniportela': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Dani_Portela_em_2023.jpg/500px-Dani_Portela_em_2023.jpg',
-  'ale_am_sinesio': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Sin%C3%A9sio_Campos.jpg/500px-Sin%C3%A9sio_Campos.jpg',
-  'ale_ac_edvaldo': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Edvaldo_Magalh%C3%A3es.jpg/500px-Edvaldo_Magalh%C3%A3es.jpg',
-  'ale_mg_bellagoncalves': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Bella_Gon%C3%A7alves_em_2023.jpg/500px-Bella_Gon%C3%A7alves_em_2023.jpg',
-  'ale_rj_flavioserafini': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Fl%C3%A1vio_Serafini_em_2022.jpg/500px-Fl%C3%A1vio_Serafini_em_2022.jpg',
-  'ale_sp_helou': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Marina_Helou_em_2020.jpg/500px-Marina_Helou_em_2020.jpg',
+  // Rio de Janeiro
+  'gov_rj_juliete': 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Juliete_Pantoja_%28foto_oficial_para_o_TSE%29_-_2022_-_FRJ190001609712_div.jpg',
+  'gov_rj_siri': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Eduardo_Paes_em_2021.jpg/500px-Eduardo_Paes_em_2021.jpg',
+  'ale_rj_danimonteiro': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Renata_Souza_em_2022.jpg/500px-Renata_Souza_em_2022.jpg',
+
+  // Outras Lideranças e Deputados Estaduais / Federais
+  'dep_ap_acacio': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Acacio_Favacho.jpg/500px-Acacio_Favacho.jpg',
+  'sen_pr_carol': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/2023-07-03_Ses%C3%A3o_Solene_-_Dia_Mundial_do_Refugiado_06_%28cropped%29.jpg/500px-2023-07-03_Ses%C3%A3o_Solene_-_Dia_Mundial_do_Refugiado_06_%28cropped%29.jpg',
+  'ale_mg_andreia': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/Andr%C3%A9ia_de_Jesus.jpg/500px-Andr%C3%A9ia_de_Jesus.jpg',
+  'ale_mg_beatrizcerqueira': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Deputada_Beatriz_Cerqueira_2023.jpg/500px-Deputada_Beatriz_Cerqueira_2023.jpg',
+  'ale_go_biadelima': 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Bia_de_Lima_em_2022.jpg',
+  'sen_es_camila': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/2023-02-01_Deputada_Camila_Valad%C3%A3o.jpg/500px-2023-02-01_Deputada_Camila_Valad%C3%A3o.jpg',
+  'ale_es_camila': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/2023-02-01_Deputada_Camila_Valad%C3%A3o.jpg/500px-2023-02-01_Deputada_Camila_Valad%C3%A3o.jpg',
+  'dep_es_camila': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/2023-02-01_Deputada_Camila_Valad%C3%A3o.jpg/500px-2023-02-01_Deputada_Camila_Valad%C3%A3o.jpg',
+  'sen_ap_camilo': 'https://upload.wikimedia.org/wikipedia/commons/2/23/Camilo_Capiberibe_em_novembro_de_2011_%28cropped%29.jpg',
+  'dep_pi_castro': 'https://www.camara.leg.br/internet/deputado/bandep/220699.jpg',
+  'ale_df_chicovigilante': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Chico_Vigilante_%28cropped%29.jpg/500px-Chico_Vigilante_%28cropped%29.jpg',
+  'ale_ma_carloslula': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Carlos_Minc_2022.jpg/500px-Carlos_Minc_2022.jpg',
 };
+
+/**
+ * Retorna uma cadeia ordenada de URLs de fallback para a foto do candidato.
+ * Permite que o componente de UI tente a próxima fonte caso a primeira falhe (404/400).
+ */
+export function resolveCandidatePhotoFallbackChain(candidate: {
+  photoUrl?: string | null;
+  tseId?: string | null;
+  cargo?: string | null;
+  name?: string | null;
+  id?: string | null;
+  state?: string | null;
+  party?: string | null;
+  baseUrl?: string;
+}): string[] {
+  const urls: string[] = [];
+  const photoUrl = candidate.photoUrl?.trim() || '';
+  const tseId = candidate.tseId?.trim() || candidate.id?.trim() || '';
+  const cleanPhotoKey = photoUrl.replace(/^\/?candidates\//, '').replace(/\.jpg$/i, '');
+  const base = (candidate.baseUrl || 'https://eleicoes-progressistas.onrender.com').replace(/\/+$/, '');
+
+  // 1. URL explícita válida externa (HTTPS)
+  if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
+    urls.push(photoUrl.replace(/^http:\/\//i, 'https://'));
+  }
+
+  // 2. Mapeamento explícito de fotos parlamentares e lideranças nacionais
+  if (tseId && KNOWN_PARLIAMENTARY_PHOTOS[tseId]) {
+    urls.push(KNOWN_PARLIAMENTARY_PHOTOS[tseId]);
+  }
+  if (cleanPhotoKey && KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]) {
+    urls.push(KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]);
+  }
+
+  // 3. Imagem estática hospedada no backend da aplicação
+  if (photoUrl && photoUrl.startsWith('/')) {
+    urls.push(`${base}${photoUrl}`);
+  }
+  if (tseId) {
+    urls.push(`${base}/candidates/${tseId}.jpg`);
+  }
+  if (cleanPhotoKey && cleanPhotoKey !== tseId) {
+    urls.push(`${base}/candidates/${cleanPhotoKey}.jpg`);
+  }
+
+  // 4. Portal da Câmara dos Deputados (para deputados federais)
+  const depMatch = tseId.match(/^dep_(\d+)$/) || photoUrl.match(/dep_(\d+)/);
+  if (depMatch && depMatch[1]) {
+    urls.push(`https://www.camara.leg.br/internet/deputado/bandep/${depMatch[1]}.jpg`);
+  }
+
+  // 5. Portal do Senado Federal (para senadores)
+  const senMatch = tseId.match(/^sen_(\d+)$/) || photoUrl.match(/sen_(\d+)/);
+  if (senMatch && senMatch[1]) {
+    urls.push(`https://www.senado.leg.br/senadores/img/fotos-oficiais/${senMatch[1]}.jpg`);
+  }
+
+  // 6. Proxy Inteligente de Fotos do Backend (busca dinâmica na Wikipédia e Dados Abertos)
+  const searchName = candidate.name?.trim() || candidate.tseId || '';
+  if (searchName) {
+    const qName = encodeURIComponent(searchName);
+    const qUf = encodeURIComponent(candidate.state || 'BR');
+    const qTseId = encodeURIComponent(tseId);
+    urls.push(`${base}/api/candidates/photo-proxy?name=${qName}&state=${qUf}&tseId=${qTseId}`);
+  }
+
+  // 7. Fallback oficial DivulgaCandContas do TSE
+  const isNumericTseId = /^\d+$/.test(tseId) || /^\d+$/.test(cleanPhotoKey);
+  if (isNumericTseId) {
+    const numId = /^\d+$/.test(tseId) ? tseId : cleanPhotoKey;
+    urls.push(`https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto/2045202026/${numId}`);
+    urls.push(`https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto/2040602022/${numId}`);
+  }
+
+  // Remove duplicados e strings vazias preservando a ordem de prioridade
+  return [...new Set(urls.filter(Boolean))];
+}
 
 /**
  * Resolve a melhor URL de foto disponível para um candidato:
@@ -503,45 +590,8 @@ export function resolveCandidatePhotoUrl(candidate: {
   name?: string | null;
   id?: string | null;
 }): string {
-  const photoUrl = candidate.photoUrl?.trim() || '';
-  const tseId = (candidate.tseId?.trim() || candidate.id?.trim() || '');
-
-  // 1. Se já for uma URL HTTP/HTTPS externa válida
-  if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
-    return photoUrl.replace(/^http:\/\//i, 'https://');
-  }
-
-  // 2. Mapeamento explícito de fotos parlamentares e lideranças nacionais
-  if (tseId && KNOWN_PARLIAMENTARY_PHOTOS[tseId]) {
-    return KNOWN_PARLIAMENTARY_PHOTOS[tseId];
-  }
-
-  // Se photoUrl contiver referência a arquivo conhecido (ex: /candidates/gov_rj_paes.jpg)
-  const cleanPhotoKey = photoUrl.replace(/^\/?candidates\//, '').replace(/\.jpg$/i, '');
-  if (cleanPhotoKey && KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]) {
-    return KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey];
-  }
-
-  // 3. Resolução isolada de Deputados Federais na API/Portal da Câmara dos Deputados
-  const depMatch = tseId.match(/^dep_(\d+)$/) || photoUrl.match(/dep_(\d+)/);
-  if (depMatch && depMatch[1]) {
-    return `https://www.camara.leg.br/internet/deputado/bandep/${depMatch[1]}.jpg`;
-  }
-
-  // 4. Resolução isolada de Senadores no Portal do Senado Federal
-  const senMatch = tseId.match(/^sen_(\d+)$/) || photoUrl.match(/sen_(\d+)/);
-  if (senMatch && senMatch[1]) {
-    return `https://www.senado.leg.br/senadores/img/fotos-oficiais/${senMatch[1]}.jpg`;
-  }
-
-  // 5. Fallback para Foto Oficial de Campanha no TSE (DivulgaCandContas)
-  const isNumericTseId = /^\d+$/.test(tseId) || /^\d+$/.test(cleanPhotoKey);
-  if (isNumericTseId) {
-    const numId = /^\d+$/.test(tseId) ? tseId : cleanPhotoKey;
-    return `https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto/2045202026/${numId}`;
-  }
-
-  return '';
+  const chain = resolveCandidatePhotoFallbackChain(candidate);
+  return chain[0] || '';
 }
 
 export function getTseDadosAbertosSearchUrl(query: string): string {
