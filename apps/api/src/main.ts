@@ -7,7 +7,7 @@ import { Request, Response, json, urlencoded } from 'express';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { GlobalHttpExceptionFilter } from './modules/common/http-exception.filter';
-import { PRIVACY_HTML, BETA_HTML, FEEDBACK_HTML } from './modules/common/static-pages';
+import { PRIVACY_HTML, BETA_HTML, FEEDBACK_HTML, DASHBOARD_HTML } from './modules/common/static-pages';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -73,7 +73,7 @@ async function bootstrap() {
   );
 
   app.setGlobalPrefix('api', {
-    exclude: ['privacidade', 'beta'],
+    exclude: ['privacidade', 'beta', 'feedback', 'feedback/painel', 'painel', 'admin/feedback'],
   });
 
   // Filtro Global de Exceções: oculta stack traces e detalhes de BD em respostas HTTP
@@ -159,6 +159,10 @@ async function bootstrap() {
   expressApp.get('/feedback', (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(FEEDBACK_HTML);
+  });
+  expressApp.get(['/feedback/painel', '/painel', '/admin/feedback', '/api/feedback/painel', '/api/feedback/dashboard-view'], (_req: Request, res: Response) => {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(DASHBOARD_HTML);
   });
 
   const apiPublicDir = existsSync(join(__dirname, '..', 'public'))
