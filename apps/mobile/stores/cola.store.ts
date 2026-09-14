@@ -16,31 +16,81 @@ export interface ColaCandidate {
   fichaLimpa?: boolean;
 }
 
+export type ColaSlotKey =
+  | 'DEPUTADO_FEDERAL'
+  | 'DEPUTADO_ESTADUAL'
+  | 'SENADOR_1'
+  | 'SENADOR_2'
+  | 'GOVERNADOR'
+  | 'PRESIDENTE';
+
+export const COLA_SLOTS: { key: ColaSlotKey; cargo: string; title: string; digits: number; orderLabel: string }[] = [
+  { key: 'DEPUTADO_FEDERAL', cargo: 'DEPUTADO_FEDERAL', title: 'Deputado(a) Federal', digits: 4, orderLabel: '1º A VOTAR' },
+  { key: 'DEPUTADO_ESTADUAL', cargo: 'DEPUTADO_ESTADUAL', title: 'Deputado(a) Estadual / Distrital', digits: 5, orderLabel: '2º A VOTAR' },
+  { key: 'SENADOR_1', cargo: 'SENADOR', title: 'Senador(a) — 1ª Vaga', digits: 3, orderLabel: '3º A VOTAR' },
+  { key: 'SENADOR_2', cargo: 'SENADOR', title: 'Senador(a) — 2ª Vaga', digits: 3, orderLabel: '4º A VOTAR' },
+  { key: 'GOVERNADOR', cargo: 'GOVERNADOR', title: 'Governador(a)', digits: 2, orderLabel: '5º A VOTAR' },
+  { key: 'PRESIDENTE', cargo: 'PRESIDENTE', title: 'Presidente da República', digits: 2, orderLabel: '6º A VOTAR' },
+];
+
 interface ColaState {
-  selectedCandidates: Record<string, ColaCandidate>; // chave: cargo (ex: 'PRESIDENTE', 'GOVERNADOR', etc.)
+  selectedCandidates: Record<string, ColaCandidate>; // Chaves: 'DEPUTADO_FEDERAL', 'DEPUTADO_ESTADUAL', 'SENADOR_1', 'SENADOR_2', 'GOVERNADOR', 'PRESIDENTE'
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
-  addOrReplaceCandidate: (candidate: ColaCandidate) => void;
+  addOrReplaceCandidate: (candidate: ColaCandidate, targetSlot?: ColaSlotKey) => void;
   removeCandidate: (candidateId: string) => void;
-  removeCandidateByCargo: (cargo: string) => void;
+  removeCandidateByCargo: (slotOrCargo: string) => void;
   clearCola: () => void;
   isCandidateSelected: (candidateId: string) => boolean;
+  getCandidateSlot: (candidateId: string) => ColaSlotKey | null;
   getSelectedList: () => ColaCandidate[];
   getCount: () => number;
   hasGeneratedPdfInSession: boolean;
   setHasGeneratedPdfInSession: (val: boolean) => void;
 }
 
-const STORAGE_KEY = 'np_cola_eleitoral_v1';
+const STORAGE_KEY = 'np_cola_eleitoral_v2';
+const LEGACY_STORAGE_KEY = 'np_cola_eleitoral_v1';
+
+function normalizeCargoKey(rawCargo: string): ColaSlotKey | null {
+  const c = rawCargo.toUpperCase();
+  if (c === 'PRESIDENTE') return 'PRESIDENTE';
+  if (c === 'GOVERNADOR') return 'GOVERNADOR';
+  if (c === 'DEPUTADO_FEDERAL') return 'DEPUTADO_FEDERAL';
+  if (c === 'DEPUTADO_ESTADUAL' || c === 'DEPUTADO_DISTRITAL') return 'DEPUTADO_ESTADUAL';
+  if (c === 'SENADOR_1') return 'SENADOR_1';
+  if (c === 'SENADOR_2') return 'SENADOR_2';
+  return null;
+}
 
 function loadSavedCola(): Record<string, ColaCandidate> {
   if (typeof window !== 'undefined' && window.localStorage) {
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
+      let raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        raw = window.localStorage.getItem(LEGACY_STORAGE_KEY);
+      }
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed && typeof parsed === 'object') {
-          return parsed;
+          const result: Record<string, ColaCandidate> = {};
+          
+          // Migração de chaves
+          for (const [k, v] of Object.entries(parsed)) {
+            if (!v || typeof v !== 'object') continue;
+            const cand = v as ColaCandidate;
+            if (k === 'SENADOR' || k === 'SENADOR_1') {
+              result['SENADOR_1'] = cand;
+            } else if (k === 'SENADOR_2') {
+              result['SENADOR_2'] = cand;
+            } else {
+              const slot = normalizeCargoKey(k) || normalizeCargoKey(cand.cargo);
+              if (slot) {
+                result[slot] = cand;
+              }
+            }
+          }
+          return result;
         }
       }
     } catch {}
@@ -64,15 +114,59 @@ export const useColaStore = create<ColaState>((set, get) => ({
   setModalOpen: (modalOpen) => set({ modalOpen }),
   setHasGeneratedPdfInSession: (hasGeneratedPdfInSession) => set({ hasGeneratedPdfInSession }),
 
-  addOrReplaceCandidate: (candidate) => {
-    const cargoKey = candidate.cargo.toUpperCase();
+  addOrReplaceCandidate: (candidate, targetSlot) => {
     set((state) => {
-      const updated = {
-        ...state.selectedCandidates,
-        [cargoKey]: candidate,
+      const current = { ...state.selectedCandidates };
+      const rawCargo = candidate.cargo.toUpperCase();
+
+      let assignedSlot: ColaSlotKey | null = targetSlot || null;
+
+      if (!assignedSlot) {
+        if (rawCargo === 'PRESIDENTE') {
+          assignedSlot = 'PRESIDENTE';
+        } else if (rawCargo === 'GOVERNADOR') {
+          assignedSlot = 'GOVERNADOR';
+        } else if (rawCargo === 'DEPUTADO_FEDERAL') {
+          assignedSlot = 'DEPUTADO_FEDERAL';
+        } else if (rawCargo === 'DEPUTADO_ESTADUAL' || rawCargo === 'DEPUTADO_DISTRITAL') {
+          assignedSlot = 'DEPUTADO_ESTADUAL';
+        } else if (rawCargo === 'SENADOR' || rawCargo === 'SENADOR_1' || rawCargo === 'SENADOR_2') {
+          // Regra de 2 Senadores:
+          // Se já está na vaga 1, substitui vaga 1
+          if (current['SENADOR_1']?.id === candidate.id) {
+            assignedSlot = 'SENADOR_1';
+          } else if (current['SENADOR_2']?.id === candidate.id) {
+            assignedSlot = 'SENADOR_2';
+          } else if (!current['SENADOR_1']) {
+            assignedSlot = 'SENADOR_1';
+          } else if (!current['SENADOR_2']) {
+            assignedSlot = 'SENADOR_2';
+          } else {
+            // Ambas as vagas ocupadas: substitui a vaga 2 (ou a mais recente)
+            assignedSlot = 'SENADOR_2';
+          }
+        }
+      }
+
+      if (!assignedSlot) {
+        return state;
+      }
+
+      // Evita o mesmo candidato duplicado em vagas diferentes de Senador
+      if (assignedSlot === 'SENADOR_1' && current['SENADOR_2']?.id === candidate.id) {
+        delete current['SENADOR_2'];
+      }
+      if (assignedSlot === 'SENADOR_2' && current['SENADOR_1']?.id === candidate.id) {
+        delete current['SENADOR_1'];
+      }
+
+      current[assignedSlot] = {
+        ...candidate,
+        cargo: assignedSlot.startsWith('SENADOR') ? 'SENADOR' : candidate.cargo,
       };
-      saveColaToStorage(updated);
-      return { selectedCandidates: updated };
+
+      saveColaToStorage(current);
+      return { selectedCandidates: current };
     });
   },
 
@@ -89,11 +183,16 @@ export const useColaStore = create<ColaState>((set, get) => ({
     });
   },
 
-  removeCandidateByCargo: (cargo) => {
-    const cargoKey = cargo.toUpperCase();
+  removeCandidateByCargo: (slotOrCargo) => {
     set((state) => {
       const updated = { ...state.selectedCandidates };
-      delete updated[cargoKey];
+      const key = slotOrCargo.toUpperCase();
+      if (updated[key]) {
+        delete updated[key];
+      } else if (key === 'SENADOR') {
+        delete updated['SENADOR_1'];
+        delete updated['SENADOR_2'];
+      }
       saveColaToStorage(updated);
       return { selectedCandidates: updated };
     });
@@ -109,11 +208,28 @@ export const useColaStore = create<ColaState>((set, get) => ({
     return Object.values(map).some((c) => c.id === candidateId);
   },
 
+  getCandidateSlot: (candidateId) => {
+    const map = get().selectedCandidates;
+    for (const [k, v] of Object.entries(map)) {
+      if (v?.id === candidateId) return k as ColaSlotKey;
+    }
+    return null;
+  },
+
   getSelectedList: () => {
-    return Object.values(get().selectedCandidates);
+    // Retorna ordenado conforme a sequência oficial de votação
+    const map = get().selectedCandidates;
+    const list: ColaCandidate[] = [];
+    for (const slot of COLA_SLOTS) {
+      if (map[slot.key]) {
+        list.push(map[slot.key]);
+      }
+    }
+    return list;
   },
 
   getCount: () => {
     return Object.keys(get().selectedCandidates).length;
   },
 }));
+

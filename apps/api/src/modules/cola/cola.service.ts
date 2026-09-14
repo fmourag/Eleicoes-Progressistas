@@ -224,13 +224,40 @@ export class ColaService {
         currentY += 90;
       }
 
+      let senatorCount = 0;
       for (let i = 0; i < candidates.length; i++) {
         const cand = candidates[i];
-        const cfg = CARGO_CONFIG[cand.cargo.toUpperCase()] || {
-          title: cand.cargo.replace(/_/g, ' '),
-          digits: 2,
-          orderLabel: `${i + 1}º A VOTAR`,
-        };
+        let title = '';
+        let orderLabel = '';
+        let digitsCount = 2;
+
+        const rawCargo = cand.cargo.toUpperCase();
+        if (rawCargo === 'DEPUTADO_FEDERAL') {
+          title = 'DEPUTADO(A) FEDERAL';
+          digitsCount = 4;
+          orderLabel = '1º A VOTAR';
+        } else if (rawCargo === 'DEPUTADO_ESTADUAL' || rawCargo === 'DEPUTADO_DISTRITAL') {
+          title = rawCargo === 'DEPUTADO_DISTRITAL' ? 'DEPUTADO(A) DISTRITAL' : 'DEPUTADO(A) ESTADUAL';
+          digitsCount = 5;
+          orderLabel = '2º A VOTAR';
+        } else if (rawCargo.startsWith('SENADOR')) {
+          senatorCount++;
+          title = senatorCount === 1 ? 'SENADOR(A) — 1ª VAGA' : 'SENADOR(A) — 2ª VAGA';
+          digitsCount = 3;
+          orderLabel = senatorCount === 1 ? '3º A VOTAR' : '4º A VOTAR';
+        } else if (rawCargo === 'GOVERNADOR') {
+          title = 'GOVERNADOR(A)';
+          digitsCount = 2;
+          orderLabel = '5º A VOTAR';
+        } else if (rawCargo === 'PRESIDENTE') {
+          title = 'PRESIDENTE DA REPÚBLICA';
+          digitsCount = 2;
+          orderLabel = '6º A VOTAR';
+        } else {
+          title = rawCargo.replace(/_/g, ' ');
+          digitsCount = 2;
+          orderLabel = `${i + 1}º A VOTAR`;
+        }
 
         const resolvedNumber = cand.numeroUrna || getNumeroUrna({
           cargo: cand.cargo,
@@ -251,7 +278,7 @@ export class ColaService {
         doc.fillColor('#38BDF8')
           .font('Helvetica-Bold')
           .fontSize(8.5)
-          .text(`${cfg.orderLabel} • ${cfg.title} (${cfg.digits} DÍGITOS)`, margin + 10, currentY + 6);
+          .text(`${orderLabel} • ${title} (${digitsCount} DÍGITOS)`, margin + 10, currentY + 6);
 
         if (cand.state && cand.cargo !== 'PRESIDENTE') {
           doc.fillColor('#94A3B8')

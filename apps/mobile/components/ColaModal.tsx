@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { useBreakpoint } from '../utils/responsive';
-import { useColaStore, ColaCandidate } from '../stores/cola.store';
+import { useColaStore, ColaCandidate, COLA_SLOTS } from '../stores/cola.store';
 import { useLocationStore } from '../stores/location.store';
 import { getCandidatePhotoUrl, API_URL } from '../services/api';
 import { PixApoio } from './PixApoio';
@@ -24,13 +24,7 @@ interface ColaModalProps {
   onSelectCargoToChoose?: (cargo: string) => void;
 }
 
-const VOTING_SEQUENCE = [
-  { key: 'DEPUTADO_FEDERAL', title: 'Deputado(a) Federal', orderLabel: '1º A VOTAR', digits: 4 },
-  { key: 'DEPUTADO_ESTADUAL', title: 'Deputado(a) Estadual / Distrital', orderLabel: '2º A VOTAR', digits: 5 },
-  { key: 'SENADOR', title: 'Senador(a)', orderLabel: '3º A VOTAR', digits: 3 },
-  { key: 'GOVERNADOR', title: 'Governador(a)', orderLabel: '4º A VOTAR', digits: 2 },
-  { key: 'PRESIDENTE', title: 'Presidente da República', orderLabel: '5º A VOTAR', digits: 2 },
-];
+const VOTING_SEQUENCE = COLA_SLOTS;
 
 function getInitials(name: string): string {
   const parts = name.trim().split(' ').filter(Boolean);
@@ -353,7 +347,7 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
                     style={[styles.chooseBtn, { backgroundColor: colors.primary }]}
                     onPress={() => {
                       onClose();
-                      onSelectCargoToChoose?.(seq.key);
+                      onSelectCargoToChoose?.((seq as any).cargo || seq.key);
                     }}
                     activeOpacity={0.8}
                   >

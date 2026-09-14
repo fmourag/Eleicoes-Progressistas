@@ -3,20 +3,17 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Activity
 import { router } from 'expo-router';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
 import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
-import { useColaStore } from '../../stores/cola.store';
+import { useColaStore, COLA_SLOTS } from '../../stores/cola.store';
 import { useLocationStore } from '../../stores/location.store';
 import { PixApoio } from '../../components/PixApoio';
 import { ColaModal } from '../../components/ColaModal';
 import { CivicBanner } from '../../components/CivicBanner';
 import { API_URL } from '../../services/api';
 
-const VOTING_SEQUENCE = [
-  { key: 'DEPUTADO_FEDERAL', title: 'Deputado(a) Federal', orderLabel: '1º A VOTAR', digits: 4, orderNum: '1º' },
-  { key: 'DEPUTADO_ESTADUAL', title: 'Deputado(a) Estadual', orderLabel: '2º A VOTAR', digits: 5, orderNum: '2º' },
-  { key: 'SENADOR', title: 'Senador(a)', orderLabel: '3º A VOTAR', digits: 3, orderNum: '3º' },
-  { key: 'GOVERNADOR', title: 'Governador(a)', orderLabel: '4º A VOTAR', digits: 2, orderNum: '4º' },
-  { key: 'PRESIDENTE', title: 'Presidente da República', orderLabel: '5º A VOTAR', digits: 2, orderNum: '5º' },
-];
+const VOTING_SEQUENCE = COLA_SLOTS.map((s, idx) => ({
+  ...s,
+  orderNum: `${idx + 1}º`,
+}));
 
 export default function ColaScreen() {
   const colors = useThemeColors();
