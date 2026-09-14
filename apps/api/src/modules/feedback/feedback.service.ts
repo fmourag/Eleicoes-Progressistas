@@ -171,14 +171,18 @@ export class FeedbackService implements OnModuleInit {
       total,
       avgNps,
       porProblema,
-      ultimos: feedbacks.slice(0, 15).map((f: any) => ({
+      ultimos: feedbacks.slice(0, 100).map((f: any) => ({
         id: f.id,
         protocol: f.protocol,
-        testerName: f.testerName || f.nome,
-        device: f.device,
+        testerName: f.testerName || f.nome || 'Anônimo',
+        email: f.email || '-',
+        device: f.device || '-',
+        androidVersion: f.androidVersion || '-',
+        appVersion: f.appVersion || '-',
         nps: f.nps,
         problema: f.problema,
-        descricao: f.descricao,
+        descricao: f.descricao || '',
+        screenshotDesc: f.screenshotDesc || '',
         createdAt: f.createdAt,
       })),
     };
