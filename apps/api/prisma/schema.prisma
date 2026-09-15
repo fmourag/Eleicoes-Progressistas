@@ -97,6 +97,10 @@ model Candidate {
   isProgressiveSupported Boolean          @default(false)
   supportedBy         String?
   electionResult      ElectionResult?
+  rawTseData          Json?
+  source              String            @default("LEGACY")
+  tseValidated        Boolean           @default(false)
+  visible             Boolean           @default(true)
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
 

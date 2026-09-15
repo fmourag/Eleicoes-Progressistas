@@ -598,7 +598,6 @@ export function resolveCandidatePhotoFallbackChain(candidate: {
   if (isNumericTseId) {
     const numId = /^\d+$/.test(tseId) ? tseId : cleanPhotoKey;
     urls.push(`https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto/2045202026/${numId}`);
-    urls.push(`https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto/2040602022/${numId}`);
   }
 
   // Remove duplicados e strings vazias preservando a ordem de prioridade

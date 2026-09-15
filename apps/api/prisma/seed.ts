@@ -944,6 +944,10 @@ const REAL_STATE_DEPUTIES = [
 ];
 
 async function main() {
+  if (process.env.ALLOW_LEGACY_SYNC !== 'true') {
+    console.log('🛡️ [GUARD] Seed legado desativado. Em produção/homologação o escritor oficial é TseSyncService.');
+    return;
+  }
   console.log('🚀 Iniciando Carga de Dados Reais e Atuais da Política Brasileira 2026...');
 
   const camaraDeputies = await fetchFederalDeputies();

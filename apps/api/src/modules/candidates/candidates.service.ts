@@ -431,6 +431,7 @@ export class CandidatesService {
         cargo: cargo ? (cargo as Cargo) : { in: upcomingCargos },
         electionYear: UPCOMING_ELECTION.year,
         fichaLimpa: true,
+        visible: true,
         OR: [
           { party: { notIn: excludedParties } },
           { isProgressiveSupported: true },

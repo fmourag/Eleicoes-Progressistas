@@ -1,19 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
-
-const dbPath = path.resolve(process.cwd(), 'apps/api/dev.db');
-process.env.DATABASE_URL = `file:${dbPath}`;
-
+import * as dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: `file:${dbPath}`,
-    },
-  },
-});
+dotenv.config({ path: path.resolve(__dirname, '../apps/api/.env') });
+
+const prisma = new PrismaClient();
 
 const PILLARS = [
   'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7',
@@ -26,66 +19,41 @@ async function main() {
     fs.mkdirSync(outputDir, { recursive: true });
   }
 
-  console.log('Fetching candidates from database at', dbPath);
-  let candidates: any[] = [];
-  try {
-    candidates = await prisma.candidate.findMany({
-      where: {
-        electionYear: 2026,
-      },
-      select: {
-        id: true,
-        tseId: true,
-        name: true,
-        socialName: true,
-        viceName: true,
-        party: true,
-        partyNumber: true,
-        numeroUrna: true,
-        cargo: true,
-        level: true,
-        candidaturaStatus: true,
-        municipality: true,
-        state: true,
-        photoUrl: true,
-        fichaLimpa: true,
-        profileScores: true,
-      },
-    });
-  } catch (err) {
-    console.warn('Could not query database directly, fallback to memory seed dataset:', (err as Error).message);
-  }
+  console.log('Fetching reconciled candidates from database (visible=true, tseValidated=true)...');
+  const candidates = await prisma.candidate.findMany({
+    where: {
+      electionYear: 2026,
+      visible: true,
+      tseValidated: true,
+    },
+    select: {
+      id: true,
+      tseId: true,
+      name: true,
+      socialName: true,
+      viceName: true,
+      party: true,
+      partyNumber: true,
+      numeroUrna: true,
+      cargo: true,
+      level: true,
+      candidaturaStatus: true,
+      municipality: true,
+      state: true,
+      photoUrl: true,
+      fichaLimpa: true,
+      profileScores: true,
+      source: true,
+      tseValidated: true,
+    },
+    orderBy: [
+      { state: 'asc' },
+      { cargo: 'asc' },
+      { name: 'asc' },
+    ],
+  });
 
-  if (candidates.length === 0) {
-    console.log('Loading seed candidates with parliamentary photo resolution...');
-    // Lê candidatos de candidates-2026.json anterior se existente ou resolve fotos
-    const existingFile = path.join(outputDir, 'candidates-2026.json');
-    if (fs.existsSync(existingFile)) {
-      try {
-        const raw = JSON.parse(fs.readFileSync(existingFile, 'utf-8'));
-        if (Array.isArray(raw) && raw.length > 0) {
-          const { resolveCandidatePhotoUrl } = require('../packages/shared/dist');
-          candidates = raw.map((c: any) => {
-            const photoUrl = resolveCandidatePhotoUrl({
-              photoUrl: c.photoUrl,
-              tseId: c.tseId,
-              cargo: c.cargo,
-              name: c.name,
-              id: c.id,
-            });
-            return {
-              ...c,
-              photoUrl: photoUrl || c.photoUrl,
-            };
-          });
-        }
-      } catch (e) {
-        console.warn('Fallback error:', e);
-      }
-    }
-  }
-
-  console.log(`Exporting ${candidates.length} candidates to candidates-2026.json...`);
+  console.log(`Exporting ${candidates.length} reconciled candidates to candidates-2026.json...`);
   const candidatesFilePath = path.join(outputDir, 'candidates-2026.json');
   fs.writeFileSync(candidatesFilePath, JSON.stringify(candidates, null, 2), 'utf-8');
 
@@ -207,14 +175,14 @@ async function main() {
     metadata: {
       year: 2026,
       app: 'Eleições Progressistas',
-      version: '2.2.2',
+      version: '2.2.3',
     },
   };
 
   const colaTemplateFilePath = path.join(outputDir, 'cola-template.json');
   fs.writeFileSync(colaTemplateFilePath, JSON.stringify(colaTemplate, null, 2), 'utf-8');
 
-  // 4. manifest.json (hash SHA-256 de cada arquivo, data de corte, versão 2.2.0)
+  // 4. manifest.json (hash SHA-256 de cada arquivo, data de corte, versão 2.2.3)
   console.log('Generating manifest.json...');
   const filesToHash = [
     'candidates-2026.json',
@@ -235,7 +203,7 @@ async function main() {
   }
 
   const manifest = {
-    version: '2.2.2',
+    version: '2.2.3',
     cutoffDate: new Date().toISOString(),
     files: fileManifests,
   };

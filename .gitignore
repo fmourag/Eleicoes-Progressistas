@@ -64,3 +64,5 @@ apps/api/prisma/migrations/
 dev.db
 scratch/
 Iniciando
+tmp/
+*.zip

@@ -1,18 +1,18 @@
 {
-  "version": "2.2.2",
-  "cutoffDate": "2026-09-11T23:37:17.462Z",
+  "version": "2.2.3",
+  "cutoffDate": "2026-09-15T18:05:23.926Z",
   "files": {
     "candidates-2026.json": {
-      "sizeBytes": 251229,
-      "sha256": "736a98f720cd48bdfa76805d9f1c54b99328a7943fa6d6d888127e8c46cfcec5"
+      "sizeBytes": 3693546,
+      "sha256": "7ace566904dc4aa2bce79892159fcf454391d0a5bdf06e8c9cdbb60b5b6fa527"
     },
     "scores-summary.json": {
-      "sizeBytes": 7866,
-      "sha256": "22609fcb6b1fe3cb1e8b7fbaa98ebf8eab65926c57cdf61c84f46c93f7804c36"
+      "sizeBytes": 5334,
+      "sha256": "fa132e04b0c4631bd04499b7cddd55ffcf98b6fe42a17b60fbe3f9124dfcdb24"
     },
     "cola-template.json": {
       "sizeBytes": 1391,
-      "sha256": "37ab1bfb238889b3080d2e84ca63c05257b6afcd3c35adba3c71217f8a848d1e"
+      "sha256": "9715b55c269970eacd3a0acf458e88be67823dfdebff88fbbc25ab017478e07a"
     }
   }
 }

@@ -102,5 +102,15 @@ npx tsx scripts/sync-tse.ts --dry-run
 ---
 
 ## 📜 Citação da Fonte e Conformidade Legal
-- **Fonte Oficial:** Tribunal Superior Eleitoral — Portal DivulgaCandContas e Dados Abertos TSE.
+- **Fonte Oficial:** Tribunal Superior Eleitoral — Portal DivulgaCandContas e Dados Abertos TSE (`consulta_cand_2026`).
 - **Base Legal:** Dados estritamente públicos de candidaturas conforme Lei das Eleições (Lei nº 9.504/1997) e LGPD (Art. 7º, § 4º da Lei nº 13.709/2018).
+
+---
+
+## 🔒 Regras de Ouro e Governança de Dados (v2.2.3)
+1. **Ground Truth Absoluto:** Apenas o TSE 2026 (`consulta_cand_2026` e DivulgaCandContas 2026) constitui fonte oficial da verdade. Seeds, dados legados de 2022 ou arquivos estáticos obsoletos nunca sobressaem sobre os dados oficiais.
+2. **Escritor Único em Produção:** `TseSyncService` é o único serviço autorizado a escrever ou atualizar registros na tabela `Candidate`. Scripts manuais legados possuem guardas de segurança ativas (`ALLOW_LEGACY_SYNC !== 'true'`).
+3. **Eliminação do Fallback 2022:** Todo resquício de election ID `2040602022` ou anos passados foi permanentemente descontinuado.
+4. **Vices e Chapas:** Nomes de Vice-Governador e Vice-Presidente são extraídos diretamente das chapas oficiais do TSE vinculadas pelo mesmo `SQ_COLIGACAO`.
+5. **Auditoria Contínua:** Divergências são registradas e auditadas em `docs/DIVERGENCIAS_TSE.csv` e `docs/AUDITORIA_CONSISTENCIA_TSE.md`.
+
