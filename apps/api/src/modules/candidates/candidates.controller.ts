@@ -113,7 +113,7 @@ export class CandidatesController {
     return this.tseCandidatesService.fetchCampaignFinances('2045202026', cargo, uf, tseId);
   }
 
-  @Get(':id')
+  @Get(':id([0-9a-fA-F-]{36})')
   async findOne(@Param('id') id: string) {
     return this.candidatesService.findById(id);
   }

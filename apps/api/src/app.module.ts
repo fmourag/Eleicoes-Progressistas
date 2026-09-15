@@ -6,6 +6,7 @@ import { PrismaModule } from './modules/common/prisma.module';
 import { SupabaseModule } from './modules/common/supabase/supabase.module';
 import { HealthController } from './modules/common/health.controller';
 import { AuthModule } from './modules/auth/auth.module';
+import { TseSyncModule } from './modules/candidates/tse/tse-sync.module';
 import { CandidatesModule } from './modules/candidates/candidates.module';
 import { MatchingModule } from './modules/matching/matching.module';
 import { GeoModule } from './modules/geo/geo.module';
@@ -17,7 +18,6 @@ import { PublicApiModule } from './modules/public-api/public-api.module';
 import { WatchdogModule } from './modules/watchdog/watchdog.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { FeedbackModule } from './modules/feedback/feedback.module';
-import { TseSyncModule } from './modules/candidates/tse/tse-sync.module';
 import { OpsController } from './modules/common/ops.controller';
 import { PagesController } from './modules/common/pages.controller';
 import { OpsModeService } from './modules/common/ops-mode.service';
@@ -38,6 +38,7 @@ import { APP_GUARD } from '@nestjs/core';
     PrismaModule,
     SupabaseModule,
     AuthModule,
+    TseSyncModule,
     CandidatesModule,
     MatchingModule,
     GeoModule,
@@ -49,7 +50,6 @@ import { APP_GUARD } from '@nestjs/core';
     WatchdogModule,
     ReportsModule,
     FeedbackModule,
-    TseSyncModule,
   ],
   controllers: [HealthController, OpsController, PagesController],
   providers: [
