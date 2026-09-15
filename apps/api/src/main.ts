@@ -196,5 +196,8 @@ async function bootstrap() {
   logger.log(`API running on :${port}`);
   if (existsSync(webDist)) logger.log(`Web static served from ${webDist}`);
 }
-bootstrap();
+bootstrap().catch((err) => {
+  console.error('FATAL BOOTSTRAP ERROR:', err);
+  process.exit(1);
+});
 
