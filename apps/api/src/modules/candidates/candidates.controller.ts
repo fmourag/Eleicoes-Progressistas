@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Param, Query, Body, Inject, UseGuards, Res } from '@nestjs/common';
+import { Controller, Get, Param, Query, Inject, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { CandidatesService } from './candidates.service';
 import { TseCandidatesService } from './tse-candidates.service';
-import { AdminGuard } from '../auth/admin.guard';
 
 @Controller('candidates')
 export class CandidatesController {
@@ -86,16 +85,7 @@ export class CandidatesController {
     };
   }
 
-  @UseGuards(AdminGuard)
-  @Post('sync-tse')
-  async syncWithTse(@Body() body?: { candidateId?: string }) {
-    if (body?.candidateId) {
-      return this.tseCandidatesService.syncCandidateWithTse(body.candidateId);
-    }
-    return this.tseCandidatesService.syncAllBatch();
-  }
-
-  @Get(':id/tse-detail')
+  @Get(':id([0-9a-fA-F-]{36})/tse-detail')
   async getTseDetail(@Param('id') id: string) {
     const candidate = (await this.candidatesService.findById(id)) as any;
     const uf: string = candidate?.state || 'BR';
@@ -104,7 +94,7 @@ export class CandidatesController {
     return this.tseCandidatesService.fetchCandidateDetail(year, '2045202026', uf, tseId);
   }
 
-  @Get(':id/finances')
+  @Get(':id([0-9a-fA-F-]{36})/finances')
   async getFinances(@Param('id') id: string) {
     const candidate = (await this.candidatesService.findById(id)) as any;
     const cargo: string = candidate?.cargo || 'PRESIDENTE';
@@ -118,7 +108,7 @@ export class CandidatesController {
     return this.candidatesService.findById(id);
   }
 
-  @Get(':id/raio-x')
+  @Get(':id([0-9a-fA-F-]{36})/raio-x')
   async getRaioX(@Param('id') id: string) {
     return this.candidatesService.getRaioX(id);
   }
