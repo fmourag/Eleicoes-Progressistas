@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cargo, ElectionLevel, CandidaturaStatus } from '@prisma/client';
-import { EXCLUDED_CONSERVATIVE_PARTIES } from '@np/shared';
+import { EXCLUDED_CONSERVATIVE_PARTIES, normalizePartyName } from '@np/shared';
 import * as crypto from 'crypto';
 import {
   TseCandidateResponse,
@@ -12,12 +12,33 @@ import { TSE_CONFIG } from './tse.config';
 @Injectable()
 export class TseMapperService {
   /**
-   * Verifica se o partido está na lista de exclusão
+   * Verifica se o partido está na lista de exclusão (com resiliência a diacríticos e mojibake)
    */
   isPartyExcluded(partySigla: string): boolean {
     if (!partySigla) return false;
-    const normalized = partySigla.trim().toUpperCase();
-    return EXCLUDED_CONSERVATIVE_PARTIES.includes(normalized as any);
+    const rawUpper = partySigla.trim().toUpperCase();
+    const normalized = normalizePartyName(partySigla);
+
+    if ((EXCLUDED_CONSERVATIVE_PARTIES as readonly string[]).includes(rawUpper)) {
+      return true;
+    }
+    if (
+      (EXCLUDED_CONSERVATIVE_PARTIES as readonly string[]).some(
+        (p) => normalizePartyName(p) === normalized
+      )
+    ) {
+      return true;
+    }
+    if (
+      normalized.includes('UNIAO') ||
+      normalized.includes('MISSAO') ||
+      normalized.includes('DEMOCRATA') ||
+      normalized === 'DC' ||
+      normalized === 'PRTB'
+    ) {
+      return true;
+    }
+    return false;
   }
 
   /**

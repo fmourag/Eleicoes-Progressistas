@@ -262,6 +262,8 @@ export const EXCLUDED_CONSERVATIVE_PARTIES = [
   'UNIAO',
   'UNIÃO BRASIL',
   'UNIAO BRASIL',
+  'UNIÃƒO',
+  'UNIÃƒO BRASIL',
   'PATRIOTA',
   'PATRIOTAS',
   'AVANTE',
@@ -275,7 +277,25 @@ export const EXCLUDED_CONSERVATIVE_PARTIES = [
   'PMDB',
   'MISSÃO',
   'MISSAO',
+  'MISSÃƒO',
+  'DEM',
+  'DEMOCRATA',
+  'DEMOCRATAS',
+  'PRTB',
+  'DC',
+  'DEMOCRACIA CRISTÃ',
+  'DEMOCRACIA CRISTA',
 ] as const;
+
+export function normalizePartyName(party: string): string {
+  if (!party) return '';
+  return party
+    .trim()
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Z0-9]/g, '');
+}
 
 export const PROGRESSIVE_COALITION_CORE_PARTIES = [
   'PT',
@@ -302,7 +322,17 @@ export function isCandidateAllowedInProgressiveRoll(candidate: {
   if (candidate.supportedBy && candidate.supportedBy.trim().length > 0) return true;
 
   const partyUpper = (candidate.party || '').trim().toUpperCase();
-  const isExcluded = (EXCLUDED_CONSERVATIVE_PARTIES as readonly string[]).includes(partyUpper);
+  const normalizedParty = normalizePartyName(candidate.party);
+
+  const isExcluded =
+    (EXCLUDED_CONSERVATIVE_PARTIES as readonly string[]).includes(partyUpper) ||
+    (EXCLUDED_CONSERVATIVE_PARTIES as readonly string[]).some(
+      (p) => normalizePartyName(p) === normalizedParty
+    ) ||
+    normalizedParty.includes('UNIAO') ||
+    normalizedParty.includes('MISSAO') ||
+    normalizedParty.includes('DEMOCRATA');
+
   if (!isExcluded) return true;
 
   // If candidate is from an excluded party, allow if they are part of a progressive alliance/coalition
