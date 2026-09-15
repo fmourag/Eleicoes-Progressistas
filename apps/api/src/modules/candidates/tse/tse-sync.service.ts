@@ -14,6 +14,7 @@ import axios from 'axios';
 import AdmZip from 'adm-zip';
 import { parse } from 'csv-parse';
 import * as https from 'https';
+import * as fs from 'fs';
 import { Readable } from 'stream';
 
 @Injectable()
@@ -425,17 +426,22 @@ export class TseSyncService {
     this.addLog(`Iniciando sincronização Dados Abertos CSV (${csvOrZipUrl})`);
 
     try {
-      const response = await axios.get(csvOrZipUrl, {
-        responseType: 'arraybuffer',
-        timeout: 60000,
-        httpsAgent: this.httpsAgent,
-        headers: {
-          'User-Agent': TSE_CONFIG.USER_AGENT,
-          Accept: '*/*',
-        },
-      });
-
-      const buffer = Buffer.from(response.data);
+      let buffer: Buffer;
+      if (fs.existsSync(csvOrZipUrl)) {
+        this.logger.log(`Carregando arquivo local de Dados Abertos: ${csvOrZipUrl}`);
+        buffer = fs.readFileSync(csvOrZipUrl);
+      } else {
+        const response = await axios.get(csvOrZipUrl, {
+          responseType: 'arraybuffer',
+          timeout: 60000,
+          httpsAgent: this.httpsAgent,
+          headers: {
+            'User-Agent': TSE_CONFIG.USER_AGENT,
+            Accept: '*/*',
+          },
+        });
+        buffer = Buffer.from(response.data);
+      }
       const isZip = csvOrZipUrl.endsWith('.zip') || (buffer[0] === 0x50 && buffer[1] === 0x4b);
 
       if (isZip) {

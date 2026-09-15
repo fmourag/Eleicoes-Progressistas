@@ -13,6 +13,7 @@ async function main() {
   let isDryRun = false;
   let isPhotosOnly = false;
   let limit = 2000;
+  let localFile: string | null = null;
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--uf' && args[i + 1]) {
@@ -23,6 +24,9 @@ async function main() {
       i++;
     } else if (args[i] === '--csv') {
       isCsv = true;
+    } else if (args[i] === '--file' && args[i + 1]) {
+      localFile = args[i + 1];
+      i++;
     } else if (args[i] === '--dry-run') {
       isDryRun = true;
     } else if (args[i] === '--photos-only') {
@@ -40,6 +44,7 @@ async function main() {
     console.log(`Modo: Job Dedicado de Fotos (Teto: ${limit})`);
   } else {
     console.log(`Modo: ${isCsv ? 'Dados Abertos (CSV/ZIP)' : 'API REST DivulgaCandContas (Somente Listagem)'}`);
+    if (localFile) console.log(`Arquivo Local: ${localFile}`);
     if (targetUf) console.log(`Filtro UF: ${targetUf}`);
     if (targetCargo) console.log(`Filtro Cargo ID: ${targetCargo}`);
     if (isDryRun) console.log('\x1b[33m%s\x1b[0m', '⚠️  Modo Dry-Run ATIVADO: Nenhuma gravação no banco será realizada.');
@@ -60,8 +65,9 @@ async function main() {
       console.log(`Iniciando download e cache de fotos com teto de ${limit}...`);
       result = await syncService.syncPhotosOnly(limit);
     } else if (isCsv) {
-      console.log('Iniciando sincronização via Dados Abertos CSV...');
-      result = await syncService.syncFromCsv(undefined, { dryRun: isDryRun });
+      const csvSource = localFile || TSE_CONFIG.FALLBACK_CSV_URL;
+      console.log(`Iniciando sincronização via Dados Abertos CSV (${csvSource})...`);
+      result = await syncService.syncFromCsv(csvSource, { dryRun: isDryRun });
     } else {
       const ufs = targetUf ? [targetUf] : undefined;
       const cargos = targetCargo
@@ -101,6 +107,12 @@ function printSummary(result: TseSyncResult, durationMs: number) {
     });
     if (result.errors.length > 10) {
       console.log(`   ...e mais ${result.errors.length - 10} erros nos logs.`);
+    }
+    if (result.errors.some((e) => e.error?.includes('403'))) {
+      console.log('\n\x1b[36m%s\x1b[0m', '💡 DICA SOBRE BLOQUEIO WAF DO TSE:');
+      console.log('   O firewall Akamai do TSE bloqueia downloads automatizados por script.');
+      console.log('   Você pode baixar o arquivo zip diretamente pelo seu navegador no Portal de Dados Abertos e rodar:');
+      console.log('   npx tsx scripts/sync-tse.ts --csv --file ./consulta_cand_2026.zip\n');
     }
   }
   console.log('\x1b[32m%s\x1b[0m', '===============================================================');
