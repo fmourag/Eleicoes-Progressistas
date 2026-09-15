@@ -4,7 +4,7 @@ import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { useBreakpoint } from '../utils/responsive';
 
 import { getCandidatePhotoFallbackChain } from '../services/api';
-import { getNumeroUrna } from '@np/shared';
+import { getNumeroUrna, isNeutralMatchingProfile, INSUFFICIENT_DATA_LABEL } from '@np/shared';
 import { useColaStore } from '../stores/cola.store';
 
 interface CandidateCardProps {
@@ -17,7 +17,10 @@ interface CandidateCardProps {
   tseId?: string;
   state?: string;
   cargo: string;
-  score?: number;
+  score?: number | null;
+  matchScore?: number | null;
+  hasInsufficientData?: boolean;
+  profileScores?: Record<string, number> | null;
   photoUrl?: string;
   coalition?: string | null;
   isProgressiveSupported?: boolean;
@@ -57,6 +60,9 @@ export function CandidateCard({
   state,
   cargo,
   score,
+  matchScore,
+  hasInsufficientData,
+  profileScores,
   photoUrl,
   coalition,
   isProgressiveSupported,
@@ -130,7 +136,13 @@ export function CandidateCard({
     }
   }
 
-  const isHighScore = score !== undefined && score >= 85;
+  const isInsufficient = Boolean(
+    hasInsufficientData ||
+    (profileScores && isNeutralMatchingProfile(profileScores))
+  );
+
+  const effectiveScore = matchScore !== undefined ? matchScore : score;
+  const isHighScore = !isInsufficient && effectiveScore !== undefined && effectiveScore !== null && effectiveScore >= 85;
 
   return (
     <TouchableOpacity
@@ -178,24 +190,41 @@ export function CandidateCard({
             <Text style={[styles.name, { color: colors.text }, bp === 'desktop' && styles.nameDesktop]} numberOfLines={2}>
               {name}
             </Text>
-            {score !== undefined && (
+            {isInsufficient ? (
               <View style={styles.headerBadgesRow}>
                 <View
                   style={[
                     styles.scoreBadge,
                     {
-                      backgroundColor: score >= 75 ? colors.primaryLight : score >= 50 ? colors.warningBg : colors.errorBg,
-                      borderColor: score >= 75 ? colors.primaryBorder : score >= 50 ? colors.warningBorder : colors.error,
+                      backgroundColor: '#FEF3C7',
+                      borderColor: '#F59E0B',
                       borderWidth: 1,
                     },
                   ]}
                 >
-                  <Text style={[styles.scoreText, { color: score >= 75 ? colors.primary : score >= 50 ? colors.warning : colors.error }]}>
-                    ⚡ {Math.round(score)}% Match
+                  <Text style={[styles.scoreText, { color: '#B45309' }]}>
+                    ⚡ — Match
                   </Text>
                 </View>
               </View>
-            )}
+            ) : effectiveScore !== undefined && effectiveScore !== null ? (
+              <View style={styles.headerBadgesRow}>
+                <View
+                  style={[
+                    styles.scoreBadge,
+                    {
+                      backgroundColor: effectiveScore >= 75 ? colors.primaryLight : effectiveScore >= 50 ? colors.warningBg : colors.errorBg,
+                      borderColor: effectiveScore >= 75 ? colors.primaryBorder : effectiveScore >= 50 ? colors.warningBorder : colors.error,
+                      borderWidth: 1,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.scoreText, { color: effectiveScore >= 75 ? colors.primary : effectiveScore >= 50 ? colors.warning : colors.error }]}>
+                    ⚡ {Math.round(effectiveScore)}% Match
+                  </Text>
+                </View>
+              </View>
+            ) : null}
           </View>
 
           {viceName ? (
@@ -249,6 +278,15 @@ export function CandidateCard({
             <View style={[styles.allianceBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.primaryBorder }]}>
               <Text style={[styles.allianceBadgeText, { color: colors.primary }]} numberOfLines={1}>
                 🤝 {supportedBy || coalition || 'Apoio de Coligação Progressista'}
+              </Text>
+            </View>
+          )}
+
+          {/* Insufficient Public Data Warning Badge */}
+          {isInsufficient && (
+            <View style={[styles.insufficientBadge, { backgroundColor: '#FEF3C7', borderColor: '#F59E0B' }]}>
+              <Text style={[styles.insufficientBadgeText, { color: '#B45309' }]}>
+                ⚠️ {INSUFFICIENT_DATA_LABEL}
               </Text>
             </View>
           )}
@@ -464,6 +502,18 @@ const styles = StyleSheet.create({
   },
   allianceBadgeText: {
     fontSize: 10,
+    fontWeight: '700',
+  },
+  insufficientBadge: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 3,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    marginTop: 4,
+    alignSelf: 'flex-start',
+  },
+  insufficientBadgeText: {
+    fontSize: 10.5,
     fontWeight: '700',
   },
   tseText: {

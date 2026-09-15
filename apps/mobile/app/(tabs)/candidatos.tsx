@@ -48,6 +48,8 @@ interface CandidateListItem {
   fichaLimpa: boolean;
   candidaturaStatus?: 'EM_ANALISE' | 'DEFERIDO' | 'INDEFERIDO' | 'CASSADO' | 'RENUNCIA';
   overallCommitmentScore?: number;
+  hasInsufficientData?: boolean;
+  profileScores?: Record<string, number> | null;
 }
 
 const CARGO_ORDER = ['PRESIDENTE', 'GOVERNADOR', 'SENADOR', 'DEPUTADO_FEDERAL', 'DEPUTADO_ESTADUAL'];
@@ -619,6 +621,8 @@ export default function CandidatosScreen() {
                       supportedBy={item.supportedBy}
                       candidaturaStatus={item.candidaturaStatus}
                       fichaLimpa={item.fichaLimpa}
+                      hasInsufficientData={item.hasInsufficientData}
+                      profileScores={item.profileScores}
                       onPress={() => router.push(`/(tabs)/raio-x?id=${item.id}`)}
                     />
                     <CandidaturaWarning status={item.candidaturaStatus || 'EM_ANALISE'} />

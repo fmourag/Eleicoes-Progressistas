@@ -5,6 +5,7 @@ import { TsePhotoService } from './tse-photo.service';
 import { TseSyncService } from './tse-sync.service';
 import { TseSchedulerService } from './tse-scheduler.service';
 import { TseSyncController } from './tse-sync.controller';
+import { TsePhotoPrefetchService } from './tse-photo-prefetch.service';
 
 @Module({
   imports: [PrismaModule],
@@ -14,7 +15,8 @@ import { TseSyncController } from './tse-sync.controller';
     TsePhotoService,
     TseSyncService,
     TseSchedulerService,
+    TsePhotoPrefetchService,
   ],
-  exports: [TseSyncService, TseMapperService, TsePhotoService],
+  exports: [TseSyncService, TseMapperService, TsePhotoService, TsePhotoPrefetchService],
 })
 export class TseSyncModule {}

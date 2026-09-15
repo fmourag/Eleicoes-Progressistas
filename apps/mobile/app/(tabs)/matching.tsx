@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Switch, TouchableOpacity, Pressable } from 'react-native';
 import { router } from 'expo-router';
-import { PROGRESSIVE_GUIDELINE_NOTICE, PILLAR_DISPLAY_LIST } from '@np/shared';
+import { PROGRESSIVE_GUIDELINE_NOTICE, PILLAR_DISPLAY_LIST, isNeutralMatchingProfile, INSUFFICIENT_DATA_LABEL } from '@np/shared';
 import { matchingApi, candidatesApi, MatchResult, Candidate } from '../../services/api';
 import { useAuthStore } from '../../stores/auth.store';
 import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
@@ -104,10 +104,23 @@ interface CargoGroup {
   items: MatchResult[];
 }
 
-function groupResultsByCargo(results: MatchResult[]): CargoGroup[] {
-  const map: Record<string, MatchResult[]> = {};
+interface PartitionedResults {
+  rankedGroups: CargoGroup[];
+  unrankedItems: MatchResult[];
+}
 
-  for (const r of results) {
+function partitionResultsByCargo(results: MatchResult[]): PartitionedResults {
+  const isNeutral = (r: MatchResult) =>
+    Boolean(r.hasInsufficientData || isNeutralMatchingProfile(r.candidate.profileScores));
+
+  const ranked = results.filter((r) => !isNeutral(r));
+  const unrankedItems = results.filter((r) => isNeutral(r));
+
+  // Ordena os não-ranqueados em ordem alfabética
+  unrankedItems.sort((a, b) => (a.candidate.name || '').localeCompare(b.candidate.name || ''));
+
+  const map: Record<string, MatchResult[]> = {};
+  for (const r of ranked) {
     const cargo = r.candidate.cargo;
     if (!map[cargo]) {
       map[cargo] = [];
@@ -115,11 +128,11 @@ function groupResultsByCargo(results: MatchResult[]): CargoGroup[] {
     map[cargo].push(r);
   }
 
-  const groups: CargoGroup[] = [];
+  const rankedGroups: CargoGroup[] = [];
 
   for (const cargo of CARGO_ORDER) {
     const dynamicItems = map[cargo] || [];
-    const fallbackItems = FALLBACK_CANDIDATES.filter((f) => f.candidate.cargo === cargo);
+    const fallbackItems = FALLBACK_CANDIDATES.filter((f) => f.candidate.cargo === cargo && !isNeutral(f));
 
     const combined: MatchResult[] = [...dynamicItems];
     for (const f of fallbackItems) {
@@ -128,9 +141,9 @@ function groupResultsByCargo(results: MatchResult[]): CargoGroup[] {
       }
     }
 
-    const sortedCandidates = combined.sort((a, b) => b.score - a.score);
+    const sortedCandidates = combined.sort((a, b) => (b.matchScore ?? b.score ?? 0) - (a.matchScore ?? a.score ?? 0));
     if (sortedCandidates.length > 0) {
-      groups.push({
+      rankedGroups.push({
         cargo,
         title: CARGO_SECTION_TITLES[cargo] || cargo,
         items: sortedCandidates,
@@ -138,7 +151,7 @@ function groupResultsByCargo(results: MatchResult[]): CargoGroup[] {
     }
   }
 
-  return groups;
+  return { rankedGroups, unrankedItems };
 }
 
 export default function MatchingScreen() {
@@ -220,7 +233,7 @@ export default function MatchingScreen() {
     ? results.filter((r) => r.candidate.candidaturaStatus === 'DEFERIDO')
     : results;
 
-  const groupedCargos = groupResultsByCargo(filteredResults);
+  const { rankedGroups, unrankedItems } = partitionResultsByCargo(filteredResults);
   const firstPriority = selectedPriorities.length > 0 ? selectedPriorities[0] : undefined;
 
   return (
@@ -394,12 +407,13 @@ export default function MatchingScreen() {
           <View style={[styles.center, { backgroundColor: colors.background }]}>
             <Text style={{ color: colors.textMuted }}>Carregando candidaturas...</Text>
           </View>
-        ) : groupedCargos.length > 0 ? (
+        ) : (rankedGroups.length > 0 || unrankedItems.length > 0) ? (
           (() => {
             let renderedCandidatesCount = 0;
             return (
               <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={true}>
-                {groupedCargos.map((group) => (
+                {/* Grupos Ranqueados por Cargo */}
+                {rankedGroups.map((group) => (
                   <View key={group.cargo} style={styles.cargoSection}>
                     <View style={[styles.cargoHeaderBanner, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
                       <Text style={[styles.cargoTitle, { color: colors.text }]}>{group.title}</Text>
@@ -424,6 +438,8 @@ export default function MatchingScreen() {
                             tseId={item.candidate.tseId}
                             cargo={item.candidate.cargo}
                             score={item.score}
+                            matchScore={item.matchScore}
+                            hasInsufficientData={item.hasInsufficientData}
                             photoUrl={item.candidate.photoUrl}
                             coalition={item.candidate.coalition}
                             isProgressiveSupported={item.candidate.isProgressiveSupported}
@@ -441,6 +457,52 @@ export default function MatchingScreen() {
                     })}
                   </View>
                 ))}
+
+                {/* Seção Final: Sem histórico público suficiente (Unranked) */}
+                {unrankedItems.length > 0 && (
+                  <View style={styles.cargoSection}>
+                    <View style={[styles.cargoHeaderBanner, { backgroundColor: '#FEF3C7', borderColor: '#F59E0B' }]}>
+                      <Text style={[styles.cargoTitle, { color: '#B45309' }]}>
+                        ⚠️ {INSUFFICIENT_DATA_LABEL}
+                      </Text>
+                      <View style={[styles.limitBadge, { backgroundColor: '#FDE68A' }]}>
+                        <Text style={[styles.limitBadgeText, { color: '#92400E' }]}>
+                          {unrankedItems.length} {unrankedItems.length === 1 ? 'Opção' : 'Opções'}
+                        </Text>
+                      </View>
+                    </View>
+                    <Text style={{ fontSize: 12, color: colors.textMuted, marginHorizontal: 8, marginBottom: 8, lineHeight: 18 }}>
+                      Candidaturas que ainda não possuem histórico de votações, discursos ou atuação parlamentar suficiente para cálculo de afinidade. Exibidos em ordem alfabética sem percentual de match.
+                    </Text>
+                    {unrankedItems.map((item) => {
+                      renderedCandidatesCount++;
+                      return (
+                        <View key={item.id}>
+                          <CandidateCard
+                            name={item.candidate.name}
+                            viceName={item.candidate.viceName || undefined}
+                            party={item.candidate.party}
+                            partyNumber={item.candidate.partyNumber}
+                            numeroUrna={item.candidate.numeroUrna}
+                            tseId={item.candidate.tseId}
+                            cargo={item.candidate.cargo}
+                            score={null}
+                            matchScore={null}
+                            hasInsufficientData={true}
+                            photoUrl={item.candidate.photoUrl}
+                            coalition={item.candidate.coalition}
+                            isProgressiveSupported={item.candidate.isProgressiveSupported}
+                            supportedBy={item.candidate.supportedBy}
+                            candidaturaStatus={item.candidate.candidaturaStatus}
+                            fichaLimpa={item.candidate.fichaLimpa}
+                            onPress={() => router.push(`/(tabs)/raio-x?id=${item.candidate.id}`)}
+                          />
+                          <CandidaturaWarning status={item.candidate.candidaturaStatus || 'EM_ANALISE'} />
+                        </View>
+                      );
+                    })}
+                  </View>
+                )}
               </ScrollView>
             );
           })()

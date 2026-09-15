@@ -182,4 +182,68 @@ describe('MatchingService - Stateless Ranking & Party Exclusion', () => {
       expect(k).not.toContain('session');
     }
   });
+
+  it('should guarantee that neutral candidates (p1-p13 = 0.5) never appear at the top and have matchScore null', async () => {
+    const neutralScores: Record<string, number> = {};
+    for (let i = 1; i <= 13; i++) {
+      neutralScores[`p${i}`] = 0.5;
+    }
+
+    const testCandidates = [
+      {
+        id: 'cand-neutral',
+        tseId: '1001',
+        name: 'Candidato Sem Histórico',
+        socialName: null,
+        viceName: null,
+        party: 'PT',
+        partyNumber: 13,
+        photoUrl: null,
+        cargo: 'DEPUTADO_FEDERAL',
+        state: 'RJ',
+        candidaturaStatus: 'DEFERIDO',
+        fichaLimpa: true,
+        profileScores: neutralScores,
+      },
+      {
+        id: 'cand-aligned',
+        tseId: '1002',
+        name: 'Candidata Atuante Alinhada',
+        socialName: null,
+        viceName: null,
+        party: 'PSOL',
+        partyNumber: 50,
+        photoUrl: null,
+        cargo: 'DEPUTADO_FEDERAL',
+        state: 'RJ',
+        candidaturaStatus: 'DEFERIDO',
+        fichaLimpa: true,
+        profileScores: { p1: 0.95, p2: 0.9, p3: 0.85 },
+      },
+    ];
+
+    mockPrismaService.candidate.findMany.mockResolvedValue(testCandidates);
+
+    const result = await service.rank({
+      priority_pillars: ['p1', 'p2'],
+    });
+
+    expect(result.rankedCount).toBe(1);
+    expect(result.unrankedCount).toBe(1);
+    expect(result.results.length).toBe(2);
+
+    // Primeiro colocado DEVE ser o candidato com histórico (ranked)
+    expect(result.results[0].id).toBe('cand-aligned');
+    expect(result.results[0].hasInsufficientData).toBe(false);
+    expect(result.results[0].matchScore).toBeGreaterThan(50);
+
+    // Candidato neutro fica no grupo não-ranqueado ao final com matchScore null
+    const neutralResult = result.results.find((r) => r.id === 'cand-neutral');
+    expect(neutralResult).toBeDefined();
+    expect(neutralResult?.hasInsufficientData).toBe(true);
+    expect(neutralResult?.matchScore).toBeNull();
+    expect(neutralResult?.score).toBeNull();
+    expect(result.results[1].id).toBe('cand-neutral');
+  });
 });
+

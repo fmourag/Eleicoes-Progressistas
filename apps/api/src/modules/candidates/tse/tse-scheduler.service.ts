@@ -22,12 +22,12 @@ export class TseSchedulerService {
     }
   }
 
-  // Agendamento noturno de fotos às 05:00 BRT (08:00 UTC) com teto de 2.000
+  // Agendamento noturno de fotos às 05:00 BRT (08:00 UTC) com teto de 500
   @Cron('0 8 * * *')
   async runNightlyPhotoSync() {
-    this.logger.log('⏰ Disparando job noturno de cache de fotos TSE (05:00 BRT, max 2.000 fotos)...');
+    this.logger.log('⏰ Disparando job noturno de cache de fotos TSE (05:00 BRT, max 500 fotos)...');
     try {
-      const result = await this.syncService.syncPhotosOnly(2000);
+      const result = await this.syncService.syncPhotosOnly(500);
       this.logger.log(
         `✅ Job noturno de fotos concluído: ${result.totalUpdated} fotos cacheadas com sucesso.`,
       );

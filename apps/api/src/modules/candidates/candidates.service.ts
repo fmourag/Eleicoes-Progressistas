@@ -1,7 +1,8 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Optional } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
-import { ElectionLevel, Cargo, CARGOS_BY_LEVEL, UPCOMING_ELECTION, EXCLUDED_CONSERVATIVE_PARTIES, CandidateClassification, PillarCommitment, GovernmentPlanDetail, getNumeroUrna, computeCandidatePollResult, resolveCandidateMandateProposals, buildPillarJustificativa, resolveCandidatePhotoUrl } from '@np/shared';
+import { ElectionLevel, Cargo, CARGOS_BY_LEVEL, UPCOMING_ELECTION, EXCLUDED_CONSERVATIVE_PARTIES, CandidateClassification, PillarCommitment, GovernmentPlanDetail, getNumeroUrna, computeCandidatePollResult, resolveCandidateMandateProposals, buildPillarJustificativa, resolveCandidatePhotoUrl, isNeutralMatchingProfile } from '@np/shared';
 import { OFFICIAL_ELECTION_POLLS } from './data/election-polls.data';
+import { TsePhotoPrefetchService } from './tse/tse-photo-prefetch.service';
 
 export function buildCandidateClassification(candidate: any): CandidateClassification {
   const scores: Record<string, number> = candidate.profileScores || {};
@@ -414,7 +415,10 @@ export class CandidatesService {
   private candidatesCache = new Map<string, { data: any; expiresAt: number }>();
   private readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos de cache em memória
 
-  constructor(@Inject(PrismaService) private prisma: PrismaService) {}
+  constructor(
+    @Inject(PrismaService) private prisma: PrismaService,
+    @Optional() @Inject(TsePhotoPrefetchService) private photoPrefetch?: TsePhotoPrefetchService,
+  ) {}
 
   async findByLocation(municipality?: string, state?: string, cargo?: string, party?: string, search?: string) {
     const cacheKey = `cand:${municipality || ''}:${state || ''}:${cargo || ''}:${party || ''}:${search || ''}`;
@@ -530,11 +534,16 @@ export class CandidatesService {
           name: c.name,
           id: c.id,
         });
+        const hasInsufficientData = isNeutralMatchingProfile(c.profileScores as Record<string, number>);
+        if (this.photoPrefetch && c.tseId && /^\d+$/.test(c.tseId) && !this.photoPrefetch.hasLocal(c.tseId)) {
+          this.photoPrefetch.prefetch(c.tseId, c.photoUrl);
+        }
         return {
           ...c,
+          hasInsufficientData,
           photoUrl: resolvedPhoto || c.photoUrl,
           numeroUrna: c.numeroUrna || getNumeroUrna(c),
-          overallCommitmentScore,
+          overallCommitmentScore: hasInsufficientData ? 50 : overallCommitmentScore,
         };
       });
 
@@ -581,6 +590,7 @@ export class CandidatesService {
       proposals: true,
       governmentPlanUrl: true,
       governmentPlanSummary: true,
+      profileScores: true,
     } as any;
 
     const candidate = isUuid
@@ -601,8 +611,13 @@ export class CandidatesService {
       name: cAny.name,
       id: cAny.id,
     });
+    const hasInsufficientData = isNeutralMatchingProfile(cAny.profileScores as Record<string, number>);
+    if (this.photoPrefetch && cAny.tseId && /^\d+$/.test(cAny.tseId) && !this.photoPrefetch.hasLocal(cAny.tseId)) {
+      this.photoPrefetch.prefetch(cAny.tseId, cAny.photoUrl);
+    }
     return {
       ...candidate,
+      hasInsufficientData,
       photoUrl: resolvedPhoto || cAny.photoUrl,
       numeroUrna: cAny.numeroUrna || getNumeroUrna(cAny),
     };
@@ -700,6 +715,10 @@ export class CandidatesService {
       name: candidate.name,
       id: candidate.id,
     });
+
+    if (this.photoPrefetch && candidate.tseId && /^\d+$/.test(candidate.tseId) && !this.photoPrefetch.hasLocal(candidate.tseId)) {
+      this.photoPrefetch.prefetch(candidate.tseId, candidate.photoUrl);
+    }
 
     return {
       ...candidate,

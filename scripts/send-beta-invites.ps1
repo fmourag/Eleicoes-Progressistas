@@ -1,18 +1,18 @@
 # scripts/send-beta-invites.ps1
-$hash = "9b8f1a71f1d786eefc711c646785c9ed87338c3957a3bf6926db889bd757d6c7"
+$hash = "71a52845fc483f699c975a736ea6eeba954eca9cf3ae49b3886259581a23ea40"
 $downloadUrl = "https://eleicoes-progressistas.onrender.com/beta"
 $feedbackUrl = "https://eleicoes-progressistas.onrender.com/feedback"
 
 Write-Host "================================================================" -ForegroundColor Cyan
-Write-Host "   MENSAGEM DE DISTRIBUIÇÃO BETA ABERTO / CÍVICO (v2.2.2)" -ForegroundColor Cyan
+Write-Host "   MENSAGEM DE DISTRIBUIÇÃO BETA ABERTO / CÍVICO (v2.2.3)" -ForegroundColor Cyan
 Write-Host "   Download Único + Protocolo Automático de Feedback" -ForegroundColor Cyan
 Write-Host "================================================================`n" -ForegroundColor Cyan
 
 Write-Host "WHATSAPP / TELEGRAM (TRANSMISSÃO DIRETA):" -ForegroundColor Green
 $msgWhatsApp = @"
-🇧🇷 *ELEIÇÕES PROGRESSISTAS v2.2.2 — AUDITORIA CÍVICA ABERTA*
+🇧🇷 *ELEIÇÕES PROGRESSISTAS v2.2.3 — AUDITORIA CÍVICA ABERTA*
 
-A versão v2.2.2 já está disponível para testes públicos e auditoria!
+A versão v2.2.3 já está disponível para testes públicos e auditoria!
 
 📲 *Download Oficial (APK):*
 $downloadUrl

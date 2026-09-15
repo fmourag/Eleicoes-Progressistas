@@ -3,10 +3,10 @@
 ## 📱 Opção 1: Convite Direto para Auditoria Cívica (Beta Testers)
 
 ```text
-🇧🇷 Olá! A versão oficial v2.2.2 do Eleições Progressistas está liberada para homologação cívica.
+🇧🇷 Olá! A versão oficial v2.2.3 do Eleições Progressistas está liberada para homologação cívica.
 
 📱 Link ÚNICO de instalação: https://eleicoes-progressistas.onrender.com/beta
-🔐 SHA-256: 9b8f1a71f1d786eefc711c646785c9ed87338c3957a3bf6926db889bd757d6c7
+🔐 SHA-256: 71a52845fc483f699c975a736ea6eeba954eca9cf3ae49b3886259581a23ea40
 
 📝 Envio de Feedback: https://eleicoes-progressistas.onrender.com/feedback (ou direto pelo botão 💬 dentro do app)
 🚀 Ao enviar, seu Protocolo de Atendimento (FB-...) é gerado automaticamente!

@@ -58,6 +58,8 @@ export interface Candidate {
   overallCommitmentScore?: number;
   classification?: CandidateClassification;
   governmentPlan?: GovernmentPlanDetail;
+  hasInsufficientData?: boolean;
+  profileScores?: Record<string, number>;
 }
 
 export interface User {
@@ -70,7 +72,9 @@ export interface User {
 
 export interface MatchingResponse {
   results: MatchResult[];
-  deviceHash: string;
+  rankedCount?: number;
+  unrankedCount?: number;
+  deviceHash?: string;
   computedAt: string;
   isFallback?: boolean;
   message?: string;
@@ -84,7 +88,12 @@ export interface CandidatesResponse {
 
 export interface MatchResult {
   id: string;
-  score: number;
+  score?: number | null;
+  matchScore?: number | null;
+  hasInsufficientData?: boolean;
+  matchReason?: string;
+  isEstimated?: boolean;
+  priorityAligned?: string[];
   candidate: Candidate;
 }
 

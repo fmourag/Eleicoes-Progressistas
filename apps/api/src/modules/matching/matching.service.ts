@@ -6,7 +6,7 @@ import { PrismaService } from '../common/prisma.service';
 import { RankMatchDto } from './dto/rank-match.dto';
 import { MatchingLocalService } from '../matching-local/matching-local.service';
 
-import { UPCOMING_ELECTION, EXCLUDED_CONSERVATIVE_PARTIES, PILLARS } from '@np/shared';
+import { UPCOMING_ELECTION, EXCLUDED_CONSERVATIVE_PARTIES, PILLARS, isNeutralMatchingProfile, INSUFFICIENT_DATA_LABEL } from '@np/shared';
 
 const MAX_CANDIDATES = 100;
 const TOP_N = 20;
@@ -151,12 +151,15 @@ export class MatchingService {
 
       formattedResults = pythonResults.map((r) => {
         const candidate = candidates.find((c) => c.id === r.candidate_id);
+        const hasInsufficientData = isNeutralMatchingProfile(candidate?.profileScores as Record<string, number>);
         return {
           id: r.candidate_id,
-          score: r.match_score,
-          matchReason: r.match_reason,
+          score: hasInsufficientData ? null : r.match_score,
+          matchScore: hasInsufficientData ? null : r.match_score,
+          hasInsufficientData,
+          matchReason: hasInsufficientData ? INSUFFICIENT_DATA_LABEL : r.match_reason,
           isEstimated: r.is_estimated,
-          priorityAligned: r.priority_aligned,
+          priorityAligned: hasInsufficientData ? [] : r.priority_aligned,
           candidate: candidate ? {
             id: candidate.id,
             name: candidate.name,
@@ -175,12 +178,14 @@ export class MatchingService {
             candidaturaStatus: candidate.candidaturaStatus,
             fichaLimpa: candidate.fichaLimpa,
             photoUrl: candidate.photoUrl,
+            hasInsufficientData,
           } : {
             id: r.candidate_id,
             name: r.candidate_name,
             party: 'IND',
             cargo: 'VEREADOR',
             fichaLimpa: true,
+            hasInsufficientData,
           },
         };
       });
@@ -189,12 +194,21 @@ export class MatchingService {
       formattedResults = this.computeInMemoryFallback(priorityPillars, candidates);
     }
 
+    // Particionar: ranked = candidatos com isNeutralMatchingProfile=false (ordenados desc); unranked = neutros (ordenados por nome)
+    const ranked = formattedResults.filter((r) => !r.hasInsufficientData);
+    ranked.sort((a, b) => (b.matchScore ?? b.score ?? 0) - (a.matchScore ?? a.score ?? 0));
+
+    const unranked = formattedResults.filter((r) => r.hasInsufficientData);
+    unranked.sort((a, b) => (a.candidate?.name || '').localeCompare(b.candidate?.name || ''));
+
     // Fire-and-forget de contadores puramente agregados (sem identificadores de usuário ou dispositivo)
     this.recordAggregateMetrics(priorityPillars, uf).catch(() => {});
 
-    // Retorna estritamente top 20 (TOP_N), de forma 100% stateless (SEM gravação em MatchResult)
+    // Retorna os ranqueados (top 20) seguidos pelos neutros não ranqueados
     return {
-      results: formattedResults.slice(0, TOP_N),
+      results: [...ranked.slice(0, TOP_N), ...unranked],
+      rankedCount: ranked.length,
+      unrankedCount: unranked.length,
       computedAt: new Date().toISOString(),
     };
   }
@@ -447,12 +461,16 @@ export class MatchingService {
         reason = 'Alto alinhamento geral nos 13 pilares';
       }
 
+      const hasInsufficientData = isNeutralMatchingProfile(cand.profileScores as Record<string, number>);
+
       return {
         id: cand.id,
-        score,
-        matchReason: reason,
+        score: hasInsufficientData ? null : score,
+        matchScore: hasInsufficientData ? null : score,
+        hasInsufficientData,
+        matchReason: hasInsufficientData ? INSUFFICIENT_DATA_LABEL : reason,
         isEstimated: false,
-        priorityAligned,
+        priorityAligned: hasInsufficientData ? [] : priorityAligned,
         candidate: {
           id: cand.id,
           tseId: cand.tseId,
@@ -462,11 +480,12 @@ export class MatchingService {
           photoUrl: cand.photoUrl,
           cargo: cand.cargo,
           fichaLimpa: cand.fichaLimpa,
+          hasInsufficientData,
         },
       };
     });
 
-    return results.sort((a, b) => b.score - a.score);
+    return results.sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
   }
 
   private normalizeProfileScores(scores: Record<string, unknown> | null | undefined): Record<string, number> {

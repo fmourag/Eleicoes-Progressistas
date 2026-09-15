@@ -33,6 +33,17 @@ export interface PillarScores {
   p13?: number;
 }
 
+export function isNeutralMatchingProfile(scores: Record<string, number> | null | undefined): boolean {
+  if (!scores) return true;
+  for (let i = 1; i <= 13; i++) {
+    const v = Number(scores[`p${i}`]);
+    if (Number.isNaN(v) || Math.abs(v - 0.5) > 0.001) return false;
+  }
+  return true;
+}
+
+export const INSUFFICIENT_DATA_LABEL = 'Sem histórico público suficiente';
+
 export type Cargo =
   | 'VEREADOR'
   | 'PREFEITO'

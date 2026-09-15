@@ -1,13 +1,17 @@
 import { Controller, Get, Param, Query, Inject, Res } from '@nestjs/common';
 import { Response } from 'express';
+import * as path from 'path';
 import { CandidatesService } from './candidates.service';
 import { TseCandidatesService } from './tse-candidates.service';
+import { TsePhotoPrefetchService } from './tse/tse-photo-prefetch.service';
+import { TSE_CONFIG } from './tse/tse.config';
 
 @Controller('candidates')
 export class CandidatesController {
   constructor(
     @Inject(CandidatesService) private candidatesService: CandidatesService,
     @Inject(TseCandidatesService) private tseCandidatesService: TseCandidatesService,
+    @Inject(TsePhotoPrefetchService) private photoPrefetch: TsePhotoPrefetchService,
   ) {}
 
   @Get('photo-proxy')
@@ -101,6 +105,35 @@ export class CandidatesController {
     const uf: string = candidate?.state || 'BR';
     const tseId: string = candidate?.tseId || id;
     return this.tseCandidatesService.fetchCampaignFinances('2045202026', cargo, uf, tseId);
+  }
+
+  @Get(':id/photo')
+  async getCandidatePhoto(@Param('id') id: string, @Res() res: Response) {
+    const candidate = (await this.candidatesService.findById(id)) as any;
+    if (!candidate) {
+      return res.status(404).send({ message: 'Candidate not found' });
+    }
+
+    const tseId = candidate.tseId;
+    if (tseId && this.photoPrefetch.hasLocal(tseId)) {
+      const localFilePath = path.join(TSE_CONFIG.PHOTO_STORAGE_DIR, `tse_${tseId}.jpg`);
+      res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+      res.setHeader('Content-Type', 'image/jpeg');
+      return res.sendFile(localFilePath);
+    }
+
+    if (tseId && /^\d+$/.test(tseId)) {
+      this.photoPrefetch.prefetch(tseId, candidate.photoUrl);
+    }
+
+    const redirectUrl =
+      candidate.photoUrl && candidate.photoUrl.startsWith('http')
+        ? candidate.photoUrl
+        : (candidate.tseId && /^\d+$/.test(candidate.tseId)
+            ? `${TSE_CONFIG.PHOTO_BASE_URL}/${TSE_CONFIG.DEFAULT_ELEICAO_ID}/${candidate.tseId}`
+            : '/placeholder-candidate.png');
+
+    return res.redirect(302, redirectUrl);
   }
 
   @Get(':id')
