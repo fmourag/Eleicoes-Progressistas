@@ -46,3 +46,7 @@
 2. **Venda e Cessão de Dados:** **ZERO compartilhamento ou comercialização** com partidos políticos, empresas de publicidade ou terceiros.
 3. **Exclusão de Dados:** Qualquer participante pode solicitar a exclusão total de seus registros de feedback enviando seu protocolo (`FB-...`) para `fmourag@gmail.com`.
 
+## 4. Fonte de Dados Oficial do TSE
+Os dados de candidaturas exibidos no aplicativo são originários dos canais públicos oficiais do Tribunal Superior Eleitoral (TSE — DivulgaCandContas e Dados Abertos). O aplicativo não armazena dados de eleitores e utiliza a base eleitoral pública estritamente para fins de transparência cívica e orientação de voto.
+
+
