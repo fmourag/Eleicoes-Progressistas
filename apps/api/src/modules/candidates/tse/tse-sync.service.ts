@@ -24,7 +24,6 @@ export class TseSyncService {
   private logs: string[] = [];
   private readonly httpsAgent = new https.Agent({
     keepAlive: true,
-    rejectUnauthorized: false,
   });
 
   constructor(
@@ -101,10 +100,7 @@ export class TseSyncService {
           timeout: 15000,
           headers: {
             'User-Agent': TSE_CONFIG.USER_AGENT,
-            Accept: 'application/json, text/plain, */*',
-            'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
-            Referer: 'https://divulgacandcontas.tse.jus.br/',
-            Origin: 'https://divulgacandcontas.tse.jus.br',
+            Accept: 'application/json',
           },
           httpsAgent: this.httpsAgent,
         });
@@ -128,7 +124,7 @@ export class TseSyncService {
   }
 
   /**
-   * Sincronização oficial via API REST do TSE
+   * Sincronização oficial via API REST do TSE (somente listagem)
    */
   async syncFromApi(options: TseSyncOptions = {}): Promise<TseSyncResult> {
     if (this.isSyncing) {
@@ -190,26 +186,28 @@ export class TseSyncService {
             }
 
             try {
-              // Buscar detalhes completos do candidato
-              const detailUrl = `${TSE_CONFIG.API_BASE_URL}/candidatura/buscar/${ano}/${uf}/${eleicaoId}/candidato/${tseId}`;
-              let details: TseCandidateResponse;
-              try {
-                details = await this.fetchWithRetry(detailUrl);
-              } catch (detailErr: any) {
-                // Fallback para os dados básicos da listagem se detalhes falharem
-                details = candItem as TseCandidateResponse;
+              let candidateData: TseCandidateResponse = candItem as TseCandidateResponse;
+
+              // Detalhe individual apenas se explicitamente solicitado
+              if (options.fetchDetails === true) {
+                const detailUrl = `${TSE_CONFIG.API_BASE_URL}/candidatura/buscar/${ano}/${uf}/${eleicaoId}/candidato/${tseId}`;
+                try {
+                  candidateData = await this.fetchWithRetry(detailUrl);
+                } catch {
+                  candidateData = candItem as TseCandidateResponse;
+                }
               }
 
-              // Mapear candidato para entidade Prisma
-              const prismaData = this.mapper.mapApiCandidateToPrisma(details, uf, ano);
+              // Mapear candidato para entidade Prisma diretamente do item de listagem
+              const prismaData = this.mapper.mapApiCandidateToPrisma(candidateData, uf, ano);
 
-              // Download da foto se configurado
-              if (options.downloadPhotos !== false) {
+              // Fotos DESLIGADAS por padrão; ativadas somente se downloadPhotos === true
+              if (options.downloadPhotos === true) {
                 try {
                   const localPhotoUrl = await this.photoService.downloadAndCachePhoto(
                     tseId,
                     eleicaoId,
-                    details.fotoUrl,
+                    candidateData.fotoUrl,
                   );
                   if (localPhotoUrl) {
                     prismaData.photoUrl = localPhotoUrl;
@@ -309,6 +307,95 @@ export class TseSyncService {
       this.addLog(
         `Sincronização concluída: ${totalImported} inseridos, ${totalUpdated} atualizados, ${totalExcluded} excluídos, ${totalErrors} erros.`,
       );
+      return this.lastResult;
+    } finally {
+      this.isSyncing = false;
+    }
+  }
+
+  /**
+   * Sincronização exclusiva e sob teto de fotos oficiais dos candidatos
+   */
+  async syncPhotosOnly(limit = 2000): Promise<TseSyncResult> {
+    if (this.isSyncing) {
+      throw new Error('Uma sincronização já está em andamento');
+    }
+
+    const safeLimit = Math.max(1, Math.min(limit, 2000));
+    this.isSyncing = true;
+    const startedAt = new Date().toISOString();
+    let totalProcessed = 0;
+    let totalUpdated = 0;
+    let totalErrors = 0;
+    const errors: Array<{ tseId?: string; name?: string; uf?: string; error: string }> = [];
+
+    this.addLog(`Iniciando job dedicado de sincronização de fotos (Teto: ${safeLimit})`);
+
+    try {
+      const candidates = await this.prisma.candidate.findMany({
+        where: {
+          OR: [
+            { photoUrl: null },
+            { NOT: { photoUrl: { startsWith: '/public/' } } },
+          ],
+        },
+        orderBy: { createdAt: 'asc' },
+        take: safeLimit,
+      });
+
+      this.logger.log(`Encontrados ${candidates.length} candidatos para cache de fotos.`);
+
+      for (const cand of candidates) {
+        totalProcessed++;
+        try {
+          await this.delay(TSE_CONFIG.RATE_LIMIT_DELAY_MS);
+          const localPhotoUrl = await this.photoService.downloadAndCachePhoto(
+            cand.tseId,
+            String(cand.electionYear || TSE_CONFIG.DEFAULT_ELEICAO_ID),
+            cand.photoUrl || undefined,
+          );
+
+          if (localPhotoUrl) {
+            await this.prisma.candidate.update({
+              where: { id: cand.id },
+              data: {
+                photoUrl: localPhotoUrl,
+                updatedAt: new Date(),
+              },
+            });
+            totalUpdated++;
+          }
+
+          if (totalProcessed % 100 === 0) {
+            this.logger.log(`[Fotos] Processados ${totalProcessed}/${candidates.length} (Atualizados: ${totalUpdated})`);
+            this.addLog(`[Fotos] Progresso: ${totalProcessed}/${candidates.length}`);
+          }
+        } catch (err: any) {
+          totalErrors++;
+          errors.push({
+            tseId: cand.tseId,
+            name: cand.name,
+            uf: cand.state,
+            error: err.message,
+          });
+        }
+      }
+
+      const completedAt = new Date().toISOString();
+      this.lastResult = {
+        totalProcessed,
+        totalImported: 0,
+        totalUpdated,
+        totalExcluded: 0,
+        totalErrors,
+        startedAt,
+        completedAt,
+        status: totalErrors > 0 && totalUpdated === 0 ? 'failed' : 'success',
+        source: 'photos',
+        errors,
+      };
+
+      this.addLog(`Job de fotos finalizado: ${totalUpdated} fotos baixadas/atualizadas com sucesso.`);
       return this.lastResult;
     } finally {
       this.isSyncing = false;

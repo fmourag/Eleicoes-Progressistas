@@ -11,7 +11,7 @@ export const TSE_CONFIG = {
   API_BASE_URL: 'https://divulgacandcontas.tse.jus.br/divulga/rest/v1',
   PHOTO_BASE_URL: 'https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto',
   FALLBACK_CSV_URL: 'https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2026.zip',
-  USER_AGENT: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+  USER_AGENT: 'EleicoesProgressistas/2.2.3 (+https://eleicoes-progressistas.pages.dev; contato: fmourag@gmail.com)',
 
   // Defaults
   DEFAULT_ANO: 2026,

@@ -8,6 +8,8 @@ import {
   UnauthorizedException,
   HttpCode,
   HttpStatus,
+  OnModuleInit,
+  Logger,
 } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { TseSyncService } from './tse-sync.service';
@@ -15,52 +17,45 @@ import { TSE_CONFIG } from './tse.config';
 
 function isValidAdmin(provided?: string): boolean {
   if (!provided || typeof provided !== 'string') return false;
+  const allowed = [process.env.ADMIN_SECRET, process.env.ADMIN_FEEDBACK_TOKEN].filter(Boolean) as string[];
+  if (allowed.length === 0) return false; // FAIL-CLOSED: sem secrets configurados, ninguém administra
   const clean = provided.trim();
-  const allowed = [
-    process.env.ADMIN_SECRET,
-    process.env.ADMIN_FEEDBACK_TOKEN,
-    'dev-secret',
-    'admin123',
-  ].filter(Boolean) as string[];
-
-  for (const secret of allowed) {
-    if (clean === secret) return true;
-    try {
-      const providedBuf = Buffer.from(clean);
-      const secretBuf = Buffer.from(secret);
-      if (providedBuf.length === secretBuf.length && crypto.timingSafeEqual(providedBuf, secretBuf)) {
-        return true;
-      }
-    } catch {}
-  }
-  return false;
+  return allowed.some((secret) => {
+    const a = Buffer.from(clean);
+    const b = Buffer.from(secret);
+    return a.length === b.length && crypto.timingSafeEqual(a, b);
+  });
 }
 
 function isValidCron(provided?: string): boolean {
   if (!provided || typeof provided !== 'string') return false;
-  const clean = provided.trim();
-  const allowed = [
-    process.env.CRON_SECRET,
-    process.env.ADMIN_SECRET,
-    'dev-secret',
-  ].filter(Boolean) as string[];
-
-  return allowed.includes(clean);
+  const allowed = [process.env.CRON_SECRET, process.env.ADMIN_SECRET].filter(Boolean) as string[];
+  if (allowed.length === 0) return false;
+  return allowed.includes(provided.trim());
 }
 
 @Controller('candidates')
-export class TseSyncController {
+export class TseSyncController implements OnModuleInit {
+  private readonly logger = new Logger(TseSyncController.name);
+
   constructor(private readonly syncService: TseSyncService) {}
+
+  onModuleInit() {
+    if (process.env.NODE_ENV === 'production' && !process.env.ADMIN_SECRET) {
+      this.logger.error(
+        'ADMIN_SECRET ausente: endpoints de sync permanecerão bloqueados (fail-closed)',
+      );
+    }
+  }
 
   @Post('sync-tse')
   @HttpCode(HttpStatus.OK)
   async triggerSyncAll(
     @Headers('x-admin-token') adminToken?: string,
     @Headers('x-admin-key') adminKey?: string,
-    @Query('token') queryToken?: string,
     @Query('dryRun') dryRun?: string,
   ) {
-    const token = adminToken || adminKey || queryToken;
+    const token = adminToken || adminKey;
     if (!isValidAdmin(token)) {
       throw new UnauthorizedException('Token administrativo inválido ou ausente.');
     }
@@ -74,10 +69,9 @@ export class TseSyncController {
     @Param('cargoId') cargoId: string,
     @Headers('x-admin-token') adminToken?: string,
     @Headers('x-admin-key') adminKey?: string,
-    @Query('token') queryToken?: string,
     @Query('dryRun') dryRun?: string,
   ) {
-    const token = adminToken || adminKey || queryToken;
+    const token = adminToken || adminKey;
     if (!isValidAdmin(token)) {
       throw new UnauthorizedException('Token administrativo inválido ou ausente.');
     }
@@ -90,15 +84,30 @@ export class TseSyncController {
     });
   }
 
+  @Post('sync-photos')
+  @HttpCode(HttpStatus.OK)
+  async triggerSyncPhotos(
+    @Headers('x-admin-token') adminToken?: string,
+    @Headers('x-admin-key') adminKey?: string,
+    @Query('limit') limitStr?: string,
+  ) {
+    const token = adminToken || adminKey;
+    if (!isValidAdmin(token)) {
+      throw new UnauthorizedException('Token administrativo inválido ou ausente.');
+    }
+    const parsedLimit = limitStr ? parseInt(limitStr, 10) : 2000;
+    const safeLimit = isNaN(parsedLimit) ? 2000 : Math.max(1, Math.min(parsedLimit, 2000));
+    return this.syncService.syncPhotosOnly(safeLimit);
+  }
+
   @Post('sync-csv')
   @HttpCode(HttpStatus.OK)
   async triggerSyncCsv(
     @Headers('x-admin-token') adminToken?: string,
     @Headers('x-admin-key') adminKey?: string,
-    @Query('token') queryToken?: string,
     @Query('dryRun') dryRun?: string,
   ) {
-    const token = adminToken || adminKey || queryToken;
+    const token = adminToken || adminKey;
     if (!isValidAdmin(token)) {
       throw new UnauthorizedException('Token administrativo inválido ou ausente.');
     }
@@ -121,10 +130,8 @@ export class TseSyncController {
   @HttpCode(HttpStatus.OK)
   async triggerScheduledSync(
     @Headers('x-cron-secret') cronSecret?: string,
-    @Query('secret') querySecret?: string,
   ) {
-    const secret = cronSecret || querySecret;
-    if (!isValidCron(secret)) {
+    if (!isValidCron(cronSecret)) {
       throw new UnauthorizedException('Segredo de cron inválido ou ausente.');
     }
     return this.syncService.syncFromApi();

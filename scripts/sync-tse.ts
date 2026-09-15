@@ -11,6 +11,8 @@ async function main() {
   let targetCargo: number | null = null;
   let isCsv = false;
   let isDryRun = false;
+  let isPhotosOnly = false;
+  let limit = 2000;
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--uf' && args[i + 1]) {
@@ -23,16 +25,25 @@ async function main() {
       isCsv = true;
     } else if (args[i] === '--dry-run') {
       isDryRun = true;
+    } else if (args[i] === '--photos-only') {
+      isPhotosOnly = true;
+    } else if (args[i] === '--limit' && args[i + 1]) {
+      limit = parseInt(args[i + 1], 10);
+      i++;
     }
   }
 
   console.log('\x1b[36m%s\x1b[0m', '=====================================================');
   console.log('\x1b[32m%s\x1b[0m', '  🇧🇷 ELEIÇÕES PROGRESSISTAS — SINCRONIZAÇÃO OFICIAL TSE');
   console.log('\x1b[36m%s\x1b[0m', '=====================================================');
-  console.log(`Modo: ${isCsv ? 'Dados Abertos (CSV/ZIP)' : 'API REST DivulgaCandContas'}`);
-  if (targetUf) console.log(`Filtro UF: ${targetUf}`);
-  if (targetCargo) console.log(`Filtro Cargo ID: ${targetCargo}`);
-  if (isDryRun) console.log('\x1b[33m%s\x1b[0m', '⚠️  Modo Dry-Run ATIVADO: Nenhuma gravação no banco será realizada.');
+  if (isPhotosOnly) {
+    console.log(`Modo: Job Dedicado de Fotos (Teto: ${limit})`);
+  } else {
+    console.log(`Modo: ${isCsv ? 'Dados Abertos (CSV/ZIP)' : 'API REST DivulgaCandContas (Somente Listagem)'}`);
+    if (targetUf) console.log(`Filtro UF: ${targetUf}`);
+    if (targetCargo) console.log(`Filtro Cargo ID: ${targetCargo}`);
+    if (isDryRun) console.log('\x1b[33m%s\x1b[0m', '⚠️  Modo Dry-Run ATIVADO: Nenhuma gravação no banco será realizada.');
+  }
   console.log('-----------------------------------------------------');
 
   const prisma = new PrismaClient();
@@ -44,16 +55,20 @@ async function main() {
 
   try {
     let result: TseSyncResult;
-    const ufs = targetUf ? [targetUf] : undefined;
-    const cargos = targetCargo
-      ? TSE_CONFIG.CARGOS.filter((c) => c.codigo === targetCargo)
-      : undefined;
 
-    if (isCsv) {
+    if (isPhotosOnly) {
+      console.log(`Iniciando download e cache de fotos com teto de ${limit}...`);
+      result = await syncService.syncPhotosOnly(limit);
+    } else if (isCsv) {
       console.log('Iniciando sincronização via Dados Abertos CSV...');
       result = await syncService.syncFromCsv(undefined, { dryRun: isDryRun });
     } else {
-      console.log('Iniciando sincronização via API REST TSE...');
+      const ufs = targetUf ? [targetUf] : undefined;
+      const cargos = targetCargo
+        ? TSE_CONFIG.CARGOS.filter((c) => c.codigo === targetCargo)
+        : undefined;
+
+      console.log('Iniciando sincronização via API REST TSE (payload de listagem)...');
       result = await syncService.syncFromApi({
         ufs,
         cargos,

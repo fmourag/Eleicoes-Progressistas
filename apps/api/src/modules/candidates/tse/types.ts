@@ -6,6 +6,7 @@ export interface TseSyncOptions {
   ano?: number;
   eleicaoId?: string;
   downloadPhotos?: boolean;
+  fetchDetails?: boolean;
   dryRun?: boolean;
 }
 
@@ -18,7 +19,7 @@ export interface TseSyncResult {
   startedAt: string;
   completedAt: string;
   status: 'success' | 'failed' | 'partial';
-  source: 'api' | 'csv';
+  source: 'api' | 'csv' | 'photos';
   errors: Array<{ tseId?: string; name?: string; uf?: string; error: string }>;
 }
 

@@ -11,7 +11,6 @@ export class TsePhotoService {
   private readonly photoDir: string;
   private readonly httpsAgent = new https.Agent({
     keepAlive: true,
-    rejectUnauthorized: false,
   });
 
   constructor() {

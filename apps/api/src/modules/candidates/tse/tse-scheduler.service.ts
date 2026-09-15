@@ -8,7 +8,7 @@ export class TseSchedulerService {
 
   constructor(private readonly syncService: TseSyncService) {}
 
-  // Agendamento diário às 03:00 BRT (06:00 UTC)
+  // Agendamento diário de candidatos às 03:00 BRT (06:00 UTC)
   @Cron('0 6 * * *')
   async runDailySync() {
     this.logger.log('⏰ Disparando rotina agendada diária de sincronização TSE (03:00 BRT)...');
@@ -19,6 +19,20 @@ export class TseSchedulerService {
       );
     } catch (err: any) {
       this.logger.error(`❌ Falha na rotina de sincronização diária: ${err.message}`, err.stack);
+    }
+  }
+
+  // Agendamento noturno de fotos às 05:00 BRT (08:00 UTC) com teto de 2.000
+  @Cron('0 8 * * *')
+  async runNightlyPhotoSync() {
+    this.logger.log('⏰ Disparando job noturno de cache de fotos TSE (05:00 BRT, max 2.000 fotos)...');
+    try {
+      const result = await this.syncService.syncPhotosOnly(2000);
+      this.logger.log(
+        `✅ Job noturno de fotos concluído: ${result.totalUpdated} fotos cacheadas com sucesso.`,
+      );
+    } catch (err: any) {
+      this.logger.error(`❌ Falha no job noturno de fotos: ${err.message}`, err.stack);
     }
   }
 }
