@@ -106,7 +106,7 @@ export default function HomeScreen() {
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 <Text style={[styles.brandTitle, { color: colors.text }]}>Eleições Progressistas</Text>
                 <View style={[styles.versionBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.warning }]}>
-                  <Text style={[styles.versionBadgeText, { color: colors.warning }]}>v2.2.2</Text>
+                  <Text style={[styles.versionBadgeText, { color: colors.warning }]}>v2.2.3</Text>
                 </View>
               </View>
               <Text style={[styles.brandSub, { color: colors.textMuted }]}>Cheque o passado. Escolha o futuro.</Text>
@@ -493,7 +493,7 @@ export default function HomeScreen() {
             💡 Mapeamento independente com dados abertos oficiais do TSE (DivulgaCandContas) e Congresso Nacional.
           </Text>
           <Text style={[styles.footerText, { color: colors.textFaint }]}>
-            Versão 2.2.2 • 100% Anônimo • Código Auditável • Conforme LGPD
+            Versão 2.2.3 • 100% Anônimo • Código Auditável • Conforme LGPD
           </Text>
         </View>
 

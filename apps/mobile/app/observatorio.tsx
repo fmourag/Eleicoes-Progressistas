@@ -449,7 +449,7 @@ export default function ObservatorioScreen() {
         {/* Footer info */}
         <View style={styles.footer}>
           <Text style={[styles.footerText, { color: colors.textMuted }]}>
-            Observatório de Mandatos • Eleições Progressistas v2.2.2
+            Observatório de Mandatos • Eleições Progressistas v2.2.3
           </Text>
           <Text style={[styles.footerSubtext, { color: colors.textFaint }]}>
             100% Stateless • Dados abertos da Câmara dos Deputados e Senado Federal • Atualização noturna às 02:00

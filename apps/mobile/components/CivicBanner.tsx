@@ -55,7 +55,7 @@ export function CivicBanner({ variant = 'hero', showSubtitle = true }: CivicBann
           )}
           <View style={[styles.badgePill, styles.badgePillBlue]}>
             <View style={[styles.badgeDot, { backgroundColor: '#2563EB' }]} />
-            <Text style={styles.badgeTextBlue}>v2.2.2</Text>
+            <Text style={styles.badgeTextBlue}>v2.2.3</Text>
           </View>
         </View>
       </View>
@@ -98,7 +98,7 @@ export function CivicBanner({ variant = 'hero', showSubtitle = true }: CivicBann
 
           <View style={[styles.badgePill, styles.badgePillBlue]}>
             <View style={[styles.badgeDot, { backgroundColor: '#2563EB' }]} />
-            <Text style={styles.badgeTextBlue}>v2.2.2</Text>
+            <Text style={styles.badgeTextBlue}>v2.2.3</Text>
           </View>
         </View>
 

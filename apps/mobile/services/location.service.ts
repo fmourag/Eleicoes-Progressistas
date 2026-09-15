@@ -118,7 +118,7 @@ export async function resolveLocationFromCoords(lat: number, lng: number): Promi
       {
         headers: {
           'Accept-Language': 'pt-BR,pt;q=0.9',
-          'User-Agent': 'EleicoesProgressistas/2.2.0',
+          'User-Agent': 'EleicoesProgressistas/2.2.3',
         },
       }
     );
