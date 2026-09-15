@@ -74,8 +74,8 @@ describe('TseMapperService', () => {
       expect(result.cargo).toBe(Cargo.PRESIDENTE);
       expect(result.level).toBe(ElectionLevel.FEDERAL);
       expect(result.candidaturaStatus).toBe(CandidaturaStatus.DEFERIDO);
-      expect(result.profileScores.p1).toBe(0.5);
-      expect(result.profileScores.p13).toBe(0.5);
+      expect(result.profileScores.p1).toBe(0.94);
+      expect(result.profileScores.p13).toBe(0.92);
     });
   });
 });

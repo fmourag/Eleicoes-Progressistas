@@ -625,7 +625,6 @@ export default function CandidatosScreen() {
                       profileScores={item.profileScores}
                       onPress={() => router.push(`/(tabs)/raio-x?id=${item.id}`)}
                     />
-                    <CandidaturaWarning status={item.candidaturaStatus || 'EM_ANALISE'} />
                   </View>
                 ))}
               </View>

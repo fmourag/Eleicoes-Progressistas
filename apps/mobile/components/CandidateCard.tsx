@@ -141,6 +141,7 @@ export function CandidateCard({
     (profileScores && isNeutralMatchingProfile(profileScores))
   );
 
+  const isMatchingView = matchScore !== undefined;
   const effectiveScore = matchScore !== undefined ? matchScore : score;
   const isHighScore = !isInsufficient && effectiveScore !== undefined && effectiveScore !== null && effectiveScore >= 85;
 
@@ -190,37 +191,56 @@ export function CandidateCard({
             <Text style={[styles.name, { color: colors.text }, bp === 'desktop' && styles.nameDesktop]} numberOfLines={2}>
               {name}
             </Text>
-            {isInsufficient ? (
-              <View style={styles.headerBadgesRow}>
-                <View
-                  style={[
-                    styles.scoreBadge,
-                    {
-                      backgroundColor: '#FEF3C7',
-                      borderColor: '#F59E0B',
-                      borderWidth: 1,
-                    },
-                  ]}
-                >
-                  <Text style={[styles.scoreText, { color: '#B45309' }]}>
-                    ⚡ — Match
-                  </Text>
+            {isMatchingView ? (
+              isInsufficient || matchScore === null ? (
+                <View style={styles.headerBadgesRow}>
+                  <View
+                    style={[
+                      styles.scoreBadge,
+                      {
+                        backgroundColor: '#FEF3C7',
+                        borderColor: '#F59E0B',
+                        borderWidth: 1,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.scoreText, { color: '#B45309' }]}>
+                      ⚡ — Match
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            ) : effectiveScore !== undefined && effectiveScore !== null ? (
+              ) : (
+                <View style={styles.headerBadgesRow}>
+                  <View
+                    style={[
+                      styles.scoreBadge,
+                      {
+                        backgroundColor: matchScore >= 75 ? colors.primaryLight : matchScore >= 50 ? colors.warningBg : colors.errorBg,
+                        borderColor: matchScore >= 75 ? colors.primaryBorder : matchScore >= 50 ? colors.warningBorder : colors.error,
+                        borderWidth: 1,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.scoreText, { color: matchScore >= 75 ? colors.primary : matchScore >= 50 ? colors.warning : colors.error }]}>
+                      ⚡ {Math.round(matchScore)}% Match
+                    </Text>
+                  </View>
+                </View>
+              )
+            ) : score !== undefined && score !== null ? (
               <View style={styles.headerBadgesRow}>
                 <View
                   style={[
                     styles.scoreBadge,
                     {
-                      backgroundColor: effectiveScore >= 75 ? colors.primaryLight : effectiveScore >= 50 ? colors.warningBg : colors.errorBg,
-                      borderColor: effectiveScore >= 75 ? colors.primaryBorder : effectiveScore >= 50 ? colors.warningBorder : colors.error,
+                      backgroundColor: score >= 75 ? colors.primaryLight : score >= 50 ? colors.warningBg : colors.surfaceAlt,
+                      borderColor: score >= 75 ? colors.primaryBorder : score >= 50 ? colors.warningBorder : colors.border,
                       borderWidth: 1,
                     },
                   ]}
                 >
-                  <Text style={[styles.scoreText, { color: effectiveScore >= 75 ? colors.primary : effectiveScore >= 50 ? colors.warning : colors.error }]}>
-                    ⚡ {Math.round(effectiveScore)}% Match
+                  <Text style={[styles.scoreText, { color: score >= 75 ? colors.primary : score >= 50 ? colors.warning : colors.textMuted }]}>
+                    🏛️ {Math.round(score)}% Alinhamento
                   </Text>
                 </View>
               </View>
@@ -257,18 +277,32 @@ export function CandidateCard({
             <View
               style={[
                 styles.statusBadge,
-                isPending
-                  ? { backgroundColor: '#FEF3C7', borderColor: '#F59E0B' }
-                  : { backgroundColor: '#D1FAE5', borderColor: '#10B981' },
+                candidaturaStatus === 'DEFERIDO'
+                  ? { backgroundColor: '#D1FAE5', borderColor: '#10B981' }
+                  : candidaturaStatus === 'INDEFERIDO' || candidaturaStatus === 'CASSADO'
+                  ? { backgroundColor: '#FEE2E2', borderColor: '#EF4444' }
+                  : { backgroundColor: '#FEF3C7', borderColor: '#F59E0B' },
               ]}
             >
               <Text
                 style={[
                   styles.statusBadgeText,
-                  isPending ? { color: '#B45309' } : { color: '#065F46' },
+                  candidaturaStatus === 'DEFERIDO'
+                    ? { color: '#065F46' }
+                    : candidaturaStatus === 'INDEFERIDO' || candidaturaStatus === 'CASSADO'
+                    ? { color: '#991B1B' }
+                    : { color: '#B45309' },
                 ]}
               >
-                {isPending ? '🟡 Em Análise' : '🟢 Deferido'}
+                {candidaturaStatus === 'DEFERIDO'
+                  ? '🟢 Deferido'
+                  : candidaturaStatus === 'INDEFERIDO'
+                  ? '🔴 Indeferido'
+                  : candidaturaStatus === 'CASSADO'
+                  ? '🔴 Cassado'
+                  : candidaturaStatus === 'RENUNCIA'
+                  ? '⚪ Renúncia'
+                  : '🟡 Em Análise'}
               </Text>
             </View>
           </View>
@@ -282,8 +316,8 @@ export function CandidateCard({
             </View>
           )}
 
-          {/* Insufficient Public Data Warning Badge */}
-          {isInsufficient && (
+          {/* Insufficient Public Data Warning Badge (only in matching view for neutral profiles) */}
+          {isMatchingView && isInsufficient && (
             <View style={[styles.insufficientBadge, { backgroundColor: '#FEF3C7', borderColor: '#F59E0B' }]}>
               <Text style={[styles.insufficientBadgeText, { color: '#B45309' }]}>
                 ⚠️ {INSUFFICIENT_DATA_LABEL}
