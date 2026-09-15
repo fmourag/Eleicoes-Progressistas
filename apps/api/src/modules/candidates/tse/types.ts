@@ -21,6 +21,9 @@ export interface TseSyncResult {
   status: 'success' | 'failed' | 'partial';
   source: 'api' | 'csv' | 'photos';
   errors: Array<{ tseId?: string; name?: string; uf?: string; error: string }>;
+  processed?: number;
+  downloaded?: number;
+  failed?: number;
 }
 
 export interface TseSyncStats {
@@ -36,6 +39,7 @@ export interface TseCandidateItem {
   id: number | string;
   nomeUrna: string;
   numero: number | string;
+  fotoUrl?: string;
   partido?: {
     sigla: string;
     nome: string;
@@ -44,6 +48,7 @@ export interface TseCandidateItem {
     codigo: number;
     nome: string;
   };
+  [key: string]: any;
 }
 
 export interface TseCandidateListResponse {

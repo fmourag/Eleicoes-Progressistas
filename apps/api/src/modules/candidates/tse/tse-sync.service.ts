@@ -198,20 +198,8 @@ export class TseSyncService {
             }
 
             try {
-              let candidateData: TseCandidateResponse = candItem as TseCandidateResponse;
-
-              // Detalhe individual apenas se explicitamente solicitado
-              if (options.fetchDetails === true) {
-                const detailUrl = `${TSE_CONFIG.API_BASE_URL}/candidatura/buscar/${ano}/${uf}/${eleicaoId}/candidato/${tseId}`;
-                try {
-                  candidateData = await this.fetchWithRetry(detailUrl);
-                } catch {
-                  candidateData = candItem as TseCandidateResponse;
-                }
-              }
-
-              // Mapear candidato para entidade Prisma diretamente do item de listagem
-              const prismaData = this.mapper.mapApiCandidateToPrisma(candidateData, uf, ano);
+              // Mapear candidato para entidade Prisma DIRETAMENTE do item de listagem (zero chamadas de detalhe)
+              const prismaData = this.mapper.mapApiCandidateToPrisma(candItem as TseCandidateResponse, uf, ano);
 
               // Fotos DESLIGADAS por padrão; ativadas somente se downloadPhotos === true
               if (options.downloadPhotos === true) {
@@ -219,7 +207,7 @@ export class TseSyncService {
                   const localPhotoUrl = await this.photoService.downloadAndCachePhoto(
                     tseId,
                     eleicaoId,
-                    candidateData.fotoUrl,
+                    candItem.fotoUrl,
                   );
                   if (localPhotoUrl) {
                     prismaData.photoUrl = localPhotoUrl;
@@ -345,12 +333,7 @@ export class TseSyncService {
 
     try {
       const candidates = await this.prisma.candidate.findMany({
-        where: {
-          OR: [
-            { photoUrl: null },
-            { NOT: { photoUrl: { startsWith: '/public/' } } },
-          ],
-        },
+        where: { photoUrl: null },
         orderBy: { createdAt: 'asc' },
         take: safeLimit,
       });
@@ -408,7 +391,12 @@ export class TseSyncService {
       };
 
       this.addLog(`Job de fotos finalizado: ${totalUpdated} fotos baixadas/atualizadas com sucesso.`);
-      return this.lastResult;
+      return {
+        processed: totalProcessed,
+        downloaded: totalUpdated,
+        failed: totalErrors,
+        ...this.lastResult,
+      };
     } finally {
       this.isSyncing = false;
     }
