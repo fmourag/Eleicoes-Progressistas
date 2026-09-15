@@ -147,17 +147,18 @@ export default function CandidatosScreen() {
   }, [params.uf, params.state, params.municipality]);
 
   useEffect(() => {
-    loadCandidates();
-  }, []);
+    const ufToQuery = !showAllStates && location?.uf ? location.uf : undefined;
+    loadCandidates(ufToQuery);
+  }, [location?.uf, showAllStates]);
 
-  async function loadCandidates() {
+  async function loadCandidates(stateFilter?: string) {
     setLoading(true);
     setIsOffline(false);
     setErrorMessage(null);
     try {
       const res = await retryWithBackoff(
         async () => {
-          const apiRes = await candidatesApi.getAll();
+          const apiRes = await candidatesApi.getAll(stateFilter ? { state: stateFilter } : undefined);
           if (apiRes && !Array.isArray(apiRes) && (apiRes as { isFallback?: boolean }).isFallback) {
             throw new Error((apiRes as { message?: string }).message || 'Servidor indisponível');
           }

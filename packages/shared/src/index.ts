@@ -477,12 +477,22 @@ export const TRUSTED_DATA_SOURCES: TrustedDataSource[] = [
 ];
 
 export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
-  // Presidente
+  // Presidente 2026 / 2022
+  '280002542548': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
   '280001600001': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
-  
+  'pres_lula': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
+  '280002551975': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Edmilson_Costa_%28cropped%29.jpg/500px-Edmilson_Costa_%28cropped%29.jpg',
+  '280002538811': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Samara_Martins_em_2024.jpg/500px-Samara_Martins_em_2024.jpg',
+  '280002541457': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Hertz_Dias_%28cropped%29.jpg/500px-Hertz_Dias_%28cropped%29.jpg',
+  '280002552487': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Rui_Costa_Pimenta_2018.jpg/500px-Rui_Costa_Pimenta_2018.jpg',
+
   // Governadores
+  '190002540001': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Eduardo_Paes%2C_October_2024.jpg/500px-Eduardo_Paes%2C_October_2024.jpg',
   'gov_rj_paes': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Eduardo_Paes%2C_October_2024.jpg/500px-Eduardo_Paes%2C_October_2024.jpg',
+  '190002540198': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/2020_CYRO_GARCIA_CANDIDATO_PREFEITO_RJ_RIO_DE_JANEIRO_TSE_%28190000858699%29.jpg/500px-2020_CYRO_GARCIA_CANDIDATO_PREFEITO_RJ_RIO_DE_JANEIRO_TSE_%28190000858699%29.jpg',
   'gov_rj_cyro': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/2020_CYRO_GARCIA_CANDIDATO_PREFEITO_RJ_RIO_DE_JANEIRO_TSE_%28190000858699%29.jpg/500px-2020_CYRO_GARCIA_CANDIDATO_PREFEITO_RJ_RIO_DE_JANEIRO_TSE_%28190000858699%29.jpg',
+  '190002540200': 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Juliete_Pantoja_%28foto_oficial_para_o_TSE%29_-_2022_-_FRJ190001609712_div.jpg',
+  'gov_rj_juliete': 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Juliete_Pantoja_%28foto_oficial_para_o_TSE%29_-_2022_-_FRJ190001609712_div.jpg',
   'gov_sp_haddad': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Fernando_Haddad_posse_min._da_Fazenda.jpg/500px-Fernando_Haddad_posse_min._da_Fazenda.jpg',
   'gov_sp_franca': 'https://www.camara.leg.br/internet/deputado/bandep/160535.jpg',
   'gov_ba_jeronimo': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8c/18_01_2023_-_Visita_de_Cortesia_Jer%C3%B4nimo_Rodrigues_%28Governador_do_Estado_da_Bahia-BA%29_%2852635213362%29_%28cropped%29.jpg/500px-18_01_2023_-_Visita_de_Cortesia_Jer%C3%B4nimo_Rodrigues_%28Governador_do_Estado_da_Bahia-BA%29_%2852635213362%29_%28cropped%29.jpg',
@@ -519,8 +529,6 @@ export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
   'ale_rj_carlosminc': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Carlos_Minc_2022.jpg/500px-Carlos_Minc_2022.jpg',
   'ale_sp_suplicy': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/38.jpg',
   'ale_rs_lucianagenro': 'https://www.camara.leg.br/internet/deputado/bandep/74844.jpg',
-  // Rio de Janeiro
-  'gov_rj_juliete': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Juliete_Pantoja_%28foto_oficial_para_o_TSE%29_-_2022_-_FRJ190001609712_div.jpg/500px-Juliete_Pantoja_%28foto_oficial_para_o_TSE%29_-_2022_-_FRJ190001609712_div.jpg',
   'gov_rj_siri': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/Eduardo_Paes_em_2021.jpg/500px-Eduardo_Paes_em_2021.jpg',
   'ale_rj_danimonteiro': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Renata_Souza_em_2022.jpg/500px-Renata_Souza_em_2022.jpg',
 

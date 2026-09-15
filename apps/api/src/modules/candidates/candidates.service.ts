@@ -1,6 +1,6 @@
 import { Injectable, Inject, Optional } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
-import { ElectionLevel, Cargo, CARGOS_BY_LEVEL, UPCOMING_ELECTION, EXCLUDED_CONSERVATIVE_PARTIES, CandidateClassification, PillarCommitment, GovernmentPlanDetail, getNumeroUrna, computeCandidatePollResult, resolveCandidateMandateProposals, buildPillarJustificativa, resolveCandidatePhotoUrl, isNeutralMatchingProfile } from '@np/shared';
+import { ElectionLevel, Cargo, CARGOS_BY_LEVEL, UPCOMING_ELECTION, EXCLUDED_CONSERVATIVE_PARTIES, PROGRESSIVE_COALITION_CORE_PARTIES, CandidateClassification, PillarCommitment, GovernmentPlanDetail, getNumeroUrna, computeCandidatePollResult, resolveCandidateMandateProposals, buildPillarJustificativa, resolveCandidatePhotoUrl, isNeutralMatchingProfile } from '@np/shared';
 import { OFFICIAL_ELECTION_POLLS } from './data/election-polls.data';
 import { TsePhotoPrefetchService } from './tse/tse-photo-prefetch.service';
 
@@ -431,16 +431,23 @@ export class CandidatesService {
 
     try {
       const excludedParties = [...EXCLUDED_CONSERVATIVE_PARTIES] as string[];
+      const progressiveCore = [...PROGRESSIVE_COALITION_CORE_PARTIES] as string[];
+
+      const orConditions: any[] = [
+        { party: { notIn: excludedParties } },
+        { isProgressiveSupported: true },
+        { supportedBy: { not: null } },
+      ];
+      for (const prog of progressiveCore) {
+        orConditions.push({ coalition: { contains: prog } });
+      }
+
       const whereClause: any = {
         cargo: cargo ? (cargo as Cargo) : { in: upcomingCargos },
         electionYear: UPCOMING_ELECTION.year,
         fichaLimpa: true,
         visible: true,
-        OR: [
-          { party: { notIn: excludedParties } },
-          { isProgressiveSupported: true },
-          { supportedBy: { not: null } },
-        ],
+        OR: orConditions,
       };
 
       if (party && party.trim()) {
@@ -493,7 +500,7 @@ export class CandidatesService {
 
       const candidates = await this.prisma.candidate.findMany({
         where: whereClause,
-        take: 2000, // Retorna todas as candidaturas da base sem truncamento de candidatos presidenciais ou por letra
+        take: 10000, // Retorna todas as candidaturas progressistas sem corte alfabético
         select: {
           id: true,
           name: true,
@@ -747,8 +754,9 @@ export class CandidatesService {
 
     // 1. Tenta buscar no banco de dados se já temos a URL cadastrada
     if (tseId) {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(tseId);
       const candidate = await this.prisma.candidate.findFirst({
-        where: { OR: [{ tseId }, { id: tseId }] },
+        where: isUuid ? { OR: [{ tseId }, { id: tseId }] } : { tseId },
         select: { photoUrl: true, tseId: true, name: true, cargo: true },
       });
       if (candidate?.photoUrl && candidate.photoUrl.startsWith('http')) {

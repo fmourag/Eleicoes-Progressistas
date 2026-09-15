@@ -7,15 +7,11 @@ dotenv.config({ path: path.resolve(__dirname, '../apps/api/.env') });
 const prisma = new PrismaClient();
 
 async function main() {
-  const parties = await prisma.candidate.groupBy({
-    by: ['party'],
-    _count: { id: true },
-    orderBy: { _count: { id: 'desc' } },
+  const c = await prisma.candidate.findFirst({
+    where: { name: { contains: 'CYRO' } },
+    select: { id: true, name: true, tseId: true, photoUrl: true, cargo: true, state: true }
   });
-  console.log('=== PARTIDOS NO BANCO ===');
-  for (const p of parties) {
-    console.log(p.party + ': ' + p._count.id);
-  }
+  console.log('Cyro Garcia:', c);
 }
 
 main()
