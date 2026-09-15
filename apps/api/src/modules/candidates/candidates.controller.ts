@@ -16,15 +16,17 @@ export class CandidatesController {
     @Inject(TsePhotoPrefetchService) private photoPrefetch: TsePhotoPrefetchService,
   ) {}
 
-  @Get('photo-proxy')
+  @Get(['photo-proxy', 'photo-proxy/:tseId'])
   async getCandidatePhotoProxy(
+    @Param('tseId') paramTseId?: string,
     @Query('name') name?: string,
     @Query('state') state?: string,
-    @Query('tseId') tseId?: string,
+    @Query('tseId') queryTseId?: string,
     @Query('cargo') cargo?: string,
     @Res() res?: Response,
   ) {
     if (!res) return;
+    const tseId = paramTseId || queryTseId;
 
     // 1. Verifica se já existe cache em disco
     if (tseId) {

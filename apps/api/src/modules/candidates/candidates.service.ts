@@ -753,19 +753,20 @@ export class CandidatesService {
   ): Promise<string | null> {
     if (!name && !tseId) return null;
 
+    let dbCandidate: any = null;
     // 1. Tenta buscar no banco de dados se já temos a URL cadastrada
     if (tseId) {
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(tseId);
-      const candidate = await this.prisma.candidate.findFirst({
+      dbCandidate = await this.prisma.candidate.findFirst({
         where: isUuid ? { OR: [{ tseId }, { id: tseId }] } : { tseId },
-        select: { photoUrl: true, tseId: true, name: true, cargo: true },
+        select: { photoUrl: true, tseId: true, name: true, socialName: true, cargo: true },
       });
-      if (candidate?.photoUrl && candidate.photoUrl.startsWith('http')) {
-        return candidate.photoUrl;
+      if (dbCandidate?.photoUrl && dbCandidate.photoUrl.startsWith('http')) {
+        return dbCandidate.photoUrl;
       }
     }
 
-    // 2. Mapeamento de fotos oficiais conhecidas (Lula, Paes, governadores, presidenciáveis)
+    // 2. Mapeamento de fotos oficiais conhecidas (Lula, Paes, Benedita, governadores, presidenciáveis)
     if (tseId && (KNOWN_PARLIAMENTARY_PHOTOS as Record<string, string>)[tseId]) {
       const knownUrl = (KNOWN_PARLIAMENTARY_PHOTOS as Record<string, string>)[tseId];
       if (tseId) {
@@ -795,11 +796,13 @@ export class CandidatesService {
       } catch {}
     }
 
+    const effectiveName = name || dbCandidate?.socialName || dbCandidate?.name;
+
     // 4. Busca na Wikipédia (PageImages API)
     const searchTerms = [
-      name,
-      name ? name.split(' ').slice(0, 2).join(' ') : null,
-      name ? name.split(' ')[0] : null,
+      effectiveName,
+      effectiveName ? effectiveName.split(' ').slice(0, 2).join(' ') : null,
+      effectiveName ? effectiveName.split(' ')[0] : null,
     ].filter(Boolean) as string[];
 
     for (const term of searchTerms) {

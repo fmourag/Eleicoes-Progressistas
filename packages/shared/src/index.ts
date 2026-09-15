@@ -519,9 +519,10 @@ export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
   'gov_to_mourao': 'https://www.camara.leg.br/internet/deputado/bandep/74044.jpg',
 
   // Senadores
+  '190002548141': 'https://www.camara.leg.br/internet/deputado/bandep/73701.jpg',
+  'sen_rj_benedita': 'https://www.camara.leg.br/internet/deputado/bandep/73701.jpg',
   'sen_rj_molon': 'https://www.camara.leg.br/internet/deputado/bandep/160511.jpg',
   'sen_rj_lindbergh': 'https://www.camara.leg.br/internet/deputado/bandep/74858.jpg',
-  'sen_rj_benedita': 'https://www.camara.leg.br/internet/deputado/bandep/73701.jpg',
   'sen_rj_tarcisio': 'https://www.camara.leg.br/internet/deputado/bandep/220598.jpg',
 
   // Lideranças Estaduais / Deputados Estaduais
