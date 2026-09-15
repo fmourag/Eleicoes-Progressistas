@@ -1,20 +1,20 @@
 @echo off
-chcp 65001 >nul
-title Publicar Eleições Progressistas Web no Cloudflare Pages
+setlocal enabledelayedexpansion
+title Publicar Eleicoes Progressistas Web no Cloudflare Pages
 
 echo =====================================================================
-echo   PUBLICADOR WEB — ELEIÇÕES PROGRESSISTAS (Cloudflare Pages)
+echo   PUBLICADOR WEB - ELEICOES PROGRESSISTAS (Cloudflare Pages)
 echo =====================================================================
 echo.
 
 cd /d "%~dp0"
 
-echo [1/3] Verificando autenticação no Cloudflare...
+echo [1/3] Verificando autenticacao no Cloudflare...
 call npx wrangler whoami >nul 2>&1
 if %errorlevel% neq 0 (
     echo.
-    echo [AVISO] Sua sessão no Cloudflare expirou ou você ainda não fez login.
-    echo Abrindo navegador para você autorizar o Wrangler...
+    echo [AVISO] Sua sessao no Cloudflare precisa ser autenticada.
+    echo Abrindo navegador para autorizar o Cloudflare no Wrangler...
     echo.
     call npx wrangler login
     if %errorlevel% neq 0 (
@@ -25,9 +25,9 @@ if %errorlevel% neq 0 (
     )
 )
 
-echo [OK] Sessão Cloudflare autenticada!
+echo [OK] Sessao Cloudflare autenticada com sucesso!
 echo.
-echo [2/3] Gerando build web de produção (apps/mobile/dist)...
+echo [2/3] Preparando build web de producao...
 call npm run build:web -w @np/mobile
 if %errorlevel% neq 0 (
     echo.
@@ -35,6 +35,9 @@ if %errorlevel% neq 0 (
     pause
     exit /b 1
 )
+
+echo Copiando paginas estaticas complementares...
+xcopy /y /e /i /q "static\*" "apps\mobile\dist\" >nul 2>&1
 
 echo.
 echo [3/3] Enviando deploy para eleicoes-progressistas.pages.dev...
@@ -48,7 +51,7 @@ if %errorlevel% neq 0 (
 
 echo.
 echo =====================================================================
-echo   SUCESSO! Versão v2.2.3 publicada em:
+echo   SUCESSO! Versao v2.2.3 publicada com exito em:
 echo   https://eleicoes-progressistas.pages.dev
 echo =====================================================================
 echo.
