@@ -1,6 +1,7 @@
 import { Injectable, Inject, Optional } from '@nestjs/common';
+import axios from 'axios';
 import { PrismaService } from '../common/prisma.service';
-import { ElectionLevel, Cargo, CARGOS_BY_LEVEL, UPCOMING_ELECTION, EXCLUDED_CONSERVATIVE_PARTIES, PROGRESSIVE_COALITION_CORE_PARTIES, CandidateClassification, PillarCommitment, GovernmentPlanDetail, getNumeroUrna, computeCandidatePollResult, resolveCandidateMandateProposals, buildPillarJustificativa, resolveCandidatePhotoUrl, isNeutralMatchingProfile } from '@np/shared';
+import { ElectionLevel, Cargo, CARGOS_BY_LEVEL, UPCOMING_ELECTION, EXCLUDED_CONSERVATIVE_PARTIES, PROGRESSIVE_COALITION_CORE_PARTIES, KNOWN_PARLIAMENTARY_PHOTOS, CandidateClassification, PillarCommitment, GovernmentPlanDetail, getNumeroUrna, computeCandidatePollResult, resolveCandidateMandateProposals, buildPillarJustificativa, resolveCandidatePhotoUrl, isNeutralMatchingProfile } from '@np/shared';
 import { OFFICIAL_ELECTION_POLLS } from './data/election-polls.data';
 import { TsePhotoPrefetchService } from './tse/tse-photo-prefetch.service';
 
@@ -764,8 +765,43 @@ export class CandidatesService {
       }
     }
 
-    // 2. Busca na Wikipédia (PageImages API)
-    const searchTerms = [name, name ? name.split(' ').slice(0, 2).join(' ') : null].filter(Boolean) as string[];
+    // 2. Mapeamento de fotos oficiais conhecidas (Lula, Paes, governadores, presidenciáveis)
+    if (tseId && (KNOWN_PARLIAMENTARY_PHOTOS as Record<string, string>)[tseId]) {
+      const knownUrl = (KNOWN_PARLIAMENTARY_PHOTOS as Record<string, string>)[tseId];
+      if (tseId) {
+        this.prisma.candidate.updateMany({
+          where: { tseId },
+          data: { photoUrl: knownUrl },
+        }).catch(() => {});
+      }
+      return knownUrl;
+    }
+
+    // 3. Busca na API oficial de fotos do TSE (DivulgaCandContas) para 2026
+    if (tseId && /^\d{11,13}$/.test(tseId)) {
+      const tsePhotoUrl = `https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto/2045202026/${tseId}`;
+      try {
+        const check = await axios.head(tsePhotoUrl, {
+          timeout: 4000,
+          headers: { 'User-Agent': 'EleicoesProgressistas/2.2.3 (+https://eleicoes-progressistas.pages.dev)' },
+        });
+        if (check.status === 200) {
+          this.prisma.candidate.updateMany({
+            where: { tseId },
+            data: { photoUrl: tsePhotoUrl },
+          }).catch(() => {});
+          return tsePhotoUrl;
+        }
+      } catch {}
+    }
+
+    // 4. Busca na Wikipédia (PageImages API)
+    const searchTerms = [
+      name,
+      name ? name.split(' ').slice(0, 2).join(' ') : null,
+      name ? name.split(' ')[0] : null,
+    ].filter(Boolean) as string[];
+
     for (const term of searchTerms) {
       try {
         const encoded = encodeURIComponent(term);
@@ -778,6 +814,12 @@ export class CandidatesService {
             if (firstPage?.thumbnail?.source) {
               const url = firstPage.thumbnail.source;
               if (url.startsWith('http') && !url.includes('Replace_this_image')) {
+                if (tseId) {
+                  this.prisma.candidate.updateMany({
+                    where: { tseId },
+                    data: { photoUrl: url },
+                  }).catch(() => {});
+                }
                 return url;
               }
             }
@@ -786,7 +828,7 @@ export class CandidatesService {
       } catch {}
     }
 
-    // 3. Se for Deputado Federal ou tiver nome, busca na API da Câmara dos Deputados
+    // 5. Se for Deputado Federal ou tiver nome, busca na API da Câmara dos Deputados
     if (name) {
       try {
         const encoded = encodeURIComponent(name);
@@ -795,6 +837,12 @@ export class CandidatesService {
           const json = await res.json();
           const dep = json?.dados?.[0];
           if (dep?.urlFoto) {
+            if (tseId) {
+              this.prisma.candidate.updateMany({
+                where: { tseId },
+                data: { photoUrl: dep.urlFoto },
+              }).catch(() => {});
+            }
             return dep.urlFoto;
           }
         }

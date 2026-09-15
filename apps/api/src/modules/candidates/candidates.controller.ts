@@ -1,6 +1,8 @@
 import { Controller, Get, Param, Query, Inject, Res } from '@nestjs/common';
 import { Response } from 'express';
 import * as path from 'path';
+import * as fs from 'fs';
+import axios from 'axios';
 import { CandidatesService } from './candidates.service';
 import { TseCandidatesService } from './tse-candidates.service';
 import { TsePhotoPrefetchService } from './tse/tse-photo-prefetch.service';
@@ -22,11 +24,60 @@ export class CandidatesController {
     @Query('cargo') cargo?: string,
     @Res() res?: Response,
   ) {
-    const photoUrl = await this.candidatesService.resolveCandidatePhotoDynamic(name, state, tseId, cargo);
-    if (photoUrl) {
-      return res?.redirect(photoUrl);
+    if (!res) return;
+
+    // 1. Verifica se já existe cache em disco
+    if (tseId) {
+      const localFile = path.join(TSE_CONFIG.PHOTO_STORAGE_DIR, `tse_${tseId}.jpg`);
+      if (fs.existsSync(localFile) && fs.statSync(localFile).size > 1024) {
+        res.set('Content-Type', 'image/jpeg');
+        res.set('Cache-Control', 'public, max-age=604800, s-maxage=2592000');
+        res.set('Access-Control-Allow-Origin', '*');
+        return res.sendFile(localFile);
+      }
     }
-    return res?.status(404).send({ message: 'Photo not found' });
+
+    // 2. Resolve URL dinâmica
+    const photoUrl = await this.candidatesService.resolveCandidatePhotoDynamic(name, state, tseId, cargo);
+    if (!photoUrl) {
+      return res.status(404).send({ message: 'Photo not found' });
+    }
+
+    // 3. Se for URL remota HTTP/HTTPS, baixa o buffer e envia com headers corretos e salva em cache
+    if (photoUrl.startsWith('http')) {
+      try {
+        const response = await axios.get(photoUrl, {
+          responseType: 'arraybuffer',
+          timeout: 8000,
+          headers: {
+            'User-Agent': TSE_CONFIG.USER_AGENT,
+            Accept: 'image/jpeg,image/png,image/webp,image/*;q=0.8',
+          },
+        });
+
+        const buffer = Buffer.from(response.data);
+        const contentType = String(response.headers['content-type'] || 'image/jpeg');
+
+        // Salva em cache local se tiver tseId
+        if (tseId && buffer.length > 1024) {
+          try {
+            if (!fs.existsSync(TSE_CONFIG.PHOTO_STORAGE_DIR)) {
+              fs.mkdirSync(TSE_CONFIG.PHOTO_STORAGE_DIR, { recursive: true });
+            }
+            fs.writeFileSync(path.join(TSE_CONFIG.PHOTO_STORAGE_DIR, `tse_${tseId}.jpg`), buffer);
+          } catch {}
+        }
+
+        res.set('Content-Type', contentType);
+        res.set('Cache-Control', 'public, max-age=604800, s-maxage=2592000');
+        res.set('Access-Control-Allow-Origin', '*');
+        return res.send(buffer);
+      } catch {
+        return res.redirect(photoUrl);
+      }
+    }
+
+    return res.redirect(photoUrl);
   }
 
   @Get()

@@ -277,7 +277,7 @@ export function CandidateCard({
             <View
               style={[
                 styles.statusBadge,
-                candidaturaStatus === 'DEFERIDO'
+                candidaturaStatus === 'DEFERIDO' || (candidaturaStatus === 'EM_ANALISE' && fichaLimpa !== false)
                   ? { backgroundColor: '#D1FAE5', borderColor: '#10B981' }
                   : candidaturaStatus === 'INDEFERIDO' || candidaturaStatus === 'CASSADO'
                   ? { backgroundColor: '#FEE2E2', borderColor: '#EF4444' }
@@ -287,7 +287,7 @@ export function CandidateCard({
               <Text
                 style={[
                   styles.statusBadgeText,
-                  candidaturaStatus === 'DEFERIDO'
+                  candidaturaStatus === 'DEFERIDO' || (candidaturaStatus === 'EM_ANALISE' && fichaLimpa !== false)
                     ? { color: '#065F46' }
                     : candidaturaStatus === 'INDEFERIDO' || candidaturaStatus === 'CASSADO'
                     ? { color: '#991B1B' }
@@ -295,13 +295,15 @@ export function CandidateCard({
                 ]}
               >
                 {candidaturaStatus === 'DEFERIDO'
-                  ? '🟢 Deferido'
+                  ? '🟢 Deferido (TSE)'
                   : candidaturaStatus === 'INDEFERIDO'
                   ? '🔴 Indeferido'
                   : candidaturaStatus === 'CASSADO'
                   ? '🔴 Cassado'
                   : candidaturaStatus === 'RENUNCIA'
                   ? '⚪ Renúncia'
+                  : fichaLimpa !== false
+                  ? '🟢 Deferido (TSE)'
                   : '🟡 Em Análise'}
               </Text>
             </View>
