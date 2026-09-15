@@ -85,7 +85,7 @@ export class CandidatesController {
     };
   }
 
-  @Get(':id([0-9a-fA-F-]{36})/tse-detail')
+  @Get(':id/tse-detail')
   async getTseDetail(@Param('id') id: string) {
     const candidate = (await this.candidatesService.findById(id)) as any;
     const uf: string = candidate?.state || 'BR';
@@ -94,7 +94,7 @@ export class CandidatesController {
     return this.tseCandidatesService.fetchCandidateDetail(year, '2045202026', uf, tseId);
   }
 
-  @Get(':id([0-9a-fA-F-]{36})/finances')
+  @Get(':id/finances')
   async getFinances(@Param('id') id: string) {
     const candidate = (await this.candidatesService.findById(id)) as any;
     const cargo: string = candidate?.cargo || 'PRESIDENTE';
@@ -103,12 +103,12 @@ export class CandidatesController {
     return this.tseCandidatesService.fetchCampaignFinances('2045202026', cargo, uf, tseId);
   }
 
-  @Get(':id([0-9a-fA-F-]{36})')
+  @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.candidatesService.findById(id);
   }
 
-  @Get(':id([0-9a-fA-F-]{36})/raio-x')
+  @Get(':id/raio-x')
   async getRaioX(@Param('id') id: string) {
     return this.candidatesService.getRaioX(id);
   }

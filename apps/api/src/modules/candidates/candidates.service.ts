@@ -554,33 +554,43 @@ export class CandidatesService {
   }
 
   async findById(id: string) {
-    const candidate = await this.prisma.candidate.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        name: true,
-        socialName: true,
-        viceName: true,
-        party: true,
-        partyNumber: true,
-        numeroUrna: true,
-        cargo: true,
-        level: true,
-        electionYear: true,
-        candidaturaStatus: true,
-        dataRegistro: true,
-        municipality: true,
-        state: true,
-        photoUrl: true,
-        coalition: true,
-        isProgressiveSupported: true,
-        supportedBy: true,
-        fichaLimpa: true,
-        proposals: true,
-        governmentPlanUrl: true,
-        governmentPlanSummary: true,
-      } as any,
-    });
+    if (!id || typeof id !== 'string') return null;
+    const isUuid = /^[0-9a-fA-F-]{36}$/.test(id);
+    const selectFields = {
+      id: true,
+      tseId: true,
+      name: true,
+      socialName: true,
+      viceName: true,
+      party: true,
+      partyNumber: true,
+      numeroUrna: true,
+      cargo: true,
+      level: true,
+      electionYear: true,
+      candidaturaStatus: true,
+      dataRegistro: true,
+      municipality: true,
+      state: true,
+      photoUrl: true,
+      coalition: true,
+      isProgressiveSupported: true,
+      supportedBy: true,
+      fichaLimpa: true,
+      proposals: true,
+      governmentPlanUrl: true,
+      governmentPlanSummary: true,
+    } as any;
+
+    const candidate = isUuid
+      ? await this.prisma.candidate.findUnique({
+          where: { id },
+          select: selectFields,
+        })
+      : await this.prisma.candidate.findFirst({
+          where: { tseId: id },
+          select: selectFields,
+        });
     if (!candidate) return null;
     const cAny = candidate as any;
     const resolvedPhoto = resolveCandidatePhotoUrl({
