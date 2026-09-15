@@ -481,10 +481,10 @@ export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
   '280002542548': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
   '280001600001': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
   'pres_lula': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
-  '280002551975': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Edmilson_Costa_%28cropped%29.jpg/500px-Edmilson_Costa_%28cropped%29.jpg',
-  '280002538811': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Samara_Martins_em_2024.jpg/500px-Samara_Martins_em_2024.jpg',
-  '280002541457': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Hertz_Dias_%28cropped%29.jpg/500px-Hertz_Dias_%28cropped%29.jpg',
-  '280002552487': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Rui_Costa_Pimenta_2018.jpg/500px-Rui_Costa_Pimenta_2018.jpg',
+  '280002551975': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3d/Edmilson_Costa_-_PCB.jpg/500px-Edmilson_Costa_-_PCB.jpg',
+  '280002538811': 'https://upload.wikimedia.org/wikipedia/commons/d/d9/Samara_Martins_UP.jpg',
+  '280002541457': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Hertz_Dias_PSTU.jpg/500px-Hertz_Dias_PSTU.jpg',
+  '280002552487': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Rui_Costa_Pimenta_Close.jpg/500px-Rui_Costa_Pimenta_Close.jpg',
 
   // Governadores
   '190002540001': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Eduardo_Paes%2C_October_2024.jpg/500px-Eduardo_Paes%2C_October_2024.jpg',

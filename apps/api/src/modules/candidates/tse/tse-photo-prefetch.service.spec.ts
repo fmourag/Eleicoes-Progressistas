@@ -41,6 +41,7 @@ describe('TsePhotoPrefetchService', () => {
 
   describe('Concurrent deduplication', () => {
     it('should deduplicate concurrent prefetch calls for the same tseId into 1 download', async () => {
+      jest.spyOn(service, 'hasLocal').mockReturnValue(false);
       const validJpeg = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10]);
       mockedAxios.get.mockImplementation(
         () =>
@@ -50,8 +51,8 @@ describe('TsePhotoPrefetchService', () => {
       );
 
       // Call prefetch twice concurrently
-      service.prefetch('280001600001');
-      service.prefetch('280001600001');
+      service.prefetch('999001600001');
+      service.prefetch('999001600001');
 
       // Wait for completion
       await new Promise((resolve) => setTimeout(resolve, 150));
