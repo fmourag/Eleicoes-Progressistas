@@ -45,43 +45,55 @@ export class TseSyncService {
   }
 
   async getSyncStats(): Promise<TseSyncStats> {
-    const totalInDb = await this.prisma.candidate.count();
-    const totalByParty = await this.prisma.candidate.groupBy({
-      by: ['party'],
-      _count: { id: true },
-    });
-    const totalByCargo = await this.prisma.candidate.groupBy({
-      by: ['cargo'],
-      _count: { id: true },
-    });
-    const totalByState = await this.prisma.candidate.groupBy({
-      by: ['state'],
-      _count: { id: true },
-    });
+    try {
+      const totalInDb = await this.prisma.candidate.count();
+      const totalByParty = await this.prisma.candidate.groupBy({
+        by: ['party'],
+        _count: { id: true },
+      });
+      const totalByCargo = await this.prisma.candidate.groupBy({
+        by: ['cargo'],
+        _count: { id: true },
+      });
+      const totalByState = await this.prisma.candidate.groupBy({
+        by: ['state'],
+        _count: { id: true },
+      });
 
-    const partyCounts: Record<string, number> = {};
-    totalByParty.forEach((p) => {
-      partyCounts[p.party] = p._count?.id || 0;
-    });
+      const partyCounts: Record<string, number> = {};
+      totalByParty.forEach((p) => {
+        partyCounts[p.party] = p._count?.id || 0;
+      });
 
-    const roleCounts: Record<string, number> = {};
-    totalByCargo.forEach((r) => {
-      roleCounts[r.cargo] = r._count?.id || 0;
-    });
+      const roleCounts: Record<string, number> = {};
+      totalByCargo.forEach((r) => {
+        roleCounts[r.cargo] = r._count?.id || 0;
+      });
 
-    const stateCounts: Record<string, number> = {};
-    totalByState.forEach((s) => {
-      stateCounts[s.state] = s._count?.id || 0;
-    });
+      const stateCounts: Record<string, number> = {};
+      totalByState.forEach((s) => {
+        stateCounts[s.state] = s._count?.id || 0;
+      });
 
-    return {
-      totalCandidates: totalInDb,
-      lastSyncDate: this.lastResult?.completedAt || null,
-      lastSyncStatus: this.lastResult?.status || 'idle',
-      byParty: partyCounts,
-      byRole: roleCounts,
-      byState: stateCounts,
-    };
+      return {
+        totalCandidates: totalInDb,
+        lastSyncDate: this.lastResult?.completedAt || null,
+        lastSyncStatus: this.lastResult?.status || 'idle',
+        byParty: partyCounts,
+        byRole: roleCounts,
+        byState: stateCounts,
+      };
+    } catch (err: any) {
+      this.logger.error(`Erro ao consultar estatísticas do banco: ${err.message}`);
+      return {
+        totalCandidates: 0,
+        lastSyncDate: this.lastResult?.completedAt || null,
+        lastSyncStatus: this.lastResult?.status || 'idle',
+        byParty: {},
+        byRole: {},
+        byState: {},
+      };
+    }
   }
 
   private delay(ms: number): Promise<void> {
