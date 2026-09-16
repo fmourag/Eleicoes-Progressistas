@@ -4,7 +4,7 @@ import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { useBreakpoint } from '../utils/responsive';
 
 import { getCandidatePhotoFallbackChain } from '../services/api';
-import { getNumeroUrna, isNeutralMatchingProfile, INSUFFICIENT_DATA_LABEL } from '@np/shared';
+import { getNumeroUrna, isNeutralMatchingProfile, INSUFFICIENT_DATA_LABEL, getPartyColors } from '@np/shared';
 import { useColaStore } from '../stores/cola.store';
 
 interface CandidateCardProps {
@@ -74,6 +74,7 @@ export function CandidateCard({
   const bp = useBreakpoint();
   const colors = useThemeColors();
   const initials = getInitials(name);
+  const partyTheme = useMemo(() => getPartyColors(party), [party]);
 
   const fallbackChain = useMemo(() => {
     return getCandidatePhotoFallbackChain({
@@ -164,7 +165,7 @@ export function CandidateCard({
       <View style={styles.contentRow}>
         {/* Photo Avatar or Initials Circle with Urna Badge Overlay */}
         <View style={styles.photoWrapper}>
-          <View style={[styles.photoContainer, { backgroundColor: colors.surfaceAlt, borderColor: colors.primaryBorder }]}>
+          <View style={[styles.photoContainer, { backgroundColor: partyTheme.primary, borderColor: partyTheme.border || colors.primaryBorder }]}>
             {showImage ? (
               <Image
                 source={{ uri: currentPhoto }}
@@ -173,8 +174,11 @@ export function CandidateCard({
                 onError={handleImageError}
               />
             ) : (
-              <View style={[styles.avatarFallback, { backgroundColor: colors.primaryLight }]}>
-                <Text style={[styles.avatarInitials, { color: colors.primary }]}>{initials}</Text>
+              <View style={[styles.avatarFallback, { backgroundColor: partyTheme.primary }]}>
+                <Text style={[styles.avatarInitials, { color: partyTheme.text }]}>{initials}</Text>
+                <View style={[styles.avatarPartyPill, { backgroundColor: partyTheme.secondary || '#00000088' }]}>
+                  <Text style={[styles.avatarPartyPillText, { color: partyTheme.text }]}>{party}</Text>
+                </View>
               </View>
             )}
           </View>
@@ -426,10 +430,26 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
   },
   avatarInitials: {
-    fontSize: FontSize.xl,
+    fontSize: FontSize.lg,
     fontWeight: '800',
+    letterSpacing: 0.5,
+    marginTop: -4,
+  },
+  avatarPartyPill: {
+    position: 'absolute',
+    bottom: 3,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: Radius.sm,
+  },
+  avatarPartyPillText: {
+    fontSize: 8,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
   },
   detailsContainer: {
     flex: 1,

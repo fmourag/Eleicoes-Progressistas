@@ -568,6 +568,54 @@ export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
   'ale_ma_carloslula': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Carlos_Minc_2022.jpg/500px-Carlos_Minc_2022.jpg',
 };
 
+export interface PartyColorTheme {
+  primary: string;
+  secondary: string;
+  text: string;
+  border: string;
+}
+
+export const PARTY_COLORS: Record<string, PartyColorTheme> = {
+  PT: { primary: '#CC0000', secondary: '#990000', text: '#FFFFFF', border: '#FF4D4D' },
+  PSOL: { primary: '#5B187F', secondary: '#FFCC00', text: '#FFFFFF', border: '#8A2BE2' },
+  PSB: { primary: '#E30613', secondary: '#FFCC00', text: '#FFFFFF', border: '#FF4D4D' },
+  PCDOB: { primary: '#B30000', secondary: '#FFD700', text: '#FFFFFF', border: '#CC0000' },
+  REDE: { primary: '#009E96', secondary: '#F39200', text: '#FFFFFF', border: '#00BFA5' },
+  PV: { primary: '#008000', secondary: '#004D00', text: '#FFFFFF', border: '#2E7D32' },
+  PDT: { primary: '#0047AB', secondary: '#CC0000', text: '#FFFFFF', border: '#1E88E5' },
+  UP: { primary: '#1A1A1A', secondary: '#CC0000', text: '#FFFFFF', border: '#424242' },
+  PSTU: { primary: '#B30000', secondary: '#000000', text: '#FFFFFF', border: '#D32F2F' },
+  PCB: { primary: '#8B0000', secondary: '#FFD700', text: '#FFFFFF', border: '#B71C1C' },
+  PCO: { primary: '#D2143A', secondary: '#FFCC00', text: '#FFFFFF', border: '#E53935' },
+  CIDADANIA: { primary: '#E95D0F', secondary: '#1D71B8', text: '#FFFFFF', border: '#FB8C00' },
+  SOLIDARIEDADE: { primary: '#005DAA', secondary: '#E30613', text: '#FFFFFF', border: '#1976D2' },
+  PSD: { primary: '#006699', secondary: '#FFCC00', text: '#FFFFFF', border: '#0288D1' },
+  MOBILIZA: { primary: '#336699', secondary: '#FF9900', text: '#FFFFFF', border: '#4682B4' },
+  AGIR: { primary: '#4B0082', secondary: '#FFD700', text: '#FFFFFF', border: '#6A1B9A' },
+  PMB: { primary: '#008080', secondary: '#FF69B4', text: '#FFFFFF', border: '#00897B' },
+  AVANTE: { primary: '#1E3A8A', secondary: '#F59E0B', text: '#FFFFFF', border: '#3B82F6' },
+  PODE: { primary: '#0284C7', secondary: '#0EA5E9', text: '#FFFFFF', border: '#38BDF8' },
+  MDB: { primary: '#059669', secondary: '#DC2626', text: '#FFFFFF', border: '#10B981' },
+};
+
+export function getPartyColors(party?: string | null): PartyColorTheme {
+  const norm = (party || '').toUpperCase().trim().replace(/[^A-Z0-9]/g, '');
+  return (
+    PARTY_COLORS[norm] || {
+      primary: '#1E293B',
+      secondary: '#475569',
+      text: '#FFFFFF',
+      border: '#64748B',
+    }
+  );
+}
+
+export function getPartyBadgeUrl(party?: string | null, baseUrl?: string): string {
+  const norm = (party || '').toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+  const base = (baseUrl || 'https://eleicoes-progressistas.onrender.com').replace(/\/+$/, '');
+  return `${base}/candidates/party_${norm}.png`;
+}
+
 /**
  * Retorna uma cadeia ordenada de URLs de fallback para a foto do candidato.
  * Permite que o componente de UI tente a próxima fonte caso a primeira falhe (404/400).
@@ -587,6 +635,7 @@ export function resolveCandidatePhotoFallbackChain(candidate: {
   const tseId = candidate.tseId?.trim() || candidate.id?.trim() || '';
   const cleanPhotoKey = photoUrl.replace(/^\/?candidates\//, '').replace(/\.jpg$/i, '');
   const base = (candidate.baseUrl || 'https://eleicoes-progressistas.onrender.com').replace(/\/+$/, '');
+  const partyKey = (candidate.party || '').toLowerCase().trim().replace(/[^a-z0-9]/g, '');
 
   // 1. URL explícita válida externa (HTTPS)
   if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
@@ -601,15 +650,19 @@ export function resolveCandidatePhotoFallbackChain(candidate: {
     urls.push(KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]);
   }
 
-  // 3. Imagem estática hospedada no backend da aplicação
+  // 3. Imagem estática hospedada no backend da aplicação / assets do frontend
   if (photoUrl && photoUrl.startsWith('/')) {
     urls.push(`${base}${photoUrl}`);
+    urls.push(photoUrl);
   }
   if (tseId) {
     urls.push(`${base}/candidates/${tseId}.jpg`);
+    urls.push(`/candidates/${tseId}.jpg`);
+    urls.push(`${base}/candidates/tse_${tseId}.jpg`);
   }
   if (cleanPhotoKey && cleanPhotoKey !== tseId) {
     urls.push(`${base}/candidates/${cleanPhotoKey}.jpg`);
+    urls.push(`/candidates/${cleanPhotoKey}.jpg`);
   }
 
   // 4. Portal da Câmara dos Deputados (para deputados federais)
@@ -633,7 +686,13 @@ export function resolveCandidatePhotoFallbackChain(candidate: {
     urls.push(`${base}/api/candidates/photo-proxy?name=${qName}&state=${qUf}&tseId=${qTseId}`);
   }
 
-  // 7. Fallback oficial DivulgaCandContas do TSE
+  // 7. Badge Oficial do Partido Político como fallback de alta fidelidade
+  if (partyKey) {
+    urls.push(`${base}/candidates/party_${partyKey}.png`);
+    urls.push(`/candidates/party_${partyKey}.png`);
+  }
+
+  // 8. Fallback oficial DivulgaCandContas do TSE (se disponível)
   const isNumericTseId = /^\d+$/.test(tseId) || /^\d+$/.test(cleanPhotoKey);
   if (isNumericTseId) {
     const numId = /^\d+$/.test(tseId) ? tseId : cleanPhotoKey;
