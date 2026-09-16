@@ -216,7 +216,7 @@ export default function ApiPublicoScreen() {
             Para garantir sustentabilidade financeira sem recorrer a intermediários ou taxas abusivas de gateway, a assinatura do Tier Profissional é realizada via contrato institucional direto e chave PIX:
           </Text>
           <Text style={[styles.paragraph, { color: colors.textMuted }]}>
-            1. Envie uma mensagem para <Text style={{ fontWeight: '700', color: colors.primary }}>api@eleicoesprogressistas.org.br</Text> com o nome da redação/instituto e CNPJ.{'\n'}
+            1. Envie uma mensagem para <Text style={{ fontWeight: '700', color: colors.primary }}>fmourag@gmail.com</Text> com o nome da redação/instituto e CNPJ.{'\n'}
             2. Realize o PIX de R$ 200,00 para a chave oficial de custeio.{'\n'}
             3. Nossa equipe homologa o contrato e emite sua chave de alta vazão (10.000 req/dia) em até 2 horas úteis.
           </Text>
