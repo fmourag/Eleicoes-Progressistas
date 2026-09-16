@@ -66,3 +66,6 @@ scratch/
 Iniciando
 tmp/
 *.zip
+
+# Candidate cache
+apps/api/public/candidates/*.jpg
