@@ -778,7 +778,36 @@ export class CandidatesService {
       return knownUrl;
     }
 
-    // 3. Busca na API oficial de fotos do TSE (DivulgaCandContas) para 2026
+    // 2.5. Arquivo local no backend
+    if (tseId) {
+      const candidateDir = path.resolve(process.cwd(), 'apps/api/public/candidates');
+      const f1 = path.join(candidateDir, `${tseId}.jpg`);
+      const f2 = path.join(candidateDir, `tse_${tseId}.jpg`);
+      if ((fs.existsSync(f1) && fs.statSync(f1).size > 800) || (fs.existsSync(f2) && fs.statSync(f2).size > 800)) {
+        return `https://eleicoes-progressistas.onrender.com/candidates/${tseId}.jpg`;
+      }
+    }
+
+    // 3. CDN Oficial de Fotos e Santinhos TSE 2026 (Hermes Media / Tribuna PR / Gazeta do Povo)
+    if (tseId && /^\d{11,13}$/.test(tseId)) {
+      const uf = (state || dbCandidate?.state || 'rj').toLowerCase();
+      const cdnUrl = `https://www.tribunapr.com.br/hermes-media/eleicoes/2026/candidatos/${uf}/${tseId}.jpg`;
+      try {
+        const check = await axios.head(cdnUrl, {
+          timeout: 4000,
+          headers: { 'User-Agent': 'EleicoesProgressistas/2.2.3 (+https://eleicoes-progressistas.pages.dev)' },
+        });
+        if (check.status === 200) {
+          this.prisma.candidate.updateMany({
+            where: { tseId },
+            data: { photoUrl: cdnUrl },
+          }).catch(() => {});
+          return cdnUrl;
+        }
+      } catch {}
+    }
+
+    // 3.5. Busca na API oficial de fotos do TSE (DivulgaCandContas) para 2026
     if (tseId && /^\d{11,13}$/.test(tseId)) {
       const tsePhotoUrl = `https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto/2045202026/${tseId}`;
       try {

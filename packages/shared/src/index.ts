@@ -650,19 +650,22 @@ export function resolveCandidatePhotoFallbackChain(candidate: {
     urls.push(KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]);
   }
 
-  // 3. Imagem estática hospedada no backend da aplicação / assets do frontend
+  // 3. Imagem estática hospedada no backend da aplicação
   if (photoUrl && photoUrl.startsWith('/')) {
     urls.push(`${base}${photoUrl}`);
-    urls.push(photoUrl);
   }
   if (tseId) {
     urls.push(`${base}/candidates/${tseId}.jpg`);
-    urls.push(`/candidates/${tseId}.jpg`);
     urls.push(`${base}/candidates/tse_${tseId}.jpg`);
   }
   if (cleanPhotoKey && cleanPhotoKey !== tseId) {
     urls.push(`${base}/candidates/${cleanPhotoKey}.jpg`);
-    urls.push(`/candidates/${cleanPhotoKey}.jpg`);
+  }
+
+  // 3.5. CDN Oficial de Fotos e Santinhos TSE 2026 (Hermes Media / Tribuna PR / Gazeta do Povo)
+  if (tseId && /^\d+$/.test(tseId)) {
+    const uf = (candidate.state || 'rj').toLowerCase();
+    urls.push(`https://www.tribunapr.com.br/hermes-media/eleicoes/2026/candidatos/${uf}/${tseId}.jpg`);
   }
 
   // 4. Portal da Câmara dos Deputados (para deputados federais)
