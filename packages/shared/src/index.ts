@@ -686,13 +686,7 @@ export function resolveCandidatePhotoFallbackChain(candidate: {
     urls.push(`${base}/api/candidates/photo-proxy?name=${qName}&state=${qUf}&tseId=${qTseId}`);
   }
 
-  // 7. Badge Oficial do Partido Político como fallback de alta fidelidade
-  if (partyKey) {
-    urls.push(`${base}/candidates/party_${partyKey}.png`);
-    urls.push(`/candidates/party_${partyKey}.png`);
-  }
-
-  // 8. Fallback oficial DivulgaCandContas do TSE (se disponível)
+  // 7. Fallback oficial DivulgaCandContas do TSE (se disponível)
   const isNumericTseId = /^\d+$/.test(tseId) || /^\d+$/.test(cleanPhotoKey);
   if (isNumericTseId) {
     const numId = /^\d+$/.test(tseId) ? tseId : cleanPhotoKey;
