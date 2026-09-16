@@ -9,6 +9,7 @@ import { ThemeToggle } from '../components/ThemeToggle';
 import { CivicEmblem } from '../components/CivicEmblem';
 import { CivicBanner } from '../components/CivicBanner';
 import { PrivacyBanner } from '../components/PrivacyBanner';
+import { ApoioVoluntarioBanner } from '../components/ApoioVoluntarioBanner';
 import { Dropdown, DropdownOption } from '../components/Dropdown';
 import { useLocationStore } from '../stores/location.store';
 import { fetchMunicipalities } from '../services/location.service';
@@ -427,11 +428,25 @@ export default function HomeScreen() {
               variant="secondary"
             />
           </View>
+
+          {/* Banner Estratégico de Apoio Voluntário via PIX */}
+          <ApoioVoluntarioBanner
+            variant="card"
+            style={{ marginTop: Spacing.xl, marginBottom: Spacing.md }}
+          />
         </View>
 
         {/* Footer info */}
         <View style={styles.footer}>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: Spacing.md, marginBottom: Spacing.sm }}>
+            <TouchableOpacity
+              onPress={() => router.push('/apoie')}
+              activeOpacity={0.7}
+            >
+              <Text style={{ fontSize: FontSize.xs, fontWeight: '700', color: '#047857', textDecorationLine: 'underline' }}>
+                🤝 Apoio Voluntário (PIX)
+              </Text>
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => router.push('/manual')}
               activeOpacity={0.7}

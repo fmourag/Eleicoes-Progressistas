@@ -10,6 +10,7 @@ import { CandidaturaWarning } from '../../components/CandidaturaWarning';
 import { useColaStore } from '../../stores/cola.store';
 import { ColaModal } from '../../components/ColaModal';
 import { CivicBanner } from '../../components/CivicBanner';
+import { ApoioVoluntarioBanner } from '../../components/ApoioVoluntarioBanner';
 
 import { ActionButton } from '../../components/ActionButton';
 import {
@@ -1704,6 +1705,12 @@ export default function RaioXScreen() {
             </View>
           </View>
         )}
+
+        {/* Banner Estratégico de Apoio Voluntário via PIX */}
+        <ApoioVoluntarioBanner
+          variant="card"
+          style={{ marginHorizontal: Spacing.sm, marginVertical: Spacing.xl }}
+        />
       </View>
     </ScrollView>
 

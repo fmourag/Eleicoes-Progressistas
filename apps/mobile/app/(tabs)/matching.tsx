@@ -13,6 +13,7 @@ import { ActionButton } from '../../components/ActionButton';
 import { CivicBanner } from '../../components/CivicBanner';
 import { useLocationStore } from '../../stores/location.store';
 import { EthicalAd } from '../../components/EthicalAd';
+import { ApoioVoluntarioBanner } from '../../components/ApoioVoluntarioBanner';
 
 const CARGO_ORDER = ['PRESIDENTE', 'GOVERNADOR', 'SENADOR', 'DEPUTADO_FEDERAL', 'DEPUTADO_ESTADUAL'];
 
@@ -503,6 +504,12 @@ export default function MatchingScreen() {
                     })}
                   </View>
                 )}
+
+                {/* Banner Estratégico de Apoio Voluntário via PIX */}
+                <ApoioVoluntarioBanner
+                  variant="compact"
+                  style={{ marginTop: Spacing.xl, marginBottom: Spacing.xxl }}
+                />
               </ScrollView>
             );
           })()

@@ -27,6 +27,7 @@ import { useColaStore } from '../../stores/cola.store';
 import { ColaModal } from '../../components/ColaModal';
 import { EthicalAd } from '../../components/EthicalAd';
 import { CivicBanner } from '../../components/CivicBanner';
+import { ApoioVoluntarioBanner } from '../../components/ApoioVoluntarioBanner';
 
 interface CandidateListItem {
   id: string;
@@ -676,6 +677,12 @@ export default function CandidatosScreen() {
             </View>
           </View>
         )}
+
+        {/* Banner Estratégico de Apoio Voluntário via PIX */}
+        <ApoioVoluntarioBanner
+          variant="compact"
+          style={{ marginTop: Spacing.xl, marginBottom: Spacing.xxl }}
+        />
       </ScrollView>
 
       {/* Barra Flutuante de Ação Rápida: Gerar Cola Eleitoral */}

@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'reac
 import QRCode from 'qrcode';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 
+import { OFFICIAL_PIX_KEY, generatePixPayload, generatePixQrDataUrl } from '../utils/pix';
+
 interface PixApoioProps {
   compact?: boolean;
 }
@@ -15,41 +17,42 @@ const PRESET_VALUES = [
 ];
 
 export function PixApoio({ compact = false }: PixApoioProps) {
-  const pixKey = process.env.EXPO_PUBLIC_PIX_KEY;
+  const pixKey = process.env.EXPO_PUBLIC_PIX_KEY?.trim() || OFFICIAL_PIX_KEY;
   const colors = useThemeColors();
   const [selectedValue, setSelectedValue] = useState('15.00');
   const [customValue, setCustomValue] = useState('');
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [copiedPayload, setCopiedPayload] = useState(false);
 
-  // Gera o QR Code com base na chave PIX
+  const effectiveAmount = selectedValue === '' ? customValue : selectedValue;
+
+  // Gera o QR Code oficial BR Code com base no valor e na chave PIX
   useEffect(() => {
-    if (!pixKey) return;
-    QRCode.toDataURL(pixKey, {
-      width: 200,
-      margin: 2,
-      color: {
-        dark: '#131B2E',
-        light: '#FFFFFF',
-      },
-    })
+    const payload = generatePixPayload({ key: pixKey, amount: effectiveAmount });
+    generatePixQrDataUrl(payload, { width: 200, margin: 2 })
       .then(setQrDataUrl)
       .catch(() => {});
-  }, [pixKey]);
-
-  // Falha silenciosa se a variável de ambiente não estiver definida
-  if (!pixKey) {
-    return null;
-  }
+  }, [pixKey, effectiveAmount]);
 
   async function handleCopyPix() {
-    if (!pixKey) return;
     try {
       if (typeof navigator !== 'undefined' && navigator.clipboard) {
         await navigator.clipboard.writeText(pixKey);
       }
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
+    } catch {}
+  }
+
+  async function handleCopyPayload() {
+    try {
+      const payload = generatePixPayload({ key: pixKey, amount: effectiveAmount });
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(payload);
+      }
+      setCopiedPayload(true);
+      setTimeout(() => setCopiedPayload(false), 2500);
     } catch {}
   }
 
@@ -151,20 +154,40 @@ export function PixApoio({ compact = false }: PixApoioProps) {
         </View>
       )}
 
-      {/* Botão Copiar Chave */}
-      <TouchableOpacity
-        style={[styles.copyButton, { backgroundColor: copied ? colors.success : colors.primary }]}
-        onPress={handleCopyPix}
-        activeOpacity={0.85}
-      >
-        <Text style={styles.copyButtonText}>
-          {copied ? '✅ Chave PIX Copiada!' : '📋 Copiar Chave PIX'}
-        </Text>
-      </TouchableOpacity>
+      {/* Botões de Ação */}
+      <View style={{ gap: Spacing.xs, marginBottom: Spacing.sm }}>
+        <TouchableOpacity
+          style={[styles.copyButton, { backgroundColor: copied ? colors.success : colors.primary, marginBottom: 0 }]}
+          onPress={handleCopyPix}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.copyButtonText}>
+            {copied ? '✅ Chave PIX Copiada!' : `📋 Copiar Chave PIX: ${pixKey}`}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.copyButton,
+            {
+              backgroundColor: copiedPayload ? '#ECFDF5' : colors.surfaceAlt,
+              borderWidth: 1,
+              borderColor: copiedPayload ? '#059669' : colors.border,
+              marginBottom: 0,
+            },
+          ]}
+          onPress={handleCopyPayload}
+          activeOpacity={0.85}
+        >
+          <Text style={[styles.copyButtonText, { color: copiedPayload ? '#059669' : colors.text }]}>
+            {copiedPayload ? '✅ Código PIX Copiado!' : '⚡ Copiar Código PIX (Copia e Cola)'}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.keyRow}>
         <Text style={[styles.pixKeyDisplay, { color: colors.textMuted }]} numberOfLines={1}>
-          Chave direta: <Text style={{ fontFamily: 'monospace', color: colors.text }}>{pixKey}</Text>
+          Chave oficial: <Text style={{ fontFamily: 'monospace', fontWeight: '700', color: colors.text }}>{pixKey}</Text>
         </Text>
       </View>
     </View>

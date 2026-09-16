@@ -17,6 +17,7 @@ import { useColaStore, ColaCandidate, COLA_SLOTS } from '../stores/cola.store';
 import { useLocationStore } from '../stores/location.store';
 import { getCandidatePhotoUrl, API_URL } from '../services/api';
 import { PixApoio } from './PixApoio';
+import { ApoioVoluntarioBanner } from './ApoioVoluntarioBanner';
 
 interface ColaModalProps {
   visible: boolean;
@@ -369,6 +370,13 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
                 </TouchableOpacity>
               </View>
             )}
+
+            {/* Banner de Apoio Voluntário para Manutenção da Cola */}
+            <ApoioVoluntarioBanner
+              variant="compact"
+              title="Apoie a Manutenção da Cola Eleitoral Gratuita"
+              style={{ marginTop: Spacing.lg, marginBottom: Spacing.md }}
+            />
           </ScrollView>
         </View>
       </View>
