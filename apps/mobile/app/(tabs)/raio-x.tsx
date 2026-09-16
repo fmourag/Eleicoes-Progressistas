@@ -155,16 +155,18 @@ export default function RaioXScreen() {
   const loadData = async () => {
     if (!id) return;
     setLoading(true);
-    setIsOffline(false);
     setErrorMessage(null);
 
     try {
       const res = await candidatesApi.getRaioX(id);
       setData(res);
+      setIsOffline(Boolean(res?.isOffline));
     } catch (err) {
       console.warn('[RaioXScreen] Erro ao carregar raio-x:', (err as Error).message);
       setIsOffline(true);
-      setErrorMessage('Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.');
+      if (!data) {
+        setErrorMessage('Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.');
+      }
     } finally {
       setLoading(false);
     }
@@ -203,7 +205,7 @@ export default function RaioXScreen() {
     );
   }
 
-  if (isOffline || !data) {
+  if (!data) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background, padding: Spacing.xl }]}>
         <Text style={[styles.errorTitle, { color: colors.errorText || '#DC2626' }]}>
@@ -297,6 +299,39 @@ export default function RaioXScreen() {
         </TouchableOpacity>
 
         <CivicBanner variant="compact" />
+
+        {isOffline && (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              backgroundColor: '#FEF2F2',
+              borderColor: '#F87171',
+              borderWidth: 1,
+              borderRadius: Radius.md,
+              paddingVertical: Spacing.xs + 2,
+              paddingHorizontal: Spacing.md,
+              marginBottom: Spacing.sm,
+            }}
+          >
+            <Text style={{ fontSize: FontSize.xs, color: '#991B1B', fontWeight: '600', flex: 1 }}>
+              ⚡ Modo Offline: exibindo dados em cache / locais.
+            </Text>
+            <TouchableOpacity
+              onPress={loadData}
+              style={{
+                backgroundColor: '#DC2626',
+                paddingHorizontal: Spacing.sm,
+                paddingVertical: 4,
+                borderRadius: Radius.sm,
+                marginLeft: Spacing.sm,
+              }}
+            >
+              <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '700' }}>Reconectar</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <View style={[styles.header, { backgroundColor: colors.surfaceAlt, paddingHorizontal: padding }]}>
           <View style={styles.headerRow}>

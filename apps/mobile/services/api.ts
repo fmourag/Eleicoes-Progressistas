@@ -1,5 +1,11 @@
-import { Platform } from 'react-native';
-import { CandidateClassification, GovernmentPlanDetail, CandidatePollResult, resolveCandidatePhotoUrl, resolveCandidatePhotoFallbackChain } from '@np/shared';
+import {
+  CandidateClassification,
+  GovernmentPlanDetail,
+  CandidatePollResult,
+  resolveCandidatePhotoUrl,
+  resolveCandidatePhotoFallbackChain,
+  resolveCandidateMandateProposals,
+} from '@np/shared';
 
 const PRODUCTION_API_URL = 'https://eleicoes-progressistas.onrender.com';
 
@@ -134,6 +140,81 @@ export interface RaioXData {
   classification?: CandidateClassification;
   governmentPlan?: GovernmentPlanDetail;
   pollResult?: CandidatePollResult;
+  isOffline?: boolean;
+}
+
+const candidateMemoryCache = new Map<string, Candidate>();
+const raioXMemoryCache = new Map<string, RaioXData>();
+
+export function saveCandidatesToCache(candidates: Candidate[]) {
+  if (!Array.isArray(candidates)) return;
+  for (const c of candidates) {
+    if (c.id) candidateMemoryCache.set(c.id, c);
+    if (c.tseId) candidateMemoryCache.set(c.tseId, c);
+  }
+  if (typeof window !== 'undefined' && window.sessionStorage) {
+    try {
+      const existingStr = window.sessionStorage.getItem('np_cached_candidates');
+      const existing = existingStr ? JSON.parse(existingStr) : {};
+      for (const c of candidates) {
+        if (c.id) existing[c.id] = c;
+        if (c.tseId) existing[c.tseId] = c;
+      }
+      window.sessionStorage.setItem('np_cached_candidates', JSON.stringify(existing));
+    } catch {
+      // storage unavailable or quota exceeded
+    }
+  }
+}
+
+export function getCachedCandidate(id: string): Candidate | undefined {
+  if (candidateMemoryCache.has(id)) {
+    return candidateMemoryCache.get(id);
+  }
+  if (typeof window !== 'undefined' && window.sessionStorage) {
+    try {
+      const existingStr = window.sessionStorage.getItem('np_cached_candidates');
+      if (existingStr) {
+        const existing = JSON.parse(existingStr);
+        if (existing[id]) {
+          candidateMemoryCache.set(id, existing[id]);
+          return existing[id];
+        }
+      }
+    } catch {}
+  }
+  return undefined;
+}
+
+export function saveRaioXToCache(id: string, data: RaioXData) {
+  if (!id || !data) return;
+  raioXMemoryCache.set(id, data);
+  if (data.tseId) raioXMemoryCache.set(data.tseId, data);
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      window.localStorage.setItem(`np_raiox_${id}`, JSON.stringify(data));
+      if (data.tseId) {
+        window.localStorage.setItem(`np_raiox_${data.tseId}`, JSON.stringify(data));
+      }
+    } catch {}
+  }
+}
+
+export function getCachedRaioX(id: string): RaioXData | undefined {
+  if (raioXMemoryCache.has(id)) {
+    return raioXMemoryCache.get(id);
+  }
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      const item = window.localStorage.getItem(`np_raiox_${id}`);
+      if (item) {
+        const parsed = JSON.parse(item);
+        raioXMemoryCache.set(id, parsed);
+        return parsed;
+      }
+    } catch {}
+  }
+  return undefined;
 }
 
 export function getCandidatePhotoFallbackChain(params: {
@@ -178,18 +259,25 @@ export async function retryWithBackoff<T>(
     } catch (error) {
       lastError = error;
       if (i === maxRetries - 1) break;
-      const delay = baseDelayMs * Math.pow(2, i); // 1s, 2s, 4s
+      const delay = baseDelayMs * Math.pow(2, i);
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
   throw lastError;
 }
 
+export interface RequestConfig extends RequestInit {
+  timeout?: number;
+  retries?: number;
+}
+
 export async function apiRequest<T>(
   path: string,
-  options: RequestInit & { timeout?: number } = {}
+  options: RequestConfig = {}
 ): Promise<T> {
   const timeoutMs = options.timeout ?? DEFAULT_API_TIMEOUT;
+  const isGet = !options.method || options.method.toUpperCase() === 'GET';
+  const maxRetries = options.retries ?? (isGet ? 2 : 0);
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...((options.headers as Record<string, string>) ?? {}),
@@ -199,44 +287,55 @@ export async function apiRequest<T>(
     headers['Authorization'] = `Bearer ${authToken}`;
   }
 
-  const controller = new AbortController();
-  const timeoutTimer = setTimeout(() => {
-    controller.abort();
-  }, timeoutMs);
+  let attempt = 0;
+  let lastError: any;
 
-  let res: Response;
-  try {
-    res = await fetch(`${API_URL}${path}`, {
-      ...options,
-      headers,
-      signal: controller.signal,
-    });
-  } catch (err) {
-    clearTimeout(timeoutTimer);
-    const isAbort = (err as Error)?.name === 'AbortError';
-    console.warn(
-      `[API] ${isAbort ? 'Timeout de conexão (60s)' : 'Falha de conexão'} ao acessar ${path}:`,
-      (err as Error).message
-    );
-    throw new Error(
-      isAbort
-        ? 'O servidor demorou mais que 60 segundos para responder (inicialização de serviço). Tente novamente em instantes.'
-        : 'Servidor temporariamente indisponível. Tente novamente em alguns minutos.'
-    );
-  } finally {
-    clearTimeout(timeoutTimer);
+  while (attempt <= maxRetries) {
+    const controller = new AbortController();
+    const timeoutTimer = setTimeout(() => {
+      controller.abort();
+    }, timeoutMs);
+
+    try {
+      const res = await fetch(`${API_URL}${path}`, {
+        ...options,
+        headers,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutTimer);
+
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({ message: res.statusText }));
+        throw new Error(error.message ?? `API ${res.status}`);
+      }
+
+      return (await res.json()) as Promise<T>;
+    } catch (err) {
+      clearTimeout(timeoutTimer);
+      lastError = err;
+      attempt++;
+      if (attempt <= maxRetries) {
+        const delay = Math.min(800 * Math.pow(2, attempt - 1), 3000);
+        await new Promise((r) => setTimeout(r, delay));
+      }
+    }
   }
 
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({ message: res.statusText }));
-    throw new Error(error.message ?? `API ${res.status}`);
-  }
-
-  return res.json() as Promise<T>;
+  const isAbort = (lastError as Error)?.name === 'AbortError';
+  console.warn(
+    `[API] ${isAbort ? 'Timeout de conexão (60s)' : 'Falha de conexão'} ao acessar ${path}:`,
+    (lastError as Error)?.message
+  );
+  throw new Error(
+    isAbort
+      ? 'O servidor demorou mais que 60 segundos para responder (inicialização de serviço). Tente novamente em instantes.'
+      : 'Servidor temporariamente indisponível. Tente novamente em alguns minutos.'
+  );
 }
 
 export const api = {
-  get: <T>(path: string, config?: { params?: Record<string, any>; timeout?: number }) => {
+  get: <T>(path: string, config?: { params?: Record<string, any>; timeout?: number; retries?: number }) => {
     let url = path;
     if (config?.params) {
       const sp = new URLSearchParams();
@@ -246,13 +345,14 @@ export const api = {
       const qs = sp.toString();
       if (qs) url += (url.includes('?') ? '&' : '?') + qs;
     }
-    return apiRequest<T>(url, { timeout: config?.timeout });
+    return apiRequest<T>(url, { timeout: config?.timeout, retries: config?.retries });
   },
-  post: <T>(path: string, body?: unknown, config?: { timeout?: number }) =>
+  post: <T>(path: string, body?: unknown, config?: { timeout?: number; retries?: number }) =>
     apiRequest<T>(path, {
       method: 'POST',
       body: body !== undefined ? JSON.stringify(body) : undefined,
       timeout: config?.timeout,
+      retries: config?.retries,
     }),
 };
 
@@ -277,10 +377,22 @@ export interface RankMatchDto {
 export const matchingApi = {
   getResults: (deviceId: string, userId?: string) =>
     api.get<MatchResult[]>(`/api/candidates`),
-  rank: (dto?: RankMatchDto) =>
-    api.post<MatchingResponse>('/api/matching/rank', dto ?? {}),
-  compute: (dto?: RankMatchDto) =>
-    api.post<MatchingResponse>('/api/matching/rank', dto ?? {}),
+  rank: async (dto?: RankMatchDto) => {
+    const res = await api.post<MatchingResponse>('/api/matching/rank', dto ?? {});
+    if (res?.results && Array.isArray(res.results)) {
+      const candidates = res.results.map((r) => r.candidate).filter(Boolean);
+      saveCandidatesToCache(candidates);
+    }
+    return res;
+  },
+  compute: async (dto?: RankMatchDto) => {
+    const res = await api.post<MatchingResponse>('/api/matching/rank', dto ?? {});
+    if (res?.results && Array.isArray(res.results)) {
+      const candidates = res.results.map((r) => r.candidate).filter(Boolean);
+      saveCandidatesToCache(candidates);
+    }
+    return res;
+  },
 };
 
 const MOCK_RAIOX_FALLBACKS: Record<string, RaioXData> = {
@@ -312,7 +424,7 @@ const MOCK_RAIOX_FALLBACKS: Record<string, RaioXData> = {
 };
 
 export const candidatesApi = {
-  getAll: (params?: { municipality?: string; state?: string; cargo?: string; party?: string; search?: string }) => {
+  getAll: async (params?: { municipality?: string; state?: string; cargo?: string; party?: string; search?: string }) => {
     const query = new URLSearchParams();
     if (params?.municipality) query.append('municipality', params.municipality);
     if (params?.state) query.append('state', params.state);
@@ -320,35 +432,105 @@ export const candidatesApi = {
     if (params?.party) query.append('party', params.party);
     if (params?.search) query.append('search', params.search);
     const qs = query.toString();
-    return api.get<Candidate[] | (CandidatesResponse & { results: Candidate[] })>(`/api/candidates${qs ? `?${qs}` : ''}`);
+    const res = await api.get<Candidate[] | (CandidatesResponse & { results: Candidate[] })>(`/api/candidates${qs ? `?${qs}` : ''}`);
+    const list = Array.isArray(res) ? res : res?.results;
+    if (Array.isArray(list)) {
+      saveCandidatesToCache(list);
+    }
+    return res;
   },
   getById: (id: string) => api.get<Candidate>(`/api/candidates/${id}`),
   getRaioX: async (id: string): Promise<RaioXData> => {
     try {
-      return await api.get<RaioXData>(`/api/candidates/${id}/raio-x`);
+      const res = await api.get<RaioXData>(`/api/candidates/${id}/raio-x`, { retries: 3 });
+      saveRaioXToCache(id, res);
+      return res;
     } catch (err) {
-      if (MOCK_RAIOX_FALLBACKS[id]) {
-        return MOCK_RAIOX_FALLBACKS[id];
+      console.warn(`[candidatesApi.getRaioX] Falha de rede para ${id}, utilizando fallback local/cache...`);
+
+      // 1. Verificar cache local do Raio-X completo
+      const cachedRaioX = getCachedRaioX(id);
+      if (cachedRaioX) {
+        return { ...cachedRaioX, isOffline: true };
       }
+
+      // 2. Verificar candidato em cache e sintetizar Raio-X detalhado
+      const cachedCand = getCachedCandidate(id);
+      if (cachedCand) {
+        let synthesizedProposals: ProposalItem[] = [];
+        try {
+          const rawProposals = resolveCandidateMandateProposals([], cachedCand);
+          synthesizedProposals = rawProposals.map((p) => ({
+            pillar: p.pillar,
+            title: p.title,
+            description: p.translatedText,
+            text: p.diretrizes,
+            translatedText: p.translatedText,
+          }));
+        } catch {
+          synthesizedProposals = [
+            { pillar: 'p1', text: 'Defesa e valorização contínua dos serviços públicos essenciais.' },
+            { pillar: 'p9', text: 'Fortalecimento do SUS, saúde primária e educação cidadã integral.' },
+          ];
+        }
+
+        const synthRaioX: RaioXData = {
+          id: cachedCand.id,
+          candidate: cachedCand,
+          name: cachedCand.name,
+          socialName: cachedCand.socialName,
+          viceName: cachedCand.viceName,
+          party: cachedCand.party,
+          partyNumber: cachedCand.partyNumber,
+          numeroUrna: cachedCand.numeroUrna,
+          cargo: cachedCand.cargo,
+          level: cachedCand.level,
+          state: cachedCand.state,
+          municipality: cachedCand.municipality,
+          electionYear: cachedCand.electionYear || 2026,
+          tseId: cachedCand.tseId,
+          photoUrl: cachedCand.photoUrl,
+          candidaturaStatus: cachedCand.candidaturaStatus || 'EM_ANALISE',
+          fichaLimpa: cachedCand.fichaLimpa ?? true,
+          profileScores: cachedCand.profileScores,
+          classification: cachedCand.classification,
+          governmentPlanUrl: cachedCand.governmentPlanUrl || 'https://divulgacandcontas.tse.jus.br/',
+          governmentPlanSummary: cachedCand.governmentPlanSummary || 'Plano de Diretrizes e Metas registrado no Tribunal Superior Eleitoral (TSE).',
+          proposals: synthesizedProposals,
+          votingHistory: [
+            { project: 'Atuação parlamentar e posicionamentos registrados no TSE', vote: 'Acompanhamento' },
+          ],
+          isOffline: true,
+        };
+        return synthRaioX;
+      }
+
+      // 3. Fallbacks pré-configurados
+      if (MOCK_RAIOX_FALLBACKS[id]) {
+        return { ...MOCK_RAIOX_FALLBACKS[id], isOffline: true };
+      }
+
+      // 4. Fallback genérico para evitar tela de erro impeditiva
       return {
         id,
-        name: 'Candidato(a) Progressista',
-        socialName: 'Candidato Oficial',
-        party: 'FE BRASIL / PSB / PSOL',
-        cargo: 'PRESIDENTE',
+        name: 'Candidatura Progressista',
+        socialName: 'Candidato(a) Oficial',
+        party: 'PROGRESSISTAS / FEDERAÇÃO',
+        cargo: 'DEPUTADO_FEDERAL',
         level: 'FEDERAL',
         candidaturaStatus: 'EM_ANALISE',
         fichaLimpa: true,
         governmentPlanUrl: 'https://divulgacandcontas.tse.jus.br/',
-        governmentPlanSummary: 'Plano de Governo Registrado no TSE: Foco em justiça social, ampliação da rede de atenção primária de saúde, segurança cidadã e transição ecológica.',
+        governmentPlanSummary: 'Plano de Diretrizes Registrado no TSE: Prioridade à justiça social, expansão da saúde pública, sustentabilidade e inovação.',
         votingHistory: [
           { project: 'Proposta de Emenda Constitucional da Saúde', vote: 'Aprovado' },
-          { project: 'Incentivo à Transição Energética e Sustentabilidade', vote: 'Aprovado' },
+          { project: 'Incentivo à Sustentabilidade e Transição Ecológica', vote: 'Aprovado' },
         ],
         proposals: [
-          { pillar: 'p1', text: 'Fortalecimento de serviços públicos e direitos sociais.' },
-          { pillar: 'p9', text: 'Investimentos prioritários em saúde universal e educação.' },
+          { pillar: 'p1', text: 'Fortalecimento dos serviços públicos e garantia de direitos sociais.' },
+          { pillar: 'p9', text: 'Investimentos prioritários no SUS e educação pública de qualidade.' },
         ],
+        isOffline: true,
       };
     }
   },
