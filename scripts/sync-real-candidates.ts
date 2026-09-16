@@ -156,7 +156,7 @@ const REAL_GOVERNORS = [
   { tseId: 'gov_mg_rogerio', name: 'Rogério Correia Machado', socialName: 'Rogério Correia', viceName: 'Bella Gonçalves', party: 'PT', state: 'MG', municipality: 'Belo Horizonte', photoUrl: '/candidates/gov_mg_rogerio.jpg', numeroUrna: '13', status: 'DEFERIDO' },
   
   // Rio de Janeiro (RJ) - Ampla frente democrática e progressista
-  { tseId: 'gov_rj_paes', name: 'Eduardo da Costa Paes', socialName: 'Eduardo Paes', viceName: 'Eduardo Cavaliere', party: 'PSD', state: 'RJ', municipality: 'Rio de Janeiro', photoUrl: '/candidates/280001600006.jpg', numeroUrna: '55', status: 'DEFERIDO' },
+  { tseId: 'gov_rj_paes', name: 'Eduardo da Costa Paes', socialName: 'Eduardo Paes', viceName: 'Jane Reis', party: 'PSD', state: 'RJ', municipality: 'Rio de Janeiro', photoUrl: '/candidates/280001600006.jpg', numeroUrna: '55', status: 'DEFERIDO' },
   { tseId: 'gov_rj_siri', name: 'William Siri', socialName: 'William Siri', viceName: 'Bárbara Sinedino', party: 'PSOL', state: 'RJ', municipality: 'Rio de Janeiro', photoUrl: '/candidates/gov_rj_siri.jpg', numeroUrna: '50', status: 'DEFERIDO' },
   { tseId: 'gov_rj_neves', name: 'Rodrigo Neves Barreto', socialName: 'Rodrigo Neves', viceName: 'Felipe Peixoto', party: 'PDT', state: 'RJ', municipality: 'Niterói', photoUrl: '/candidates/gov_rj_neves.jpg', numeroUrna: '12', status: 'DEFERIDO' },
   { tseId: 'gov_rj_juliete', name: 'Juliete Pantoja', socialName: 'Juliete Pantoja', viceName: 'Juliana Alves', party: 'UP', state: 'RJ', municipality: 'Rio de Janeiro', photoUrl: '/candidates/gov_rj_juliete.jpg', numeroUrna: '80', status: 'EM_ANALISE' },

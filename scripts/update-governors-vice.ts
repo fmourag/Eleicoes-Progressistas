@@ -9,8 +9,8 @@ const prisma = new PrismaClient({
 });
 
 const GOVERNOR_VICES: Record<string, string> = {
-  'gov_rj_paes': 'Eduardo Cavaliere',
-  'Eduardo da Costa Paes': 'Eduardo Cavaliere',
+  'gov_rj_paes': 'Jane Reis',
+  'Eduardo da Costa Paes': 'Jane Reis',
   'gov_sp_franca': 'Juliano Medeiros',
   'Márcio França': 'Juliano Medeiros',
   'Márcio Luiz França Gomes': 'Juliano Medeiros',

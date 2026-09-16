@@ -46,7 +46,7 @@ const FALLBACK_CANDIDATES: MatchResult[] = [
     candidate: {
       id: 'c4',
       name: 'Eduardo da Costa Paes',
-      viceName: 'Eduardo Cavaliere',
+      viceName: 'Jane Reis',
       party: 'PSD',
       partyNumber: 55,
       tseId: '280001600006',

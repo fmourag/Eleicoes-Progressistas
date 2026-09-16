@@ -1,4 +1,4 @@
-import { Injectable, Inject, Optional } from '@nestjs/common';
+import { Injectable, Inject, Optional, OnModuleInit } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
@@ -414,7 +414,7 @@ export function buildGovernmentPlanDetail(candidate: any): GovernmentPlanDetail 
 }
 
 @Injectable()
-export class CandidatesService {
+export class CandidatesService implements OnModuleInit {
   private candidatesCache = new Map<string, { data: any; expiresAt: number }>();
   private readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos de cache em memória
 
@@ -422,6 +422,39 @@ export class CandidatesService {
     @Inject(PrismaService) private prisma: PrismaService,
     @Optional() @Inject(TsePhotoPrefetchService) private photoPrefetch?: TsePhotoPrefetchService,
   ) {}
+
+  async onModuleInit() {
+    try {
+      // 1. Atualização oficial da vice de Eduardo Paes no Rio de Janeiro (Jane Reis - MDB)
+      await this.prisma.candidate.updateMany({
+        where: {
+          OR: [
+            { tseId: 'gov_rj_paes' },
+            { name: { contains: 'Eduardo da Costa Paes', mode: 'insensitive' } },
+            { socialName: { equals: 'Eduardo Paes', mode: 'insensitive' } },
+          ],
+        },
+        data: {
+          viceName: 'Jane Reis',
+        },
+      });
+
+      // 2. Ocultar duplicata indevida de Well Macedo como titular no PA (é vice de Cleber Rabelo)
+      await this.prisma.candidate.updateMany({
+        where: {
+          tseId: '140002554108',
+          cargo: 'GOVERNADOR',
+        },
+        data: {
+          visible: false,
+        },
+      });
+
+      this.candidatesCache.clear();
+    } catch {
+      // Falha silenciosa em caso de tabela ainda não inicializada
+    }
+  }
 
   async findByLocation(municipality?: string, state?: string, cargo?: string, party?: string, search?: string) {
     const cacheKey = `cand:${municipality || ''}:${state || ''}:${cargo || ''}:${party || ''}:${search || ''}`;
@@ -548,8 +581,13 @@ export class CandidatesService {
         if (this.photoPrefetch && c.tseId && /^\d+$/.test(c.tseId) && !this.photoPrefetch.hasLocal(c.tseId)) {
           this.photoPrefetch.prefetch(c.tseId, c.photoUrl);
         }
+        let viceName = c.viceName;
+        if (c.tseId === 'gov_rj_paes' || c.socialName === 'Eduardo Paes' || c.name === 'Eduardo da Costa Paes') {
+          viceName = 'Jane Reis';
+        }
         return {
           ...c,
+          viceName,
           hasInsufficientData,
           photoUrl: resolvedPhoto || c.photoUrl,
           numeroUrna: c.numeroUrna || getNumeroUrna(c),
@@ -625,8 +663,13 @@ export class CandidatesService {
     if (this.photoPrefetch && cAny.tseId && /^\d+$/.test(cAny.tseId) && !this.photoPrefetch.hasLocal(cAny.tseId)) {
       this.photoPrefetch.prefetch(cAny.tseId, cAny.photoUrl);
     }
+    let viceName = cAny.viceName;
+    if (cAny.tseId === 'gov_rj_paes' || cAny.socialName === 'Eduardo Paes' || cAny.name === 'Eduardo da Costa Paes') {
+      viceName = 'Jane Reis';
+    }
     return {
       ...candidate,
+      viceName,
       hasInsufficientData,
       photoUrl: resolvedPhoto || cAny.photoUrl,
       numeroUrna: cAny.numeroUrna || getNumeroUrna(cAny),
@@ -730,8 +773,14 @@ export class CandidatesService {
       this.photoPrefetch.prefetch(candidate.tseId, candidate.photoUrl);
     }
 
+    let viceName = candidate.viceName;
+    if (candidate.tseId === 'gov_rj_paes' || candidate.socialName === 'Eduardo Paes' || candidate.name === 'Eduardo da Costa Paes') {
+      viceName = 'Jane Reis';
+    }
+
     return {
       ...candidate,
+      viceName,
       photoUrl: resolvedPhoto || candidate.photoUrl,
       proposals: resolvedProposals,
       numeroUrna,
