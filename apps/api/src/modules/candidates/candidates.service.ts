@@ -1,4 +1,6 @@
 import { Injectable, Inject, Optional } from '@nestjs/common';
+import * as fs from 'fs';
+import * as path from 'path';
 import axios from 'axios';
 import { PrismaService } from '../common/prisma.service';
 import { ElectionLevel, Cargo, CARGOS_BY_LEVEL, UPCOMING_ELECTION, EXCLUDED_CONSERVATIVE_PARTIES, PROGRESSIVE_COALITION_CORE_PARTIES, KNOWN_PARLIAMENTARY_PHOTOS, CandidateClassification, PillarCommitment, GovernmentPlanDetail, getNumeroUrna, computeCandidatePollResult, resolveCandidateMandateProposals, buildPillarJustificativa, resolveCandidatePhotoUrl, isNeutralMatchingProfile } from '@np/shared';

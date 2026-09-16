@@ -122,7 +122,7 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
 
     lines.push('----------------------------------------');
     lines.push('📄 _Resolução TSE nº 23.736/2024: É permitido levar colinha em papel para a cabine de votação._');
-    lines.push('🌐 Acesse e monte a sua cola: https://eleicoesprogressistas.org');
+    lines.push('📲 Baixe o App Eleições Progressistas: https://eleicoes-progressistas.onrender.com/download');
 
     return lines.join('\n');
   }

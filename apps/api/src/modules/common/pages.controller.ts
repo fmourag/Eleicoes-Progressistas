@@ -9,7 +9,7 @@ export class PagesController {
     return PRIVACY_HTML;
   }
 
-  @Get('beta')
+  @Get(['beta', 'download', 'app', 'apk'])
   @Header('Content-Type', 'text/html; charset=utf-8')
   getBeta() {
     return BETA_HTML;

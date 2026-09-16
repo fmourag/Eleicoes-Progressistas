@@ -152,9 +152,12 @@ async function bootstrap() {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(PRIVACY_HTML);
   });
-  expressApp.get('/beta', (_req: Request, res: Response) => {
+  expressApp.get(['/beta', '/download', '/app', '/apk'], (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(BETA_HTML);
+  });
+  expressApp.get(['/download/apk', '/app.apk'], (_req: Request, res: Response) => {
+    res.redirect('https://expo.dev/artifacts/eas/AuyFXRY-POmAo6xJK3cxvesMAHJlLPsK_m11pwQjSRc.apk');
   });
   expressApp.get('/feedback', (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');

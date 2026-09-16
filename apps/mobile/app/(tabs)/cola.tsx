@@ -85,7 +85,7 @@ export default function ColaScreen() {
     }
     lines.push('');
     lines.push('⚠️ Atenção: Leve a cola impressa! É proibido entrar com celular na cabine (TSE).');
-    lines.push('📱 Monte sua cola em: https://eleicoesprogressistas.org.br');
+    lines.push('📲 Baixe o App Eleições Progressistas: https://eleicoes-progressistas.onrender.com/download');
     const text = encodeURIComponent(lines.join('\n'));
     Linking.openURL(`https://api.whatsapp.com/send?text=${text}`);
   }

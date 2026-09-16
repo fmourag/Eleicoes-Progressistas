@@ -96,7 +96,7 @@ export default function RelatoriosScreen() {
             <Text style={[styles.priceTag, { color: colors.primary }]}>R$ 490,00</Text>
             <TouchableOpacity
               style={[styles.actionBtn, { backgroundColor: colors.primary }]}
-              onPress={() => Alert.alert('Contato B2B', 'Envie mensagem para relatorios@eleicoesprogressistas.org')}
+              onPress={() => Alert.alert('Contato B2B', 'Envie mensagem para fmourag@gmail.com')}
             >
               <Text style={styles.actionBtnText}>Solicitar Dossiê</Text>
             </TouchableOpacity>
