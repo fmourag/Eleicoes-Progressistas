@@ -45,12 +45,12 @@
     <div class="header">
         <span class="badge">AUDITORIA CÍVICA ABERTA</span>
         <h1>Eleições Progressistas</h1>
-        <p class="subtitle">Avaliação e feedback de homologação da versão 2.2.3</p>
+        <p class="subtitle">Avaliação e feedback de homologação da versão 2.2.5</p>
     </div>
 
     <div class="card" id="formCard">
         <form id="feedbackForm">
-            <input type="hidden" id="appVersion" name="appVersion" value="2.2.3">
+            <input type="hidden" id="appVersion" name="appVersion" value="2.2.5">
             <input type="hidden" id="nps" name="nps" value="10">
 
             <div class="form-group">
@@ -125,10 +125,36 @@
 
     <div class="success-box" id="successBox">
         <h2 style="color: #1B5E20; margin-top: 0;">🎉 Feedback Registrado com Sucesso!</h2>
-        <p>Seu reporte foi registrado e integrado à base de auditoria cívica da versão 2.2.3.</p>
+        <p>Seu reporte foi registrado e integrado à base de auditoria cívica da versão 2.2.5.</p>
         <div>Seu protocolo de feedback é:</div>
         <div class="protocol-badge" id="protocolBadge">FB-...</div>
-        <p style="font-size: 14px; color: #555;">Muito obrigado por contribuir com a democracia e a transparência eleitoral! 🇧🇷</p>
+
+        <!-- Bloco Promotores: Play Store Review Prompt -->
+        <div id="playStorePrompt" style="display: none; margin-top: 20px; padding: 16px; background: #E8F5E9; border: 2px solid #2E7D32; border-radius: 8px; text-align: center;">
+            <h3 style="color: #1B5E20; margin-top: 0;">⭐ Apoie nossa causa na Google Play Store!</h3>
+            <p style="font-size: 14px; color: #2E7D32; margin-bottom: 14px; font-weight: 500;">
+                Ficamos muito felizes com a sua ótima avaliação! Sua nota de 5 estrelas é essencial para dar visibilidade a uma política transparente, limpa e independente.
+            </p>
+            <a href="https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app" target="_blank" class="btn" style="background: #2E7D32; font-size: 16px; padding: 12px 24px; text-decoration: none; color: #fff; border-radius: 6px; font-weight: bold; display: inline-block;">
+                ⭐ Avaliar com 5 Estrelas no Google Play
+            </a>
+            <p style="font-size: 12px; color: #555; margin-top: 10px;">
+                (Se você participa do Beta Fechado: <a href="https://play.google.com/apps/testing/com.eleicoesprogressistas.app" target="_blank">Acessar Trilha de Testes Google Play</a>)
+            </p>
+        </div>
+
+        <!-- Bloco Crítica / Diagnóstico Técnico: Tratamento Preventivo -->
+        <div id="techSupportPrompt" style="display: none; margin-top: 20px; padding: 16px; background: #FFF8E1; border: 1px solid #FFE082; border-radius: 8px; text-align: center;">
+            <h3 style="color: #F57F17; margin-top: 0;">🛠️ Diagnóstico Cívico Registrado</h3>
+            <p style="font-size: 14px; color: #424242; margin-bottom: 8px;">
+                Agradecemos imensamente seu apontamento técnico. Nossa equipe já vinculou os dados do seu modelo de aparelho ao protocolo para solucionar a ocorrência antes da liberação na Google Play Store.
+            </p>
+            <p style="font-size: 13px; color: #616161;">
+                Dúvidas ou evidências adicionais podem ser enviadas diretamente para: <a href="mailto:fmourag@gmail.com" id="supportMailLink" style="color: #1B5E20; font-weight: bold;">fmourag@gmail.com</a>
+            </p>
+        </div>
+
+        <p style="font-size: 14px; color: #555; margin-top: 18px;">Muito obrigado por contribuir com a democracia e a transparência eleitoral! 🇧🇷</p>
         <p><a href="/beta" style="font-weight: bold; text-decoration: none;">← Voltar para a página de instalação Beta</a></p>
     </div>
 
@@ -215,7 +241,22 @@
                 }
 
                 var data = await response.json();
-                document.getElementById("protocolBadge").innerText = data.protocol || ("FB-" + data.id);
+                var protocolStr = data.protocol || ("FB-" + data.id);
+                document.getElementById("protocolBadge").innerText = protocolStr;
+
+                var isPromoter = payload.nps >= 9 && payload.problema === 'nenhum';
+                if (isPromoter) {
+                    document.getElementById("playStorePrompt").style.display = "block";
+                    document.getElementById("techSupportPrompt").style.display = "none";
+                } else {
+                    document.getElementById("playStorePrompt").style.display = "none";
+                    document.getElementById("techSupportPrompt").style.display = "block";
+                    var mailLink = document.getElementById("supportMailLink");
+                    if (mailLink) {
+                        mailLink.href = "mailto:fmourag@gmail.com?subject=" + encodeURIComponent("Feedback Beta " + protocolStr);
+                    }
+                }
+
                 document.getElementById("formCard").style.display = "none";
                 document.getElementById("successBox").style.display = "block";
                 window.scrollTo({ top: 0, behavior: "smooth" });

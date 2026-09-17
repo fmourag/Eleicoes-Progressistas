@@ -96,7 +96,7 @@ export class FeedbackService implements OnModuleInit {
           email: dto.email?.trim() || null,
           device: dto.device?.trim() || 'Desconhecido',
           androidVersion: dto.androidVersion?.trim() || null,
-          appVersion: dto.appVersion?.trim() || '2.2.2',
+          appVersion: dto.appVersion?.trim() || '2.2.5',
           nps: Number(dto.nps),
           problema: dto.problema?.trim() || 'nenhum',
           descricao: dto.descricao?.trim() || null,
@@ -120,7 +120,7 @@ export class FeedbackService implements OnModuleInit {
           INSERT INTO "Feedback" ("protocol", "testerName", "nome", "email", "device", "androidVersion", "appVersion", "nps", "problema", "descricao", "screenshotDesc")
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
           RETURNING "id", "protocol"
-        `, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.2', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
+        `, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.5', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
 
         const newId = result[0]?.id || Date.now();
         const retProtocol = result[0]?.protocol || protocol;
@@ -135,7 +135,7 @@ export class FeedbackService implements OnModuleInit {
             INSERT INTO "Feedback" ("protocol", "testerCode", "testerName", "nome", "email", "device", "androidVersion", "appVersion", "nps", "problema", "descricao", "screenshotDesc")
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
             RETURNING "id", "protocol"
-          `, protocol, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.2', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
+          `, protocol, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.5', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
 
           const newId = result[0]?.id || Date.now();
           const retProtocol = result[0]?.protocol || protocol;

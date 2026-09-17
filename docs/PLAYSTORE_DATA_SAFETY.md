@@ -1,8 +1,8 @@
 # Declaração de Segurança de Dados (Data Safety) — Google Play Store
 
 **Aplicativo:** Eleições Progressistas (`com.eleicoesprogressistas.app`)  
-**Versão:** 2.2.2 (Build Code 3)  
-**Data de Emissão:** 11 de setembro de 2026 (2026-09-12T00:52:34.197Z)  
+**Versão:** 2.2.5 (Build Code 6)  
+**Data de Emissão:** 17 de setembro de 2026  
 **Status:** Auditado e Conforme com LGPD e Políticas de Desenvolvedor do Google Play  
 
 ---
