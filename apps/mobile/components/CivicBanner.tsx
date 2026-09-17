@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { CivicEmblem } from './CivicEmblem';
 import { useBreakpoint } from '../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
+import { APP_VERSION } from '../src/constants/app';
 
 interface CivicBannerProps {
   variant?: 'hero' | 'compact';
@@ -55,7 +56,7 @@ export function CivicBanner({ variant = 'hero', showSubtitle = true }: CivicBann
           )}
           <View style={[styles.badgePill, styles.badgePillBlue]}>
             <View style={[styles.badgeDot, { backgroundColor: '#2563EB' }]} />
-            <Text style={styles.badgeTextBlue}>v2.2.3</Text>
+            <Text style={styles.badgeTextBlue}>{APP_VERSION}</Text>
           </View>
         </View>
       </View>
@@ -98,7 +99,7 @@ export function CivicBanner({ variant = 'hero', showSubtitle = true }: CivicBann
 
           <View style={[styles.badgePill, styles.badgePillBlue]}>
             <View style={[styles.badgeDot, { backgroundColor: '#2563EB' }]} />
-            <Text style={styles.badgeTextBlue}>v2.2.3</Text>
+            <Text style={styles.badgeTextBlue}>{APP_VERSION}</Text>
           </View>
         </View>
 

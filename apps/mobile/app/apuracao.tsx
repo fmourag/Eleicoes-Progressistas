@@ -9,7 +9,7 @@ import {
   Switch,
 } from 'react-native';
 import { router } from 'expo-router';
-import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
+import { useThemeColors, Spacing, Radius } from '../utils/theme';
 import { useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { useColaStore } from '../stores/cola.store';
 import { useLocationStore } from '../stores/location.store';

@@ -1,4 +1,4 @@
-import { ELECTION_CONFIG, ELECTION_STATUS } from '../constants/election-night';
+import { ELECTION_CONFIG } from '../constants/election-night';
 import { TseApiResponse, ElectionResult, NationalStats } from '../types/election-night';
 import { RateLimiter } from '../utils/rate-limiter';
 import { MemoryCache } from '../utils/memory-cache';

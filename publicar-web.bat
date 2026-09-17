@@ -51,7 +51,7 @@ if %errorlevel% neq 0 (
 
 echo.
 echo =====================================================================
-echo   SUCESSO! Versao v2.2.3 publicada com exito em:
+echo   SUCESSO! Versao v2.2.5 publicada com exito em:
 echo   https://eleicoes-progressistas.pages.dev
 echo =====================================================================
 echo.

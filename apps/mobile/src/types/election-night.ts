@@ -2,8 +2,8 @@ export interface TseApiResponse {
   cdabr: string;       // "BR" ou UF
   cdc: string;         // código do cargo
   dht: string;         // horário da totalização
-  dvg: Array<{ cd: number; nm: string; p: string }>; // partidos
-  cand: Array<{
+  dvg: { cd: number; nm: string; p: string }[]; // partidos
+  cand: {
     seq: string;       // SQ_CANDIDATO (chave primária - cruza com nosso tseId)
     n: string;         // número urna
     nm: string;        // nome urna
@@ -14,7 +14,7 @@ export interface TseApiResponse {
     pv: number;        // % votos
     s: string;         // "ELEITO" | "2º TURNO" | "NÃO ELEITO" | ""
     sit: string;       // situação textual
-  }>;
+  }[];
   vapt: number;        // votos apurados total
   e: string;           // eleição
   t: string;           // turno

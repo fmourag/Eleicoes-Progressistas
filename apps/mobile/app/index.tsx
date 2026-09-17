@@ -14,6 +14,7 @@ import { Dropdown, DropdownOption } from '../components/Dropdown';
 import { useLocationStore } from '../stores/location.store';
 import { fetchMunicipalities } from '../services/location.service';
 import { API_URL } from '../services/api';
+import { APP_VERSION } from '../src/constants/app';
 
 const UF_OPTIONS: DropdownOption[] = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG',
@@ -105,7 +106,7 @@ export default function HomeScreen() {
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 <Text style={[styles.brandTitle, { color: colors.text }]}>Eleições Progressistas</Text>
                 <View style={[styles.versionBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.warning }]}>
-                  <Text style={[styles.versionBadgeText, { color: colors.warning }]}>v2.2.3</Text>
+                  <Text style={[styles.versionBadgeText, { color: colors.warning }]}>{APP_VERSION}</Text>
                 </View>
               </View>
               <Text style={[styles.brandSub, { color: colors.textMuted }]}>Cheque o passado. Escolha o futuro.</Text>

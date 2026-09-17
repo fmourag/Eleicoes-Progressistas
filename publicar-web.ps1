@@ -1,4 +1,4 @@
-﻿# publicar-web.ps1
+# publicar-web.ps1
 $ErrorActionPreference = "Stop"
 
 Write-Host "=====================================================================" -ForegroundColor Cyan
@@ -42,7 +42,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "`n=====================================================================" -ForegroundColor Green
-Write-Host "  SUCESSO! Versao v2.2.3 publicada com exito em:" -ForegroundColor Green
+Write-Host "  SUCESSO! Versao v2.2.5 publicada com exito em:" -ForegroundColor Green
 Write-Host "  https://eleicoes-progressistas.pages.dev" -ForegroundColor Green
 Write-Host "=====================================================================`n" -ForegroundColor Green
 
