@@ -1,10 +1,10 @@
 ---
 title: "Checklist de Deploy e Lançamento Oficial"
-version: "2.2.0"
-last_updated: "2026-09-08"
+version: "2.2.5"
+last_updated: "2026-09-17"
 ---
 
-# Checklist de Deploy e Pré-Lançamento — Eleições Progressistas v2.2.0
+# Checklist de Deploy e Pré-Lançamento — Eleições Progressistas v2.2.5
 
 Roteiro operacional obrigatório para validação técnica, jurídica e de infraestrutura antes da liberação do tráfego público de produção.
 
@@ -19,20 +19,24 @@ A plataforma opera no modelo **Consulta por Prioridades (100% stateless e Coleta
 - **Transparência Auditável**: Todos os dados provêm de fontes oficiais (TSE, Câmara, Senado) e são verificáveis em tempo real
 - **Acessibilidade Universal**: App gratuito, linguagem simples, compatível com dispositivos de entrada e conexão instável
 - **Alinhamento ao Interesse Nacional**: Priorização de candidatos comprometidos com soberania, justiça social e desenvolvimento sustentável
+- **Conformidade Google Play**: Ausência total de *Review Gating*, uso da *In-App Review API* nativa por marcos neutros e canal universal de suporte
 
 ---
 
 ## 📋 1. Checklist Pré-Deploy
 
-- [ ] **Saneamento Documental:** Apenas documentos com `last_updated: "2026-09-08"` no repositório (zero questionários e zero scores legados).
-- [ ] **Nota de Transparência:** Arquivo `docs/NOTA_TRANSPARENCIA.md` criado e rota `/transparencia` linkada no perfil e rodapé.
+- [ ] **Saneamento Documental:** Apenas documentos atualizados com a versão `v2.2.5` e data `2026-09-17`.
+- [ ] **Nota de Transparência:** Arquivo `docs/NOTA_TRANSPARENCIA_LANCAMENTO.md` e rota `/transparencia` linkada no perfil e rodapé.
+- [ ] **Módulo de Apuração Oficial:** Endpoint do TSE (`resultados.tse.jus.br`) testado com parsing resiliente e fallback offline.
+- [ ] **Apoio Cívico PIX Celular:** Chave PIX celular `(21) 97194-3298` (E.164 BACEN `+5521971943298`) e persistência 100% local no dispositivo.
+- [ ] **Conformidade Play Store (Anti-Gating):** Bateria de testes aprovada (`npm run test:feedback`) garantindo CTA universal e neutro para todos os usuários.
+- [ ] **In-App Review API Nativa:** `StoreReviewService` validado com cota de 30 dias e disparo exclusivo por marcos neutros de engajamento.
 - [ ] **Injeção de Segredos:** Todas as variáveis de produção configuradas no Render, Cloudflare Pages e GitHub Secrets (`deploy/secrets.md`).
-- [ ] **Monitoramento de Erros:** `SENTRY_DSN` configurado e testado no backend e cliente.
+- [ ] **Monitoramento de Erros:** Telemetria técnica anônima configurada e testada no backend e cliente.
 - [ ] **Compliance Eleitoral (Blackout):** Regra de suspensão automática de anúncios entre 16/08 e 05/10 testada e operante.
 - [ ] **Carga de Dados Eleitorais:** Banco de dados populado com as candidaturas de 2026 das 27 UFs (`npm run db:seed`).
 - [ ] **Acervo de Imagens Oficiais:** Fotos oficiais da urna (TSE) e retratos parlamentares presentes em `public/candidates/` e compilados em `dist/candidates/`.
 - [ ] **Geração de Cola Eleitoral (PDF):** Endpoint `/api/cola/pdf` testado com saída em meia-folha / folha A4 com caixas de dígitos grandes e dados do TSE.
-- [ ] **Webhook PIX & HMAC:** Validação de assinatura em tempo constante via `crypto.timingSafeEqual` testada contra payload de homologação.
 - [ ] **Blindagem Cibernética:** Rate limiting `@nestjs/throttler` (120 req/min), cabeçalhos Helmet (CSP/HSTS) e limite de corpo de 512 KB ativos.
 
 ---

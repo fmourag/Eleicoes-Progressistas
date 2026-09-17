@@ -1,15 +1,16 @@
 @echo off
 chcp 65001 >nul
-title Eleicoes Progressistas - Reiniciar (Lite)
-echo ============================================
-echo  Reiniciar - Mata processos e inicia Lite
-echo ============================================
+title Eleicoes Progressistas v2.2.5 - Reiniciar (Lite)
+echo ===================================================
+echo  Reiniciar v2.2.5 - Encerra processos e inicia Lite
+echo ===================================================
 
 echo [1/5] Matando processos antigos...
 taskkill /F /IM node.exe /T >nul 2>&1
 taskkill /F /IM python.exe /T >nul 2>&1
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":3000" ^| findstr "LISTENING"') do taskkill /F /PID %%a >nul 2>&1
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8001" ^| findstr "LISTENING"') do taskkill /F /PID %%a >nul 2>&1
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8002" ^| findstr "LISTENING"') do taskkill /F /PID %%a >nul 2>&1
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8081" ^| findstr "LISTENING"') do taskkill /F /PID %%a >nul 2>&1
 timeout /t 2 >nul
 echo       OK.
@@ -39,6 +40,7 @@ if not exist apps\mobile\dist\index.html (
   echo       Compilando web...
   call npm run build -w @np/shared >nul 2>&1
   call npm run build:web -w @np/mobile >nul 2>&1
+  if exist static\ xcopy /E /I /Y /D "static\*" "apps\mobile\dist\" >nul 2>&1
 )
 if not exist apps\api\dist\main.js (
   echo       Compilando API...

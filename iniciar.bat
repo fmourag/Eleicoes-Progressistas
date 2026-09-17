@@ -1,13 +1,13 @@
 @echo off
 setlocal enabledelayedexpansion
 
-title Eleicoes Progressistas v2.2.0 - Inicializador Local
+title Eleicoes Progressistas v2.2.5 - Inicializador Local
 
 :: Garante execucao no diretorio raiz do projeto
 cd /d "%~dp0"
 
 echo ===============================================================================
-echo        ELEICOES PROGRESSISTAS v2.2.0 - INICIALIZADOR LOCAL LEVE
+echo        ELEICOES PROGRESSISTAS v2.2.5 - INICIALIZADOR LOCAL LEVE
 echo ===============================================================================
 echo.
 
@@ -163,6 +163,11 @@ if exist "apps\mobile\public\candidates" (
     xcopy /E /I /Y /D "apps\mobile\public\candidates" "apps\mobile\dist\candidates" >nul 2>&1
 )
 
+:: Sincroniza paginas estaticas com a distribuicao web
+if exist "static\" (
+    xcopy /E /I /Y /D "static\*" "apps\mobile\dist\" >nul 2>&1
+)
+
 echo       Artefatos de compilacao prontos.
 echo.
 
@@ -189,12 +194,16 @@ if "!OPEN_BROWSER!"=="1" (
 
 echo.
 echo ===============================================================================
-echo  APLICACAO PRONTA E RODANDO!
+echo  APLICACAO PRONTA E RODANDO! (v2.2.5)
 echo.
 echo  Principal:      http://localhost:3000
 echo  Candidatos:     http://localhost:3000/candidatos
 echo  Prioridades:    http://localhost:3000/matching
 echo  Minha Cola:     http://localhost:3000/cola
+echo  Apuracao TSE:   http://localhost:3000/apuracao
+echo  Feedback Civico:http://localhost:3000/feedback
+echo  Beta / APK:     http://localhost:3000/beta
+echo  Privacidade:    http://localhost:3000/privacidade
 echo  Apoie (PIX):    http://localhost:3000/apoie
 echo  Health Check:   http://localhost:3000/api/health
 echo.

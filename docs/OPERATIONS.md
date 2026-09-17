@@ -1,4 +1,4 @@
-# Operações — Eleições Progressistas v2.2.0
+# Operações — Eleições Progressistas v2.2.5
 
 ## 🚀 Comandos Rápidos
 
@@ -10,6 +10,11 @@
 ### Monitoramento Contínuo (a cada 5 min)
 ```powershell
 .\scripts\health-monitor.ps1
+```
+
+### Validação de Feedback e Play Store Compliance
+```powershell
+npm run test:feedback
 ```
 
 ### Coletar Feedback de Tester
@@ -39,12 +44,16 @@
 | Serviço | URL |
 |---|---|
 | Web App | https://eleicoes-progressistas.pages.dev |
-| API | https://eleicoes-progressistas.onrender.com |
+| API Backend | https://eleicoes-progressistas.onrender.com |
+| Beta Sideload APK | https://eleicoes-progressistas.onrender.com/beta |
+| Feedback Cívico | https://eleicoes-progressistas.onrender.com/feedback |
+| Dashboard Feedbacks | https://eleicoes-progressistas.onrender.com/feedback/dashboard |
 | Supabase | https://supabase.com/dashboard/project/zsrjpitpyhsmsxerzxzc |
 | Render | https://dashboard.render.com |
 | Cloudflare | https://dash.cloudflare.com |
 | GitHub | https://github.com/fmourag/Eleicoes-Progressistas |
 | Play Console | https://play.google.com/console |
+| Play Store Testing Track | https://play.google.com/apps/testing/com.eleicoesprogressistas.app |
 | EAS Builds | https://expo.dev/accounts/fmourag/projects/eleicoes-progressistas/builds |
 
 ---

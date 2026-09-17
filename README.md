@@ -6,28 +6,36 @@ Plataforma cívica gratuita que conecta eleitores a candidatos progressistas aud
 
 ![API Status](https://img.shields.io/badge/API-LIVE-green)
 ![Web Status](https://img.shields.io/badge/Web-LIVE-green)
-![Version](https://img.shields.io/badge/Version-2.2.0-blue)
+![Version](https://img.shields.io/badge/Version-2.2.5-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ## 🚀 Acesso Rápido
 
 - 🌐 **Web App**: https://eleicoes-progressistas.pages.dev
-- 📱 **Beta Android**: https://play.google.com/apps/testing/com.eleicoesprogressistas.app
-- 💻 **Código**: https://github.com/fmourag/Eleicoes-Progressistas
+- 📱 **Beta Android (Google Play)**: https://play.google.com/apps/testing/com.eleicoesprogressistas.app
+- 📦 **Download Direto APK (Sideload)**: https://eleicoes-progressistas.onrender.com/beta
+- 💬 **Feedback & Suporte Cívico**: https://eleicoes-progressistas.onrender.com/feedback
+- 🔒 **Política de Privacidade & LGPD**: https://eleicoes-progressistas.onrender.com/privacidade
+- 💻 **Código Aberto**: https://github.com/fmourag/Eleicoes-Progressistas
 
 ## 🎯 Funcionalidades
 
 - ✅ **Matching Stateless**: ranking por 13 pilares prioritários (memória de sessão, zero persistência)
 - ✅ **Raio-X Auditável**: memória de cálculo 40/30/30 (ideologia/propostas/histórico)
-- ✅ **Cola Eleitoral**: PDF oficial com números do TSE
-- ✅ **Coleta Zero**: nenhum dado político é armazenado
-- ✅ **Blackout Eleitoral**: anúncios desativados até 05/10/2026
+- ✅ **Cola Eleitoral**: PDF oficial em conformidade com as regras do TSE para impressão em papel
+- ✅ **Apuração em Tempo Real (Election Night)**: dados oficiais do TSE em tempo real para os candidatos da cola
+- ✅ **Apoio Cívico Voluntário**: contribuição independente via PIX celular `(21) 97194-3298` (E.164 BACEN) com persistência 100% local
+- ✅ **Conformidade Google Play & Anti-Gating**: avaliação in-app nativa acionada exclusivamente por marcos neutros e CTA universal
+- ✅ **Coleta Zero**: nenhum dado político ou pessoal do eleitor é transmitido ou armazenado em servidores
+- ✅ **Blackout Eleitoral**: anúncios comerciais totalmente desativados durante o período eleitoral
 
-## 🛡️ Compliance TSE
+## 🛡️ Compliance TSE & Google Play
 
-- Privacidade por Design (matching stateless)
-- Transparência Radical (código 100% aberto)
-- Memória de Cálculo Auditável (pesos públicos)
+- Privacidade por Design (matching stateless e Coleta Zero)
+- Transparência Radical (código 100% aberto e auditável)
+- Memória de Cálculo Auditável (pesos e fontes oficiais)
+- Fonte Oficial Única: dados públicos do TSE (DivulgaCandContas e Resultados 2026)
+- Conformidade Google Play: ausência estrita de *Review Gating* e uso da *In-App Review API* oficial
 - Blackout Automático de Anúncios
 
 ## 📊 Stack Técnico (R$ 0-150/mês)
@@ -51,20 +59,23 @@ cd Eleicoes-Progressistas
 # Instalar dependências
 npm install
 
-# Rodar API localmente
-npm run dev:api
-
-# Rodar frontend localmente
-npm run dev:web
+# Rodar modo local leve
+.\iniciar.bat
 ```
 
 ## 📚 Documentação
-- [Nota de Transparência](docs/NOTA_TRANSPARENCIA_LANCAMENTO.md)
-- [Operações](docs/OPERATIONS.md)
+
+- [Índice Geral de Documentação (Markdown Index)](docs/MARKDOWN.md)
+- [Política de Avaliações Google Play (Anti-Gating)](docs/PLAYSTORE_REVIEW_POLICY.md)
+- [Declaração de Segurança de Dados (Data Safety)](docs/PLAYSTORE_DATA_SAFETY.md)
+- [Kit de Distribuição Sideload APK](docs/SIDELOAD_KIT.md)
+- [Modelo de Apoio Cívico PIX](docs/CIVIC_SUPPORT_MODEL.md)
+- [Nota de Transparência de Lançamento](docs/NOTA_TRANSPARENCIA_LANCAMENTO.md)
+- [Manual de Operações](docs/OPERATIONS.md)
 - [Dashboard de Lançamento](docs/DASHBOARD_LANCAMENTO.html)
 
 ## 🤝 Contribuindo
-Contribuições são bem-vindas! Leia `CONTRIBUTING.md` antes de abrir PRs.
+Contribuições são bem-vindas! Leia a documentação técnica antes de submeter PRs.
 
 ## 📄 Licença
 MIT License — veja `LICENSE` para detalhes.

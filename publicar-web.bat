@@ -1,9 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
-title Publicar Eleicoes Progressistas Web no Cloudflare Pages
+title Publicar Eleicoes Progressistas Web v2.2.5 no Cloudflare Pages
 
 echo =====================================================================
-echo   PUBLICADOR WEB - ELEICOES PROGRESSISTAS (Cloudflare Pages)
+echo   PUBLICADOR WEB - ELEICOES PROGRESSISTAS v2.2.5 (Cloudflare Pages)
 echo =====================================================================
 echo.
 

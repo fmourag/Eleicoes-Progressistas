@@ -1,12 +1,12 @@
-﻿@echo off
+@echo off
 setlocal enabledelayedexpansion
 chcp 65001 >nul
-title Eleicoes Progressistas - Carga de Dados TSE (CSV/ZIP)
+title Eleicoes Progressistas v2.2.5 - Carga de Dados TSE (CSV/ZIP)
 
 cd /d "%~dp0"
 
 echo ===============================================================================
-echo        ELEICOES PROGRESSISTAS - CARGA DE DADOS OFICIAIS TSE
+echo        ELEICOES PROGRESSISTAS v2.2.5 - CARGA DE DADOS OFICIAIS TSE
 echo ===============================================================================
 echo.
 
