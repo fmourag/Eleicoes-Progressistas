@@ -11,6 +11,7 @@
 - **Link Direto do APK:** [Download APK v2.2.4](https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.4/eleicoes-progressistas-v2.2.4-beta.apk)
 - **Landing Page de Instalação:** https://eleicoes-progressistas.onrender.com/beta
 - **Releases no GitHub:** https://github.com/fmourag/Eleicoes-Progressistas/releases/tag/v2.2.4
+- **Verificação de Integridade (SHA-256):** `05da0c763f4404929a61777c0be90fae795c17565565ac9fcd94228f713272bc`
 - **Política de Privacidade:** https://eleicoes-progressistas.onrender.com/privacidade
 
 ---
@@ -67,6 +68,7 @@
 
 🔗 Baixar nova versão: https://eleicoes-progressistas.onrender.com/beta
 📂 GitHub Release: https://github.com/fmourag/Eleicoes-Progressistas/releases/tag/v2.2.4
+🔐 SHA-256: 05da0c763f4404929a61777c0be90fae795c17565565ac9fcd94228f713272bc
 
 ⚠️ Desinstale a versão anterior antes de instalar.
 Feedback: fmourag@gmail.com
@@ -86,6 +88,9 @@ https://eleicoes-progressistas.onrender.com/beta
 
 📂 Releases GitHub:
 https://github.com/fmourag/Eleicoes-Progressistas/releases/tag/v2.2.4
+
+🔐 Verificação de Integridade (SHA-256):
+05da0c763f4404929a61777c0be90fae795c17565565ac9fcd94228f713272bc
 
 🛠️ Novidades da v2.2.4:
 • Apoio cívico via chave PIX celular (21) 97194-3298 (formato BACEN E.164)
