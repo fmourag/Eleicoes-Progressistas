@@ -53,13 +53,80 @@ interface CandidateListItem {
 
 const CARGO_ORDER = ['PRESIDENTE', 'GOVERNADOR', 'SENADOR', 'DEPUTADO_FEDERAL', 'DEPUTADO_ESTADUAL'];
 
-const CARGO_SECTION_TITLES: Record<string, string> = {
-  PRESIDENTE: '🏛️ Presidente da República (Circunscrição Nacional)',
-  GOVERNADOR: '🏛️ Governador(a) do Estado',
-  SENADOR: '🏛️ Senador(a) da República',
-  DEPUTADO_FEDERAL: '🏛️ Deputado(a) Federal',
-  DEPUTADO_ESTADUAL: '🏛️ Deputado(a) Estadual',
+interface CargoMeta {
+  title: string;
+  icon: string;
+  subtitle: string;
+}
+
+const CARGO_CONFIG: Record<string, CargoMeta> = {
+  PRESIDENTE: {
+    title: 'Presidente da República',
+    icon: '🇧🇷',
+    subtitle: 'Poder Executivo Federal • Circunscrição Nacional',
+  },
+  GOVERNADOR: {
+    title: 'Governador(a)',
+    icon: '🏛️',
+    subtitle: 'Poder Executivo Estadual',
+  },
+  SENADOR: {
+    title: 'Senador(a) da República',
+    icon: '⚖️',
+    subtitle: 'Senado Federal • Congresso Nacional',
+  },
+  DEPUTADO_FEDERAL: {
+    title: 'Deputado(a) Federal',
+    icon: '🏛️',
+    subtitle: 'Câmara dos Deputados • Brasília',
+  },
+  DEPUTADO_ESTADUAL: {
+    title: 'Deputado(a) Estadual',
+    icon: '🏛️',
+    subtitle: 'Assembleia Legislativa Estadual',
+  },
+  DEPUTADO_DISTRITAL: {
+    title: 'Deputado(a) Distrital',
+    icon: '🏛️',
+    subtitle: 'Câmara Legislativa do Distrito Federal',
+  },
+  PREFEITO: {
+    title: 'Prefeito(a)',
+    icon: '🏛️',
+    subtitle: 'Poder Executivo Municipal',
+  },
+  VEREADOR: {
+    title: 'Vereador(a)',
+    icon: '🏛️',
+    subtitle: 'Câmara Municipal',
+  },
 };
+
+const CARGO_SECTION_TITLES: Record<string, string> = {
+  PRESIDENTE: 'Presidente da República',
+  GOVERNADOR: 'Governador(a)',
+  SENADOR: 'Senador(a) da República',
+  DEPUTADO_FEDERAL: 'Deputado(a) Federal',
+  DEPUTADO_ESTADUAL: 'Deputado(a) Estadual',
+  DEPUTADO_DISTRITAL: 'Deputado(a) Distrital',
+  PREFEITO: 'Prefeito(a)',
+  VEREADOR: 'Vereador(a)',
+};
+
+function getCargoMeta(cargo: string): CargoMeta {
+  if (CARGO_CONFIG[cargo]) {
+    return CARGO_CONFIG[cargo];
+  }
+  const formatted = cargo
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .replace(/\b\w/g, (l) => l.toUpperCase());
+  return {
+    title: formatted,
+    icon: '🗳️',
+    subtitle: 'Cargo Eletivo',
+  };
+}
 
 const CARGO_PILLS = [
   { value: null, label: 'Todos os Cargos' },
@@ -307,7 +374,13 @@ export default function CandidatosScreen() {
       const cargo = c.cargo || 'DEPUTADO_FEDERAL';
       (map[cargo] ??= []).push(c);
     }
-    const groups: { cargo: string; title: string; items: CandidateListItem[] }[] = [];
+    const groups: {
+      cargo: string;
+      title: string;
+      icon: string;
+      subtitle: string;
+      items: CandidateListItem[];
+    }[] = [];
     for (const cargo of CARGO_ORDER) {
       const items = map[cargo];
       if (items && items.length > 0) {
@@ -317,7 +390,14 @@ export default function CandidatosScreen() {
           const nameB = (b.socialName || b.name || '').trim();
           return nameA.localeCompare(nameB, 'pt-BR', { sensitivity: 'base' });
         });
-        groups.push({ cargo, title: CARGO_SECTION_TITLES[cargo] || cargo, items: sortedItems });
+        const meta = getCargoMeta(cargo);
+        groups.push({
+          cargo,
+          title: meta.title,
+          icon: meta.icon,
+          subtitle: meta.subtitle,
+          items: sortedItems,
+        });
       }
     }
     for (const [cargo, items] of Object.entries(map)) {
@@ -327,7 +407,14 @@ export default function CandidatosScreen() {
           const nameB = (b.socialName || b.name || '').trim();
           return nameA.localeCompare(nameB, 'pt-BR', { sensitivity: 'base' });
         });
-        groups.push({ cargo, title: CARGO_SECTION_TITLES[cargo] || cargo, items: sortedItems });
+        const meta = getCargoMeta(cargo);
+        groups.push({
+          cargo,
+          title: meta.title,
+          icon: meta.icon,
+          subtitle: meta.subtitle,
+          items: sortedItems,
+        });
       }
     }
     return groups;
@@ -625,16 +712,47 @@ export default function CandidatosScreen() {
         {/* Lista Hierárquica por Cargo */}
         {grouped.length > 0 ? (
           <View style={styles.listContainer}>
-            {grouped.map((group) => (
-              <View key={group.cargo} style={styles.cargoSection}>
-                <View style={[styles.cargoHeaderBanner, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
-                  <View style={styles.cargoTitleWrapper}>
-                    <Text style={[styles.cargoTitle, { color: colors.text }]}>{group.title}</Text>
-                    <View style={[styles.azBadge, { backgroundColor: '#EEF2FF', borderColor: '#818CF8' }]}>
-                      <Text style={styles.azBadgeText}>A–Z</Text>
+            {grouped.map((group, groupIndex) => (
+              <View
+                key={group.cargo}
+                style={[
+                  styles.cargoSection,
+                  groupIndex > 0 && { marginTop: Spacing.xl },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.cargoHeaderBanner,
+                    {
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      borderLeftColor: colors.primary,
+                    },
+                  ]}
+                >
+                  <View style={styles.cargoHeaderLeft}>
+                    <View style={[styles.cargoIconBox, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
+                      <Text style={styles.cargoIconText}>{group.icon}</Text>
+                    </View>
+                    <View style={styles.cargoTitleWrapper}>
+                      <View style={styles.cargoTitleRow}>
+                        <Text style={[styles.cargoTitle, { color: colors.text }]}>{group.title}</Text>
+                        <View style={[styles.azBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.primaryBorder }]}>
+                          <Text style={[styles.azBadgeText, { color: colors.primary }]}>A–Z</Text>
+                        </View>
+                      </View>
+                      {group.subtitle ? (
+                        <Text style={[styles.cargoSubtitle, { color: colors.textMuted }]}>{group.subtitle}</Text>
+                      ) : null}
                     </View>
                   </View>
-                  <Text style={[styles.countBadge, { color: colors.primary }]}>{group.items.length}</Text>
+
+                  <View style={[styles.cargoCountBadge, { backgroundColor: colors.primaryLight, borderColor: colors.primaryBorder }]}>
+                    <Text style={[styles.cargoCountNumber, { color: colors.primary }]}>{group.items.length}</Text>
+                    <Text style={[styles.cargoCountLabel, { color: colors.primary }]}>
+                      {group.items.length === 1 ? 'candidato' : 'candidatos'}
+                    </Text>
+                  </View>
                 </View>
                 {group.items.map((item) => (
                   <View key={item.id}>
@@ -1052,26 +1170,67 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   cargoSection: {
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.xl,
   },
   cargoHeaderBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs + 2,
-    borderRadius: Radius.md,
+    paddingVertical: Spacing.sm + 4,
+    borderRadius: Radius.lg,
     borderWidth: 1,
-    marginBottom: Spacing.xs,
+    borderLeftWidth: 6,
+    marginBottom: Spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
+    boxShadow: '0 4px 14px rgba(0, 0, 0, 0.08)',
+    ...(Platform.OS === 'web' ? {
+      position: 'sticky' as any,
+      top: 0,
+      zIndex: 15,
+    } : {}),
   },
-  cargoTitleWrapper: {
+  cargoHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    flex: 1,
+    marginRight: Spacing.sm,
+    gap: Spacing.sm,
+  },
+  cargoIconBox: {
+    width: 38,
+    height: 38,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cargoIconText: {
+    fontSize: 20,
+  },
+  cargoTitleWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  cargoTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 6,
   },
   cargoTitle: {
-    fontSize: FontSize.sm + 1,
+    fontSize: FontSize.md,
     fontWeight: '800',
+    letterSpacing: 0.2,
+  },
+  cargoSubtitle: {
+    fontSize: FontSize.xs - 1,
+    fontWeight: '500',
+    marginTop: 1,
   },
   azBadge: {
     paddingHorizontal: 6,
@@ -1082,12 +1241,24 @@ const styles = StyleSheet.create({
   azBadgeText: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#4338CA',
     letterSpacing: 0.5,
   },
-  countBadge: {
+  cargoCountBadge: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 3,
+    paddingHorizontal: Spacing.sm + 2,
+    paddingVertical: Spacing.xs + 2,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+  },
+  cargoCountNumber: {
     fontSize: FontSize.sm,
-    fontWeight: '800',
+    fontWeight: '900',
+  },
+  cargoCountLabel: {
+    fontSize: FontSize.xs - 1,
+    fontWeight: '700',
   },
   emptyContainer: {
     alignItems: 'center',

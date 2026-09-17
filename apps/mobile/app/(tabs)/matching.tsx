@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Switch, TouchableOpacity, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Switch, TouchableOpacity, Pressable, ActivityIndicator, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { PROGRESSIVE_GUIDELINE_NOTICE, PILLAR_DISPLAY_LIST, isNeutralMatchingProfile, INSUFFICIENT_DATA_LABEL } from '@np/shared';
 import { matchingApi, candidatesApi, MatchResult, Candidate } from '../../services/api';
@@ -440,9 +440,18 @@ export default function MatchingScreen() {
                 {/* Grupos Ranqueados por Cargo */}
                 {rankedGroups.map((group) => (
                   <View key={group.cargo} style={styles.cargoSection}>
-                    <View style={[styles.cargoHeaderBanner, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
+                    <View
+                      style={[
+                        styles.cargoHeaderBanner,
+                        {
+                          backgroundColor: colors.surface,
+                          borderColor: colors.border,
+                          borderLeftColor: colors.primary,
+                        },
+                      ]}
+                    >
                       <Text style={[styles.cargoTitle, { color: colors.text }]}>{group.title}</Text>
-                      <View style={[styles.limitBadge, { backgroundColor: colors.primaryLight }]}>
+                      <View style={[styles.limitBadge, { backgroundColor: colors.primaryLight, borderColor: colors.primaryBorder }]}>
                         <Text style={[styles.limitBadgeText, { color: colors.primary }]}>
                           {group.items.length} {group.items.length === 1 ? 'Opção' : 'Opções'}
                         </Text>
@@ -715,14 +724,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.sm + 4,
     paddingHorizontal: Spacing.md,
-    borderRadius: Radius.md,
+    borderRadius: Radius.lg,
     borderWidth: 1,
-    marginBottom: Spacing.sm,
+    borderLeftWidth: 6,
+    marginBottom: Spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
+    boxShadow: '0 4px 14px rgba(0, 0, 0, 0.08)',
+    ...(Platform.OS === 'web' ? {
+      position: 'sticky' as any,
+      top: 0,
+      zIndex: 15,
+    } : {}),
   },
   cargoTitle: { fontSize: FontSize.base, fontWeight: '800' },
-  limitBadge: { paddingVertical: 2, paddingHorizontal: 8, borderRadius: Radius.sm },
+  limitBadge: {
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+  },
   limitBadgeText: { fontSize: FontSize.xs, fontWeight: '700' },
   emptyContainer: { padding: Spacing.xl, alignItems: 'center', gap: Spacing.md },
   emptyText: { fontSize: FontSize.base },
