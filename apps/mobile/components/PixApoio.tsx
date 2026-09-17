@@ -17,7 +17,8 @@ const PRESET_VALUES = [
 ];
 
 export function PixApoio({ compact = false }: PixApoioProps) {
-  const pixKey = process.env.EXPO_PUBLIC_PIX_KEY?.trim() || OFFICIAL_PIX_KEY;
+  const envKey = process.env.EXPO_PUBLIC_PIX_KEY?.trim();
+  const pixKey = (envKey && !envKey.includes('eleicoesprogressistas.org')) ? envKey : OFFICIAL_PIX_KEY;
   const colors = useThemeColors();
   const [selectedValue, setSelectedValue] = useState('15.00');
   const [customValue, setCustomValue] = useState('');

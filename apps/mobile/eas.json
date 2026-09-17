@@ -17,7 +17,7 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://eleicoes-progressistas.onrender.com",
-        "EXPO_PUBLIC_PIX_KEY": "contato@eleicoesprogressistas.org.br"
+        "EXPO_PUBLIC_PIX_KEY": "(21) 97194-3298"
       }
     },
     "production": {
@@ -27,7 +27,7 @@
       "ios": {},
       "env": {
         "EXPO_PUBLIC_API_URL": "https://eleicoes-progressistas.onrender.com",
-        "EXPO_PUBLIC_PIX_KEY": "contato@eleicoesprogressistas.org.br"
+        "EXPO_PUBLIC_PIX_KEY": "(21) 97194-3298"
       }
     }
   },

@@ -1,8 +1,34 @@
 import QRCode from 'qrcode';
 
-export const OFFICIAL_PIX_KEY = 'fmourag@yahoo.com';
+export const OFFICIAL_PIX_KEY = '(21) 97194-3298';
+export const OFFICIAL_PIX_KEY_PHONE = '+5521971943298';
+export const OFFICIAL_PIX_KEY_RAW = '21971943298';
 export const OFFICIAL_BENEFICIARY_NAME = 'Fernando Goncalves';
 export const OFFICIAL_CITY = 'Rio de Janeiro';
+
+export function normalizePixKey(key: string): string {
+  if (!key) return '';
+  const trimmed = key.trim();
+  if (trimmed.includes('@')) return trimmed;
+  // If random key (UUID)
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(trimmed)) {
+    return trimmed;
+  }
+  const digits = trimmed.replace(/\D/g, '');
+  // If already starts with +55
+  if (trimmed.startsWith('+55')) {
+    return '+' + digits;
+  }
+  // If starts with 55 and has 12 or 13 digits (country code included without +)
+  if (digits.length >= 12 && digits.startsWith('55')) {
+    return '+' + digits;
+  }
+  // If Brazilian phone (10 or 11 digits, e.g. 21971943298)
+  if (digits.length === 10 || digits.length === 11) {
+    return '+55' + digits;
+  }
+  return trimmed;
+}
 
 function crc16(data: string): string {
   let crc = 0xffff;
@@ -38,8 +64,9 @@ export function generatePixPayload({
   amount?: string;
   txId?: string;
 } = {}): string {
+  const normalizedKey = normalizePixKey(key);
   const gui = formatField('00', 'br.gov.bcb.pix');
-  const pixKeyField = formatField('01', key);
+  const pixKeyField = formatField('01', normalizedKey);
   const merchantInfo = formatField('26', `${gui}${pixKeyField}`);
 
   let raw =
