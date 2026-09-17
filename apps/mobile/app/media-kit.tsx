@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { router } from 'expo-router';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
-import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
+import { useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { CivicEmblem } from '../components/CivicEmblem';
 import { API_URL } from '../services/api';
 
@@ -42,7 +42,6 @@ const PRICING = [
 
 export default function MediaKitScreen() {
   const colors = useThemeColors();
-  const bp = useBreakpoint();
   const maxW = useMaxContentWidth();
   const padding = useResponsivePadding();
 

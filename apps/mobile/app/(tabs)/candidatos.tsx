@@ -12,13 +12,11 @@ import {
   Linking,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { PROGRESSIVE_GUIDELINE_NOTICE, EXCLUDED_CONSERVATIVE_PARTIES, getTseDadosAbertosSearchUrl, isCandidateAllowedInProgressiveRoll } from '@np/shared';
+import { PROGRESSIVE_GUIDELINE_NOTICE, getTseDadosAbertosSearchUrl, isCandidateAllowedInProgressiveRoll } from '@np/shared';
 import { candidatesApi, retryWithBackoff } from '../../services/api';
-import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
+import { useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
 import { CandidateCard } from '../../components/CandidateCard';
-import { CandidaturaWarning } from '../../components/CandidaturaWarning';
-import { ActionButton } from '../../components/ActionButton';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { ThemeToggle } from '../../components/ThemeToggle';
 import { useLocationStore } from '../../stores/location.store';
@@ -126,7 +124,6 @@ export default function CandidatosScreen() {
   const colaCount = getColaCount();
 
   const colors = useThemeColors();
-  const bp = useBreakpoint();
   const maxW = useMaxContentWidth();
   const padding = useResponsivePadding();
 
@@ -145,7 +142,7 @@ export default function CandidatosScreen() {
       setConsent(true);
       setShowAllStates(false);
     }
-  }, [params.uf, params.state, params.municipality]);
+  }, [params.uf, params.state, params.municipality, setConsent, setLocation]);
 
   useEffect(() => {
     const ufToQuery = !showAllStates && location?.uf ? location.uf : undefined;
@@ -264,13 +261,6 @@ export default function CandidatosScreen() {
       counts[cargo] = (counts[cargo] || 0) + 1;
     }
     return counts;
-  }, [byLocation]);
-
-  // Partidos disponíveis para o filtro (derivados da lista por localização)
-  const parties = useMemo(() => {
-    const set = new Set<string>();
-    byLocation.forEach((c) => c.party && set.add(c.party));
-    return Array.from(set).sort();
   }, [byLocation]);
 
   // Filtro completo: Localização + Cargo + Partido + Busca Textual

@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useThemeStore } from '../stores/theme.store';
 import { useThemeColors, Radius, Spacing, FontSize } from '../utils/theme';
 

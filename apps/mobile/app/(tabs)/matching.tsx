@@ -3,8 +3,7 @@ import { View, Text, ScrollView, StyleSheet, Switch, TouchableOpacity, Pressable
 import { router } from 'expo-router';
 import { PROGRESSIVE_GUIDELINE_NOTICE, PILLAR_DISPLAY_LIST, isNeutralMatchingProfile, INSUFFICIENT_DATA_LABEL } from '@np/shared';
 import { matchingApi, candidatesApi, MatchResult, Candidate } from '../../services/api';
-import { useAuthStore } from '../../stores/auth.store';
-import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
+import { useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
 import { CandidateCard } from '../../components/CandidateCard';
 import { CandidaturaWarning } from '../../components/CandidaturaWarning';
@@ -164,12 +163,12 @@ export default function MatchingScreen() {
   const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
   const { location } = useLocationStore();
   const colors = useThemeColors();
-  const bp = useBreakpoint();
   const maxW = useMaxContentWidth();
   const padding = useResponsivePadding();
 
   useEffect(() => {
     loadResults();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPriorities, location, onlyDeferido]);
 
   function togglePriority(pillarId: string) {

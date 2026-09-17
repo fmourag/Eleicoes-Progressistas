@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
-import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
+import { useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
 import { useColaStore, COLA_SLOTS } from '../../stores/cola.store';
 import { useLocationStore } from '../../stores/location.store';
 import { PixApoio } from '../../components/PixApoio';
@@ -17,15 +17,12 @@ const VOTING_SEQUENCE = COLA_SLOTS.map((s, idx) => ({
 
 export default function ColaScreen() {
   const colors = useThemeColors();
-  const bp = useBreakpoint();
   const maxW = useMaxContentWidth();
   const padding = useResponsivePadding();
 
   const {
     selectedCandidates,
     getSelectedList,
-    removeCandidateByCargo,
-    hasGeneratedPdfInSession,
     setHasGeneratedPdfInSession,
   } = useColaStore();
   const { location } = useLocationStore();

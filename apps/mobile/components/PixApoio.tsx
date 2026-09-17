@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
-import QRCode from 'qrcode';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 
 import { OFFICIAL_PIX_KEY, generatePixPayload, generatePixQrDataUrl } from '../utils/pix';

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
-import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
+import { useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { CivicEmblem } from '../components/CivicEmblem';
 import { API_URL } from '../services/api';
 
@@ -20,7 +20,6 @@ interface ReportProduct {
 
 export default function RelatoriosScreen() {
   const colors = useThemeColors();
-  const bp = useBreakpoint();
   const maxW = useMaxContentWidth();
   const padding = useResponsivePadding();
 

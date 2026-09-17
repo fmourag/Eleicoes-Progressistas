@@ -4,8 +4,6 @@ import { useLocationStore } from '../stores/location.store';
 import { fetchUserLocationWithConsent, IBGE_MAP } from '../services/location.service';
 import { useThemeColors, Radius, Spacing, FontSize } from '../utils/theme';
 
-const POPULAR_UFS = ['RJ', 'SP', 'MG', 'BA', 'RS', 'PR', 'PE', 'CE', 'DF', 'PA', 'SC', 'GO'];
-
 export function LocationConsentModal() {
   const { consentModalVisible, closeConsentModal, setConsent, setLocation } = useLocationStore();
   const [loading, setLoading] = useState(false);
@@ -26,7 +24,7 @@ export function LocationConsentModal() {
       setLocation(locationData);
       setConsent(true);
       closeConsentModal();
-    } catch (err: any) {
+    } catch {
       setErrorMessage('GPS indisponível ou permissão negada. Selecione seu Estado abaixo:');
       setShowManualSelection(true);
     } finally {

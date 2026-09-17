@@ -1,4 +1,4 @@
-import { useWindowDimensions, Platform } from 'react-native';
+import { useWindowDimensions } from 'react-native';
 
 export type Breakpoint = 'mobile' | 'tablet' | 'desktop';
 

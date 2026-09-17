@@ -12,7 +12,7 @@ import { router } from 'expo-router';
 import { useColaStore } from '../stores/cola.store';
 import { watchdogApi, WatchdogAlert, WatchdogPledge, WatchdogDashboard } from '../services/api';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
-import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
+import { useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { CivicEmblem } from '../components/CivicEmblem';
 import { EthicalAd } from '../components/EthicalAd';
 
@@ -32,13 +32,15 @@ const PILLARS_MAP: Record<string, { name: string; icon: string }> = {
   p13: { name: 'Transparência & Ética Pública', icon: '🔍' },
 };
 
-const LAST_VISITED_KEY = 'watchdog_last_visited';
+const LAST_VISITED_KEY = 'observatorio_last_visited';
 
 async function getStorageItem(key: string): Promise<string | null> {
   if (typeof window !== 'undefined' && window.localStorage) {
     try {
       return window.localStorage.getItem(key);
-    } catch {}
+    } catch {
+      return null;
+    }
   }
   return null;
 }
@@ -53,14 +55,13 @@ async function setStorageItem(key: string, value: string): Promise<void> {
 
 export default function ObservatorioScreen() {
   const colors = useThemeColors();
-  const bp = useBreakpoint();
   const maxW = useMaxContentWidth();
   const padding = useResponsivePadding();
-  const isDesktop = bp === 'desktop';
 
   const selectedCandidatesMap = useColaStore((state) => state.selectedCandidates);
   const candidatesList = Object.values(selectedCandidatesMap);
   const candidateIds = candidatesList.map((c) => c.id);
+  const candidateIdsKey = candidateIds.join(',');
 
   const [loading, setLoading] = useState(true);
   const [alerts, setAlerts] = useState<WatchdogAlert[]>([]);
@@ -112,7 +113,8 @@ export default function ObservatorioScreen() {
     }
 
     loadData();
-  }, [candidateIds.join(',')]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [candidateIdsKey]);
 
   function handleOpenLink(url?: string) {
     if (!url) return;

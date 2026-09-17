@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Pressable, Platfo
 import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { PILLAR_DISPLAY_LIST } from '@np/shared';
-import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
+import { useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { ActionButton } from '../components/ActionButton';
 import { ThemeToggle } from '../components/ThemeToggle';
@@ -21,12 +21,10 @@ const UF_OPTIONS: DropdownOption[] = [
 ].map((uf) => ({ value: uf, label: uf }));
 
 export default function HomeScreen() {
-  const bp = useBreakpoint();
   const colors = useThemeColors();
   const maxW = useMaxContentWidth();
   const padding = useResponsivePadding();
-  const isDesktop = bp === 'desktop';
-  const { location, hasConsented, resetLocation, setLocation, setConsent, openConsentModal } = useLocationStore();
+  const { location, resetLocation, setLocation, setConsent, openConsentModal } = useLocationStore();
 
   const [selectedUf, setSelectedUf] = useState(location?.uf ?? '');
   const [selectedMunicipio, setSelectedMunicipio] = useState(location?.municipality ?? '');

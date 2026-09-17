@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
-import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
+import { useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { CivicEmblem } from '../components/CivicEmblem';
 import { PROGRESSIVE_FILTER_DISCLAIMER } from '@np/shared';
 
@@ -77,10 +77,8 @@ const PRIVACY_ITEMS = [
 
 export default function ManualDoUsuarioScreen() {
   const colors = useThemeColors();
-  const bp = useBreakpoint();
   const maxW = useMaxContentWidth();
   const padding = useResponsivePadding();
-  const isDesktop = bp === 'desktop';
 
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 

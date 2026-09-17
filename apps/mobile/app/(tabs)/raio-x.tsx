@@ -1,10 +1,10 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Linking, TouchableOpacity, Image, TextInput } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { candidatesApi, RaioXData, getCandidatePhotoUrl } from '../../services/api';
 import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
-import { searchMandateProposals, extractKeywords, expandKeywords, CivicSearchResult } from '../../utils/civic-search';
+import { searchMandateProposals, extractKeywords, expandKeywords } from '../../utils/civic-search';
 
 import { CandidaturaWarning } from '../../components/CandidaturaWarning';
 import { useColaStore } from '../../stores/cola.store';
@@ -15,8 +15,6 @@ import { ApoioVoluntarioBanner } from '../../components/ApoioVoluntarioBanner';
 import { ActionButton } from '../../components/ActionButton';
 import {
   getNumeroUrna,
-  getCargoDigitsCount,
-  PILLAR_DISPLAY_LIST,
   resolveMandateProposalDetails,
   resolveCandidateMandateProposals,
   MandateProposalDetail,
@@ -64,14 +62,6 @@ function renderHighlightedText(text: string, queryTerms: string[], defaultColor:
     return <Text style={{ color: defaultColor }}>{text}</Text>;
   }
 }
-
-const PILLAR_LOOKUP: Record<string, { label: string; icon: string }> = PILLAR_DISPLAY_LIST.reduce(
-  (acc, p) => {
-    acc[p.id.toLowerCase()] = { label: p.label, icon: p.icon };
-    return acc;
-  },
-  {} as Record<string, { label: string; icon: string }>
-);
 
 function formatProposalForSharing(detail: MandateProposalDetail, candName?: string): string {
   return [
@@ -196,6 +186,7 @@ export default function RaioXScreen() {
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (loading) {
@@ -244,7 +235,6 @@ export default function RaioXScreen() {
     tseId,
     name,
   });
-  const digitsCount = getCargoDigitsCount(cargo);
 
   const rawProposalsList = (data.proposals && data.proposals.length > 0)
     ? data.proposals
@@ -1336,7 +1326,6 @@ export default function RaioXScreen() {
             : [];
 
           const selectedIdx = Math.min(Math.max(0, selectedProposalIndex), rawProposals.length - 1);
-          const currentProposal = rawProposals[selectedIdx];
           const detail = allResolvedProposals[selectedIdx];
           const pillarInfo = detail.pillarInfo;
 

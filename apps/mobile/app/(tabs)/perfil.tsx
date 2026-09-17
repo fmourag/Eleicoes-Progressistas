@@ -6,7 +6,6 @@ import { setAuthToken } from '../../services/api';
 import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
 import { ActionButton } from '../../components/ActionButton';
-import { ThemeToggle } from '../../components/ThemeToggle';
 
 export default function PerfilScreen() {
   const { user, logout } = useAuthStore();

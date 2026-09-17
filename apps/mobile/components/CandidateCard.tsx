@@ -111,7 +111,6 @@ export function CandidateCard({
   const { isCandidateSelected, addOrReplaceCandidate, removeCandidate } = useColaStore();
   const selectedForCola = id ? isCandidateSelected(id) : false;
 
-  const isPending = candidaturaStatus === 'EM_ANALISE';
   const votingNumber = numeroUrna || getNumeroUrna({ cargo, partyNumber, party, tseId, name });
   const hasAlliance = isProgressiveSupported || Boolean(supportedBy) || Boolean(coalition);
 

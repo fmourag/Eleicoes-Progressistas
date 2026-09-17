@@ -7,13 +7,12 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  Platform,
   Linking,
   ActivityIndicator,
 } from 'react-native';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { useBreakpoint } from '../utils/responsive';
-import { useColaStore, ColaCandidate, COLA_SLOTS } from '../stores/cola.store';
+import { useColaStore, COLA_SLOTS } from '../stores/cola.store';
 import { useLocationStore } from '../stores/location.store';
 import { getCandidatePhotoUrl, API_URL } from '../services/api';
 import { PixApoio } from './PixApoio';

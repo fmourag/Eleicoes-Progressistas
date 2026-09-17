@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Activi
 import { router } from 'expo-router';
 import { PILLAR_DISPLAY_LIST } from '@np/shared';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
-import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
+import { useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { api } from '../services/api';
 
 const CATEGORIES = [
@@ -16,7 +16,6 @@ const CATEGORIES = [
 
 export default function AnuncieScreen() {
   const colors = useThemeColors();
-  const bp = useBreakpoint();
   const maxW = useMaxContentWidth();
   const padding = useResponsivePadding();
 

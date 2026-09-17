@@ -175,7 +175,7 @@ export async function fetchMunicipalities(uf: string): Promise<Municipality[]> {
       `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`
     );
     if (!response.ok) return [];
-    const data = (await response.json()) as Array<{ id: number | string; nome: string }>;
+    const data = (await response.json()) as { id: number | string; nome: string }[];
     const list = data
       .map((m) => ({ code: String(m.id), name: m.nome }))
       .sort((a, b) => a.name.localeCompare(b.name));

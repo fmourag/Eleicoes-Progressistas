@@ -1,15 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { CandidaturaStatus } from '@np/shared';
-import { useThemeColors, Radius, Spacing, FontSize } from '../utils/theme';
+import { Radius, Spacing, FontSize } from '../utils/theme';
 
 interface CandidaturaWarningProps {
   status: CandidaturaStatus;
 }
 
 export function CandidaturaWarning({ status }: CandidaturaWarningProps) {
-  const colors = useThemeColors();
-
   if (status !== 'EM_ANALISE') return null;
 
   return (

@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
-import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
+import { useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { PixApoio } from '../components/PixApoio';
 import { CivicBanner } from '../components/CivicBanner';
 import { api, API_URL } from '../services/api';
 
 interface FinanceCostsData {
   monthlyBudget: {
-    items: Array<{ category: string; monthlyCostBrl: number; description: string }>;
+    items: { category: string; monthlyCostBrl: number; description: string }[];
     totalMonthlyCostBrl: number;
   };
   period: {
@@ -32,7 +32,6 @@ interface FinanceCostsData {
 
 export default function ApoieScreen() {
   const colors = useThemeColors();
-  const bp = useBreakpoint();
   const maxW = useMaxContentWidth();
   const padding = useResponsivePadding();
 

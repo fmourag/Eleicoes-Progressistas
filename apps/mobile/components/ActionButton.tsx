@@ -1,6 +1,5 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import type { ViewStyle } from 'react-native';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 
 interface ActionButtonProps {

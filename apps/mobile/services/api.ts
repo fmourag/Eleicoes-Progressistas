@@ -2,7 +2,6 @@ import {
   CandidateClassification,
   GovernmentPlanDetail,
   CandidatePollResult,
-  resolveCandidatePhotoUrl,
   resolveCandidatePhotoFallbackChain,
   resolveCandidateMandateProposals,
 } from '@np/shared';
@@ -445,7 +444,7 @@ export const candidatesApi = {
       const res = await api.get<RaioXData>(`/api/candidates/${id}/raio-x`, { retries: 3 });
       saveRaioXToCache(id, res);
       return res;
-    } catch (err) {
+    } catch {
       console.warn(`[candidatesApi.getRaioX] Falha de rede para ${id}, utilizando fallback local/cache...`);
 
       // 1. Verificar cache local do Raio-X completo
@@ -572,11 +571,11 @@ export interface WatchdogDashboard {
   eleitosPorPilar: Record<string, number>;
   eleitosPorPartido: Record<string, number>;
   fidelidadeMedia: number;
-  topDivergencias: Array<{
+  topDivergencias: {
     description: string;
     pillarId: string;
     divergenceCount: number;
-  }>;
+  }[];
   totalEleitos: number;
   totalVotacoes: number;
 }

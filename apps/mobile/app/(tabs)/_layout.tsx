@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { View, Text, Platform, TouchableOpacity, Linking } from 'react-native';
 import { useBreakpoint, useMaxContentWidth } from '../../utils/responsive';
-import { useThemeColors, FontSize, Spacing } from '../../utils/theme';
+import { useThemeColors, Spacing } from '../../utils/theme';
 import { ThemeToggle } from '../../components/ThemeToggle';
 import { API_URL } from '../../services/api';
 

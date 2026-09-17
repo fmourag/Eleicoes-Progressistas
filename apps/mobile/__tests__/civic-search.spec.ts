@@ -1,4 +1,4 @@
-import { searchMandateProposals, normalizeText, extractKeywords, expandKeywords, CIVIC_SYNONYMS } from '../utils/civic-search';
+import { searchMandateProposals } from '../utils/civic-search';
 import { MandateProposalDetail } from '@np/shared';
 
 const mockProposals: MandateProposalDetail[] = [
