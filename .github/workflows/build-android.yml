@@ -131,20 +131,18 @@ jobs:
           APK_FILE="apps/mobile/eleicoes-progressistas-${TAG}-beta.apk"
           SHA_FILE="apps/mobile/sha256.txt"
 
-          cat << 'EOF' > release_body.md
-## 📦 Release ${{ steps.vars.outputs.tag }} — Beta Fechado
-
-### 🔐 Verificação de Integridade
-- **Arquivo:** `eleicoes-progressistas-${{ steps.vars.outputs.tag }}-beta.apk`
-- **SHA-256:** `${{ steps.checksum.outputs.sha256 }}`
-
-### 🚀 Novidades da v2.2.4:
-- **Apoio Cívico via PIX Celular:** Atualizada chave PIX para celular `(21) 97194-3298` no padrão E.164 BACEN (`+5521971943298`) com cópia em 1 clique e QR Code EMVCo.
-- **Slogan Cívico:** Mensagem de destaque *"Buscando Propostas e não Fofocas"* na tela de carregamento.
-- **Ordenação Alfabética:** Candidatos ordenados alfabeticamente por nome de campanha dentro de cada cargo.
-- **Cards de Cargos Destacados:** Visual com faixa temática, elevação aprimorada e cabeçalhos fixos (*sticky*) para fácil localização na rolagem.
-- **Blindagem de Segurança:** Defesas de timing-safe comparisons, validação rigorosa de esquemas de URL, sanitização contra CSV injection e limites de entrada.
-EOF
+          echo "## 📦 Release $TAG — Beta Fechado" > release_body.md
+          echo "" >> release_body.md
+          echo "### 🔐 Verificação de Integridade" >> release_body.md
+          echo "- **Arquivo:** \`eleicoes-progressistas-${TAG}-beta.apk\`" >> release_body.md
+          echo "- **SHA-256:** \`${{ steps.checksum.outputs.sha256 }}\`" >> release_body.md
+          echo "" >> release_body.md
+          echo "### 🚀 Novidades da v2.2.4:" >> release_body.md
+          echo "- **Apoio Cívico via PIX Celular:** Atualizada chave PIX para celular \`(21) 97194-3298\` no padrão E.164 BACEN (\`+5521971943298\`) com cópia em 1 clique e QR Code EMVCo." >> release_body.md
+          echo "- **Slogan Cívico:** Mensagem de destaque *\"Buscando Propostas e não Fofocas\"* na tela de carregamento." >> release_body.md
+          echo "- **Ordenação Alfabética:** Candidatos ordenados alfabeticamente por nome de campanha dentro de cada cargo." >> release_body.md
+          echo "- **Cards de Cargos Destacados:** Visual com faixa temática, elevação aprimorada e cabeçalhos fixos (*sticky*) para fácil localização na rolagem." >> release_body.md
+          echo "- **Blindagem de Segurança:** Defesas de timing-safe comparisons, validação rigorosa de esquemas de URL, sanitização contra CSV injection e limites de entrada." >> release_body.md
 
           if gh release view "$TAG" > /dev/null 2>&1; then
             gh release edit "$TAG" --notes-file release_body.md --prerelease
