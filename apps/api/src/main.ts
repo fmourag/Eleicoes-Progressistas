@@ -73,7 +73,22 @@ async function bootstrap() {
   );
 
   app.setGlobalPrefix('api', {
-    exclude: ['privacidade', 'beta', 'feedback', 'feedback/painel', 'painel', 'admin/feedback'],
+    exclude: [
+      'privacidade',
+      'beta',
+      'download',
+      'app',
+      'apk',
+      'download/apk',
+      'download/apk/sha256',
+      'web',
+      'web/*path',
+      'feedback',
+      'feedback/painel',
+      'painel',
+      'admin/feedback',
+      '',
+    ],
   });
 
   // Filtro Global de Exceções: oculta stack traces e detalhes de BD em respostas HTTP
@@ -148,6 +163,28 @@ async function bootstrap() {
   );
 
   const expressApp = app.getHttpAdapter().getInstance();
+
+  const apiStaticDir = existsSync(join(__dirname, '..', 'static'))
+    ? join(__dirname, '..', 'static')
+    : join(process.cwd(), 'apps', 'api', 'static');
+
+  if (existsSync(apiStaticDir)) {
+    app.useStaticAssets(apiStaticDir, {
+      prefix: '/',
+    });
+    logger.log(`API static assets served from ${apiStaticDir}`);
+  }
+
+  // Rota raiz: redireciona ou serve /web/
+  expressApp.get('/', (_req: Request, res: Response) => {
+    const rootIndex = join(apiStaticDir, 'index.html');
+    if (existsSync(rootIndex)) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.sendFile(rootIndex);
+    }
+    res.redirect('/web/');
+  });
+
   expressApp.get('/privacidade', (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(PRIVACY_HTML);
@@ -157,7 +194,35 @@ async function bootstrap() {
     res.send(BETA_HTML);
   });
   expressApp.get(['/download/apk', '/app.apk'], (_req: Request, res: Response) => {
+    const apkPath = join(apiStaticDir, 'apk', 'eleicoes-progressistas-v2.2.5.apk');
+    if (existsSync(apkPath)) {
+      res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+      res.setHeader('Content-Disposition', 'attachment; filename="eleicoes-progressistas-v2.2.5.apk"');
+      return res.sendFile(apkPath);
+    }
     res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.5/eleicoes-progressistas-v2.2.5-beta.apk');
+  });
+  expressApp.get('/download/apk/sha256', (_req: Request, res: Response) => {
+    const shaPath = join(apiStaticDir, 'apk', 'sha256.txt');
+    if (existsSync(shaPath)) {
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      return res.sendFile(shaPath);
+    }
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.send('421aaf52ebc730d839cfadb50c3b47fbb26870855c5c02d9dd14484a1404dbba\n');
+  });
+  expressApp.get(['/web', '/web/*path'], (_req: Request, res: Response) => {
+    const webIndex = join(apiStaticDir, 'web', 'index.html');
+    if (existsSync(webIndex)) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.sendFile(webIndex);
+    }
+    const mobileDistIndex = join(__dirname, '..', '..', 'mobile', 'dist', 'index.html');
+    if (existsSync(mobileDistIndex)) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.sendFile(mobileDistIndex);
+    }
+    res.redirect('/beta');
   });
   expressApp.get('/feedback', (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');

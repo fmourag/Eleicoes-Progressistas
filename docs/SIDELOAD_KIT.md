@@ -8,10 +8,10 @@
 
 ## 📦 Dados do Pacote
 
-- **Link Direto do APK:** [Download APK v2.2.5](https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.5/eleicoes-progressistas-v2.2.5-beta.apk)
+- **Link Direto do APK (Render):** [Download APK v2.2.5](https://eleicoes-progressistas.onrender.com/download/apk)
+- **Verificação de Integridade (SHA-256):** `421aaf52ebc730d839cfadb50c3b47fbb26870855c5c02d9dd14484a1404dbba` ([Checar via API](https://eleicoes-progressistas.onrender.com/download/apk/sha256))
 - **Landing Page de Instalação:** https://eleicoes-progressistas.onrender.com/beta
-- **Releases no GitHub:** https://github.com/fmourag/Eleicoes-Progressistas/releases/tag/v2.2.5
-- **Verificação de Integridade (SHA-256):** `421aaf52ebc730d839cfadb50c3b47fbb26870855c5c02d9dd14484a1404dbba`
+- **Releases no GitHub (Espelho):** https://github.com/fmourag/Eleicoes-Progressistas/releases/tag/v2.2.5
 - **Política de Privacidade:** https://eleicoes-progressistas.onrender.com/privacidade
 
 ---

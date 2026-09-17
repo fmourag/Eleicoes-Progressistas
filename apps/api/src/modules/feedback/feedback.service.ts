@@ -2,9 +2,11 @@ import { Injectable, OnModuleInit, Logger, BadRequestException } from '@nestjs/c
 import { PrismaService } from '../common/prisma.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 
+let protocolCounter = 0;
 function generateProtocol(): string {
   const timestamp = Date.now();
-  const rand = Math.random().toString(36).substring(2, 6);
+  protocolCounter = (protocolCounter + 1) % 1000000;
+  const rand = Math.random().toString(36).substring(2, 6) + protocolCounter.toString(36);
   return `FB-${timestamp}-${rand}`;
 }
 

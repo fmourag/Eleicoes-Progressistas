@@ -18,6 +18,7 @@ out/
 *.mobileprovision
 *.orig.*
 *.apk
+!apps/api/static/apk/*.apk
 *.aab
 
 # Native

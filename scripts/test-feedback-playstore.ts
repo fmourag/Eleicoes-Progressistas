@@ -151,9 +151,11 @@ async function runValidation() {
   // SUÍTE 3: Geração de Protocolo Único de Auditoria Cívica
   console.log('\n--- SUÍTE 3: Geração e Unicidade do Protocolo de Atendimento ---');
 
+  let protocolCounter = 0;
   function generateProtocol(): string {
     const timestamp = Date.now();
-    const rand = Math.random().toString(36).substring(2, 6);
+    protocolCounter = (protocolCounter + 1) % 1000000;
+    const rand = Math.random().toString(36).substring(2, 6) + protocolCounter.toString(36);
     return `FB-${timestamp}-${rand}`;
   }
 

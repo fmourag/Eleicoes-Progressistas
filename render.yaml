@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: eleicoes-progressistas
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install && npm run build -w @np/api && npm run build:web -w @np/mobile && npm run render:copy-assets
+    startCommand: node apps/api/dist/main.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_SECRET
+        sync: false
+      - key: CRON_SECRET
+        sync: false

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback de Testes — Eleições Progressistas 2026</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #222; max-width: 640px; margin: 0 auto; padding: 20px; background: #f9fbf9; }
+        .header { text-align: center; margin-bottom: 24px; }
+        h1 { color: #1B5E20; margin-bottom: 4px; font-size: 24px; }
+        .subtitle { color: #555; font-size: 15px; }
+        .badge { display: inline-block; background: #E8F5E9; color: #1B5E20; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-bottom: 8px; }
+        .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0; margin-bottom: 20px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; color: #333; }
+        .label-desc { font-weight: normal; font-size: 12px; color: #666; margin-top: 2px; }
+        input[type="text"], input[type="email"], select, textarea {
+            width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; transition: border-color 0.2s;
+        }
+        input[type="text"]:focus, input[type="email"]:focus, select:focus, textarea:focus {
+            border-color: #1B5E20; outline: none; box-shadow: 0 0 0 2px rgba(27,94,32,0.15);
+        }
+        .nps-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+        .nps-btn {
+            flex: 1 0 calc(9% - 6px); min-width: 36px; height: 42px; border: 1px solid #ccc; background: #fff; border-radius: 6px;
+            font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+        }
+        .nps-btn:hover { background: #f0f7f0; border-color: #1B5E20; }
+        .nps-btn.selected { background: #1B5E20; color: #fff; border-color: #1B5E20; }
+        .nps-labels { display: flex; justify-content: space-between; font-size: 12px; color: #777; margin-top: 4px; }
+        .btn-submit {
+            display: block; width: 100%; background: #1B5E20; color: #fff; border: none; padding: 16px; border-radius: 8px;
+            font-weight: bold; font-size: 17px; cursor: pointer; transition: background 0.2s; margin-top: 10px;
+        }
+        .btn-submit:hover { background: #2E7D32; }
+        .btn-submit:disabled { background: #a5d6a7; cursor: not-allowed; }
+        .success-box { display: none; background: #E8F5E9; border-left: 5px solid #1B5E20; padding: 24px; border-radius: 8px; text-align: center; }
+        .protocol-badge { display: inline-block; background: #1B5E20; color: #fff; font-family: monospace; font-size: 18px; padding: 6px 16px; border-radius: 6px; margin: 14px 0; word-break: break-all; }
+        .error-msg { color: #d32f2f; font-size: 13px; margin-top: 4px; display: none; }
+        footer { text-align: center; font-size: 13px; color: #777; margin-top: 30px; border-top: 1px solid #ddd; padding-top: 15px; }
+        a { color: #1B5E20; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <span class="badge">AUDITORIA CÍVICA ABERTA</span>
+        <h1>Eleições Progressistas</h1>
+        <p class="subtitle">Avaliação e feedback de homologação da versão 2.2.5</p>
+    </div>
+
+    <div class="card" id="formCard">
+        <form id="feedbackForm">
+            <input type="hidden" id="appVersion" name="appVersion" value="2.2.5">
+            <input type="hidden" id="nps" name="nps" value="10">
+
+            <div class="form-group">
+                <label for="testerName">Seu Nome (para identificação voluntária — Opcional)</label>
+                <input type="text" id="testerName" name="testerName" placeholder="Ex.: Maria Silva ou Auditor Cívico">
+                <div class="label-desc">Opcional: qualquer cidadão pode enviar feedback aberto sem necessidade de cadastro.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="npsSelect">Qual a probabilidade de recomendar este app? (0 a 10) *</label>
+                <div class="nps-container" id="npsContainer">
+                    <button type="button" class="nps-btn" data-val="0">0</button>
+                    <button type="button" class="nps-btn" data-val="1">1</button>
+                    <button type="button" class="nps-btn" data-val="2">2</button>
+                    <button type="button" class="nps-btn" data-val="3">3</button>
+                    <button type="button" class="nps-btn" data-val="4">4</button>
+                    <button type="button" class="nps-btn" data-val="5">5</button>
+                    <button type="button" class="nps-btn" data-val="6">6</button>
+                    <button type="button" class="nps-btn" data-val="7">7</button>
+                    <button type="button" class="nps-btn" data-val="8">8</button>
+                    <button type="button" class="nps-btn" data-val="9">9</button>
+                    <button type="button" class="nps-btn selected" data-val="10">10</button>
+                </div>
+                <div class="nps-labels">
+                    <span>0 = Pouco provável</span>
+                    <span>10 = Altamente provável</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="problema">Status do Teste / Problema Encontrado *</label>
+                <select id="problema" name="problema" required>
+                    <option value="nenhum">✅ Nenhum problema — Tudo funcionou com sucesso</option>
+                    <option value="fotos">📸 Falha no carregamento de fotos</option>
+                    <option value="layout">📱 Problema visual / texto cortado</option>
+                    <option value="lentidao">⏳ Lentidão no carregamento de candidatos</option>
+                    <option value="crash">💥 Fechamento inesperado do app</option>
+                    <option value="outro">📝 Outro apontamento</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="descricao">Descrição dos Testes e Observações (Opcional)</label>
+                <textarea id="descricao" name="descricao" rows="3" placeholder="Ex.: Testei deputados de SP e RJ, fotos carregaram em menos de 1s..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="screenshotDesc">Descrição de Captura de Tela / Evidência (Opcional)</label>
+                <input type="text" id="screenshotDesc" name="screenshotDesc" placeholder="Ex.: Print da aba Candidatos sem truncamento">
+            </div>
+
+            <div class="form-group">
+                <label for="device">Dispositivo / Modelo *</label>
+                <input type="text" id="device" name="device" required>
+                <div class="label-desc">Preenchido automaticamente pelo navegador do seu aparelho.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="androidVersion">Versão do Sistema Operacional</label>
+                <input type="text" id="androidVersion" name="androidVersion">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Seu E-mail (Opcional)</label>
+                <input type="email" id="email" name="email" placeholder="Opcional para contato">
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">🚀 Enviar Feedback de Teste</button>
+            <div class="error-msg" id="submitError" style="margin-top: 10px; text-align: center;"></div>
+        </form>
+    </div>
+
+    <div class="success-box" id="successBox">
+        <h2 style="color: #1B5E20; margin-top: 0;">🎉 Feedback Registrado com Sucesso!</h2>
+        <p>Seu reporte foi registrado e integrado à base de auditoria cívica da versão 2.2.5.</p>
+        <div>Seu protocolo de atendimento técnico:</div>
+        <div class="protocol-badge" id="protocolBadge">FB-...</div>
+
+        <!-- Próximos Passos Neutros e Universais (Exibidos para 100% dos envios) -->
+        <div class="next-steps-card" style="margin-top: 20px; padding: 18px; background: #ffffff; border: 1px solid #c8e6c9; border-radius: 8px; text-align: left;">
+            <h3 style="color: #1B5E20; margin-top: 0; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                📋 Próximos Passos (Opcionais)
+            </h3>
+            
+            <div style="margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid #e0e0e0;">
+                <strong style="color: #333; display: block; margin-bottom: 4px;">🛠️ Suporte e Diagnóstico Técnico Direto</strong>
+                <p style="font-size: 13px; color: #555; margin: 0 0 6px 0;">
+                    Caso deseje complementar seu reporte com capturas de tela, registros ou detalhes adicionais, entre em contato direto pelo canal:
+                </p>
+                <a href="mailto:fmourag@gmail.com" id="supportMailLink" style="color: #1B5E20; font-weight: bold; font-size: 13px;">
+                    ✉️ fmourag@gmail.com
+                </a>
+            </div>
+
+            <div style="text-align: center;">
+                <strong style="color: #333; display: block; margin-bottom: 6px; text-align: left;">⭐ Avaliação Pública no Google Play</strong>
+                <p style="font-size: 13px; color: #555; margin: 0 0 12px 0; text-align: left;">
+                    Convidamos você a deixar sua avaliação pública na Google Play Store. Todas as impressões e experiências dos usuários são bem-vindas:
+                </p>
+                <a href="https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app" id="playStoreLink" target="_blank" class="btn" style="background: #1B5E20; font-size: 15px; padding: 12px 24px; text-decoration: none; color: #fff; border-radius: 6px; font-weight: bold; display: inline-block;">
+                    Avaliar no Google Play
+                </a>
+                <p style="font-size: 12px; color: #666; margin-top: 10px; margin-bottom: 0;">
+                    Testadores da Trilha Fechada: <a href="https://play.google.com/apps/testing/com.eleicoesprogressistas.app" id="testingTrackLink" target="_blank" style="color: #1B5E20;">Acessar Trilha de Testes Google Play</a>
+                </p>
+            </div>
+        </div>
+
+        <p style="font-size: 14px; color: #555; margin-top: 18px;">Muito obrigado por contribuir com a democracia e a transparência eleitoral! 🇧🇷</p>
+        <p><a href="/beta" style="font-weight: bold; text-decoration: none;">← Voltar para a página de instalação Beta</a></p>
+    </div>
+
+    <footer>
+        <p>
+            <a href="/privacidade">Política de Privacidade</a> • 
+            <a href="https://github.com/fmourag/Eleicoes-Progressistas" target="_blank">Código no GitHub</a> • 
+            Contato: <a href="mailto:fmourag@gmail.com">fmourag@gmail.com</a>
+        </p>
+    </footer>
+
+    <script>
+        // Auto-detectar dispositivo e OS
+        (function initDevice() {
+            var ua = navigator.userAgent;
+            var dev = "Navegador Web";
+            var os = "";
+
+            if (/android/i.test(ua)) {
+                var match = ua.match(/Android\s([0-9\.]*)/i);
+                os = match ? "Android " + match[1] : "Android";
+                var devMatch = ua.match(/\((.*?)\)/);
+                dev = devMatch ? devMatch[1] : "Dispositivo Android";
+            } else if (/iPhone|iPad/i.test(ua)) {
+                dev = "Apple iOS Device";
+                os = "iOS";
+            } else if (/Windows/i.test(ua)) {
+                dev = "PC Windows";
+                os = "Windows";
+            } else if (/Macintosh/i.test(ua)) {
+                dev = "Apple Mac";
+                os = "macOS";
+            }
+
+            document.getElementById("device").value = dev;
+            document.getElementById("androidVersion").value = os;
+        })();
+
+        // Manipulação da escala NPS
+        var npsBtns = document.querySelectorAll(".nps-btn");
+        npsBtns.forEach(function(btn) {
+            btn.addEventListener("click", function() {
+                npsBtns.forEach(function(b) { b.classList.remove("selected"); });
+                btn.classList.add("selected");
+                document.getElementById("nps").value = btn.getAttribute("data-val");
+            });
+        });
+
+        // Envio do formulário
+        document.getElementById("feedbackForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            var submitBtn = document.getElementById("submitBtn");
+            var submitError = document.getElementById("submitError");
+            submitError.style.display = "none";
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "⏳ Enviando dados de teste...";
+
+            var testerNameVal = document.getElementById("testerName").value.trim();
+
+            var payload = {
+                testerName: testerNameVal || undefined,
+                nome: testerNameVal || undefined,
+                email: document.getElementById("email").value.trim() || undefined,
+                device: document.getElementById("device").value,
+                androidVersion: document.getElementById("androidVersion").value || undefined,
+                appVersion: document.getElementById("appVersion").value,
+                nps: parseInt(document.getElementById("nps").value, 10),
+                problema: document.getElementById("problema").value,
+                descricao: document.getElementById("descricao").value.trim() || undefined,
+                screenshotDesc: document.getElementById("screenshotDesc").value.trim() || undefined
+            };
+
+            try {
+                var response = await fetch("/api/feedback", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    var errData = await response.json().catch(function() { return {}; });
+                    throw new Error(errData.message || ("Erro " + response.status + " ao registrar feedback"));
+                }
+
+                var data = await response.json();
+                var protocolStr = data.protocol || ("FB-" + data.id);
+                document.getElementById("protocolBadge").innerText = protocolStr;
+
+                // Suporte interno vinculado ao protocolo
+                var mailLink = document.getElementById("supportMailLink");
+                if (mailLink) {
+                    mailLink.href = "mailto:fmourag@gmail.com?subject=" + encodeURIComponent("Suporte Cívico " + protocolStr);
+                }
+
+                // Sincroniza links do Google Play retornados pelo backend
+                if (data.reviewCta) {
+                    var playLink = document.getElementById("playStoreLink");
+                    if (playLink && data.reviewCta.playStoreUrl) {
+                        playLink.href = data.reviewCta.playStoreUrl;
+                    }
+                    var testLink = document.getElementById("testingTrackLink");
+                    if (testLink && data.reviewCta.testingTrackUrl) {
+                        testLink.href = data.reviewCta.testingTrackUrl;
+                    }
+                }
+
+                document.getElementById("formCard").style.display = "none";
+                document.getElementById("successBox").style.display = "block";
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            } catch (err) {
+                submitError.innerText = "❌ " + err.message;
+                submitError.style.display = "block";
+                submitBtn.disabled = false;
+                submitBtn.innerText = "🚀 Enviar Feedback de Teste";
+            }
+        });
+    </script>
+</body>
+</html>

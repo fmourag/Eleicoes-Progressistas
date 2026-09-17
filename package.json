@@ -22,6 +22,7 @@
     "build:api": "npm run build -w @np/api",
     "start:lite": "node apps/api/dist/main.js",
     "prepare:lite": "npm run build -w @np/shared && npm run build:web -w @np/mobile && npm run build:api",
+    "render:copy-assets": "node scripts/render-copy-assets.js",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
