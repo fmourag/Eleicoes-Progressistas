@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Linking, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Linking, TouchableOpacity, Image, TextInput, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { candidatesApi, RaioXData, getCandidatePhotoUrl } from '../../services/api';
 import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
@@ -191,8 +191,33 @@ export default function RaioXScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <Text style={{ color: colors.textMuted }}>Carregando raio-x do candidato...</Text>
+      <View style={[styles.center, { backgroundColor: colors.background, padding: Spacing.xl }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <View
+          style={{
+            backgroundColor: '#ECFDF5',
+            borderColor: '#10B981',
+            borderWidth: 1.5,
+            borderRadius: Radius.full,
+            paddingVertical: 6,
+            paddingHorizontal: 18,
+            marginTop: Spacing.lg,
+            marginBottom: Spacing.xs,
+          }}
+        >
+          <Text
+            style={{
+              color: '#065F46',
+              fontSize: FontSize.md,
+              fontWeight: '800',
+              textAlign: 'center',
+              letterSpacing: 0.3,
+            }}
+          >
+            🎯 Buscando Propostas e não Fofocas
+          </Text>
+        </View>
+        <Text style={{ color: colors.textMuted, fontSize: FontSize.sm, marginTop: Spacing.xs }}>Carregando raio-x e propostas do candidato...</Text>
       </View>
     );
   }

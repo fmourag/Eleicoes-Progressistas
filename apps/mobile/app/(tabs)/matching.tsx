@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Switch, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Switch, TouchableOpacity, Pressable, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { PROGRESSIVE_GUIDELINE_NOTICE, PILLAR_DISPLAY_LIST, isNeutralMatchingProfile, INSUFFICIENT_DATA_LABEL } from '@np/shared';
 import { matchingApi, candidatesApi, MatchResult, Candidate } from '../../services/api';
@@ -404,8 +404,33 @@ export default function MatchingScreen() {
         </View>
 
         {loading ? (
-          <View style={[styles.center, { backgroundColor: colors.background }]}>
-            <Text style={{ color: colors.textMuted }}>Carregando candidaturas...</Text>
+          <View style={[styles.center, { backgroundColor: colors.background, padding: Spacing.xl }]}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <View
+              style={{
+                backgroundColor: '#ECFDF5',
+                borderColor: '#10B981',
+                borderWidth: 1.5,
+                borderRadius: Radius.full,
+                paddingVertical: 6,
+                paddingHorizontal: 16,
+                marginTop: Spacing.lg,
+                marginBottom: Spacing.xs,
+              }}
+            >
+              <Text
+                style={{
+                  color: '#065F46',
+                  fontSize: FontSize.md,
+                  fontWeight: '800',
+                  textAlign: 'center',
+                  letterSpacing: 0.3,
+                }}
+              >
+                🎯 Buscando Propostas e não Fofocas
+              </Text>
+            </View>
+            <Text style={{ color: colors.textMuted, fontSize: FontSize.sm, marginTop: Spacing.xs }}>Carregando candidaturas e prioridades...</Text>
           </View>
         ) : (rankedGroups.length > 0 || unrankedItems.length > 0) ? (
           (() => {

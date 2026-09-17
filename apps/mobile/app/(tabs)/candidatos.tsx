@@ -334,10 +334,34 @@ export default function CandidatosScreen() {
     return (
       <View style={[styles.center, { backgroundColor: colors.background, padding: Spacing.xl }]}>
         <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={{ color: colors.text, fontSize: FontSize.md, fontWeight: '600', marginTop: Spacing.md, textAlign: 'center' }}>
+        <View
+          style={{
+            backgroundColor: '#ECFDF5',
+            borderColor: '#10B981',
+            borderWidth: 1.5,
+            borderRadius: Radius.full,
+            paddingVertical: 6,
+            paddingHorizontal: 18,
+            marginTop: Spacing.lg,
+            marginBottom: Spacing.xs,
+          }}
+        >
+          <Text
+            style={{
+              color: '#065F46',
+              fontSize: FontSize.md,
+              fontWeight: '800',
+              textAlign: 'center',
+              letterSpacing: 0.3,
+            }}
+          >
+            🎯 Buscando Propostas e não Fofocas
+          </Text>
+        </View>
+        <Text style={{ color: colors.text, fontSize: FontSize.md, fontWeight: '600', marginTop: Spacing.xs, textAlign: 'center' }}>
           Carregando candidaturas oficiais do TSE...
         </Text>
-        <Text style={{ color: colors.textMuted, fontSize: FontSize.sm, marginTop: Spacing.xs, textAlign: 'center', maxWidth: 320 }}>
+        <Text style={{ color: colors.textMuted, fontSize: FontSize.sm, marginTop: Spacing.xs, textAlign: 'center', maxWidth: 340, lineHeight: 20 }}>
           Aguardando servidor seguro. Caso seja o primeiro acesso, o carregamento pode levar até 60s.
         </Text>
       </View>
