@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
-import { OFFICIAL_PIX_KEY, generatePixPayload, generatePixQrDataUrl } from '../utils/pix';
+import {
+  PIX_KEY_DISPLAY,
+  PIX_AMOUNT,
+  PIX_BENEFICIARY_NAME,
+  PIX_CITY,
+} from '../src/constants/civic-support';
+import { generatePixPayload, generatePixQrDataUrl } from '../src/utils/pix-generator';
 
 interface ApoioVoluntarioBannerProps {
   variant?: 'card' | 'compact' | 'strategic';
@@ -10,6 +16,7 @@ interface ApoioVoluntarioBannerProps {
 }
 
 const PRESET_VALUES = [
+  { label: 'R$ 3', value: '3.00', desc: 'Apoio Cívico Básico' },
   { label: 'R$ 5', value: '5.00', desc: 'Servidores' },
   { label: 'R$ 15', value: '15.00', desc: 'Sincronização TSE' },
   { label: 'R$ 30', value: '30.00', desc: 'Infraestrutura' },
@@ -41,7 +48,7 @@ export function ApoioVoluntarioBanner({
   async function handleCopyKey() {
     try {
       if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        await navigator.clipboard.writeText(OFFICIAL_PIX_KEY);
+        await navigator.clipboard.writeText(PIX_KEY_DISPLAY);
       }
       setCopiedKey(true);
       setTimeout(() => setCopiedKey(false), 3000);
@@ -179,7 +186,7 @@ export function ApoioVoluntarioBanner({
               activeOpacity={0.85}
             >
               <Text style={styles.actionBtnText}>
-                {copiedKey ? '✅ Chave PIX Copiada!' : `📋 Copiar Chave: ${OFFICIAL_PIX_KEY}`}
+                {copiedKey ? '✅ Chave PIX Copiada!' : `📋 Copiar Chave: ${PIX_KEY_DISPLAY}`}
               </Text>
             </TouchableOpacity>
 
@@ -203,8 +210,8 @@ export function ApoioVoluntarioBanner({
           {/* Rodapé de Transparência */}
           <View style={styles.footerNote}>
             <Text style={[styles.footerText, { color: colors.textMuted }]}>
-              🔒 Favorecido oficial: <Text style={{ fontWeight: '700', color: colors.text }}>Fernando Gonçalves</Text> • Chave:{' '}
-              <Text style={{ fontFamily: 'monospace', fontWeight: '700', color: colors.primary }}>{OFFICIAL_PIX_KEY}</Text>
+              🔒 Favorecido oficial: <Text style={{ fontWeight: '700', color: colors.text }}>{PIX_BENEFICIARY_NAME}</Text> ({PIX_CITY}) • Chave:{' '}
+              <Text style={{ fontFamily: 'monospace', fontWeight: '700', color: colors.primary }}>{PIX_KEY_DISPLAY}</Text>
             </Text>
           </View>
         </View>

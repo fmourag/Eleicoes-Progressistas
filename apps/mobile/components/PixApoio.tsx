@@ -2,13 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 
-import { OFFICIAL_PIX_KEY, generatePixPayload, generatePixQrDataUrl } from '../utils/pix';
+import {
+  PIX_KEY,
+  PIX_KEY_DISPLAY,
+  PIX_AMOUNT,
+  PIX_BENEFICIARY_NAME,
+  PIX_CITY,
+} from '../src/constants/civic-support';
+import { generatePixPayload, generatePixQrDataUrl } from '../src/utils/pix-generator';
 
 interface PixApoioProps {
   compact?: boolean;
 }
 
 const PRESET_VALUES = [
+  { label: 'R$ 3', value: '3.00', desc: 'Apoio Cívico Básico' },
   { label: 'R$ 5', value: '5.00', desc: 'Ajuda servidores' },
   { label: 'R$ 15', value: '15.00', desc: 'Sincroniza TSE 2026' },
   { label: 'R$ 30', value: '30.00', desc: 'CDN & Infraestrutura' },
@@ -16,10 +24,8 @@ const PRESET_VALUES = [
 ];
 
 export function PixApoio({ compact = false }: PixApoioProps) {
-  const envKey = process.env.EXPO_PUBLIC_PIX_KEY?.trim();
-  const pixKey = (envKey && !envKey.includes('eleicoesprogressistas.org')) ? envKey : OFFICIAL_PIX_KEY;
   const colors = useThemeColors();
-  const [selectedValue, setSelectedValue] = useState('15.00');
+  const [selectedValue, setSelectedValue] = useState(PIX_AMOUNT.toFixed(2));
   const [customValue, setCustomValue] = useState('');
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -27,18 +33,18 @@ export function PixApoio({ compact = false }: PixApoioProps) {
 
   const effectiveAmount = selectedValue === '' ? customValue : selectedValue;
 
-  // Gera o QR Code oficial BR Code com base no valor e na chave PIX
+  // Gera o QR Code oficial BR Code com base no valor e na chave central PIX
   useEffect(() => {
-    const payload = generatePixPayload({ key: pixKey, amount: effectiveAmount });
+    const payload = generatePixPayload({ key: PIX_KEY, amount: effectiveAmount });
     generatePixQrDataUrl(payload, { width: 200, margin: 2 })
       .then(setQrDataUrl)
       .catch(() => {});
-  }, [pixKey, effectiveAmount]);
+  }, [effectiveAmount]);
 
   async function handleCopyPix() {
     try {
       if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        await navigator.clipboard.writeText(pixKey);
+        await navigator.clipboard.writeText(PIX_KEY_DISPLAY);
       }
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
@@ -47,7 +53,7 @@ export function PixApoio({ compact = false }: PixApoioProps) {
 
   async function handleCopyPayload() {
     try {
-      const payload = generatePixPayload({ key: pixKey, amount: effectiveAmount });
+      const payload = generatePixPayload({ key: PIX_KEY, amount: effectiveAmount });
       if (typeof navigator !== 'undefined' && navigator.clipboard) {
         await navigator.clipboard.writeText(payload);
       }
@@ -162,7 +168,7 @@ export function PixApoio({ compact = false }: PixApoioProps) {
           activeOpacity={0.85}
         >
           <Text style={styles.copyButtonText}>
-            {copied ? '✅ Chave PIX Copiada!' : `📋 Copiar Chave PIX: ${pixKey}`}
+            {copied ? '✅ Chave PIX Copiada!' : `📋 Copiar Chave PIX: ${PIX_KEY_DISPLAY}`}
           </Text>
         </TouchableOpacity>
 
@@ -187,7 +193,10 @@ export function PixApoio({ compact = false }: PixApoioProps) {
 
       <View style={styles.keyRow}>
         <Text style={[styles.pixKeyDisplay, { color: colors.textMuted }]} numberOfLines={1}>
-          Chave oficial: <Text style={{ fontFamily: 'monospace', fontWeight: '700', color: colors.text }}>{pixKey}</Text>
+          Chave oficial: <Text style={{ fontFamily: 'monospace', fontWeight: '700', color: colors.text }}>{PIX_KEY_DISPLAY}</Text>
+        </Text>
+        <Text style={[styles.pixKeyDisplay, { color: colors.textMuted, marginTop: 4 }]} numberOfLines={1}>
+          Favorecido: <Text style={{ fontWeight: '700', color: colors.text }}>{PIX_BENEFICIARY_NAME}</Text> ({PIX_CITY})
         </Text>
       </View>
     </View>

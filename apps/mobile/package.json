@@ -10,7 +10,8 @@
     "dev:ios": "npx expo start --ios",
     "build:web": "npx expo export --platform web --output-dir dist",
     "lint": "expo lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "npx tsx ../../scripts/test-pix.ts"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
