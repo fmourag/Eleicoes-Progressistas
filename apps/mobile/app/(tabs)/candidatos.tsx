@@ -311,12 +311,23 @@ export default function CandidatosScreen() {
     for (const cargo of CARGO_ORDER) {
       const items = map[cargo];
       if (items && items.length > 0) {
-        groups.push({ cargo, title: CARGO_SECTION_TITLES[cargo] || cargo, items });
+        // Ordena por ordem alfabética de nome de campanha (socialName || name)
+        const sortedItems = [...items].sort((a, b) => {
+          const nameA = (a.socialName || a.name || '').trim();
+          const nameB = (b.socialName || b.name || '').trim();
+          return nameA.localeCompare(nameB, 'pt-BR', { sensitivity: 'base' });
+        });
+        groups.push({ cargo, title: CARGO_SECTION_TITLES[cargo] || cargo, items: sortedItems });
       }
     }
     for (const [cargo, items] of Object.entries(map)) {
       if (!CARGO_ORDER.includes(cargo)) {
-        groups.push({ cargo, title: CARGO_SECTION_TITLES[cargo] || cargo, items });
+        const sortedItems = [...items].sort((a, b) => {
+          const nameA = (a.socialName || a.name || '').trim();
+          const nameB = (b.socialName || b.name || '').trim();
+          return nameA.localeCompare(nameB, 'pt-BR', { sensitivity: 'base' });
+        });
+        groups.push({ cargo, title: CARGO_SECTION_TITLES[cargo] || cargo, items: sortedItems });
       }
     }
     return groups;
@@ -606,6 +617,8 @@ export default function CandidatosScreen() {
             Exibindo <Text style={{ fontWeight: 'bold', color: colors.primary }}>{filtered.length}</Text> candidaturas
             {searchQuery ? ` para "${searchQuery}"` : ''}
             {location?.uf && !showAllStates ? ` em ${location.uf}` : ' em todo o Brasil'}
+            {' • '}
+            <Text style={{ fontWeight: '700', color: colors.primary }}>Ordem alfabética de nome de campanha</Text>
           </Text>
         </View>
 
@@ -615,7 +628,12 @@ export default function CandidatosScreen() {
             {grouped.map((group) => (
               <View key={group.cargo} style={styles.cargoSection}>
                 <View style={[styles.cargoHeaderBanner, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
-                  <Text style={[styles.cargoTitle, { color: colors.text }]}>{group.title}</Text>
+                  <View style={styles.cargoTitleWrapper}>
+                    <Text style={[styles.cargoTitle, { color: colors.text }]}>{group.title}</Text>
+                    <View style={[styles.azBadge, { backgroundColor: '#EEF2FF', borderColor: '#818CF8' }]}>
+                      <Text style={styles.azBadgeText}>A–Z</Text>
+                    </View>
+                  </View>
                   <Text style={[styles.countBadge, { color: colors.primary }]}>{group.items.length}</Text>
                 </View>
                 {group.items.map((item) => (
@@ -1046,9 +1064,26 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: Spacing.xs,
   },
+  cargoTitleWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   cargoTitle: {
     fontSize: FontSize.sm + 1,
     fontWeight: '800',
+  },
+  azBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+  },
+  azBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#4338CA',
+    letterSpacing: 0.5,
   },
   countBadge: {
     fontSize: FontSize.sm,

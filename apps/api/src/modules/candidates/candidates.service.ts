@@ -595,6 +595,13 @@ export class CandidatesService implements OnModuleInit {
         };
       });
 
+      // Ordena por ordem alfabética de nome de campanha (socialName ou name)
+      result.sort((a: any, b: any) => {
+        const nameA = (a.socialName || a.name || '').trim();
+        const nameB = (b.socialName || b.name || '').trim();
+        return nameA.localeCompare(nameB, 'pt-BR', { sensitivity: 'base' });
+      });
+
       this.candidatesCache.set(cacheKey, {
         data: result,
         expiresAt: Date.now() + this.CACHE_TTL_MS,
