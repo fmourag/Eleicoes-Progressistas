@@ -211,8 +211,12 @@ export class FeedbackService implements OnModuleInit {
     const rows = feedbacks.map((f: any) => {
       const escape = (val: any) => {
         if (val === null || val === undefined) return '""';
-        const str = String(val).replace(/"/g, '""');
-        return `"${str}"`;
+        let str = String(val);
+        // Mitigação contra CSV Formula Injection (OWASP / CWE-1236)
+        if (/^[=+\-@\t\r]/.test(str)) {
+          str = "'" + str;
+        }
+        return `"${str.replace(/"/g, '""')}"`;
       };
 
       return [

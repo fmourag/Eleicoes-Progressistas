@@ -34,7 +34,7 @@ export function EthicalAd({ screen, pillar, format = 'card' }: EthicalAdProps) {
 
   const handleAdClick = async () => {
     api.post(`/api/ads/click/${ad.id}`).catch(() => {});
-    if (ad.targetUrl) {
+    if (ad.targetUrl && /^https?:\/\//i.test(ad.targetUrl)) {
       Linking.openURL(ad.targetUrl).catch(() => {});
     }
   };

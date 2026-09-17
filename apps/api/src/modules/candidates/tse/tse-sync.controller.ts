@@ -31,7 +31,16 @@ function isValidCron(provided?: string): boolean {
   if (!provided || typeof provided !== 'string') return false;
   const allowed = [process.env.CRON_SECRET, process.env.ADMIN_SECRET].filter(Boolean) as string[];
   if (allowed.length === 0) return false;
-  return allowed.includes(provided.trim());
+  const clean = provided.trim();
+  return allowed.some((secret) => {
+    try {
+      const a = Buffer.from(clean);
+      const b = Buffer.from(secret);
+      return a.length === b.length && crypto.timingSafeEqual(a, b);
+    } catch {
+      return false;
+    }
+  });
 }
 
 @Controller('candidates')

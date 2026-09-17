@@ -33,6 +33,7 @@ export class MatchingController {
    * POST /api/matching/compute
    * Alias de compatibilidade retroativa para rank — 100% stateless.
    */
+  @Throttle({ default: { limit: 60, ttl: 60000 } })
   @Post('compute')
   @HttpCode(HttpStatus.OK)
   async compute(@Body() dto: RankMatchDto) {

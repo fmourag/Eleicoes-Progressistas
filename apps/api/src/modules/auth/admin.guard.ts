@@ -1,6 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { UserLevel } from '@prisma/client';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -11,14 +12,24 @@ export class AdminGuard implements CanActivate {
     
     // Suporte a chave secreta de administração/cron para automações, rotinas e scripts
     const providedKey = request.headers['x-admin-key'] || request.headers['x-cron-secret'];
+    const isProduction = process.env.NODE_ENV === 'production';
     const configuredSecret = process.env.ADMIN_SECRET || process.env.CRON_SECRET;
-    const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 
-    if (providedKey) {
-      if (configuredSecret && providedKey === configuredSecret) {
-        return true;
+    if (providedKey && typeof providedKey === 'string') {
+      const cleanKey = providedKey.trim();
+
+      if (configuredSecret) {
+        try {
+          const bufProvided = Buffer.from(cleanKey);
+          const bufConfigured = Buffer.from(configuredSecret);
+          if (bufProvided.length === bufConfigured.length && crypto.timingSafeEqual(bufProvided, bufConfigured)) {
+            return true;
+          }
+        } catch {}
       }
-      if (isDev && (providedKey === 'dev-secret' || providedKey === 'admin')) {
+
+      // Em desenvolvimento estrito, permite chaves locais para testes
+      if (!isProduction && (cleanKey === 'dev-secret' || cleanKey === 'admin')) {
         return true;
       }
     }

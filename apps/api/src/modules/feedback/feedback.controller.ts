@@ -11,6 +11,7 @@ import {
   Header,
   Res,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 import * as crypto from 'crypto';
 import { FeedbackService } from './feedback.service';
@@ -19,15 +20,20 @@ import { CreateFeedbackDto } from './dto/create-feedback.dto';
 function isValidAdmin(provided?: string): boolean {
   if (!provided || typeof provided !== 'string') return false;
   const clean = provided.trim();
-  const allowed = [
+  const isProduction = process.env.NODE_ENV === 'production';
+  const allowed: string[] = [
     process.env.ADMIN_SECRET,
     process.env.ADMIN_FEEDBACK_TOKEN,
-    'dev-secret',
-    'admin123',
   ].filter(Boolean) as string[];
 
+  // Segredos de teste permitidos estritamente fora de produção
+  if (!isProduction) {
+    allowed.push('dev-secret', 'admin123');
+  }
+
+  if (allowed.length === 0) return false;
+
   for (const secret of allowed) {
-    if (clean === secret) return true;
     try {
       const providedBuf = Buffer.from(clean);
       const secretBuf = Buffer.from(secret);
@@ -516,6 +522,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
 export class FeedbackController {
   constructor(private readonly feedbackService: FeedbackService) {}
 
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateFeedbackDto) {
