@@ -10,7 +10,15 @@ describe('FeedbackController', () => {
   let service: any;
 
   const mockFeedbackService = {
-    create: jest.fn().mockResolvedValue({ id: 1, protocol: 'FB-1710000000-abcd' }),
+    create: jest.fn().mockResolvedValue({
+      id: 1,
+      protocol: 'FB-1710000000-abcd',
+      reviewCta: {
+        playStoreUrl: 'https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app',
+        testingTrackUrl: 'https://play.google.com/apps/testing/com.eleicoesprogressistas.app',
+        supportEmail: 'fmourag@gmail.com',
+      },
+    }),
     getDashboard: jest.fn().mockResolvedValue({
       total: 10,
       avgNps: 9.5,
@@ -54,7 +62,15 @@ describe('FeedbackController', () => {
       const res = await controller.create(dto);
 
       expect(service.create).toHaveBeenCalledWith(dto);
-      expect(res).toEqual({ id: 1, protocol: 'FB-1710000000-abcd' });
+      expect(res).toEqual({
+        id: 1,
+        protocol: 'FB-1710000000-abcd',
+        reviewCta: {
+          playStoreUrl: 'https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app',
+          testingTrackUrl: 'https://play.google.com/apps/testing/com.eleicoesprogressistas.app',
+          supportEmail: 'fmourag@gmail.com',
+        },
+      });
     });
   });
 

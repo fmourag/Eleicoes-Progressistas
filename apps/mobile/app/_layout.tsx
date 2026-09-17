@@ -5,6 +5,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { setAuthToken, api } from '../services/api';
 import { useThemeColors } from '../utils/theme';
 import { LocationConsentModal } from '../components/LocationConsentModal';
+import { storeReviewService } from '../services/store-review.service';
 
 export default function RootLayout() {
   const { token } = useAuthStore();
@@ -14,6 +15,12 @@ export default function RootLayout() {
   useEffect(() => {
     if (token) setAuthToken(token);
   }, [token]);
+
+  useEffect(() => {
+    // Registra sessão ativa e verifica marco neutro de engajamento
+    storeReviewService.recordSession();
+    storeReviewService.promptIfEligible().catch(() => {});
+  }, []);
 
   useEffect(() => {
     api.get<{ mode: string }>('/api/ops/mode')

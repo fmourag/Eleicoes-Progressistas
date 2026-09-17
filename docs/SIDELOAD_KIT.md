@@ -35,6 +35,10 @@
 - Badges e metadados sincronizados e centralizados na versão `v2.2.5` em todas as telas mobile e web.
 - Cards com cabeçalho fixo (*sticky*) e ordenação alfabética rigorosa por nome de campanha.
 
+### ⭐ Mecanismo de Avaliações e Feedback Conforme Google Play
+- Ausência total de *Review Gating*: exibição universal e neutra dos canais de avaliação na Google Play Store e suporte interno com protocolo FB-...
+- Disparo de In-App Review oficial por marcos neutros de engajamento (3+ sessões ativas ou geração de PDF da cola) respeitando cotas de 30 dias.
+
 ---
 
 ## 📱 Instruções de Instalação (Android)

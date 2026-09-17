@@ -81,54 +81,71 @@ async function runValidation() {
   const errorsNoDevice = await validate(invalidNoDevice);
   assert('DTO', 'Identificação do dispositivo é obrigatória para triagem técnica', errorsNoDevice.some(e => e.property === 'device'));
 
-  // SUÍTE 2: Mecanismo de Roteamento Inteligente para a Google Play Store
-  console.log('\n--- SUÍTE 2: Mecanismo de Roteamento para a Google Play Store ---');
+  // SUÍTE 2: Ausência Total de Review Gating e Conformidade Google Play Store
+  console.log('\n--- SUÍTE 2: Ausência de Review Gating e Conformidade Google Play ---');
 
-  function evaluatePlayStoreAction(nps: number, problema: string): {
-    route: 'PLAY_STORE_REVIEW' | 'INTERNAL_DIAGNOSTIC';
-    promptTarget: string;
+  interface FeedbackResponseCta {
+    playStoreUrl: string;
+    testingTrackUrl: string;
+    supportEmail: string;
+  }
+
+  // No backend em conformidade, 100% dos usuários recebem o mesmo payload de CTA
+  function generateFeedbackResponse(nps: number, problema: string): {
+    protocol: string;
+    reviewCta: FeedbackResponseCta;
+    internalPriority: 'CRITICA' | 'MEDIA' | 'PADRAO';
   } {
-    const isPromoter = nps >= 9 && problema === 'nenhum';
-    if (isPromoter) {
-      return {
-        route: 'PLAY_STORE_REVIEW',
-        promptTarget: 'https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app',
-      };
+    const reviewCta: FeedbackResponseCta = {
+      playStoreUrl: 'https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app',
+      testingTrackUrl: 'https://play.google.com/apps/testing/com.eleicoesprogressistas.app',
+      supportEmail: 'fmourag@gmail.com',
+    };
+
+    // Triagem de severidade ocorre SOMENTE internamente para suporte e métricas
+    let internalPriority: 'CRITICA' | 'MEDIA' | 'PADRAO' = 'PADRAO';
+    if (problema === 'crash' || problema === 'bloqueio' || nps <= 4) {
+      internalPriority = 'CRITICA';
+    } else if (problema !== 'nenhum' || nps <= 7) {
+      internalPriority = 'MEDIA';
     }
+
     return {
-      route: 'INTERNAL_DIAGNOSTIC',
-      promptTarget: 'mailto:fmourag@gmail.com',
+      protocol: `FB-${Date.now()}-test`,
+      reviewCta,
+      internalPriority,
     };
   }
 
-  // 2.1 Usuário Promotor (NPS 10, sem problemas) -> Direciona para 5 estrelas no Play Store
-  const actionPromoter10 = evaluatePlayStoreAction(10, 'nenhum');
+  // 2.1 Usuário Detrator com Crash (NPS 0, crash) -> DEVE receber CTA Play Store (Zero Gating)
+  const respCrash = generateFeedbackResponse(0, 'crash');
   assert(
-    'Play Store Routing',
-    'NPS 10 sem problema direciona para avaliação 5 estrelas na Google Play Store',
-    actionPromoter10.route === 'PLAY_STORE_REVIEW' && actionPromoter10.promptTarget.includes('play.google.com'),
+    'Play Store Compliance',
+    'Usuário com crash/NPS 0 recebe CTA da Google Play Store (proibido review gating)',
+    respCrash.reviewCta.playStoreUrl.includes('play.google.com'),
+    'Zero Review Gating: link da Play Store é universal',
+  );
+  assert(
+    'Triagem Interna',
+    'Severidade de crash é sinalizada internamente para os desenvolvedores',
+    respCrash.internalPriority === 'CRITICA',
   );
 
-  const actionPromoter9 = evaluatePlayStoreAction(9, 'nenhum');
+  // 2.2 Usuário Neutro com Lentidão (NPS 6, lentidao) -> DEVE receber CTA Play Store
+  const respLentidao = generateFeedbackResponse(6, 'lentidao');
   assert(
-    'Play Store Routing',
-    'NPS 9 sem problema direciona para avaliação 5 estrelas na Google Play Store',
-    actionPromoter9.route === 'PLAY_STORE_REVIEW',
+    'Play Store Compliance',
+    'Usuário com lentidão/NPS 6 recebe CTA idêntico da Google Play Store',
+    respLentidao.reviewCta.playStoreUrl.includes('play.google.com') && respLentidao.reviewCta.supportEmail === 'fmourag@gmail.com',
   );
 
-  // 2.2 Usuário com Problema (ex: crash ou layout) -> Retém internamente para diagnóstico
-  const actionCrash = evaluatePlayStoreAction(10, 'crash');
+  // 2.3 Usuário Promotor (NPS 10, sem problemas) -> Recebe o mesmo CTA idêntico e neutro
+  const respPromoter = generateFeedbackResponse(10, 'nenhum');
   assert(
-    'Play Store Routing',
-    'Usuário que reportou crash/bug é retido no suporte interno para não prejudicar nota na Play Store',
-    actionCrash.route === 'INTERNAL_DIAGNOSTIC' && actionCrash.promptTarget.includes('mailto:'),
-  );
-
-  const actionDetractor = evaluatePlayStoreAction(6, 'nenhum');
-  assert(
-    'Play Store Routing',
-    'NPS passivo/detrator (<9) é direcionado para melhoria interna sem solicitar review no Play Store',
-    actionDetractor.route === 'INTERNAL_DIAGNOSTIC',
+    'Play Store Compliance',
+    'Usuário promotor recebe exatamente a mesma estrutura neutra de CTA e suporte',
+    respPromoter.reviewCta.playStoreUrl === respCrash.reviewCta.playStoreUrl &&
+    respPromoter.reviewCta.supportEmail === respCrash.reviewCta.supportEmail,
   );
 
   // SUÍTE 3: Geração de Protocolo Único de Auditoria Cívica

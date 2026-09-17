@@ -49,4 +49,12 @@
 ## 4. Fonte de Dados Oficial do TSE
 Os dados de candidaturas exibidos no aplicativo são originários dos canais públicos oficiais do Tribunal Superior Eleitoral (TSE — DivulgaCandContas e Dados Abertos). O aplicativo não armazena dados de eleitores e utiliza a base eleitoral pública estritamente para fins de transparência cívica e orientação de voto.
 
+---
+
+## 5. Conformidade com Avaliações e In-App Review (Anti-Gating)
+1. **Ausência de Review Gating:** 100% dos usuários que submetem feedback voluntário recebem a mesma tela neutra com links diretos para avaliação na Play Store e suporte técnico, sem distinção de sentimento ou nota atribuída.
+2. **In-App Review API Oficial:** O aplicativo utiliza exclusivamente a biblioteca oficial `expo-store-review` disparada por marcos neutros de engajamento (3+ sessões ativas ou geração da cola em PDF), respeitando o intervalo de 30 dias do Google Play.
+3. **Persistência Estritamente Local:** As variáveis de controle de cotas de avaliação (`activeSessionsCount`, `hasGeneratedPdf`, `lastPromptTimestamp`) residem 100% no armazenamento local do dispositivo do usuário e **nunca** são transmitidas a servidores ou terceiros. Detalhes completos disponíveis em [PLAYSTORE_REVIEW_POLICY.md](./PLAYSTORE_REVIEW_POLICY.md).
+
+
 

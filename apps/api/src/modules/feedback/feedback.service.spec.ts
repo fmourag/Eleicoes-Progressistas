@@ -58,6 +58,12 @@ describe('FeedbackService', () => {
 
       expect(result).toHaveProperty('id', 42);
       expect(result).toHaveProperty('protocol');
+      expect(result).toHaveProperty('reviewCta');
+      expect(result.reviewCta).toEqual({
+        playStoreUrl: 'https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app',
+        testingTrackUrl: 'https://play.google.com/apps/testing/com.eleicoesprogressistas.app',
+        supportEmail: 'fmourag@gmail.com',
+      });
       expect(prisma.feedback.create).toHaveBeenCalledTimes(1);
       const callData = prisma.feedback.create.mock.calls[0][0].data;
       expect(callData.protocol).toMatch(/^FB-\d+-[a-z0-9]+$/);
@@ -82,6 +88,8 @@ describe('FeedbackService', () => {
       const result = await service.create(dto);
 
       expect(result.id).toBe(43);
+      expect(result.reviewCta).toBeDefined();
+      expect(result.reviewCta.playStoreUrl).toContain('com.eleicoesprogressistas.app');
       expect(prisma.feedback.create).toHaveBeenCalledTimes(1);
       const callData = prisma.feedback.create.mock.calls[0][0].data;
       expect(callData.testerName).toBeNull();
@@ -89,6 +97,41 @@ describe('FeedbackService', () => {
       expect(callData.descricao).toBeNull();
       expect(callData.screenshotDesc).toBeNull();
       expect(callData.appVersion).toBe('2.2.5');
+    });
+
+    it('deve retornar CTA idêntico e neutro para qualquer NPS [0, 3, 6, 8, 9, 10] e qualquer problema (Fim do Review Gating)', async () => {
+      const testCases: Array<{ nps: number; problema: string }> = [
+        { nps: 0, problema: 'crash' },
+        { nps: 3, problema: 'lentidao' },
+        { nps: 6, problema: 'bloqueio' },
+        { nps: 8, problema: 'outro' },
+        { nps: 9, problema: 'nenhum' },
+        { nps: 10, problema: 'nenhum' },
+      ];
+
+      for (const tc of testCases) {
+        prisma.feedback.create.mockResolvedValue({
+          id: 100 + tc.nps,
+          protocol: `FB-test-${tc.nps}`,
+          device: 'Test Device',
+          nps: tc.nps,
+          problema: tc.problema,
+          appVersion: '2.2.5',
+        });
+
+        const res = await service.create({
+          device: 'Test Device',
+          nps: tc.nps,
+          problema: tc.problema,
+        });
+
+        // 100% dos usuários recebem exatamente o mesmo CTA com URLs oficiais e e-mail de suporte
+        expect(res.reviewCta).toEqual({
+          playStoreUrl: 'https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app',
+          testingTrackUrl: 'https://play.google.com/apps/testing/com.eleicoesprogressistas.app',
+          supportEmail: 'fmourag@gmail.com',
+        });
+      }
     });
 
     it('deve acionar fallback de query raw caso o Prisma Client falhe', async () => {
@@ -105,6 +148,8 @@ describe('FeedbackService', () => {
 
       expect(result.id).toBe(99);
       expect(result.protocol).toBe('FB-fallback-123');
+      expect(result.reviewCta).toBeDefined();
+      expect(result.reviewCta.playStoreUrl).toContain('com.eleicoesprogressistas.app');
       expect(prisma.$queryRawUnsafe).toHaveBeenCalled();
     });
   });

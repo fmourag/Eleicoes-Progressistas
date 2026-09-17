@@ -9,6 +9,7 @@ import { PixApoio } from '../../components/PixApoio';
 import { ColaModal } from '../../components/ColaModal';
 import { CivicBanner } from '../../components/CivicBanner';
 import { API_URL } from '../../services/api';
+import { storeReviewService } from '../../services/store-review.service';
 
 const VOTING_SEQUENCE = COLA_SLOTS.map((s, idx) => ({
   ...s,
@@ -40,6 +41,8 @@ export default function ColaScreen() {
 
   function handleViewPdf() {
     setHasGeneratedPdfInSession(true);
+    storeReviewService.recordPdfGenerated();
+    storeReviewService.promptIfEligible().catch(() => {});
     if (typeof window !== 'undefined') {
       window.open(pdfViewUrl, '_blank');
     } else {
@@ -49,6 +52,8 @@ export default function ColaScreen() {
 
   function handleDownloadPdf() {
     setHasGeneratedPdfInSession(true);
+    storeReviewService.recordPdfGenerated();
+    storeReviewService.promptIfEligible().catch(() => {});
     setDownloading(true);
     if (typeof window !== 'undefined') {
       const link = document.createElement('a');

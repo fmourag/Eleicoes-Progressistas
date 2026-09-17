@@ -258,32 +258,37 @@ export const FEEDBACK_HTML = `<!DOCTYPE html>
     <div class="success-box" id="successBox">
         <h2 style="color: #1B5E20; margin-top: 0;">🎉 Feedback Registrado com Sucesso!</h2>
         <p>Seu reporte foi registrado e integrado à base de auditoria cívica da versão 2.2.5.</p>
-        <div>Seu protocolo de feedback é:</div>
+        <div>Seu protocolo de atendimento técnico:</div>
         <div class="protocol-badge" id="protocolBadge">FB-...</div>
 
-        <!-- Bloco Promotores: Play Store Review Prompt -->
-        <div id="playStorePrompt" style="display: none; margin-top: 20px; padding: 16px; background: #E8F5E9; border: 2px solid #2E7D32; border-radius: 8px; text-align: center;">
-            <h3 style="color: #1B5E20; margin-top: 0;">⭐ Apoie nossa causa na Google Play Store!</h3>
-            <p style="font-size: 14px; color: #2E7D32; margin-bottom: 14px; font-weight: 500;">
-                Ficamos muito felizes com a sua ótima avaliação! Sua nota de 5 estrelas é essencial para dar visibilidade a uma política transparente, limpa e independente.
-            </p>
-            <a href="https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app" target="_blank" class="btn" style="background: #2E7D32; font-size: 16px; padding: 12px 24px; text-decoration: none; color: #fff; border-radius: 6px; font-weight: bold; display: inline-block;">
-                ⭐ Avaliar com 5 Estrelas no Google Play
-            </a>
-            <p style="font-size: 12px; color: #555; margin-top: 10px;">
-                (Se você participa do Beta Fechado: <a href="https://play.google.com/apps/testing/com.eleicoesprogressistas.app" target="_blank">Acessar Trilha de Testes Google Play</a>)
-            </p>
-        </div>
+        <!-- Próximos Passos Neutros e Universais (Exibidos para 100% dos envios) -->
+        <div class="next-steps-card" style="margin-top: 20px; padding: 18px; background: #ffffff; border: 1px solid #c8e6c9; border-radius: 8px; text-align: left;">
+            <h3 style="color: #1B5E20; margin-top: 0; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                📋 Próximos Passos (Opcionais)
+            </h3>
+            
+            <div style="margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid #e0e0e0;">
+                <strong style="color: #333; display: block; margin-bottom: 4px;">🛠️ Suporte e Diagnóstico Técnico Direto</strong>
+                <p style="font-size: 13px; color: #555; margin: 0 0 6px 0;">
+                    Caso deseje complementar seu reporte com capturas de tela, registros ou detalhes adicionais, entre em contato direto pelo canal:
+                </p>
+                <a href="mailto:fmourag@gmail.com" id="supportMailLink" style="color: #1B5E20; font-weight: bold; font-size: 13px;">
+                    ✉️ fmourag@gmail.com
+                </a>
+            </div>
 
-        <!-- Bloco Crítica / Diagnóstico Técnico: Tratamento Preventivo -->
-        <div id="techSupportPrompt" style="display: none; margin-top: 20px; padding: 16px; background: #FFF8E1; border: 1px solid #FFE082; border-radius: 8px; text-align: center;">
-            <h3 style="color: #F57F17; margin-top: 0;">🛠️ Diagnóstico Cívico Registrado</h3>
-            <p style="font-size: 14px; color: #424242; margin-bottom: 8px;">
-                Agradecemos imensamente seu apontamento técnico. Nossa equipe já vinculou os dados do seu modelo de aparelho ao protocolo para solucionar a ocorrência antes da liberação na Google Play Store.
-            </p>
-            <p style="font-size: 13px; color: #616161;">
-                Dúvidas ou evidências adicionais podem ser enviadas diretamente para: <a href="mailto:fmourag@gmail.com" id="supportMailLink" style="color: #1B5E20; font-weight: bold;">fmourag@gmail.com</a>
-            </p>
+            <div style="text-align: center;">
+                <strong style="color: #333; display: block; margin-bottom: 6px; text-align: left;">⭐ Avaliação Pública no Google Play</strong>
+                <p style="font-size: 13px; color: #555; margin: 0 0 12px 0; text-align: left;">
+                    Convidamos você a deixar sua avaliação pública na Google Play Store. Todas as impressões e experiências dos usuários são bem-vindas:
+                </p>
+                <a href="https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app" id="playStoreLink" target="_blank" class="btn" style="background: #1B5E20; font-size: 15px; padding: 12px 24px; text-decoration: none; color: #fff; border-radius: 6px; font-weight: bold; display: inline-block;">
+                    Avaliar no Google Play
+                </a>
+                <p style="font-size: 12px; color: #666; margin-top: 10px; margin-bottom: 0;">
+                    Testadores da Trilha Fechada: <a href="https://play.google.com/apps/testing/com.eleicoesprogressistas.app" id="testingTrackLink" target="_blank" style="color: #1B5E20;">Acessar Trilha de Testes Google Play</a>
+                </p>
+            </div>
         </div>
 
         <p style="font-size: 14px; color: #555; margin-top: 18px;">Muito obrigado por contribuir com a democracia e a transparência eleitoral! 🇧🇷</p>
@@ -376,16 +381,21 @@ export const FEEDBACK_HTML = `<!DOCTYPE html>
                 var protocolStr = data.protocol || ("FB-" + data.id);
                 document.getElementById("protocolBadge").innerText = protocolStr;
 
-                var isPromoter = payload.nps >= 9 && payload.problema === 'nenhum';
-                if (isPromoter) {
-                    document.getElementById("playStorePrompt").style.display = "block";
-                    document.getElementById("techSupportPrompt").style.display = "none";
-                } else {
-                    document.getElementById("playStorePrompt").style.display = "none";
-                    document.getElementById("techSupportPrompt").style.display = "block";
-                    var mailLink = document.getElementById("supportMailLink");
-                    if (mailLink) {
-                        mailLink.href = "mailto:fmourag@gmail.com?subject=" + encodeURIComponent("Feedback Beta " + protocolStr);
+                // Suporte interno vinculado ao protocolo
+                var mailLink = document.getElementById("supportMailLink");
+                if (mailLink) {
+                    mailLink.href = "mailto:fmourag@gmail.com?subject=" + encodeURIComponent("Suporte Cívico " + protocolStr);
+                }
+
+                // Sincroniza links do Google Play retornados pelo backend
+                if (data.reviewCta) {
+                    var playLink = document.getElementById("playStoreLink");
+                    if (playLink && data.reviewCta.playStoreUrl) {
+                        playLink.href = data.reviewCta.playStoreUrl;
+                    }
+                    var testLink = document.getElementById("testingTrackLink");
+                    if (testLink && data.reviewCta.testingTrackUrl) {
+                        testLink.href = data.reviewCta.testingTrackUrl;
                     }
                 }
 

@@ -17,6 +17,7 @@ import { useLocationStore } from '../stores/location.store';
 import { getCandidatePhotoUrl, API_URL } from '../services/api';
 import { PixApoio } from './PixApoio';
 import { ApoioVoluntarioBanner } from './ApoioVoluntarioBanner';
+import { storeReviewService } from '../services/store-review.service';
 
 interface ColaModalProps {
   visible: boolean;
@@ -61,6 +62,8 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
 
   function handleViewPdf() {
     setHasGeneratedPdfInSession(true);
+    storeReviewService.recordPdfGenerated();
+    storeReviewService.promptIfEligible().catch(() => {});
     if (typeof window !== 'undefined') {
       window.open(pdfViewUrl, '_blank');
     } else {
@@ -70,6 +73,8 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
 
   function handleDownloadPdf() {
     setHasGeneratedPdfInSession(true);
+    storeReviewService.recordPdfGenerated();
+    storeReviewService.promptIfEligible().catch(() => {});
     setDownloading(true);
     if (typeof window !== 'undefined') {
       const link = document.createElement('a');
@@ -87,6 +92,8 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
 
   function handlePrint() {
     setHasGeneratedPdfInSession(true);
+    storeReviewService.recordPdfGenerated();
+    storeReviewService.promptIfEligible().catch(() => {});
     if (typeof window !== 'undefined') {
       window.open(pdfViewUrl, '_blank');
     } else {

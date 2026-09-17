@@ -87,6 +87,12 @@ export class FeedbackService implements OnModuleInit {
     const protocol = generateProtocol();
     const resolvedName = dto.testerName?.trim() || dto.nome?.trim() || null;
 
+    const reviewCta = {
+      playStoreUrl: 'https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app',
+      testingTrackUrl: 'https://play.google.com/apps/testing/com.eleicoesprogressistas.app',
+      supportEmail: 'fmourag@gmail.com',
+    };
+
     try {
       const feedback = await this.prisma.feedback.create({
         data: {
@@ -107,6 +113,7 @@ export class FeedbackService implements OnModuleInit {
       return {
         id: feedback.id,
         protocol: feedback.protocol,
+        reviewCta,
       };
     } catch (err: any) {
       this.logger.error(`Erro ao salvar feedback via Prisma Client: ${err.message}`, err.stack);
@@ -127,6 +134,7 @@ export class FeedbackService implements OnModuleInit {
         return {
           id: newId,
           protocol: retProtocol,
+          reviewCta,
         };
       } catch (sqlErr: any) {
         this.logger.warn(`Tentando fallback com coluna testerCode caso ainda exista na tabela...`);
@@ -142,6 +150,7 @@ export class FeedbackService implements OnModuleInit {
           return {
             id: newId,
             protocol: retProtocol,
+            reviewCta,
           };
         } catch (finalSqlErr: any) {
           this.logger.error(`Fallback SQL final também falhou: ${finalSqlErr.message}`);
