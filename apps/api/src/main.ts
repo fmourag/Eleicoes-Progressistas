@@ -157,7 +157,7 @@ async function bootstrap() {
     res.send(BETA_HTML);
   });
   expressApp.get(['/download/apk', '/app.apk'], (_req: Request, res: Response) => {
-    res.redirect('https://expo.dev/artifacts/eas/AuyFXRY-POmAo6xJK3cxvesMAHJlLPsK_m11pwQjSRc.apk');
+    res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.4/eleicoes-progressistas-v2.2.4-beta.apk');
   });
   expressApp.get('/feedback', (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');

@@ -152,6 +152,10 @@ model Candidate {
   isProgressiveSupported Boolean          @default(false)
   supportedBy         String?
   electionResult      ElectionResult?
+  rawTseData          Json?
+  source              String            @default("LEGACY")
+  tseValidated        Boolean           @default(false)
+  visible             Boolean           @default(true)
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
 
@@ -455,6 +459,25 @@ model AggregateCounter {
   updatedAt DateTime @updatedAt
 
   @@map("aggregate_counters")
+}
+
+model Feedback {
+  id             Int      @id @default(autoincrement())
+  protocol       String   @unique
+  testerName     String?
+  nome           String?
+  email          String?
+  device         String
+  androidVersion String?
+  appVersion     String   @default("2.2.2")
+  nps            Int
+  problema       String
+  descricao      String?
+  screenshotDesc String?
+  createdAt      DateTime @default(now())
+
+  @@index([protocol])
+  @@index([createdAt])
 }
 ```
 
