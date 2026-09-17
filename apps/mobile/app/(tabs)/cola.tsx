@@ -124,6 +124,30 @@ export default function ColaScreen() {
           </Text>
         </View>
 
+        {/* Banner Election Night / Apuração em Tempo Real */}
+        <TouchableOpacity
+          style={styles.electionNightBanner}
+          onPress={() => router.push('/apuracao')}
+          activeOpacity={0.88}
+        >
+          <View style={styles.electionNightIconWrap}>
+            <Text style={{ fontSize: 24 }}>🗳️</Text>
+          </View>
+          <View style={{ flex: 1, marginLeft: 12 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <View style={styles.electionNightDot} />
+              <Text style={styles.electionNightTag}>AO VIVO • ELECTION NIGHT</Text>
+            </View>
+            <Text style={styles.electionNightTitle}>
+              Apuração Oficial TSE em Tempo Real
+            </Text>
+            <Text style={styles.electionNightSubtitle}>
+              Rastreie a contagem de votos da sua cola eleitoral direto do TSE
+            </Text>
+          </View>
+          <Text style={styles.electionNightArrow}>→</Text>
+        </TouchableOpacity>
+
         {/* Banner de Advertência TSE (Stitch Style) */}
         <View style={[styles.tseBanner, { backgroundColor: colors.secondaryContainer || '#FEF3C7' }]}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
@@ -495,5 +519,57 @@ const styles = StyleSheet.create({
   },
   supportWrapper: {
     marginTop: Spacing.xs,
+  },
+  electionNightBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#064E3B',
+    borderColor: '#059669',
+    borderWidth: 1.5,
+    borderRadius: Radius.lg,
+    padding: Spacing.md,
+    marginBottom: Spacing.base,
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  electionNightIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#047857',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  electionNightDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#34D399',
+  },
+  electionNightTag: {
+    color: '#34D399',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  electionNightTitle: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
+    marginTop: 2,
+  },
+  electionNightSubtitle: {
+    color: '#A7F3D0',
+    fontSize: 12,
+    marginTop: 1,
+  },
+  electionNightArrow: {
+    color: '#34D399',
+    fontSize: 22,
+    fontWeight: '800',
+    marginLeft: 8,
   },
 });
