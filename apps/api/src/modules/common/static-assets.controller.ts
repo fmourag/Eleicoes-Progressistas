@@ -51,9 +51,26 @@ export class StaticAssetsController {
   }
 
   @Get(['web', 'web/*path'])
-  getWebSpa(@Req() _req: Request, @Res() res: Response) {
+  getWebSpa(@Req() req: Request, @Res() res: Response) {
     const staticDir = this.getStaticDir();
-    const indexPath = join(staticDir, 'web', 'index.html');
+
+    // Se a requisição for de arquivo com extensão (ex: .js, .css, .png, .svg, .json), tenta servir o arquivo real
+    if (/\.[a-zA-Z0-9]+$/.test(req.path)) {
+      const relPath = req.path.replace(/^\/web\/?/, '');
+      const candidates = [
+        join(staticDir, 'web', relPath),
+        join(staticDir, relPath),
+        join(staticDir, req.path),
+      ];
+      for (const p of candidates) {
+        if (existsSync(p)) return res.sendFile(p);
+      }
+      return res.status(404).send('Not Found');
+    }
+
+    const indexPath = existsSync(join(staticDir, 'web', 'index.html'))
+      ? join(staticDir, 'web', 'index.html')
+      : join(staticDir, 'index.html');
 
     if (existsSync(indexPath)) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');

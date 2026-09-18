@@ -3,7 +3,7 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { existsSync } from 'fs';
-import { Request, Response, json, urlencoded } from 'express';
+import { Request, Response, json, urlencoded, static as expressStatic } from 'express';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { GlobalHttpExceptionFilter } from './modules/common/http-exception.filter';
@@ -87,6 +87,10 @@ async function bootstrap() {
       'feedback/painel',
       'painel',
       'admin/feedback',
+      '_expo',
+      '_expo/*path',
+      'assets',
+      'assets/*path',
       '',
     ],
   });
@@ -168,6 +172,54 @@ async function bootstrap() {
     ? join(__dirname, '..', 'static')
     : join(process.cwd(), 'apps', 'api', 'static');
 
+  const webDistDir = existsSync(join(__dirname, '..', '..', 'mobile', 'dist'))
+    ? join(__dirname, '..', '..', 'mobile', 'dist')
+    : join(process.cwd(), 'apps', 'mobile', 'dist');
+
+  // Localização resiliente dos bundles e ativos do Expo Web
+  const expoDir = existsSync(join(apiStaticDir, '_expo'))
+    ? join(apiStaticDir, '_expo')
+    : existsSync(join(apiStaticDir, 'web', '_expo'))
+    ? join(apiStaticDir, 'web', '_expo')
+    : existsSync(join(webDistDir, '_expo'))
+    ? join(webDistDir, '_expo')
+    : null;
+
+  const assetsDir = existsSync(join(apiStaticDir, 'assets'))
+    ? join(apiStaticDir, 'assets')
+    : existsSync(join(apiStaticDir, 'web', 'assets'))
+    ? join(apiStaticDir, 'web', 'assets')
+    : existsSync(join(webDistDir, 'assets'))
+    ? join(webDistDir, 'assets')
+    : null;
+
+  const candidatesDir = existsSync(join(apiStaticDir, 'candidates'))
+    ? join(apiStaticDir, 'candidates')
+    : existsSync(join(apiStaticDir, 'web', 'candidates'))
+    ? join(apiStaticDir, 'web', 'candidates')
+    : existsSync(join(webDistDir, 'candidates'))
+    ? join(webDistDir, 'candidates')
+    : null;
+
+  // Servir rotas estáticas críticas com prioridade máxima
+  if (expoDir) {
+    logger.log(`Serving _expo bundles from ${expoDir}`);
+    expressApp.use('/_expo', expressStatic(expoDir, { maxAge: '1y', immutable: true }));
+    expressApp.use('/web/_expo', expressStatic(expoDir, { maxAge: '1y', immutable: true }));
+  }
+
+  if (assetsDir) {
+    logger.log(`Serving web assets from ${assetsDir}`);
+    expressApp.use('/assets', expressStatic(assetsDir, { maxAge: '30d' }));
+    expressApp.use('/web/assets', expressStatic(assetsDir, { maxAge: '30d' }));
+  }
+
+  if (candidatesDir) {
+    logger.log(`Serving candidate portraits from ${candidatesDir}`);
+    expressApp.use('/candidates', expressStatic(candidatesDir, { maxAge: '7d' }));
+    expressApp.use('/web/candidates', expressStatic(candidatesDir, { maxAge: '7d' }));
+  }
+
   if (existsSync(apiStaticDir)) {
     app.useStaticAssets(apiStaticDir, {
       prefix: '/',
@@ -175,14 +227,34 @@ async function bootstrap() {
     logger.log(`API static assets served from ${apiStaticDir}`);
   }
 
-  // Rota raiz: redireciona ou serve /web/
-  expressApp.get('/', (_req: Request, res: Response) => {
-    const rootIndex = join(apiStaticDir, 'index.html');
-    if (existsSync(rootIndex)) {
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      return res.sendFile(rootIndex);
+  const staticWebDir = join(apiStaticDir, 'web');
+  if (existsSync(staticWebDir)) {
+    app.useStaticAssets(staticWebDir, {
+      prefix: '/web',
+    });
+    logger.log(`API static web assets served from ${staticWebDir}`);
+  }
+
+  const getSpaIndexHtml = (): string | null => {
+    const candidates = [
+      join(apiStaticDir, 'index.html'),
+      join(apiStaticDir, 'web', 'index.html'),
+      join(webDistDir, 'index.html'),
+    ];
+    for (const p of candidates) {
+      if (existsSync(p)) return p;
     }
-    res.redirect('/web/');
+    return null;
+  };
+
+  // Rota raiz: serve o App SPA diretamente com alta performance
+  expressApp.get('/', (_req: Request, res: Response) => {
+    const spaIndex = getSpaIndexHtml();
+    if (spaIndex) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.sendFile(spaIndex);
+    }
+    res.redirect('/beta');
   });
 
   expressApp.get('/privacidade', (_req: Request, res: Response) => {
@@ -211,16 +283,15 @@ async function bootstrap() {
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.send('421aaf52ebc730d839cfadb50c3b47fbb26870855c5c02d9dd14484a1404dbba\n');
   });
-  expressApp.get(['/web', '/web/*path'], (_req: Request, res: Response) => {
-    const webIndex = join(apiStaticDir, 'web', 'index.html');
-    if (existsSync(webIndex)) {
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      return res.sendFile(webIndex);
+  expressApp.get(['/web', '/web/*path'], (req: Request, res: Response, next: () => void) => {
+    // Se for requisição de recurso estático com extensão de arquivo, entrega para os middlewares estáticos
+    if (/\.[a-zA-Z0-9]+$/.test(req.path)) {
+      return next();
     }
-    const mobileDistIndex = join(__dirname, '..', '..', 'mobile', 'dist', 'index.html');
-    if (existsSync(mobileDistIndex)) {
+    const spaIndex = getSpaIndexHtml();
+    if (spaIndex) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      return res.sendFile(mobileDistIndex);
+      return res.sendFile(spaIndex);
     }
     res.redirect('/beta');
   });
@@ -249,20 +320,19 @@ async function bootstrap() {
     logger.log(`API public assets served from ${apiPublicDir}`);
   }
 
-  const webDist = join(__dirname, '..', '..', 'mobile', 'dist');
-  if (existsSync(webDist)) {
-    app.useStaticAssets(webDist);
-    expressApp.get(/^\/(?!api|privacidade|beta|feedback|candidates).*/, (_req: Request, res: Response) => {
-      res.sendFile(join(webDist, 'index.html'));
+  // Fallback SPA para navegação do Expo Router no navegador
+  const spaIndex = getSpaIndexHtml();
+  if (spaIndex) {
+    expressApp.get(/^\/(?!api|privacidade|beta|feedback|candidates|download|apk|_expo|assets).*/, (_req: Request, res: Response) => {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.sendFile(spaIndex);
     });
-  } else {
-    logger.warn(`Web dist not found at ${webDist} - run build:web`);
   }
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
   logger.log(`API running on :${port}`);
-  if (existsSync(webDist)) logger.log(`Web static served from ${webDist}`);
+  if (existsSync(webDistDir)) logger.log(`Web static served from ${webDistDir}`);
 }
 bootstrap().catch((err) => {
   console.error('FATAL BOOTSTRAP ERROR:', err);
