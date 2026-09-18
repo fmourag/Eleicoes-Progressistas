@@ -1,51 +1,32 @@
-Assunto: 🇧🇷 Convite: Beta Fechado v2.2.1 — Eleições Progressistas 2026
+# Template de E-mail — Eleições Progressistas v2.2.5
 
+**Assunto:** 🇧🇷 Eleições Progressistas: use no navegador ou baixe o app
+
+**Corpo:**
+```text
 Olá [NOME],
 
-Você foi selecionado(a) para participar do **Beta Fechado** do Eleições Progressistas 2026 (v2.2.1), plataforma cívica independente com dados auditáveis do TSE.
+A plataforma cívica Eleições Progressistas 2026 está no ar em sua versão v2.2.5, agora oferecendo dois caminhos práticos de acesso para auxiliar você e sua rede na escolha de candidatos oficiais do TSE:
 
-## 📱 Como instalar e participar
+🌐 USE AGORA NO NAVEGADOR (sem instalar nada):
+https://eleicoes-progressistas.onrender.com/web/
 
-1. **Instalação Direta (Sideload / APK Oficial):**
-   https://eleicoes-progressistas.onrender.com/beta
+📱 OU BAIXE O APP ANDROID (61,48 MB):
+https://eleicoes-progressistas.onrender.com/download/apk
+🔐 SHA-256: 421aaf52ebc730d839cfadb50c3b47fbb26870855c5c02d9dd14484a1404dbba
 
-2. **Opt-in no Google Play Console (Trilha Fechada):**
-   https://play.google.com/apps/testing/com.eleicoesprogressistas.app
+✅ O QUE VOCÊ ENCONTRA:
+• 7.256 candidatos oficiais do TSE (todos os cargos e estados)
+• Matching honesto com suas prioridades
+• Cola eleitoral em PDF para levar à urna
+• Apuração em tempo real no dia da eleição
+• Zero coleta de dados — tudo fica no seu dispositivo
 
-🔐 **SHA-256 do APK:** `c99d481b43032aeca3e0c88a22da5504b668ccbe1f7716ac8f98d31b3a79d200`
+💚 Apoio cívico voluntário: R$ 3 via PIX celular (21) 97194-3298 (opcional)
+📝 Envie dúvidas ou sugestões: https://eleicoes-progressistas.onrender.com/feedback
+📧 Suporte direto com o desenvolvedor: fmourag@gmail.com
 
-## 🧪 O que testar
-
-- **Listagem e Busca Nacional**: navegue pelos 262 candidatos das 27 UFs (Presidente, Governador, Senador, Dep. Federal e Estadual)
-- **Matching por pilares**: selecione até 3 prioridades e confira o ranking
-- **Raio-X do candidato**: examine fotos em alta resolução, histórico legislativo e diretrizes do plano de governo
-- **Cola Eleitoral**: gere o PDF oficial com números do TSE para impressão ou envio no WhatsApp
-- **Resiliência e Cache**: navegação rápida com tempo de resposta sub-10ms
-
-## 📝 Como reportar bugs e feedback
-
-Envie para: **fmourag@gmail.com**
-
----
-**Bug Report — Eleições Progressistas v2.2.1**
-
-**Data:** [DATA]  
-**Dispositivo:** [MODELO + VERSÃO DO ANDROID]  
-**Descrição:** [O QUE ACONTECEU]  
-**Passos para Reproduzir:** [PASSO A PASSO]  
-**Severidade:** P0 (crash) / P1 (funcionalidade quebrada) / P2 (melhoria ou cosmético)  
----
-
-## 🎯 Seu impacto
-
-Seu feedback garante que a ferramenta chegue a **50.000+ eleitores** com máxima estabilidade e transparência antes do 1º turno (04/10/2026).
-
-Obrigado por fortalecer a democracia e o voto consciente!
-
-Atenciosamente,  
-Equipe Eleições Progressistas  
-
----
-🔗 Web: https://eleicoes-progressistas.onrender.com  
-💻 Código: https://github.com/fmourag/Eleicoes-Progressistas
-
+Atenciosamente,
+Equipe Eleições Progressistas
+https://eleicoes-progressistas.onrender.com/
+```

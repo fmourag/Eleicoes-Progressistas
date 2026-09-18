@@ -1,17 +1,29 @@
 # Mensagens Curtas para WhatsApp / Telegram — Eleições Progressistas 2026
 
-## 📱 Opção 1: Convite Direto para Auditoria Cívica (Beta Testers)
+## 📱 Opção 1: Convite de Acesso Duplo (Auditoria Cívica e Homologação)
 
 ```text
-🇧🇷 Olá! A versão oficial v2.2.3 do Eleições Progressistas está liberada para homologação cívica.
+🇧🇷 ELEIÇÕES PROGRESSISTAS 2026 — Auditoria cívica na sua mão
 
-📱 Link ÚNICO de instalação: https://eleicoes-progressistas.onrender.com/beta
-🔐 SHA-256: 71a52845fc483f699c975a736ea6eeba954eca9cf3ae49b3886259581a23ea40
+🌐 USE AGORA NO NAVEGADOR (sem instalar nada):
+https://eleicoes-progressistas.onrender.com/web/
 
-📝 Envio de Feedback: https://eleicoes-progressistas.onrender.com/feedback (ou direto pelo botão 💬 dentro do app)
-🚀 Ao enviar, seu Protocolo de Atendimento (FB-...) é gerado automaticamente!
+📱 OU BAIXE O APP ANDROID (61,48 MB):
+https://eleicoes-progressistas.onrender.com/download/apk
+🔐 SHA-256: 421aaf52ebc730d839cfadb50c3b47fbb26870855c5c02d9dd14484a1404dbba
 
-Dúvidas ou suporte direto: fmourag@gmail.com
+✅ O QUE VOCÊ ENCONTRA:
+• 7.256 candidatos oficiais do TSE (todos os cargos e estados)
+• Matching honesto com suas prioridades
+• Cola eleitoral em PDF para levar à urna
+• Apuração em tempo real no dia da eleição
+• Zero coleta de dados — tudo fica no seu dispositivo
+
+💚 Apoio cívico voluntário: R$ 3 via PIX (opcional)
+📝 Feedback: https://eleicoes-progressistas.onrender.com/feedback
+📧 Suporte: fmourag@gmail.com
+
+Compartilhe com quem vai votar em outubro! 🗳️
 ```
 
 ---
@@ -21,18 +33,24 @@ Dúvidas ou suporte direto: fmourag@gmail.com
 ```text
 Oi, gente! 🇧🇷
 
-Descobri um app GRATUITO pra ajudar a escolher candidatos nas eleições de outubro. Diferente dos outros:
+Descobri um aplicativo GRATUITO pra ajudar a escolher candidatos nas eleições de 2026 com base em dados oficiais do TSE:
 
-✅ Não pede cadastro
-✅ Não guarda suas opiniões políticas (Coleta Zero)
-✅ Não tem anúncio (Blackout Eleitoral)
-✅ Mostra COMO cada score foi calculado
-✅ Gera uma "cola eleitoral" oficial em PDF
+🌐 Acesse direto pelo navegador (sem instalar nada):
+👉 https://eleicoes-progressistas.onrender.com/web/
 
-É código aberto (qualquer um pode auditar) e foi feito pra fortalecer a democracia, não pra vender dados.
+📱 Ou baixe o aplicativo nativo para Android (61,48 MB):
+👉 https://eleicoes-progressistas.onrender.com/download/apk
+🔐 SHA-256: 421aaf52ebc730d839cfadb50c3b47fbb26870855c5c02d9dd14484a1404dbba
 
-Testem e me digam o que acham:
-👉 https://eleicoes-progressistas.pages.dev
+Diferente dos outros:
+✅ Não pede cadastro e não guarda seus dados (Coleta Zero)
+✅ Mostra COMO cada afinidade política foi calculada
+✅ Gera sua "cola eleitoral" em PDF para levar à urna
+✅ Apuração oficial em tempo real na noite da eleição
 
-Compartilhem com quem ainda tá indeciso! 🗳️
+💚 Apoio cívico independente: R$ 3 via PIX (voluntário)
+📝 Dúvidas ou sugestões: https://eleicoes-progressistas.onrender.com/feedback
+📧 Contato: fmourag@gmail.com
+
+Compartilhem com quem ainda está indeciso! 🗳️
 ```

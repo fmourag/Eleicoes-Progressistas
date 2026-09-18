@@ -70,3 +70,7 @@ tmp/
 
 # Candidate cache
 apps/api/public/candidates/*.jpg
+
+# Temp and office documents
+*.docx
+~$*

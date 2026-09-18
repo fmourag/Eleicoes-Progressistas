@@ -70,21 +70,30 @@ export const BETA_HTML = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beta Fechado — Eleições Progressistas 2026</title>
+    <title>Acesso e Download — Eleições Progressistas 2026</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #222; max-width: 680px; margin: 0 auto; padding: 24px; background: #f9fbf9; }
         .header { text-align: center; margin-bottom: 24px; }
         h1 { color: #1B5E20; margin-bottom: 4px; }
         .subtitle { color: #555; font-size: 16px; }
-        .qr-box { background: #fff; border: 2px dashed #1B5E20; padding: 20px; text-align: center; border-radius: 12px; margin: 20px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .qr-box img { width: 220px; height: 220px; display: block; margin: 0 auto 12px auto; }
-        .btn { display: inline-block; background: #1B5E20; color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; font-size: 18px; transition: background 0.2s; }
-        .btn:hover { background: #2E7D32; }
+        .badge { display: inline-block; background: #E8F5E9; color: #1B5E20; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+        .seal { display: inline-block; background: #E3F2FD; color: #0D47A1; border: 1px solid #BBDEFB; padding: 8px 16px; border-radius: 24px; font-size: 14px; font-weight: 600; margin: 12px 0 20px 0; }
+        .access-card { background: #fff; border: 2px solid #C8E6C9; padding: 24px; border-radius: 12px; margin: 20px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; }
+        .btn-group { display: flex; flex-direction: row; gap: 16px; justify-content: center; align-items: stretch; margin: 16px 0; }
+        @media (max-width: 600px) {
+            .btn-group { flex-direction: column; }
+        }
+        .btn { display: flex; align-items: center; justify-content: center; padding: 14px 20px; border-radius: 8px; font-weight: bold; font-size: 16px; text-decoration: none; transition: all 0.2s; flex: 1; text-align: center; }
+        .btn-web { background: #1565C0; color: #fff; box-shadow: 0 2px 4px rgba(21,101,192,0.3); }
+        .btn-web:hover { background: #0D47A1; }
+        .btn-apk { background: #1B5E20; color: #fff; box-shadow: 0 2px 4px rgba(27,94,32,0.3); }
+        .btn-apk:hover { background: #2E7D32; }
+        .qr-box { background: #fff; border: 1px solid #e0e0e0; padding: 16px; text-align: center; border-radius: 8px; margin: 20px auto; max-width: 260px; }
+        .qr-box img { width: 200px; height: 200px; display: block; margin: 0 auto 8px auto; }
         .steps { background: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #e0e0e0; }
         .steps ol { padding-left: 20px; margin: 0; }
         .steps li { margin-bottom: 10px; }
-        .hash-box { background: #ECEFF1; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 12px; word-break: break-all; margin: 16px 0; border: 1px solid #CFD8DC; }
-        .badge { display: inline-block; background: #E8F5E9; color: #1B5E20; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+        .hash-box { background: #ECEFF1; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 12px; word-break: break-all; margin: 16px 0; border: 1px solid #CFD8DC; text-align: center; }
         footer { text-align: center; font-size: 13px; color: #777; margin-top: 30px; border-top: 1px solid #ddd; padding-top: 15px; }
         a { color: #1B5E20; }
     </style>
@@ -93,37 +102,46 @@ export const BETA_HTML = `<!DOCTYPE html>
     <div class="header">
         <span class="badge">BETA FECHADO v2.2.5</span>
         <h1>Eleições Progressistas 2026</h1>
-        <p class="subtitle">Instalação direta para testadores e auditores cívicos</p>
+        <p class="subtitle">Acesso direto para cidadãos, testadores e auditores cívicos</p>
     </div>
 
-    <div class="qr-box">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Fgithub.com%2Ffmourag%2FEleicoes-Progressistas%2Freleases%2Fdownload%2Fv2.2.5%2Feleicoes-progressistas-v2.2.5-beta.apk" alt="QR Code Download APK">
-        <p style="margin-bottom: 16px; color: #555;">Escaneie com a câmera do celular ou clique abaixo:</p>
-        <a href="https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.5/eleicoes-progressistas-v2.2.5-beta.apk" class="btn">⬇️ Baixar APK v2.2.5</a>
+    <div class="access-card">
+        <div class="seal">Funciona no navegador do celular e do computador — sem instalação</div>
+
+        <div class="btn-group">
+            <a href="https://eleicoes-progressistas.onrender.com/web/" target="_blank" class="btn btn-web">🌐 ABRIR VERSÃO WEB</a>
+            <a href="https://eleicoes-progressistas.onrender.com/download/apk" class="btn btn-apk">📱 BAIXAR APK ANDROID</a>
+        </div>
+
+        <div class="hash-box">
+            <strong>🔐 Integridade do APK Android (SHA-256):</strong><br>
+            421aaf52ebc730d839cfadb50c3b47fbb26870855c5c02d9dd14484a1404dbba
+        </div>
+
+        <div class="qr-box">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Feleicoes-progressistas.onrender.com%2Fdownload%2Fapk" alt="QR Code Download APK">
+            <small style="color: #666;">Aponte a câmera para baixar o APK no celular</small>
+        </div>
     </div>
 
     <div class="steps">
-        <h3 style="margin-top:0; color:#1B5E20;">📱 Como instalar em 3 passos:</h3>
+        <h3 style="margin-top:0; color:#1B5E20;">📱 Como instalar o APK no Android:</h3>
         <ol>
-            <li><strong>Baixe o APK</strong> através do botão acima ou escaneando o QR Code.</li>
-            <li>Abra o arquivo baixado. Se o Android solicitar, selecione <strong>"Permitir desta fonte"</strong> nas configurações de segurança.</li>
+            <li>Toque em <strong>"📱 BAIXAR APK ANDROID"</strong> ou escaneie o QR Code acima.</li>
+            <li>Abra o arquivo baixado. Se o Android solicitar, selecione <strong>"Permitir desta fonte"</strong>.</li>
             <li>Conclua a instalação e abra o aplicativo para iniciar seus testes.</li>
         </ol>
     </div>
 
-    <div class="hash-box">
-        <strong>🔐 Verificação de Integridade (SHA-256):</strong><br>
-        421aaf52ebc730d839cfadb50c3b47fbb26870855c5c02d9dd14484a1404dbba
-    </div>
-
     <p style="font-size: 13px; color: #666; text-align: center;">
-        ℹ️ <em>Este é o canal oficial de distribuição do Beta Fechado até a homologação final na Google Play Store.</em>
+        ℹ️ <em>Canal oficial de distribuição enquanto o app conclui os ciclos de homologação na Google Play Store.</em>
     </p>
 
     <footer>
         <p>
+            <a href="/web/">Versão Web</a> • 
             <a href="/privacidade">Política de Privacidade</a> • 
-            <a href="https://github.com/fmourag/Eleicoes-Progressistas" target="_blank">Código no GitHub</a> • 
+            <a href="/feedback">Canal de Feedback</a> • 
             Feedback: <a href="mailto:fmourag@gmail.com">fmourag@gmail.com</a>
         </p>
     </footer>
