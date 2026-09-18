@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Pressable, Platfo
 import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { PILLAR_DISPLAY_LIST } from '@np/shared';
-import { useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
+import { useMaxContentWidth, useResponsivePadding, useBreakpoint } from '../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { ActionButton } from '../components/ActionButton';
 import { ThemeToggle } from '../components/ThemeToggle';
@@ -22,10 +22,20 @@ const UF_OPTIONS: DropdownOption[] = [
 ].map((uf) => ({ value: uf, label: uf }));
 
 export default function HomeScreen() {
+  const bp = useBreakpoint();
+  const isDesktop = bp === 'desktop';
   const colors = useThemeColors();
   const maxW = useMaxContentWidth();
   const padding = useResponsivePadding();
   const { location, resetLocation, setLocation, setConsent, openConsentModal } = useLocationStore();
+
+  const apkDownloadUrl = typeof window !== 'undefined' && window.location?.origin
+    ? `${window.location.origin}/download/apk`
+    : `${API_URL}/download/apk`;
+
+  const betaGuideUrl = typeof window !== 'undefined' && window.location?.origin
+    ? `${window.location.origin}/beta`
+    : `${API_URL}/beta`;
 
   const [selectedUf, setSelectedUf] = useState(location?.uf ?? '');
   const [selectedMunicipio, setSelectedMunicipio] = useState(location?.municipality ?? '');
@@ -114,6 +124,15 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.topRightControls}>
+            {Platform.OS === 'web' && isDesktop && (
+              <TouchableOpacity
+                style={[styles.manualBtn, { backgroundColor: '#1B5E20', borderColor: '#2E7D32' }]}
+                onPress={() => Linking.openURL(apkDownloadUrl)}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.manualBtnText, { color: '#ffffff', fontWeight: 'bold' }]}>📲 Baixar App</Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               style={[styles.manualBtn, { backgroundColor: '#1B5E20', borderColor: '#2E7D32' }]}
               onPress={() => Linking.openURL(`${API_URL}/feedback`)}
@@ -140,6 +159,70 @@ export default function HomeScreen() {
         {/* HERO TITLE BANNER                                        */}
         {/* ======================================================== */}
         <CivicBanner variant="hero" />
+
+        {/* ======================================================== */}
+        {/* WEB EXCLUSIVE: DOWNLOAD APP BANNER (RENDER SIDELOAD)      */}
+        {/* ======================================================== */}
+        {Platform.OS === 'web' && (
+          <View
+            style={[
+              styles.downloadAppCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+              },
+              isDesktop ? styles.downloadAppCardDesktop : styles.downloadAppCardMobile,
+            ]}
+          >
+            <View style={isDesktop ? styles.downloadAppLeftDesktop : styles.downloadAppLeftMobile}>
+              <View style={[styles.downloadAppIconCircle, { backgroundColor: colors.surfaceAlt, borderColor: '#1B5E20' }]}>
+                <Text style={{ fontSize: 22 }}>📱</Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 2 }}>
+                  <View style={[styles.downloadBadge, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
+                    <View style={[styles.downloadBadgeDot, { backgroundColor: '#059669' }]} />
+                    <Text style={[styles.downloadBadgeText, { color: '#065F46' }]}>APLICATIVO ANDROID OFICIAL</Text>
+                  </View>
+                  <Text style={{ color: colors.textMuted }}>•</Text>
+                  <Text style={[styles.downloadSub, { color: colors.textMuted }]}>v{APP_VERSION}</Text>
+                </View>
+
+                <Text style={[styles.downloadTitle, { color: colors.text }]}>
+                  Instale o Eleições Progressistas no seu Celular
+                </Text>
+
+                <Text style={[styles.downloadDescription, { color: colors.textSecondary }]}>
+                  Navegação instantânea e colinha eleitoral 100% offline na cabine de votação, sem depender de internet ou gastar plano de dados.
+                </Text>
+              </View>
+            </View>
+
+            <View style={isDesktop ? styles.downloadAppRightDesktop : styles.downloadAppRightMobile}>
+              <TouchableOpacity
+                style={[styles.downloadBtn, { backgroundColor: '#1B5E20', borderColor: '#2E7D32' }]}
+                onPress={() => Linking.openURL(apkDownloadUrl)}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.downloadBtnText}>📥 Baixar APK Android (61,5 MB)</Text>
+              </TouchableOpacity>
+
+              <View style={styles.downloadMetaRow}>
+                <Text style={[styles.downloadMetaText, { color: colors.textMuted }]}>
+                  🔐 SHA-256 verificado • Servidor Render
+                </Text>
+                <TouchableOpacity
+                  onPress={() => Linking.openURL(betaGuideUrl)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[styles.downloadHelpLink, { color: colors.primary }]}>
+                    📖 Guia de instalação
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )}
 
         {/* ======================================================== */}
         {/* PRIVACIDADE POR DESIGN (STITCH CIVIC CARD)               */}
@@ -913,5 +996,128 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: FontSize.xs,
     textAlign: 'center',
+  },
+  downloadAppCard: {
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+    marginBottom: Spacing.base,
+    overflow: 'hidden',
+  },
+  downloadAppCardDesktop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: Spacing.md + 2,
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.lg,
+  },
+  downloadAppCardMobile: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    padding: Spacing.md + 2,
+    gap: Spacing.md,
+  },
+  downloadAppLeftDesktop: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  downloadAppLeftMobile: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.sm + 2,
+  },
+  downloadAppRightDesktop: {
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  downloadAppRightMobile: {
+    alignItems: 'stretch',
+    gap: 6,
+    marginTop: 2,
+  },
+  downloadAppIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  downloadBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    gap: 5,
+  },
+  downloadBadgeDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  downloadBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  downloadSub: {
+    fontSize: FontSize.xs,
+    fontWeight: '600',
+  },
+  downloadTitle: {
+    fontSize: FontSize.base,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+    marginBottom: 2,
+  },
+  downloadDescription: {
+    fontSize: FontSize.xs,
+    lineHeight: 17,
+  },
+  downloadBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: 10,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    shadowColor: '#1B5E20',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  downloadBtnText: {
+    color: '#FFFFFF',
+    fontSize: FontSize.sm,
+    fontWeight: '800',
+    letterSpacing: 0.2,
+  },
+  downloadMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  downloadMetaText: {
+    fontSize: 11,
+    fontWeight: '500',
+  },
+  downloadHelpLink: {
+    fontSize: 11,
+    fontWeight: '700',
+    textDecorationLine: 'underline',
   },
 });
