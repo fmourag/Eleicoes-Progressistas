@@ -11,6 +11,7 @@ import { CivicBanner } from '../components/CivicBanner';
 import { PrivacyBanner } from '../components/PrivacyBanner';
 import { ApoioVoluntarioBanner } from '../components/ApoioVoluntarioBanner';
 import { Dropdown, DropdownOption } from '../components/Dropdown';
+import { ShareModal } from '../components/ShareModal';
 import { useLocationStore } from '../stores/location.store';
 import { fetchMunicipalities } from '../services/location.service';
 import { API_URL } from '../services/api';
@@ -22,6 +23,7 @@ const UF_OPTIONS: DropdownOption[] = [
 ].map((uf) => ({ value: uf, label: uf }));
 
 export default function HomeScreen() {
+  const [showShareModal, setShowShareModal] = useState(false);
   const bp = useBreakpoint();
   const isDesktop = bp === 'desktop';
   const colors = useThemeColors();
@@ -138,10 +140,13 @@ export default function HomeScreen() {
             >
               <Text style={[styles.manualBtnText, { color: colors.text }]}>📖 Manual</Text>
             </TouchableOpacity>
-            <View style={[styles.watchdogBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.tertiary }]}>
-              <View style={[styles.pulsingDot, { backgroundColor: colors.tertiary }]} />
-              <Text style={[styles.watchdogText, { color: colors.tertiary }]}>TSE 2026</Text>
-            </View>
+            <TouchableOpacity
+              style={[styles.manualBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
+              onPress={() => setShowShareModal(true)}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.manualBtnText, { color: colors.text, fontWeight: 'bold' }]}>🔗 Compartilhar</Text>
+            </TouchableOpacity>
             <ThemeToggle />
           </View>
         </View>
@@ -600,6 +605,7 @@ export default function HomeScreen() {
           </Text>
         </View>
 
+        <ShareModal visible={showShareModal} onClose={() => setShowShareModal(false)} />
       </View>
     </ScrollView>
   );

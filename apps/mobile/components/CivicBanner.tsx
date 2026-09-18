@@ -48,6 +48,10 @@ export function CivicBanner({ variant = 'hero', showSubtitle = true }: CivicBann
                 <View style={[styles.badgeDot, { backgroundColor: '#DC2626' }]} />
                 <Text style={styles.badgeTextRed}>ELEIÇÕES 2026</Text>
               </View>
+              <View style={[styles.badgePill, styles.badgePillTse]}>
+                <View style={[styles.badgeDot, { backgroundColor: '#059669' }]} />
+                <Text style={styles.badgeTextTse}>TSE 2026</Text>
+              </View>
               <View style={[styles.badgePill, styles.badgePillGreen]}>
                 <View style={[styles.badgeDot, { backgroundColor: '#059669' }]} />
                 <Text style={styles.badgeTextGreen}>FICHA LIMPA</Text>
@@ -90,6 +94,11 @@ export function CivicBanner({ variant = 'hero', showSubtitle = true }: CivicBann
           <View style={[styles.badgePill, styles.badgePillRed]}>
             <View style={[styles.badgeDot, { backgroundColor: '#DC2626' }]} />
             <Text style={styles.badgeTextRed}>ELEIÇÕES 2026</Text>
+          </View>
+
+          <View style={[styles.badgePill, styles.badgePillTse]}>
+            <View style={[styles.badgeDot, { backgroundColor: '#059669' }]} />
+            <Text style={styles.badgeTextTse}>TSE 2026</Text>
           </View>
 
           <View style={[styles.badgePill, styles.badgePillGreen]}>
@@ -199,6 +208,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.xs,
     marginBottom: Spacing.xs,
+    flexWrap: 'wrap',
   },
   badgePill: {
     flexDirection: 'row',
@@ -212,6 +222,10 @@ const styles = StyleSheet.create({
   badgePillRed: {
     backgroundColor: '#FEF2F2',
     borderColor: '#FCA5A5',
+  },
+  badgePillTse: {
+    backgroundColor: '#F0FDF4',
+    borderColor: '#86EFAC',
   },
   badgePillGreen: {
     backgroundColor: '#ECFDF5',
@@ -231,6 +245,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#991B1B',
     letterSpacing: 0.8,
+  },
+  badgeTextTse: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#166534',
+    letterSpacing: 0.6,
   },
   badgeTextGreen: {
     fontSize: 10,

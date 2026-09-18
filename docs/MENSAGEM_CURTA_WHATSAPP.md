@@ -31,9 +31,9 @@ Compartilhe com quem vai votar em outubro! 🗳️
 ## 👥 Opção 2: Divulgação Geral para Grupos de Família e Amigos
 
 ```text
-Oi, gente! 🇧🇷
+Olá Progressistas!
 
-Descobri um aplicativo GRATUITO pra ajudar a escolher candidatos nas eleições de 2026 com base em dados oficiais do TSE:
+Existe um aplicativo GRATUITO pra ajudar a escolher candidatos nas eleições de 2026 com base em dados oficiais do TSE:
 
 🌐 Acesse direto pelo navegador (sem instalar nada):
 👉 https://eleicoes-progressistas.onrender.com/web/
