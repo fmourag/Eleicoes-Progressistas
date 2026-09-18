@@ -901,3 +901,6 @@ export const DASHBOARD_HTML = `<!DOCTYPE html>
 </body>
 </html>
 `;
+
+export { ACCESS_DASHBOARD_HTML } from './access-dashboard.html';
+

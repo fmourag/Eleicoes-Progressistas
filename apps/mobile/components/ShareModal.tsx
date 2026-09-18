@@ -11,6 +11,7 @@ import {
   Pressable,
 } from 'react-native';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
+import { API_URL } from '../services/api';
 
 interface ShareModalProps {
   visible: boolean;
@@ -22,11 +23,22 @@ export const SHARE_MESSAGE =
   'Descobri o Aplicativo Eleições Progressistas, um conjunto de informações para auxiliar na escolha de candidatos, é gratuito e não coleta dados. Acesse em ' +
   SHARE_URL;
 
+function trackShare(channel: 'whatsapp' | 'email' | 'copy' | 'other') {
+  try {
+    fetch(`${API_URL}/api/telemetry/share`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ channel }),
+    }).catch(() => {});
+  } catch {}
+}
+
 export function ShareModal({ visible, onClose }: ShareModalProps) {
   const colors = useThemeColors();
   const [copied, setCopied] = useState(false);
 
   async function handleWhatsApp() {
+    trackShare('whatsapp');
     const url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(SHARE_MESSAGE);
     try {
       await Linking.openURL(url);
@@ -38,6 +50,7 @@ export function ShareModal({ visible, onClose }: ShareModalProps) {
   }
 
   async function handleEmail() {
+    trackShare('email');
     const subject = encodeURIComponent('Conheça o Aplicativo Eleições Progressistas');
     const body = encodeURIComponent(
       'Descobri o Aplicativo Eleições Progressistas, um conjunto de informações para auxiliar na escolha de candidatos, é gratuito e não coleta dados.\n\nAcesse em: ' +
@@ -54,6 +67,7 @@ export function ShareModal({ visible, onClose }: ShareModalProps) {
   }
 
   async function handleCopy() {
+    trackShare('copy');
     try {
       if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(SHARE_MESSAGE);
@@ -67,6 +81,7 @@ export function ShareModal({ visible, onClose }: ShareModalProps) {
   }
 
   async function handleNativeShare() {
+    trackShare('other');
     try {
       if (Platform.OS !== 'web') {
         await Share.share({

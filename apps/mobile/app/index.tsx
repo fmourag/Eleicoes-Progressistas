@@ -61,6 +61,19 @@ export default function HomeScreen() {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      try {
+        const referrer = typeof document !== 'undefined' ? document.referrer : undefined;
+        fetch(`${API_URL}/api/telemetry/access`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventType: 'WEB_VISIT', referrer }),
+        }).catch(() => {});
+      } catch {}
+    }
+  }, []);
+
   async function handleUfChange(uf: string) {
     setSelectedUf(uf);
     setSelectedMunicipio('');
@@ -594,6 +607,23 @@ export default function HomeScreen() {
             >
               <Text style={{ fontSize: FontSize.xs, fontWeight: '700', color: colors.primary, textDecorationLine: 'underline' }}>
                 🔭 Observatório
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                const url = typeof window !== 'undefined' && window.location?.origin
+                  ? `${window.location.origin}/dashboard`
+                  : `${API_URL}/dashboard`;
+                if (Platform.OS === 'web' && typeof window !== 'undefined') {
+                  window.open(url, '_blank');
+                } else {
+                  Linking.openURL(url).catch(() => {});
+                }
+              }}
+              activeOpacity={0.7}
+            >
+              <Text style={{ fontSize: FontSize.xs, fontWeight: '700', color: '#0284c7', textDecorationLine: 'underline' }}>
+                📈 Monitor de Acessos
               </Text>
             </TouchableOpacity>
           </View>

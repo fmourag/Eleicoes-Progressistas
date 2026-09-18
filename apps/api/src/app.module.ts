@@ -18,6 +18,7 @@ import { PublicApiModule } from './modules/public-api/public-api.module';
 import { WatchdogModule } from './modules/watchdog/watchdog.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { FeedbackModule } from './modules/feedback/feedback.module';
+import { TelemetryModule } from './modules/telemetry/telemetry.module';
 import { OpsController } from './modules/common/ops.controller';
 import { PagesController } from './modules/common/pages.controller';
 import { StaticAssetsController } from './modules/common/static-assets.controller';
@@ -51,6 +52,7 @@ import { APP_GUARD } from '@nestjs/core';
     WatchdogModule,
     ReportsModule,
     FeedbackModule,
+    TelemetryModule,
   ],
   controllers: [HealthController, OpsController, PagesController, StaticAssetsController],
   providers: [

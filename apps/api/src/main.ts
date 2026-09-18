@@ -7,7 +7,8 @@ import { Request, Response, json, urlencoded, static as expressStatic } from 'ex
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { GlobalHttpExceptionFilter } from './modules/common/http-exception.filter';
-import { PRIVACY_HTML, BETA_HTML, FEEDBACK_HTML, DASHBOARD_HTML } from './modules/common/static-pages';
+import { PRIVACY_HTML, BETA_HTML, FEEDBACK_HTML, DASHBOARD_HTML, ACCESS_DASHBOARD_HTML } from './modules/common/static-pages';
+import { TelemetryService } from './modules/telemetry/telemetry.service';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -86,6 +87,9 @@ async function bootstrap() {
       'feedback',
       'feedback/painel',
       'painel',
+      'painel/acessos',
+      'dashboard',
+      'metricas',
       'admin/feedback',
       '_expo',
       '_expo/*path',
@@ -167,6 +171,7 @@ async function bootstrap() {
   );
 
   const expressApp = app.getHttpAdapter().getInstance();
+  const telemetryService = app.get(TelemetryService);
 
   const apiStaticDir = existsSync(join(__dirname, '..', 'static'))
     ? join(__dirname, '..', 'static')
@@ -265,7 +270,16 @@ async function bootstrap() {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(BETA_HTML);
   });
-  expressApp.get(['/download/apk', '/app.apk'], (_req: Request, res: Response) => {
+  expressApp.get(['/download/apk', '/app.apk'], (req: Request, res: Response) => {
+    try {
+      const userAgent = (req.headers['user-agent'] as string) || '';
+      const referer = (req.headers['referer'] as string) || undefined;
+      const deviceType = telemetryService.detectDeviceType(userAgent);
+      telemetryService.recordEvent('APK_DOWNLOAD', deviceType, referer).catch(() => {});
+    } catch {
+      // Ignora falhas de telemetria para não afetar o download
+    }
+
     const apkPath = join(apiStaticDir, 'apk', 'eleicoes-progressistas-v2.2.5.apk');
     if (existsSync(apkPath)) {
       res.setHeader('Content-Type', 'application/vnd.android.package-archive');
@@ -304,6 +318,11 @@ async function bootstrap() {
     res.send(DASHBOARD_HTML);
   });
 
+  expressApp.get(['/dashboard', '/painel/acessos', '/metricas', '/acessos'], (_req: Request, res: Response) => {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(ACCESS_DASHBOARD_HTML);
+  });
+
   const apiPublicDir = existsSync(join(__dirname, '..', 'public'))
     ? join(__dirname, '..', 'public')
     : join(process.cwd(), 'apps', 'api', 'public');
@@ -323,7 +342,7 @@ async function bootstrap() {
   // Fallback SPA para navegação do Expo Router no navegador
   const spaIndex = getSpaIndexHtml();
   if (spaIndex) {
-    expressApp.get(/^\/(?!api|privacidade|beta|feedback|candidates|download|apk|_expo|assets).*/, (_req: Request, res: Response) => {
+    expressApp.get(/^\/(?!api|privacidade|beta|feedback|dashboard|painel|metricas|acessos|candidates|download|apk|_expo|assets).*/, (_req: Request, res: Response) => {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.sendFile(spaIndex);
     });
