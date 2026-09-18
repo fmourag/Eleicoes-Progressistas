@@ -124,15 +124,6 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.topRightControls}>
-            {Platform.OS === 'web' && isDesktop && (
-              <TouchableOpacity
-                style={[styles.manualBtn, { backgroundColor: '#1B5E20', borderColor: '#2E7D32' }]}
-                onPress={() => Linking.openURL(apkDownloadUrl)}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.manualBtnText, { color: '#ffffff', fontWeight: 'bold' }]}>📲 Baixar App</Text>
-              </TouchableOpacity>
-            )}
             <TouchableOpacity
               style={[styles.manualBtn, { backgroundColor: '#1B5E20', borderColor: '#2E7D32' }]}
               onPress={() => Linking.openURL(`${API_URL}/feedback`)}
@@ -171,21 +162,34 @@ export default function HomeScreen() {
                 backgroundColor: colors.surface,
                 borderColor: colors.border,
               },
-              isDesktop ? styles.downloadAppCardDesktop : styles.downloadAppCardMobile,
             ]}
           >
-            <View style={isDesktop ? styles.downloadAppLeftDesktop : styles.downloadAppLeftMobile}>
-              <View style={[styles.downloadAppIconCircle, { backgroundColor: colors.surfaceAlt, borderColor: '#1B5E20' }]}>
-                <Text style={{ fontSize: 22 }}>📱</Text>
+            {/* Bloco Superior: Ícone + Badges + Título + Descrição */}
+            <View style={styles.downloadTopSection}>
+              <View
+                style={[
+                  styles.downloadAppIconBox,
+                  {
+                    backgroundColor: colors.successBg,
+                    borderColor: colors.tertiary,
+                  },
+                ]}
+              >
+                <Text style={{ fontSize: 24 }}>📱</Text>
               </View>
-              <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 2 }}>
-                  <View style={[styles.downloadBadge, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
-                    <View style={[styles.downloadBadgeDot, { backgroundColor: '#059669' }]} />
-                    <Text style={[styles.downloadBadgeText, { color: '#065F46' }]}>APLICATIVO ANDROID OFICIAL</Text>
+
+              <View style={styles.downloadTextContainer}>
+                <View style={styles.downloadBadgeRow}>
+                  <View style={[styles.downloadBadge, { backgroundColor: colors.successBg, borderColor: colors.tertiary }]}>
+                    <View style={[styles.downloadBadgeDot, { backgroundColor: colors.tertiary }]} />
+                    <Text style={[styles.downloadBadgeText, { color: colors.successText }]}>APLICATIVO ANDROID OFICIAL</Text>
                   </View>
-                  <Text style={{ color: colors.textMuted }}>•</Text>
-                  <Text style={[styles.downloadSub, { color: colors.textMuted }]}>v{APP_VERSION}</Text>
+                  <View style={[styles.downloadBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
+                    <Text style={[styles.downloadBadgeText, { color: colors.textSecondary }]}>{APP_VERSION}</Text>
+                  </View>
+                  <View style={[styles.downloadBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
+                    <Text style={[styles.downloadBadgeText, { color: colors.tertiary }]}>100% OFFLINE</Text>
+                  </View>
                 </View>
 
                 <Text style={[styles.downloadTitle, { color: colors.text }]}>
@@ -198,19 +202,16 @@ export default function HomeScreen() {
               </View>
             </View>
 
-            <View style={isDesktop ? styles.downloadAppRightDesktop : styles.downloadAppRightMobile}>
-              <TouchableOpacity
-                style={[styles.downloadBtn, { backgroundColor: '#1B5E20', borderColor: '#2E7D32' }]}
-                onPress={() => Linking.openURL(apkDownloadUrl)}
-                activeOpacity={0.85}
-              >
-                <Text style={styles.downloadBtnText}>📥 Baixar APK Android (61,5 MB)</Text>
-              </TouchableOpacity>
+            {/* Linha Divisória Sutil */}
+            <View style={[styles.downloadDivider, { backgroundColor: colors.border }]} />
 
-              <View style={styles.downloadMetaRow}>
+            {/* Bloco de Ação: Metadados de Segurança + Botão de Download */}
+            <View style={isDesktop ? styles.downloadActionRowDesktop : styles.downloadActionRowMobile}>
+              <View style={styles.downloadSecurityMeta}>
                 <Text style={[styles.downloadMetaText, { color: colors.textMuted }]}>
-                  🔐 SHA-256 verificado • Servidor Render
+                  🔐 SHA-256 verificado • Servidor Oficial Render
                 </Text>
+                <Text style={{ color: colors.textMuted }}>•</Text>
                 <TouchableOpacity
                   onPress={() => Linking.openURL(betaGuideUrl)}
                   activeOpacity={0.7}
@@ -220,6 +221,14 @@ export default function HomeScreen() {
                   </Text>
                 </TouchableOpacity>
               </View>
+
+              <TouchableOpacity
+                style={[styles.downloadBtn, { backgroundColor: '#1B5E20', borderColor: '#2E7D32' }]}
+                onPress={() => Linking.openURL(apkDownloadUrl)}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.downloadBtnText}>📥 Baixar APK Android (61,5 MB)</Text>
+              </TouchableOpacity>
             </View>
           </View>
         )}
@@ -998,58 +1007,39 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   downloadAppCard: {
-    borderRadius: Radius.lg,
+    borderRadius: Radius.xl,
     borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-    marginBottom: Spacing.base,
-    overflow: 'hidden',
-  },
-  downloadAppCardDesktop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: Spacing.md + 2,
-    paddingHorizontal: Spacing.lg,
-    gap: Spacing.lg,
-  },
-  downloadAppCardMobile: {
-    flexDirection: 'column',
-    alignItems: 'stretch',
     padding: Spacing.md + 2,
-    gap: Spacing.md,
+    marginBottom: Spacing.base,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
   },
-  downloadAppLeftDesktop: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-  },
-  downloadAppLeftMobile: {
+  downloadTopSection: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: Spacing.sm + 2,
+    gap: Spacing.md,
   },
-  downloadAppRightDesktop: {
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    gap: 6,
-  },
-  downloadAppRightMobile: {
-    alignItems: 'stretch',
-    gap: 6,
-    marginTop: 2,
-  },
-  downloadAppIconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 1.5,
+  downloadAppIconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 2,
+  },
+  downloadTextContainer: {
+    flex: 1,
+  },
+  downloadBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    flexWrap: 'wrap',
+    marginBottom: Spacing.xs,
   },
   downloadBadge: {
     flexDirection: 'row',
@@ -1070,25 +1060,53 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     letterSpacing: 0.5,
   },
-  downloadSub: {
-    fontSize: FontSize.xs,
-    fontWeight: '600',
-  },
   downloadTitle: {
-    fontSize: FontSize.base,
+    fontSize: FontSize.base + 1,
     fontWeight: '800',
-    letterSpacing: -0.2,
-    marginBottom: 2,
+    letterSpacing: -0.3,
+    marginBottom: 4,
+    lineHeight: 22,
   },
   downloadDescription: {
-    fontSize: FontSize.xs,
-    lineHeight: 17,
+    fontSize: FontSize.xs + 1,
+    lineHeight: 18,
+  },
+  downloadDivider: {
+    height: 1,
+    marginVertical: Spacing.sm + 4,
+    opacity: 0.7,
+  },
+  downloadActionRowDesktop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: Spacing.md,
+  },
+  downloadActionRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    gap: Spacing.sm,
+  },
+  downloadSecurityMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  downloadMetaText: {
+    fontSize: 11,
+    fontWeight: '500',
+  },
+  downloadHelpLink: {
+    fontSize: 11,
+    fontWeight: '700',
+    textDecorationLine: 'underline',
   },
   downloadBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: Spacing.base,
+    paddingHorizontal: Spacing.md + 4,
     paddingVertical: 10,
     borderRadius: Radius.full,
     borderWidth: 1,
@@ -1100,24 +1118,8 @@ const styles = StyleSheet.create({
   },
   downloadBtnText: {
     color: '#FFFFFF',
-    fontSize: FontSize.sm,
+    fontSize: FontSize.xs + 2,
     fontWeight: '800',
     letterSpacing: 0.2,
-  },
-  downloadMetaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    flexWrap: 'wrap',
-  },
-  downloadMetaText: {
-    fontSize: 11,
-    fontWeight: '500',
-  },
-  downloadHelpLink: {
-    fontSize: 11,
-    fontWeight: '700',
-    textDecorationLine: 'underline',
   },
 });
