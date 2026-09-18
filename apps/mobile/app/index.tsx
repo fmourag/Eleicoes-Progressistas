@@ -202,11 +202,16 @@ export default function HomeScreen() {
               </View>
             </View>
 
-            {/* Linha Divisória Sutil */}
-            <View style={[styles.downloadDivider, { backgroundColor: colors.border }]} />
+            {/* Bloco de Ação Centralizado e Totalmente Confinado no Card */}
+            <View style={styles.downloadActionBox}>
+              <TouchableOpacity
+                style={[styles.downloadBtn, { backgroundColor: '#1B5E20', borderColor: '#2E7D32' }]}
+                onPress={() => Linking.openURL(apkDownloadUrl)}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.downloadBtnText}>📥 Baixar APK Android (61,5 MB)</Text>
+              </TouchableOpacity>
 
-            {/* Bloco de Ação: Metadados de Segurança + Botão de Download */}
-            <View style={isDesktop ? styles.downloadActionRowDesktop : styles.downloadActionRowMobile}>
               <View style={styles.downloadSecurityMeta}>
                 <Text style={[styles.downloadMetaText, { color: colors.textMuted }]}>
                   🔐 SHA-256 verificado • Servidor Oficial Render
@@ -221,14 +226,6 @@ export default function HomeScreen() {
                   </Text>
                 </TouchableOpacity>
               </View>
-
-              <TouchableOpacity
-                style={[styles.downloadBtn, { backgroundColor: '#1B5E20', borderColor: '#2E7D32' }]}
-                onPress={() => Linking.openURL(apkDownloadUrl)}
-                activeOpacity={0.85}
-              >
-                <Text style={styles.downloadBtnText}>📥 Baixar APK Android (61,5 MB)</Text>
-              </TouchableOpacity>
             </View>
           </View>
         )}
@@ -1009,13 +1006,14 @@ const styles = StyleSheet.create({
   downloadAppCard: {
     borderRadius: Radius.xl,
     borderWidth: 1,
-    padding: Spacing.md + 2,
+    padding: Spacing.base,
     marginBottom: Spacing.base,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
     shadowRadius: 6,
     elevation: 2,
+    overflow: 'hidden',
   },
   downloadTopSection: {
     flexDirection: 'row',
@@ -1071,43 +1069,20 @@ const styles = StyleSheet.create({
     fontSize: FontSize.xs + 1,
     lineHeight: 18,
   },
-  downloadDivider: {
-    height: 1,
-    marginVertical: Spacing.sm + 4,
-    opacity: 0.7,
-  },
-  downloadActionRowDesktop: {
-    flexDirection: 'row',
+  downloadActionBox: {
+    marginTop: Spacing.md,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: Spacing.md,
-  },
-  downloadActionRowMobile: {
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    gap: Spacing.sm,
-  },
-  downloadSecurityMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 6,
-  },
-  downloadMetaText: {
-    fontSize: 11,
-    fontWeight: '500',
-  },
-  downloadHelpLink: {
-    fontSize: 11,
-    fontWeight: '700',
-    textDecorationLine: 'underline',
+    justifyContent: 'center',
+    gap: Spacing.xs + 2,
   },
   downloadBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: Spacing.md + 4,
-    paddingVertical: 10,
+    width: '100%',
+    maxWidth: 440,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: 12,
     borderRadius: Radius.full,
     borderWidth: 1,
     shadowColor: '#1B5E20',
@@ -1118,8 +1093,27 @@ const styles = StyleSheet.create({
   },
   downloadBtnText: {
     color: '#FFFFFF',
-    fontSize: FontSize.xs + 2,
+    fontSize: FontSize.sm,
     fontWeight: '800',
     letterSpacing: 0.2,
+    textAlign: 'center',
+  },
+  downloadSecurityMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: 6,
+    paddingHorizontal: Spacing.xs,
+  },
+  downloadMetaText: {
+    fontSize: 11,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  downloadHelpLink: {
+    fontSize: 11,
+    fontWeight: '700',
+    textDecorationLine: 'underline',
   },
 });
