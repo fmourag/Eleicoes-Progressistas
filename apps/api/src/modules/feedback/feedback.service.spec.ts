@@ -60,8 +60,8 @@ describe('FeedbackService', () => {
       expect(result).toHaveProperty('protocol');
       expect(result).toHaveProperty('reviewCta');
       expect(result.reviewCta).toEqual({
-        playStoreUrl: 'https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app',
-        testingTrackUrl: 'https://play.google.com/apps/testing/com.eleicoesprogressistas.app',
+        playStoreUrl: 'https://play.google.com/store/apps/details?id=eleicoes.progressistas',
+        testingTrackUrl: 'https://play.google.com/apps/testing/eleicoes.progressistas',
         supportEmail: 'fmourag@gmail.com',
       });
       expect(prisma.feedback.create).toHaveBeenCalledTimes(1);
@@ -127,8 +127,8 @@ describe('FeedbackService', () => {
 
         // 100% dos usuários recebem exatamente o mesmo CTA com URLs oficiais e e-mail de suporte
         expect(res.reviewCta).toEqual({
-          playStoreUrl: 'https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app',
-          testingTrackUrl: 'https://play.google.com/apps/testing/com.eleicoesprogressistas.app',
+          playStoreUrl: 'https://play.google.com/store/apps/details?id=eleicoes.progressistas',
+          testingTrackUrl: 'https://play.google.com/apps/testing/eleicoes.progressistas',
           supportEmail: 'fmourag@gmail.com',
         });
       }
@@ -149,7 +149,7 @@ describe('FeedbackService', () => {
       expect(result.id).toBe(99);
       expect(result.protocol).toBe('FB-fallback-123');
       expect(result.reviewCta).toBeDefined();
-      expect(result.reviewCta.playStoreUrl).toContain('com.eleicoesprogressistas.app');
+      expect(result.reviewCta.playStoreUrl).toContain('eleicoes.progressistas');
       expect(prisma.$queryRawUnsafe).toHaveBeenCalled();
     });
   });

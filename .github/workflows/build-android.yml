@@ -60,7 +60,7 @@ jobs:
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "Building APK for tag: $TAG"
 
-      - name: Compile Android APK
+      - name: Compile Android AAB & APK
         env:
           EXPO_PUBLIC_API_URL: https://eleicoes-progressistas.onrender.com
           EXPO_PUBLIC_PIX_KEY: "(21) 97194-3298"
@@ -68,58 +68,78 @@ jobs:
         run: |
           set -e
           cd apps/mobile
+          OUTPUT_AAB="eleicoes-progressistas-${{ steps.vars.outputs.tag }}.aab"
           OUTPUT_APK="eleicoes-progressistas-${{ steps.vars.outputs.tag }}-beta.apk"
 
           # Se houver EXPO_TOKEN configurado, tenta compilar localmente via EAS CLI (aproveitando a keystore remota)
           if [ -n "$EXPO_TOKEN" ]; then
-            echo "EXPO_TOKEN detectado. Tentando compilação local com EAS CLI..."
-            if npx eas-cli build --platform android --profile preview --local --non-interactive --output="$OUTPUT_APK"; then
-              echo "Build via EAS local concluído com sucesso!"
-              exit 0
+            echo "EXPO_TOKEN detectado. Tentando compilação de AAB de produção com EAS CLI local..."
+            if npx eas-cli build --platform android --profile production --local --non-interactive --output="$OUTPUT_AAB"; then
+              echo "Build de AAB via EAS local concluído com sucesso!"
             else
-              echo "Aviso: EAS local falhou, prosseguindo com Expo Prebuild + Gradle..."
+              echo "Aviso: EAS local para AAB falhou, prosseguindo com Expo Prebuild..."
             fi
           fi
 
-          echo "Compilando via Expo Prebuild e Gradle..."
-          npx expo prebuild --platform android --clean
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon
+          if [ ! -f "$OUTPUT_AAB" ] || [ ! -f "$OUTPUT_APK" ]; then
+            echo "Compilando via Expo Prebuild e Gradle..."
+            npx expo prebuild --platform android --clean
+            cd android
+            chmod +x gradlew
 
-          # Localizar o APK gerado pelo Gradle
-          BUILT_APK=$(find app/build/outputs/apk -name "*.apk" | head -n 1)
-          if [ -z "$BUILT_APK" ]; then
-            echo "Erro: Nenhum APK encontrado após o build do Gradle."
-            exit 1
+            if [ ! -f "../$OUTPUT_AAB" ]; then
+              echo "Gerando Android App Bundle (AAB)..."
+              ./gradlew bundleRelease --no-daemon
+              BUILT_AAB=$(find app/build/outputs/bundle -name "*.aab" | head -n 1)
+              if [ -n "$BUILT_AAB" ]; then
+                cp "$BUILT_AAB" "../$OUTPUT_AAB"
+                echo "AAB copiado para apps/mobile/$OUTPUT_AAB com sucesso."
+              fi
+            fi
+
+            if [ ! -f "../$OUTPUT_APK" ]; then
+              echo "Gerando APK..."
+              ./gradlew assembleRelease --no-daemon
+              BUILT_APK=$(find app/build/outputs/apk -name "*.apk" | head -n 1)
+              if [ -n "$BUILT_APK" ]; then
+                cp "$BUILT_APK" "../$OUTPUT_APK"
+                echo "APK copiado para apps/mobile/$OUTPUT_APK com sucesso."
+              fi
+            fi
+            cd ..
           fi
-
-          cp "$BUILT_APK" "../$OUTPUT_APK"
-          echo "APK copiado para apps/mobile/$OUTPUT_APK com sucesso."
 
       - name: Compute Integrity Checksum (SHA-256)
         id: checksum
         run: |
+          set -e
           cd apps/mobile
-          APK_FILE="eleicoes-progressistas-${{ steps.vars.outputs.tag }}-beta.apk"
-          if [ ! -f "$APK_FILE" ]; then
-            echo "Erro: $APK_FILE não existe."
-            exit 1
+          TAG="${{ steps.vars.outputs.tag }}"
+          AAB_FILE="eleicoes-progressistas-${TAG}.aab"
+          APK_FILE="eleicoes-progressistas-${TAG}-beta.apk"
+
+          rm -f sha256.txt
+          if [ -f "$AAB_FILE" ]; then
+            SHA256_AAB=$(sha256sum "$AAB_FILE" | cut -d ' ' -f 1)
+            echo "$SHA256_AAB  $AAB_FILE" >> sha256.txt
+            echo "sha256_aab=$SHA256_AAB" >> $GITHUB_OUTPUT
+            echo "AAB SHA-256: $SHA256_AAB"
           fi
-          SHA256=$(sha256sum "$APK_FILE" | cut -d ' ' -f 1)
-          echo "$SHA256" > sha256.txt
-          echo "sha256=$SHA256" >> $GITHUB_OUTPUT
-          echo "=================================================="
-          echo "ARQUIVO: $APK_FILE"
-          echo "SHA-256: $SHA256"
-          echo "=================================================="
+
+          if [ -f "$APK_FILE" ]; then
+            SHA256_APK=$(sha256sum "$APK_FILE" | cut -d ' ' -f 1)
+            echo "$SHA256_APK  $APK_FILE" >> sha256.txt
+            echo "sha256_apk=$SHA256_APK" >> $GITHUB_OUTPUT
+            echo "APK SHA-256: $SHA256_APK"
+          fi
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: eleicoes-progressistas-${{ steps.vars.outputs.tag }}-apk
+          name: eleicoes-progressistas-${{ steps.vars.outputs.tag }}-artifacts
           path: |
-            apps/mobile/eleicoes-progressistas-${{ steps.vars.outputs.tag }}-beta.apk
+            apps/mobile/eleicoes-progressistas-${{ steps.vars.outputs.tag }}*.aab
+            apps/mobile/eleicoes-progressistas-${{ steps.vars.outputs.tag }}*.apk
             apps/mobile/sha256.txt
           retention-days: 30
 
@@ -127,28 +147,39 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -e
           TAG="${{ steps.vars.outputs.tag }}"
+          AAB_FILE="apps/mobile/eleicoes-progressistas-${TAG}.aab"
           APK_FILE="apps/mobile/eleicoes-progressistas-${TAG}-beta.apk"
           SHA_FILE="apps/mobile/sha256.txt"
 
-          echo "## 📦 Release $TAG — Beta Fechado" > release_body.md
+          echo "## 📦 Release $TAG — Versão Oficial" > release_body.md
           echo "" >> release_body.md
-          echo "### 🔐 Verificação de Integridade" >> release_body.md
-          echo "- **Arquivo:** \`eleicoes-progressistas-${TAG}-beta.apk\`" >> release_body.md
-          echo "- **SHA-256:** \`${{ steps.checksum.outputs.sha256 }}\`" >> release_body.md
+          echo "### 🔐 Arquivos e Integridade (SHA-256)" >> release_body.md
+          if [ -f "$AAB_FILE" ]; then
+            echo "- **AAB Google Play Store:** \`eleicoes-progressistas-${TAG}.aab\`" >> release_body.md
+            echo "  - SHA-256: \`${{ steps.checksum.outputs.sha256_aab }}\`" >> release_body.md
+          fi
+          if [ -f "$APK_FILE" ]; then
+            echo "- **APK Sideload:** \`eleicoes-progressistas-${TAG}-beta.apk\`" >> release_body.md
+            echo "  - SHA-256: \`${{ steps.checksum.outputs.sha256_apk }}\`" >> release_body.md
+          fi
           echo "" >> release_body.md
-          echo "### 🚀 Novidades da v2.2.4:" >> release_body.md
-          echo "- **Apoio Cívico via PIX Celular:** Atualizada chave PIX para celular \`(21) 97194-3298\` no padrão E.164 BACEN (\`+5521971943298\`) com cópia em 1 clique e QR Code EMVCo." >> release_body.md
-          echo "- **Slogan Cívico:** Mensagem de destaque *\"Buscando Propostas e não Fofocas\"* na tela de carregamento." >> release_body.md
-          echo "- **Ordenação Alfabética:** Candidatos ordenados alfabeticamente por nome de campanha dentro de cada cargo." >> release_body.md
-          echo "- **Cards de Cargos Destacados:** Visual com faixa temática, elevação aprimorada e cabeçalhos fixos (*sticky*) para fácil localização na rolagem." >> release_body.md
-          echo "- **Blindagem de Segurança:** Defesas de timing-safe comparisons, validação rigorosa de esquemas de URL, sanitização contra CSV injection e limites de entrada." >> release_body.md
+          echo "### 🚀 Novidades da $TAG:" >> release_body.md
+          echo "- **Identificador de Pacote Google Play:** Atualizado para \`eleicoes.progressistas\` em total conformidade com o Google Play Console." >> release_body.md
+          echo "- **Monitoramento da Apuração em Tempo Real:** Eleições Gerais 2026 com paywall cívico e desbloqueio por preenchimento da colinha." >> release_body.md
+          echo "- **Apoio Cívico via PIX Celular:** Padrão E.164 BACEN (\`+5521971943298\`) com QR Code EMVCo." >> release_body.md
+          echo "- **Blindagem de Segurança:** Defesas anti-hacker e integridade eleitoral TSE." >> release_body.md
 
           if gh release view "$TAG" > /dev/null 2>&1; then
-            gh release edit "$TAG" --notes-file release_body.md --prerelease
+            gh release edit "$TAG" --notes-file release_body.md --prerelease=false
           else
-            gh release create "$TAG" --title "Eleições Progressistas $TAG (Beta Fechado)" --notes-file release_body.md --prerelease
+            gh release create "$TAG" --title "Eleições Progressistas $TAG" --notes-file release_body.md
           fi
 
           echo "Fazendo upload dos artefatos na release..."
-          gh release upload "$TAG" "$APK_FILE" "$SHA_FILE" --clobber
+          FILES_TO_UPLOAD=()
+          [ -f "$AAB_FILE" ] && FILES_TO_UPLOAD+=("$AAB_FILE")
+          [ -f "$APK_FILE" ] && FILES_TO_UPLOAD+=("$APK_FILE")
+          [ -f "$SHA_FILE" ] && FILES_TO_UPLOAD+=("$SHA_FILE")
+          gh release upload "$TAG" "${FILES_TO_UPLOAD[@]}" --clobber

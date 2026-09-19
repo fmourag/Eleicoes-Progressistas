@@ -14,8 +14,8 @@ describe('FeedbackController', () => {
       id: 1,
       protocol: 'FB-1710000000-abcd',
       reviewCta: {
-        playStoreUrl: 'https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app',
-        testingTrackUrl: 'https://play.google.com/apps/testing/com.eleicoesprogressistas.app',
+        playStoreUrl: 'https://play.google.com/store/apps/details?id=eleicoes.progressistas',
+        testingTrackUrl: 'https://play.google.com/apps/testing/eleicoes.progressistas',
         supportEmail: 'fmourag@gmail.com',
       },
     }),
@@ -66,8 +66,8 @@ describe('FeedbackController', () => {
         id: 1,
         protocol: 'FB-1710000000-abcd',
         reviewCta: {
-          playStoreUrl: 'https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app',
-          testingTrackUrl: 'https://play.google.com/apps/testing/com.eleicoesprogressistas.app',
+          playStoreUrl: 'https://play.google.com/store/apps/details?id=eleicoes.progressistas',
+          testingTrackUrl: 'https://play.google.com/apps/testing/eleicoes.progressistas',
           supportEmail: 'fmourag@gmail.com',
         },
       });

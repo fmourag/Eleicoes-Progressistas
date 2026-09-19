@@ -90,8 +90,8 @@ export class FeedbackService implements OnModuleInit {
     const resolvedName = dto.testerName?.trim() || dto.nome?.trim() || null;
 
     const reviewCta = {
-      playStoreUrl: 'https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app',
-      testingTrackUrl: 'https://play.google.com/apps/testing/com.eleicoesprogressistas.app',
+      playStoreUrl: 'https://play.google.com/store/apps/details?id=eleicoes.progressistas',
+      testingTrackUrl: 'https://play.google.com/apps/testing/eleicoes.progressistas',
       supportEmail: 'fmourag@gmail.com',
     };
 
