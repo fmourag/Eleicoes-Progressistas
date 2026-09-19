@@ -3,19 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feedback de Testes — Eleições Progressistas 2026</title>
+    <title>Inscrição de Testadores & Homologação — Eleições Progressistas 2026</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #222; max-width: 640px; margin: 0 auto; padding: 20px; background: #f9fbf9; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #222; max-width: 680px; margin: 0 auto; padding: 20px; background: #f9fbf9; }
         .header { text-align: center; margin-bottom: 24px; }
-        h1 { color: #1B5E20; margin-bottom: 4px; font-size: 24px; }
-        .subtitle { color: #555; font-size: 15px; }
-        .badge { display: inline-block; background: #E8F5E9; color: #1B5E20; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-bottom: 8px; }
-        .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0; margin-bottom: 20px; }
+        h1 { color: #1B5E20; margin-bottom: 6px; font-size: 25px; font-weight: 800; }
+        .subtitle { color: #555; font-size: 15px; margin: 0; }
+        .badge { display: inline-block; background: #E8F5E9; color: #1B5E20; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-bottom: 10px; border: 1px solid #c8e6c9; }
+        .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1px solid #e0e0e0; margin-bottom: 20px; }
+        .security-card { background: #E8F5E9; border-left: 5px solid #1B5E20; padding: 18px; border-radius: 8px; margin-bottom: 22px; }
+        .security-title { font-weight: 700; color: #1B5E20; display: flex; align-items: center; gap: 8px; font-size: 15px; margin-bottom: 8px; }
+        .security-text { font-size: 13px; color: #1e4620; margin: 0 0 8px 0; line-height: 1.5; }
+        .security-text:last-child { margin-bottom: 0; }
         .form-group { margin-bottom: 18px; }
         label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; color: #333; }
-        .label-desc { font-weight: normal; font-size: 12px; color: #666; margin-top: 2px; }
+        .label-desc { font-weight: normal; font-size: 12px; color: #666; margin-top: 3px; }
         input[type="text"], input[type="email"], select, textarea {
-            width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; transition: border-color 0.2s;
+            width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s;
         }
         input[type="text"]:focus, input[type="email"]:focus, select:focus, textarea:focus {
             border-color: #1B5E20; outline: none; box-shadow: 0 0 0 2px rgba(27,94,32,0.15);
@@ -28,9 +32,12 @@
         .nps-btn:hover { background: #f0f7f0; border-color: #1B5E20; }
         .nps-btn.selected { background: #1B5E20; color: #fff; border-color: #1B5E20; }
         .nps-labels { display: flex; justify-content: space-between; font-size: 12px; color: #777; margin-top: 4px; }
+        .consent-box { background: #f4fbf5; border: 1px solid #c8e6c9; border-radius: 8px; padding: 14px; margin-top: 14px; }
+        .consent-label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-weight: normal; font-size: 13px; color: #333; margin: 0; }
+        .consent-label input { margin-top: 2px; width: 18px; height: 18px; accent-color: #1B5E20; }
         .btn-submit {
             display: block; width: 100%; background: #1B5E20; color: #fff; border: none; padding: 16px; border-radius: 8px;
-            font-weight: bold; font-size: 17px; cursor: pointer; transition: background 0.2s; margin-top: 10px;
+            font-weight: bold; font-size: 17px; cursor: pointer; transition: background 0.2s; margin-top: 16px;
         }
         .btn-submit:hover { background: #2E7D32; }
         .btn-submit:disabled { background: #a5d6a7; cursor: not-allowed; }
@@ -43,24 +50,49 @@
 </head>
 <body>
     <div class="header">
-        <span class="badge">AUDITORIA CÍVICA ABERTA</span>
+        <span class="badge">PROGRAMA DE TESTADORES OFICIAIS & AUDITORIA CÍVICA</span>
         <h1>Eleições Progressistas</h1>
-        <p class="subtitle">Avaliação e feedback de homologação da versão 2.2.5</p>
+        <p class="subtitle">Inscrição de Testadores Google Play & Homologação da versão 2.2.6</p>
     </div>
 
     <div class="card" id="formCard">
+        <!-- Caixa de Justificativa, Transparência e Segurança LGPD -->
+        <div class="security-card">
+            <div class="security-title">
+                🛡️ Uso Específico do E-mail e Garantia de Privacidade (LGPD)
+            </div>
+            <p class="security-text">
+                <strong>• Finalidade Específica:</strong> O seu e-mail do Google (Gmail ou Google Workspace) é coletado <em>exclusivamente</em> para inclusão na lista autorizada de testadores do <strong>Google Play Console (Teste Interno / Teste Fechado)</strong>, liberando a instalação direta pelo Google Play oficial.
+            </p>
+            <p class="security-text">
+                <strong>• Princípio da Coleta Zero & Sem Compartilhamento:</strong> Seus dados pessoais ou preferências políticas jamais serão comercializados, compartilhados com terceiros, partidos políticos, campanhas eleitorais ou utilizados para spam e publicidade.
+            </p>
+            <p class="security-text">
+                <strong>• Segurança dos Dados:</strong> A comunicação é 100% criptografada (HTTPS/TLS) e armazenada em banco de dados isolado com controle rigoroso de acesso técnico.
+            </p>
+            <p class="security-text">
+                <strong>• Direito de Exclusão (Art. 18 LGPD):</strong> Você pode revogar seu consentimento e solicitar a exclusão de seu e-mail a qualquer momento pelo canal: <a href="mailto:fmourag@gmail.com" style="color: #1B5E20; font-weight: bold;">fmourag@gmail.com</a>.
+            </p>
+        </div>
+
         <form id="feedbackForm">
-            <input type="hidden" id="appVersion" name="appVersion" value="2.2.5">
+            <input type="hidden" id="appVersion" name="appVersion" value="2.2.6">
             <input type="hidden" id="nps" name="nps" value="10">
 
             <div class="form-group">
-                <label for="testerName">Seu Nome (para identificação voluntária — Opcional)</label>
-                <input type="text" id="testerName" name="testerName" placeholder="Ex.: Maria Silva ou Auditor Cívico">
-                <div class="label-desc">Opcional: qualquer cidadão pode enviar feedback aberto sem necessidade de cadastro.</div>
+                <label for="email">Seu E-mail Google / Gmail (Para Acesso Antecipado no Google Play) *</label>
+                <input type="email" id="email" name="email" placeholder="exemplo@gmail.com" required>
+                <div class="label-desc">Informe o e-mail da conta Google vinculada à Play Store do seu smartphone Android para liberação do download oficial.</div>
             </div>
 
             <div class="form-group">
-                <label for="npsSelect">Qual a probabilidade de recomendar este app? (0 a 10) *</label>
+                <label for="testerName">Seu Nome ou Identificação Cívica (Opcional)</label>
+                <input type="text" id="testerName" name="testerName" placeholder="Ex.: Maria Silva ou Auditor Cívico SP">
+                <div class="label-desc">Opcional: utilizado apenas para identificar seu feedback nos relatórios de teste.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="npsSelect">Qual a probabilidade de recomendar este app para sua rede? (0 a 10) *</label>
                 <div class="nps-container" id="npsContainer">
                     <button type="button" class="nps-btn" data-val="0">0</button>
                     <button type="button" class="nps-btn" data-val="1">1</button>
@@ -81,92 +113,101 @@
             </div>
 
             <div class="form-group">
-                <label for="problema">Status do Teste / Problema Encontrado *</label>
+                <label for="problema">Status da Avaliação / Tipo de Apontamento *</label>
                 <select id="problema" name="problema" required>
-                    <option value="nenhum">✅ Nenhum problema — Tudo funcionou com sucesso</option>
-                    <option value="fotos">📸 Falha no carregamento de fotos</option>
-                    <option value="layout">📱 Problema visual / texto cortado</option>
-                    <option value="lentidao">⏳ Lentidão no carregamento de candidatos</option>
+                    <option value="nenhum">✅ Nenhum problema — Testei e tudo funcionou perfeitamente</option>
+                    <option value="interesse_teste">📲 Quero ser testador oficial no Google Play</option>
+                    <option value="fotos">📸 Dúvida ou falha no carregamento de fotos</option>
+                    <option value="layout">📱 Problema visual / texto cortado em tela pequena</option>
+                    <option value="lentidao">⏳ Lentidão na listagem de candidatos</option>
                     <option value="crash">💥 Fechamento inesperado do app</option>
-                    <option value="outro">📝 Outro apontamento</option>
+                    <option value="outro">📝 Sugestão de melhoria ou outro apontamento</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="descricao">Descrição dos Testes e Observações (Opcional)</label>
-                <textarea id="descricao" name="descricao" rows="3" placeholder="Ex.: Testei deputados de SP e RJ, fotos carregaram em menos de 1s..."></textarea>
+                <label for="descricao">Observações, Sugestões ou Relato de Teste (Opcional)</label>
+                <textarea id="descricao" name="descricao" rows="3" placeholder="Ex.: Testei deputados do meu estado, matching rápido e intuitivo. Aguardo link da Play Store..."></textarea>
             </div>
 
             <div class="form-group">
-                <label for="screenshotDesc">Descrição de Captura de Tela / Evidência (Opcional)</label>
-                <input type="text" id="screenshotDesc" name="screenshotDesc" placeholder="Ex.: Print da aba Candidatos sem truncamento">
+                <label for="screenshotDesc">Descrição de Captura de Tela ou Evidência (Opcional)</label>
+                <input type="text" id="screenshotDesc" name="screenshotDesc" placeholder="Ex.: Verifiquei aba de candidatos sem erros">
             </div>
 
             <div class="form-group">
                 <label for="device">Dispositivo / Modelo *</label>
                 <input type="text" id="device" name="device" required>
-                <div class="label-desc">Preenchido automaticamente pelo navegador do seu aparelho.</div>
+                <div class="label-desc">Detectado automaticamente pelo seu navegador para mapeamento de compatibilidade.</div>
             </div>
 
             <div class="form-group">
-                <label for="androidVersion">Versão do Sistema Operacional</label>
+                <label for="androidVersion">Sistema Operacional</label>
                 <input type="text" id="androidVersion" name="androidVersion">
             </div>
 
-            <div class="form-group">
-                <label for="email">Seu E-mail (Opcional)</label>
-                <input type="email" id="email" name="email" placeholder="Opcional para contato">
+            <div class="consent-box">
+                <label class="consent-label">
+                    <input type="checkbox" id="consentTester" name="consentTester" checked required>
+                    <span>Concordo em fornecer meu e-mail exclusivamente para receber o convite de testador oficial na Google Play Store, ciente de que não haverá compartilhamento com terceiros conforme a <a href="/privacidade" target="_blank">Política de Privacidade</a>.</span>
+                </label>
             </div>
 
-            <button type="submit" class="btn-submit" id="submitBtn">🚀 Enviar Feedback de Teste</button>
+            <button type="submit" class="btn-submit" id="submitBtn">🚀 Enviar Inscrição de Testador & Relatório</button>
             <div class="error-msg" id="submitError" style="margin-top: 10px; text-align: center;"></div>
         </form>
     </div>
 
     <div class="success-box" id="successBox">
-        <h2 style="color: #1B5E20; margin-top: 0;">🎉 Feedback Registrado com Sucesso!</h2>
-        <p>Seu reporte foi registrado e integrado à base de auditoria cívica da versão 2.2.5.</p>
-        <div>Seu protocolo de atendimento técnico:</div>
+        <h2 style="color: #1B5E20; margin-top: 0;">🎉 Inscrição & Relatório Registrados com Sucesso!</h2>
+        <p>Seu e-mail e apontamentos foram integrados à base de homologação da versão 2.2.6.</p>
+        <div>Seu protocolo único de atendimento técnico:</div>
         <div class="protocol-badge" id="protocolBadge">FB-...</div>
 
-        <!-- Próximos Passos Neutros e Universais (Exibidos para 100% dos envios) -->
         <div class="next-steps-card" style="margin-top: 20px; padding: 18px; background: #ffffff; border: 1px solid #c8e6c9; border-radius: 8px; text-align: left;">
             <h3 style="color: #1B5E20; margin-top: 0; font-size: 16px; display: flex; align-items: center; gap: 8px;">
-                📋 Próximos Passos (Opcionais)
+                📋 Como Instalar o App no Google Play
             </h3>
             
             <div style="margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid #e0e0e0;">
-                <strong style="color: #333; display: block; margin-bottom: 4px;">🛠️ Suporte e Diagnóstico Técnico Direto</strong>
+                <strong style="color: #333; display: block; margin-bottom: 6px;">1️⃣ Aceitar o Convite de Teste no Google Play</strong>
+                <p style="font-size: 13px; color: #555; margin: 0 0 10px 0;">
+                    Toque no link abaixo para aceitar o convite de testador com a mesma conta Google informada:
+                </p>
+                <a href="https://play.google.com/apps/testing/eleicoes.progressistas" id="testingTrackLink" target="_blank" style="background: #1B5E20; font-size: 14px; padding: 10px 18px; text-decoration: none; color: #fff; border-radius: 6px; font-weight: bold; display: inline-block;">
+                    📲 Acessar Trilha de Testes Google Play
+                </a>
+            </div>
+
+            <div style="margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid #e0e0e0;">
+                <strong style="color: #333; display: block; margin-bottom: 6px;">2️⃣ Página Oficial na Loja</strong>
+                <p style="font-size: 13px; color: #555; margin: 0 0 10px 0;">
+                    Após aceitar o convite, acesse a página oficial do app na Play Store:
+                </p>
+                <a href="https://play.google.com/store/apps/details?id=eleicoes.progressistas" id="playStoreLink" target="_blank" style="color: #1B5E20; font-weight: bold; font-size: 13px;">
+                    ⭐ Ver na Google Play Store
+                </a>
+            </div>
+
+            <div>
+                <strong style="color: #333; display: block; margin-bottom: 4px;">🛠️ Contato Direto com o Desenvolvedor</strong>
                 <p style="font-size: 13px; color: #555; margin: 0 0 6px 0;">
-                    Caso deseje complementar seu reporte com capturas de tela, registros ou detalhes adicionais, entre em contato direto pelo canal:
+                    Dúvidas sobre o teste ou envio de prints complementares:
                 </p>
                 <a href="mailto:fmourag@gmail.com" id="supportMailLink" style="color: #1B5E20; font-weight: bold; font-size: 13px;">
                     ✉️ fmourag@gmail.com
                 </a>
             </div>
-
-            <div style="text-align: center;">
-                <strong style="color: #333; display: block; margin-bottom: 6px; text-align: left;">⭐ Avaliação Pública no Google Play</strong>
-                <p style="font-size: 13px; color: #555; margin: 0 0 12px 0; text-align: left;">
-                    Convidamos você a deixar sua avaliação pública na Google Play Store. Todas as impressões e experiências dos usuários são bem-vindas:
-                </p>
-                <a href="https://play.google.com/store/apps/details?id=com.eleicoesprogressistas.app" id="playStoreLink" target="_blank" class="btn" style="background: #1B5E20; font-size: 15px; padding: 12px 24px; text-decoration: none; color: #fff; border-radius: 6px; font-weight: bold; display: inline-block;">
-                    Avaliar no Google Play
-                </a>
-                <p style="font-size: 12px; color: #666; margin-top: 10px; margin-bottom: 0;">
-                    Testadores da Trilha Fechada: <a href="https://play.google.com/apps/testing/com.eleicoesprogressistas.app" id="testingTrackLink" target="_blank" style="color: #1B5E20;">Acessar Trilha de Testes Google Play</a>
-                </p>
-            </div>
         </div>
 
         <p style="font-size: 14px; color: #555; margin-top: 18px;">Muito obrigado por contribuir com a democracia e a transparência eleitoral! 🇧🇷</p>
-        <p><a href="/beta" style="font-weight: bold; text-decoration: none;">← Voltar para a página de instalação Beta</a></p>
+        <p><a href="/beta" style="font-weight: bold; text-decoration: none;">← Voltar para a página de instalação Beta (APK Direto)</a></p>
     </div>
 
     <footer>
         <p>
             <a href="/privacidade">Política de Privacidade</a> • 
-            <a href="https://github.com/fmourag/Eleicoes-Progressistas" target="_blank">Código no GitHub</a> • 
+            <a href="https://github.com/fmourag/Eleicoes-Progressistas" target="_blank">Código Aberto no GitHub</a> • 
             Contato: <a href="mailto:fmourag@gmail.com">fmourag@gmail.com</a>
         </p>
     </footer>
@@ -216,7 +257,7 @@
             submitError.style.display = "none";
 
             submitBtn.disabled = true;
-            submitBtn.innerText = "⏳ Enviando dados de teste...";
+            submitBtn.innerText = "⏳ Registrando testador...";
 
             var testerNameVal = document.getElementById("testerName").value.trim();
 
@@ -242,17 +283,17 @@
 
                 if (!response.ok) {
                     var errData = await response.json().catch(function() { return {}; });
-                    throw new Error(errData.message || ("Erro " + response.status + " ao registrar feedback"));
+                    throw new Error(errData.message || ("Erro " + response.status + " ao registrar testador"));
                 }
 
                 var data = await response.json();
                 var protocolStr = data.protocol || ("FB-" + data.id);
                 document.getElementById("protocolBadge").innerText = protocolStr;
 
-                // Suporte interno vinculado ao protocolo
+                // Suporte vinculado ao protocolo
                 var mailLink = document.getElementById("supportMailLink");
                 if (mailLink) {
-                    mailLink.href = "mailto:fmourag@gmail.com?subject=" + encodeURIComponent("Suporte Cívico " + protocolStr);
+                    mailLink.href = "mailto:fmourag@gmail.com?subject=" + encodeURIComponent("Suporte Testador " + protocolStr);
                 }
 
                 // Sincroniza links do Google Play retornados pelo backend
@@ -274,7 +315,7 @@
                 submitError.innerText = "❌ " + err.message;
                 submitError.style.display = "block";
                 submitBtn.disabled = false;
-                submitBtn.innerText = "🚀 Enviar Feedback de Teste";
+                submitBtn.innerText = "🚀 Enviar Inscrição de Testador & Relatório";
             }
         });
     </script>

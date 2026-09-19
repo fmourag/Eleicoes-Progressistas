@@ -104,7 +104,7 @@ export class FeedbackService implements OnModuleInit {
           email: dto.email?.trim() || null,
           device: dto.device?.trim() || 'Desconhecido',
           androidVersion: dto.androidVersion?.trim() || null,
-          appVersion: dto.appVersion?.trim() || '2.2.5',
+          appVersion: dto.appVersion?.trim() || '2.2.6',
           nps: Number(dto.nps),
           problema: dto.problema?.trim() || 'nenhum',
           descricao: dto.descricao?.trim() || null,
@@ -129,7 +129,7 @@ export class FeedbackService implements OnModuleInit {
           INSERT INTO "Feedback" ("protocol", "testerName", "nome", "email", "device", "androidVersion", "appVersion", "nps", "problema", "descricao", "screenshotDesc")
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
           RETURNING "id", "protocol"
-        `, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.5', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
+        `, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.6', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
 
         const newId = result[0]?.id || Date.now();
         const retProtocol = result[0]?.protocol || protocol;
@@ -145,7 +145,7 @@ export class FeedbackService implements OnModuleInit {
             INSERT INTO "Feedback" ("protocol", "testerCode", "testerName", "nome", "email", "device", "androidVersion", "appVersion", "nps", "problema", "descricao", "screenshotDesc")
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
             RETURNING "id", "protocol"
-          `, protocol, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.5', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
+          `, protocol, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.6', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
 
           const newId = result[0]?.id || Date.now();
           const retProtocol = result[0]?.protocol || protocol;
@@ -248,5 +248,36 @@ export class FeedbackService implements OnModuleInit {
 
     // UTF-8 BOM para abrir perfeitamente no Excel brasileiro
     return '\uFEFF' + [header, ...rows].join('\r\n');
+  }
+
+  async getPlayStoreTestersCsv(): Promise<string> {
+    const feedbacks = await this.prisma.feedback.findMany({
+      where: {
+        email: { not: null },
+      },
+      select: {
+        email: true,
+      },
+      orderBy: { id: 'asc' },
+    });
+
+    const emailSet = new Set<string>();
+    const validEmails: string[] = [];
+
+    // Sempre inclui o desenvolvedor principal como testador
+    const defaultDev = 'fmourag@gmail.com';
+    emailSet.add(defaultDev);
+    validEmails.push(defaultDev);
+
+    for (const f of feedbacks) {
+      if (!f.email) continue;
+      const clean = f.email.trim().toLowerCase();
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean) && !emailSet.has(clean)) {
+        emailSet.add(clean);
+        validEmails.push(clean);
+      }
+    }
+
+    return validEmails.join('\r\n');
   }
 }

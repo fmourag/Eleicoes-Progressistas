@@ -89,14 +89,14 @@ describe('FeedbackService', () => {
 
       expect(result.id).toBe(43);
       expect(result.reviewCta).toBeDefined();
-      expect(result.reviewCta.playStoreUrl).toContain('com.eleicoesprogressistas.app');
+      expect(result.reviewCta.playStoreUrl).toContain('eleicoes.progressistas');
       expect(prisma.feedback.create).toHaveBeenCalledTimes(1);
       const callData = prisma.feedback.create.mock.calls[0][0].data;
       expect(callData.testerName).toBeNull();
       expect(callData.email).toBeNull();
       expect(callData.descricao).toBeNull();
       expect(callData.screenshotDesc).toBeNull();
-      expect(callData.appVersion).toBe('2.2.5');
+      expect(callData.appVersion).toBe('2.2.6');
     });
 
     it('deve retornar CTA idêntico e neutro para qualquer NPS [0, 3, 6, 8, 9, 10] e qualquer problema (Fim do Review Gating)', async () => {

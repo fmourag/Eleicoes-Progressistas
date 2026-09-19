@@ -306,10 +306,10 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         <h1>📊 Monitor de Feedbacks & Beta</h1>
         <p>Eleições Progressistas — Painel Administrativo em Tempo Real</p>
       </div>
-      <div class="auth-bar">
         <input type="password" id="adminToken" placeholder="Token Admin (ex: dev-secret)" value="dev-secret">
         <button class="btn" onclick="carregarDados()">Carregar</button>
         <button class="btn btn-secondary" onclick="exportarCsv()">📥 CSV</button>
+        <button class="btn" style="background: #1B5E20; color: #fff;" onclick="exportarTestadores()">👥 Testadores Play Store</button>
       </div>
     </header>
 
@@ -512,6 +512,11 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
       window.location.href = '/api/feedback/export.csv?token=' + encodeURIComponent(token);
     }
 
+    function exportarTestadores() {
+      const token = document.getElementById('adminToken').value.trim();
+      window.location.href = '/api/feedback/testers.csv?token=' + encodeURIComponent(token);
+    }
+
     // Inicialização automática
     carregarDados();
   </script>
@@ -572,5 +577,24 @@ export class FeedbackController {
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="feedback-export-${new Date().toISOString().slice(0, 10)}.csv"`);
     return res.send(csvData);
+  }
+
+  @Get('testers.csv')
+  async exportTestersCsv(
+    @Res() res: Response,
+    @Headers('x-admin-token') adminToken?: string,
+    @Headers('x-admin-key') adminKey?: string,
+    @Query('token') queryToken?: string,
+    @Query('key') queryKey?: string,
+  ) {
+    const token = adminToken || adminKey || queryToken || queryKey;
+    if (!isValidAdmin(token)) {
+      throw new UnauthorizedException('Token administrativo inválido ou ausente.');
+    }
+
+    const testersData = await this.feedbackService.getPlayStoreTestersCsv();
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="google-play-testers-${new Date().toISOString().slice(0, 10)}.csv"`);
+    return res.send(testersData);
   }
 }
