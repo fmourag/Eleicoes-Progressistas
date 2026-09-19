@@ -12,6 +12,7 @@ out/
 # Expo
 .expo/
 *.jks
+*.keystore
 *.p8
 *.p12
 *.key
@@ -67,6 +68,8 @@ scratch/
 Iniciando
 tmp/
 *.zip
+scripts/fetch-keystore.js
+scripts/sign-aab.py
 
 # Candidate cache
 apps/api/public/candidates/*.jpg

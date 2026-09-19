@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: 'Tag da versão da release (ex: v2.2.4)'
+        description: 'Tag da versão da release (ex: v2.2.6)'
         required: false
-        default: 'v2.2.4'
+        default: 'v2.2.6'
   push:
     tags:
       - 'v*'
@@ -39,6 +39,7 @@ jobs:
           echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0" || true
 
       - name: Install Dependencies
         run: npm ci
@@ -55,7 +56,7 @@ jobs:
           elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             TAG="${{ github.ref_name }}"
           else
-            TAG="v2.2.4"
+            TAG="v2.2.6"
           fi
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "Building APK for tag: $TAG"
