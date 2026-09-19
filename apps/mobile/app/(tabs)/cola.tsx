@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
@@ -8,6 +8,8 @@ import { useLocationStore } from '../../stores/location.store';
 import { PixApoio } from '../../components/PixApoio';
 import { ColaModal } from '../../components/ColaModal';
 import { CivicBanner } from '../../components/CivicBanner';
+import { ApuracaoFeedbackBenefitModal } from '../../components/ApuracaoFeedbackBenefitModal';
+import { isApuracaoUnlocked } from '../../src/storage/civic-support-storage';
 import { API_URL } from '../../services/api';
 import { storeReviewService } from '../../services/store-review.service';
 
@@ -29,6 +31,8 @@ export default function ColaScreen() {
   const { location } = useLocationStore();
   const [downloading, setDownloading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [benefitModalVisible, setBenefitModalVisible] = useState(false);
+  const [promptedFullCola, setPromptedFullCola] = useState(false);
 
   const selectedList = getSelectedList();
   const selectedIds = selectedList.map((c) => c.id).join(',');
@@ -39,6 +43,27 @@ export default function ColaScreen() {
   const pdfViewUrl = `${apiUrl}/api/cola/pdf?ids=${encodeURIComponent(selectedIds)}&state=${encodeURIComponent(userUf)}&municipality=${encodeURIComponent(userMun)}`;
   const pdfDownloadUrl = `${apiUrl}/api/cola/pdf/download?ids=${encodeURIComponent(selectedIds)}&state=${encodeURIComponent(userUf)}&municipality=${encodeURIComponent(userMun)}`;
 
+  // Disparo automático ao concluir todos os 6 cargos da cola eleitoral
+  useEffect(() => {
+    if (selectedList.length === VOTING_SEQUENCE.length && !promptedFullCola) {
+      if (!isApuracaoUnlocked()) {
+        setPromptedFullCola(true);
+        const timer = setTimeout(() => {
+          setBenefitModalVisible(true);
+        }, 800);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [selectedList.length, promptedFullCola]);
+
+  function triggerBenefitIfLocked(delayMs = 1000) {
+    if (!isApuracaoUnlocked()) {
+      setTimeout(() => {
+        setBenefitModalVisible(true);
+      }, delayMs);
+    }
+  }
+
   function handleViewPdf() {
     setHasGeneratedPdfInSession(true);
     storeReviewService.recordPdfGenerated();
@@ -48,6 +73,7 @@ export default function ColaScreen() {
     } else {
       Linking.openURL(pdfViewUrl);
     }
+    triggerBenefitIfLocked();
   }
 
   function handleDownloadPdf() {
@@ -67,6 +93,7 @@ export default function ColaScreen() {
       Linking.openURL(pdfDownloadUrl);
       setTimeout(() => setDownloading(false), 1500);
     }
+    triggerBenefitIfLocked(1500);
   }
 
   function handleShareWhatsApp() {
@@ -90,6 +117,7 @@ export default function ColaScreen() {
     lines.push('📲 Baixe o App Eleições Progressistas: https://eleicoes-progressistas.onrender.com/beta');
     const text = encodeURIComponent(lines.join('\n'));
     Linking.openURL(`https://api.whatsapp.com/send?text=${text}`);
+    triggerBenefitIfLocked();
   }
 
   function handleShareEmail() {
@@ -99,6 +127,7 @@ export default function ColaScreen() {
       `Confira minha colinha eleitoral para o dia da votação:\n\n${pdfViewUrl}\n\nLembre-se de imprimir antes de ir votar!`
     );
     Linking.openURL(`mailto:?subject=${subject}&body=${body}`);
+    triggerBenefitIfLocked();
   }
 
   return (
@@ -320,6 +349,13 @@ export default function ColaScreen() {
         </View>
 
         <ColaModal visible={modalOpen} onClose={() => setModalOpen(false)} />
+        <ApuracaoFeedbackBenefitModal
+          visible={benefitModalVisible}
+          onClose={() => setBenefitModalVisible(false)}
+          onUnlocked={() => {
+            // Callback opcional após liberação
+          }}
+        />
       </View>
     </ScrollView>
   );

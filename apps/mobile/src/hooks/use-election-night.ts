@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useColaStore } from '../../stores/cola.store';
 import { useLocationStore } from '../../stores/location.store';
-import { getCivicSupportState } from '../storage/civic-support-storage';
+import { getCivicSupportState, isApuracaoUnlocked } from '../storage/civic-support-storage';
 import { electionNightStorage } from '../storage/election-night-storage';
 import { tseResultsService } from '../services/tse-results.service';
 import { electionNotificationsService } from '../services/election-notifications.service';
@@ -27,7 +27,7 @@ export function useElectionNight(forceSimulation = false) {
   const userUf = location?.uf || 'BR';
 
   const [hasContributed, setHasContributed] = useState<boolean>(() => {
-    return getCivicSupportState().hasContributed;
+    return isApuracaoUnlocked();
   });
 
   const [results, setResults] = useState<Map<string, ElectionResult>>(() => {
@@ -47,9 +47,9 @@ export function useElectionNight(forceSimulation = false) {
   const pollingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const checkCivicAccess = useCallback(() => {
-    const state = getCivicSupportState();
-    setHasContributed(state.hasContributed);
-    return state.hasContributed;
+    const unlocked = isApuracaoUnlocked();
+    setHasContributed(unlocked);
+    return unlocked;
   }, []);
 
   const refreshResults = useCallback(async () => {

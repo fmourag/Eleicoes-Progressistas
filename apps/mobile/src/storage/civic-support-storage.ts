@@ -1,4 +1,4 @@
-﻿import { PIX_KEY, PIX_KEY_DISPLAY, PIX_KEY_TYPE, PIX_AMOUNT, PIX_BENEFICIARY_NAME, PIX_CITY } from '../constants/civic-support';
+import { PIX_KEY, PIX_KEY_DISPLAY, PIX_KEY_TYPE, PIX_AMOUNT, PIX_BENEFICIARY_NAME, PIX_CITY } from '../constants/civic-support';
 
 export interface CivicSupportRecord {
   hasContributed: boolean;
@@ -6,6 +6,8 @@ export interface CivicSupportRecord {
   pixKey: string;
   pixKeyType: string;
   amount?: number;
+  unlockedViaFeedback?: boolean;
+  feedbackProtocol?: string;
   updatedAt: string;
 }
 
@@ -120,3 +122,34 @@ export function getPixDetails() {
     defaultAmount: PIX_AMOUNT,
   };
 }
+
+const APURACAO_UNLOCK_KEY = '@eleicoes_progressistas:apuracao_unlocked';
+
+/**
+ * Verifica se a apuração de candidatos já está liberada no dispositivo
+ */
+export function isApuracaoUnlocked(): boolean {
+  const state = getCivicSupportState();
+  if (state.hasContributed || state.unlockedViaFeedback) return true;
+  const flag = safeGetItem(APURACAO_UNLOCK_KEY);
+  return flag === 'true';
+}
+
+/**
+ * Libera permanentemente a apuração no dispositivo via envio de feedback
+ */
+export function unlockApuracaoViaFeedback(feedbackProtocol?: string): CivicSupportRecord {
+  safeSetItem(APURACAO_UNLOCK_KEY, 'true');
+  const current = getCivicSupportState();
+  const updated: CivicSupportRecord = {
+    ...current,
+    hasContributed: true,
+    unlockedViaFeedback: true,
+    feedbackProtocol: feedbackProtocol || undefined,
+    contributionDate: current.contributionDate || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  safeSetItem(STORAGE_KEY, JSON.stringify(updated));
+  return updated;
+}
+

@@ -17,6 +17,7 @@ import { CivicSupportModal } from '../components/CivicSupportModal';
 import { useElectionNight } from '../src/hooks/use-election-night';
 import { ElectionResult } from '../src/types/election-night';
 import { PIX_AMOUNT, PIX_KEY_DISPLAY } from '../src/constants/civic-support';
+import { isApuracaoUnlocked } from '../src/storage/civic-support-storage';
 
 export default function ApuracaoScreen() {
   const colors = useThemeColors();
@@ -70,8 +71,10 @@ export default function ApuracaoScreen() {
 
   const containerStyle = maxW ? { maxWidth: maxW, alignSelf: 'center' as const, width: '100%' as const } : {};
 
-  // Se não contribuiu com o apoio cívico, exibe o Paywall Cívico Obrigatório
-  if (!hasContributed) {
+  const isUnlocked = hasContributed || isApuracaoUnlocked();
+
+  // Se não liberou o acesso, exibe o Paywall Cívico Obrigatório
+  if (!isUnlocked) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <ScrollView contentContainerStyle={[{ padding }, containerStyle]}>
