@@ -275,11 +275,20 @@
             };
 
             try {
-                var response = await fetch("/api/feedback", {
+                // Tenta /feedback diretamente e /api/feedback com fallback transparente
+                var response = await fetch("/feedback", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
+
+                if (!response.ok && response.status === 404) {
+                    response = await fetch("/api/feedback", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                }
 
                 if (!response.ok) {
                     var errData = await response.json().catch(function() { return {}; });

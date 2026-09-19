@@ -173,6 +173,18 @@ async function bootstrap() {
   const expressApp = app.getHttpAdapter().getInstance();
   const telemetryService = app.get(TelemetryService);
 
+  // Compatibilidade transparente: roteia requisições de /api/feedback para /feedback (GET, POST, CSV, painel)
+  expressApp.use((req: Request, _res: Response, next: () => void) => {
+    if (req.url === '/api/feedback') {
+      req.url = '/feedback';
+    } else if (req.url.startsWith('/api/feedback?')) {
+      req.url = '/feedback' + req.url.substring('/api/feedback'.length);
+    } else if (req.url.startsWith('/api/feedback/')) {
+      req.url = req.url.replace(/^\/api\/feedback/, '/feedback');
+    }
+    next();
+  });
+
   const apiStaticDir = existsSync(join(__dirname, '..', 'static'))
     ? join(__dirname, '..', 'static')
     : join(process.cwd(), 'apps', 'api', 'static');
