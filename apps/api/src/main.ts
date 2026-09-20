@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
-import { existsSync } from 'fs';
+import { existsSync, readdirSync } from 'fs';
 import { Request, Response, json, urlencoded, static as expressStatic } from 'express';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
@@ -292,13 +292,23 @@ async function bootstrap() {
       // Ignora falhas de telemetria para não afetar o download
     }
 
-    const apkPath = join(apiStaticDir, 'apk', 'eleicoes-progressistas-v2.2.7.apk');
+    const apkDir = join(apiStaticDir, 'apk');
+    let apkFile = 'eleicoes-progressistas-v2.2.8.apk';
+    let apkPath = join(apkDir, apkFile);
+    if (!existsSync(apkPath) && existsSync(apkDir)) {
+      const found = readdirSync(apkDir).filter((f) => f.endsWith('.apk')).sort().reverse()[0];
+      if (found) {
+        apkFile = found;
+        apkPath = join(apkDir, found);
+      }
+    }
+
     if (existsSync(apkPath)) {
       res.setHeader('Content-Type', 'application/vnd.android.package-archive');
-      res.setHeader('Content-Disposition', 'attachment; filename="eleicoes-progressistas-v2.2.7.apk"');
+      res.setHeader('Content-Disposition', `attachment; filename="${apkFile}"`);
       return res.sendFile(apkPath);
     }
-    res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.7/eleicoes-progressistas-v2.2.7-beta.apk');
+    res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.8/eleicoes-progressistas-v2.2.8-beta.apk');
   });
   expressApp.get('/download/apk/sha256', (_req: Request, res: Response) => {
     const shaPath = join(apiStaticDir, 'apk', 'sha256.txt');

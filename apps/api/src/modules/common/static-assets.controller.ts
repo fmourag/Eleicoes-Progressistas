@@ -1,7 +1,7 @@
 import { Controller, Get, Res, Req } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { join } from 'path';
-import { existsSync, createReadStream } from 'fs';
+import { existsSync, createReadStream, readdirSync } from 'fs';
 
 @Controller()
 export class StaticAssetsController {
@@ -22,17 +22,26 @@ export class StaticAssetsController {
   @Get('download/apk')
   downloadApk(@Res() res: Response) {
     const staticDir = this.getStaticDir();
-    const apkPath = join(staticDir, 'apk', 'eleicoes-progressistas-v2.2.5.apk');
+    const apkDir = join(staticDir, 'apk');
+    let apkFile = 'eleicoes-progressistas-v2.2.8.apk';
+    let apkPath = join(apkDir, apkFile);
+    if (!existsSync(apkPath) && existsSync(apkDir)) {
+      const found = readdirSync(apkDir).filter((f) => f.endsWith('.apk')).sort().reverse()[0];
+      if (found) {
+        apkFile = found;
+        apkPath = join(apkDir, found);
+      }
+    }
 
     if (existsSync(apkPath)) {
       res.setHeader('Content-Type', 'application/vnd.android.package-archive');
-      res.setHeader('Content-Disposition', 'attachment; filename="eleicoes-progressistas-v2.2.5.apk"');
+      res.setHeader('Content-Disposition', `attachment; filename="${apkFile}"`);
       const stream = createReadStream(apkPath);
       return stream.pipe(res);
     }
 
     // Fallback caso o arquivo físico não tenha sido sincronizado
-    return res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.5/eleicoes-progressistas-v2.2.5-beta.apk');
+    return res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.8/eleicoes-progressistas-v2.2.8-beta.apk');
   }
 
   @Get('download/apk/sha256')

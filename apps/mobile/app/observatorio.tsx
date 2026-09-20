@@ -15,6 +15,7 @@ import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { CivicEmblem } from '../components/CivicEmblem';
 import { EthicalAd } from '../components/EthicalAd';
+import { APP_VERSION } from '../src/constants/app';
 
 const PILLARS_MAP: Record<string, { name: string; icon: string }> = {
   p1: { name: 'Direitos Trabalhistas & Renda', icon: '💼' },
@@ -451,7 +452,7 @@ export default function ObservatorioScreen() {
         {/* Footer info */}
         <View style={styles.footer}>
           <Text style={[styles.footerText, { color: colors.textMuted }]}>
-            Observatório de Mandatos • Eleições Progressistas v2.2.5
+            Observatório de Mandatos • Eleições Progressistas {APP_VERSION}
           </Text>
           <Text style={[styles.footerSubtext, { color: colors.textFaint }]}>
             100% Stateless • Dados abertos da Câmara dos Deputados e Senado Federal • Atualização noturna às 02:00

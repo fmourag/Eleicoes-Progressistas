@@ -1,6 +1,6 @@
 /**
  * Constantes Oficiais para Apoio Civico e Financiamento Coletivo
- * Plataforma Eleicoes Progressistas v2.2.5
+ * Plataforma Eleicoes Progressistas v2.2.8
  *
  * FONTE UNICA DA CHAVE PIX (Regra de Ouro 1):
  * - PIX_KEY: formato E.164 (+5521971943298) para o payload EMVCo / BACEN

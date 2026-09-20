@@ -96,7 +96,7 @@ describe('FeedbackService', () => {
       expect(callData.email).toBeNull();
       expect(callData.descricao).toBeNull();
       expect(callData.screenshotDesc).toBeNull();
-      expect(callData.appVersion).toBe('2.2.7');
+      expect(callData.appVersion).toBe('2.2.8');
     });
 
     it('deve retornar CTA idêntico e neutro para qualquer NPS [0, 3, 6, 8, 9, 10] e qualquer problema (Fim do Review Gating)', async () => {

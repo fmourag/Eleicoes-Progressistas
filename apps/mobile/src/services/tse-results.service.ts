@@ -3,6 +3,7 @@ import { TseApiResponse, ElectionResult, NationalStats } from '../types/election
 import { RateLimiter } from '../utils/rate-limiter';
 import { MemoryCache } from '../utils/memory-cache';
 import { ColaCandidate } from '../../stores/cola.store';
+import { APP_VERSION } from '../constants/app';
 
 export class TseResultsService {
   private static instance: TseResultsService;
@@ -56,7 +57,7 @@ export class TseResultsService {
       const res = await fetch(url, {
         headers: {
           'Accept': 'application/json',
-          'User-Agent': 'EleicoesProgressistas/2.2.5 (Apoio Civico; contato: fmourag@gmail.com)',
+          'User-Agent': `EleicoesProgressistas/${APP_VERSION.replace(/^v/, '')} (Apoio Civico; contato: fmourag@gmail.com)`,
         },
         signal: controller.signal,
       });

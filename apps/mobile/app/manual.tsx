@@ -15,6 +15,7 @@ import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { CivicEmblem } from '../components/CivicEmblem';
 import { PROGRESSIVE_FILTER_DISCLAIMER } from '@np/shared';
+import { APP_VERSION } from '../src/constants/app';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -516,7 +517,7 @@ export default function ManualDoUsuarioScreen() {
               <Text style={{ fontSize: 20 }}>📜</Text>
               <View style={{ flex: 1 }}>
                 <Text style={[styles.supportBtnTitle, { color: colors.text }]}>Nota de Transparência</Text>
-                <Text style={[styles.supportBtnSub, { color: colors.textMuted }]}>LGPD & Diretrizes v2.2.5</Text>
+                <Text style={[styles.supportBtnSub, { color: colors.textMuted }]}>LGPD & Diretrizes {APP_VERSION}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -525,7 +526,7 @@ export default function ManualDoUsuarioScreen() {
         {/* Rodapé de Encerramento */}
         <View style={styles.footerNotice}>
           <Text style={[styles.footerText, { color: colors.textMuted }]}>
-            Eleições Progressistas v2.2.5 • Tecnologia Cívica Auditável • 100% Independente
+            Eleições Progressistas {APP_VERSION} • Tecnologia Cívica Auditável • 100% Independente
           </Text>
         </View>
       </View>
