@@ -292,13 +292,13 @@ async function bootstrap() {
       // Ignora falhas de telemetria para não afetar o download
     }
 
-    const apkPath = join(apiStaticDir, 'apk', 'eleicoes-progressistas-v2.2.5.apk');
+    const apkPath = join(apiStaticDir, 'apk', 'eleicoes-progressistas-v2.2.7.apk');
     if (existsSync(apkPath)) {
       res.setHeader('Content-Type', 'application/vnd.android.package-archive');
-      res.setHeader('Content-Disposition', 'attachment; filename="eleicoes-progressistas-v2.2.5.apk"');
+      res.setHeader('Content-Disposition', 'attachment; filename="eleicoes-progressistas-v2.2.7.apk"');
       return res.sendFile(apkPath);
     }
-    res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.5/eleicoes-progressistas-v2.2.5-beta.apk');
+    res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.7/eleicoes-progressistas-v2.2.7-beta.apk');
   });
   expressApp.get('/download/apk/sha256', (_req: Request, res: Response) => {
     const shaPath = join(apiStaticDir, 'apk', 'sha256.txt');

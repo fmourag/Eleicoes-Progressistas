@@ -60,13 +60,17 @@ if (fs.existsSync(rootStaticDir)) {
 }
 
 const apkDir = path.join(apiStaticDir, 'apk');
-const apkFile = path.join(apkDir, 'eleicoes-progressistas-v2.2.5.apk');
+let apkFile = path.join(apkDir, 'eleicoes-progressistas-v2.2.7.apk');
+if (!fs.existsSync(apkFile) && fs.existsSync(apkDir)) {
+  const found = fs.readdirSync(apkDir).find(f => f.endsWith('.apk'));
+  if (found) apkFile = path.join(apkDir, found);
+}
 const shaFile = path.join(apkDir, 'sha256.txt');
 
 if (fs.existsSync(apkFile) && fs.existsSync(shaFile)) {
   const stat = fs.statSync(apkFile);
   const sha = fs.readFileSync(shaFile, 'utf8').trim();
-  console.log(`[render:copy-assets] APK verified: size=${stat.size} bytes, sha256=${sha}`);
+  console.log(`[render:copy-assets] APK verified (${path.basename(apkFile)}): size=${stat.size} bytes, sha256=${sha}`);
 } else {
   console.warn('[render:copy-assets] Warning: APK file or sha256.txt missing in apps/api/static/apk/');
 }
