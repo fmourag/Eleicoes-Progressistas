@@ -14,7 +14,7 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PROGRESSIVE_GUIDELINE_NOTICE, getTseDadosAbertosSearchUrl, isCandidateAllowedInProgressiveRoll } from '@np/shared';
-import { candidatesApi, retryWithBackoff } from '../../services/api';
+import { candidatesApi, retryWithBackoff, saveCandidateListToStorage, getCandidateListFromStorage } from '../../services/api';
 import { useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
 import { CandidateCard } from '../../components/CandidateCard';
@@ -219,9 +219,22 @@ export default function CandidatosScreen() {
   }, [location?.uf, showAllStates]);
 
   async function loadCandidates(stateFilter?: string) {
-    setLoading(true);
+    const cacheKey = stateFilter || 'all';
+
+    // 1. CARREGAMENTO INSTANTÂNEO DO CACHE (0ms):
+    // Se o usuário já tiver aberto o aplicativo alguma vez, os dados aparecem na tela no mesmo instante!
+    const cached = await getCandidateListFromStorage(cacheKey);
+    if (cached && cached.length > 0) {
+      setCandidates(cached as CandidateListItem[]);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+
     setIsOffline(false);
     setErrorMessage(null);
+
+    // 2. SINCRONIZAÇÃO EM SEGUNDO PLANO (Stale-While-Revalidate):
     try {
       const res = await retryWithBackoff(
         async () => {
@@ -236,21 +249,28 @@ export default function CandidatosScreen() {
       ).catch(() => null);
 
       if (res && !Array.isArray(res) && (res as { isFallback?: boolean }).isFallback) {
-        setIsOffline(true);
-        setErrorMessage((res as { message?: string }).message || 'Servidor temporariamente em inicialização. Toque em tentar novamente.');
-        setCandidates([]);
+        if (!cached || cached.length === 0) {
+          setIsOffline(true);
+          setErrorMessage((res as { message?: string }).message || 'Servidor temporariamente em inicialização. Toque em tentar novamente.');
+          setCandidates([]);
+        }
         return;
       }
       const list = Array.isArray(res) ? res : ((res as { results?: CandidateListItem[] })?.results ?? []);
-      if (list.length === 0 && !res) {
+      if (list.length > 0) {
+        setCandidates(list as CandidateListItem[]);
+        saveCandidateListToStorage(cacheKey, list);
+      } else if (!cached || cached.length === 0) {
         setIsOffline(true);
         setErrorMessage('Não foi possível conectar ao servidor eleitoral após 3 tentativas. Verifique sua conexão ou tente novamente.');
+        setCandidates([]);
       }
-      setCandidates(list as CandidateListItem[]);
     } catch {
-      setIsOffline(true);
-      setErrorMessage('Não foi possível carregar os candidatos do TSE no momento. Toque no botão abaixo para tentar novamente.');
-      setCandidates([]);
+      if (!cached || cached.length === 0) {
+        setIsOffline(true);
+        setErrorMessage('Não foi possível carregar os candidatos do TSE no momento. Toque no botão abaixo para tentar novamente.');
+        setCandidates([]);
+      }
     } finally {
       setLoading(false);
     }
@@ -430,7 +450,7 @@ export default function CandidatosScreen() {
 
   const hasActiveFilters = Boolean(searchQuery.trim() || selectedCargo || selectedParty);
 
-  if (loading) {
+  if (loading && candidates.length === 0) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background, padding: Spacing.xl, paddingTop: Math.max(insets.top, Spacing.xl) }]}>
         <ActivityIndicator size="large" color={colors.primary} />

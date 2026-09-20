@@ -5,6 +5,7 @@ import { join } from 'path';
 import { existsSync, readdirSync } from 'fs';
 import { Request, Response, json, urlencoded, static as expressStatic } from 'express';
 import helmet from 'helmet';
+import compression from 'compression';
 import { AppModule } from './app.module';
 import { GlobalHttpExceptionFilter } from './modules/common/http-exception.filter';
 import { PRIVACY_HTML, BETA_HTML, FEEDBACK_HTML, DASHBOARD_HTML, ACCESS_DASHBOARD_HTML } from './modules/common/static-pages';
@@ -38,6 +39,9 @@ async function bootstrap() {
 
   // Oculta a tecnologia do servidor para evitar fingerprinting
   app.disable('x-powered-by');
+
+  // Compressão HTTP Gzip/Deflate para otimizar tempo de carregamento de respostas JSON e assets
+  app.use(compression());
 
   // Proteção contra payloads excessivos / buffer overflow / exaustão de memória
   app.use(json({ limit: '512kb' }));
@@ -293,7 +297,7 @@ async function bootstrap() {
     }
 
     const apkDir = join(apiStaticDir, 'apk');
-    let apkFile = 'eleicoes-progressistas-v2.2.8.apk';
+    let apkFile = 'eleicoes-progressistas-v2.2.9.apk';
     let apkPath = join(apkDir, apkFile);
     if (!existsSync(apkPath) && existsSync(apkDir)) {
       const found = readdirSync(apkDir).filter((f) => f.endsWith('.apk')).sort().reverse()[0];
@@ -308,7 +312,7 @@ async function bootstrap() {
       res.setHeader('Content-Disposition', `attachment; filename="${apkFile}"`);
       return res.sendFile(apkPath);
     }
-    res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.8/eleicoes-progressistas-v2.2.8-beta.apk');
+    res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.9/eleicoes-progressistas-v2.2.9-beta.apk');
   });
   expressApp.get('/download/apk/sha256', (_req: Request, res: Response) => {
     const shaPath = join(apiStaticDir, 'apk', 'sha256.txt');

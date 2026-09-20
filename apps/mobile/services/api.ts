@@ -5,6 +5,7 @@ import {
   resolveCandidatePhotoFallbackChain,
   resolveCandidateMandateProposals,
 } from '@np/shared';
+import { AppStorage } from '../src/storage/app-storage';
 
 const PRODUCTION_API_URL = 'https://eleicoes-progressistas.onrender.com';
 
@@ -183,6 +184,28 @@ export function getCachedCandidate(id: string): Candidate | undefined {
     } catch {}
   }
   return undefined;
+}
+
+export async function saveCandidateListToStorage(key: string, list: any[]): Promise<void> {
+  if (!Array.isArray(list) || list.length === 0) return;
+  saveCandidatesToCache(list);
+  try {
+    const payload = JSON.stringify({ timestamp: Date.now(), list });
+    await AppStorage.setItem(`np_cand_list_${key || 'all'}`, payload);
+  } catch {}
+}
+
+export async function getCandidateListFromStorage(key: string): Promise<any[] | null> {
+  try {
+    const raw = await AppStorage.getItem(`np_cand_list_${key || 'all'}`);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && Array.isArray(parsed.list) && parsed.list.length > 0) {
+      saveCandidatesToCache(parsed.list);
+      return parsed.list;
+    }
+  } catch {}
+  return null;
 }
 
 export function saveRaioXToCache(id: string, data: RaioXData) {

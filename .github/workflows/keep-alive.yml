@@ -1,0 +1,17 @@
+name: Keep Alive Render Service
+
+on:
+  schedule:
+    # A cada 10 minutos (Render dorme com 15 minutos de inatividade)
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Ping Health Endpoint
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Ping Healthcheck
+        run: |
+          curl -s --connect-timeout 20 --max-time 30 https://eleicoes-progressistas.onrender.com/api/health || echo "Ping failed or timed out"

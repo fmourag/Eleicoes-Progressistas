@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: 'Tag da versão da release (ex: v2.2.8)'
+        description: 'Tag da versão da release (ex: v2.2.9)'
         required: false
-        default: 'v2.2.8'
+        default: 'v2.2.9'
   push:
     tags:
       - 'v*'
@@ -56,7 +56,7 @@ jobs:
           elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             TAG="${{ github.ref_name }}"
           else
-            TAG="v2.2.8"
+            TAG="v2.2.9"
           fi
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "Building APK for tag: $TAG"
