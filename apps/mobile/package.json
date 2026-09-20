@@ -1,6 +1,6 @@
 {
   "name": "@np/mobile",
-  "version": "2.2.7",
+  "version": "2.2.10",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -32,7 +32,8 @@
     "react-native-screens": "~4.4.0",
     "react-native-svg": "~15.8.0",
     "react-native-web": "~0.19.13",
-    "zustand": "^5.0.0"
+    "zustand": "^5.0.0",
+    "expo-file-system": "~18.0.12"
   },
   "devDependencies": {
     "@expo/cli": "~0.22.0",

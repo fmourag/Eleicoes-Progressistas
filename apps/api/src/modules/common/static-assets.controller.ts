@@ -23,7 +23,7 @@ export class StaticAssetsController {
   downloadApk(@Res() res: Response) {
     const staticDir = this.getStaticDir();
     const apkDir = join(staticDir, 'apk');
-    let apkFile = 'eleicoes-progressistas-v2.2.9.apk';
+    let apkFile = 'eleicoes-progressistas-v2.2.10.apk';
     let apkPath = join(apkDir, apkFile);
     if (!existsSync(apkPath) && existsSync(apkDir)) {
       const found = readdirSync(apkDir).filter((f) => f.endsWith('.apk')).sort().reverse()[0];
@@ -41,7 +41,7 @@ export class StaticAssetsController {
     }
 
     // Fallback caso o arquivo físico não tenha sido sincronizado
-    return res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.9/eleicoes-progressistas-v2.2.9-beta.apk');
+    return res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.10/eleicoes-progressistas-v2.2.10-beta.apk');
   }
 
   @Get('download/apk/sha256')

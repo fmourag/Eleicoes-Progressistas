@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Linking,
+  ActivityIndicator,
+  Platform,
+  Share,
+  Alert,
+} from 'react-native';
 import { router } from 'expo-router';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
 import { useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
@@ -27,12 +38,19 @@ export default function ColaScreen() {
     selectedCandidates,
     getSelectedList,
     setHasGeneratedPdfInSession,
+    clearCola,
+    hydrateCola,
   } = useColaStore();
   const { location } = useLocationStore();
   const [downloading, setDownloading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [benefitModalVisible, setBenefitModalVisible] = useState(false);
   const [promptedFullCola, setPromptedFullCola] = useState(false);
+
+  // Hidrata a cola salva permanentemente no dispositivo
+  useEffect(() => {
+    hydrateCola?.();
+  }, [hydrateCola]);
 
   const selectedList = getSelectedList();
   const selectedIds = selectedList.map((c) => c.id).join(',');
@@ -120,14 +138,83 @@ export default function ColaScreen() {
     triggerBenefitIfLocked();
   }
 
-  function handleShareEmail() {
+  function generateEmailShareText(): string {
+    const lines: string[] = [
+      '========================================',
+      'MINHA COLA ELEITORAL 2026',
+      'Plataforma Eleições Progressistas',
+      'Voto Consciente & Ficha Limpa',
+      `Circunscrição: ${userUf}${userMun ? ' • ' + userMun : ''}`,
+      '========================================',
+      '',
+      'SEQUÊNCIA OFICIAL DE VOTAÇÃO NA URNA ELETRÔNICA:',
+      '',
+    ];
+
+    for (const seq of VOTING_SEQUENCE) {
+      const cand = selectedCandidates[seq.key];
+      if (cand) {
+        lines.push(`[ ${seq.orderLabel} ] ${seq.title.toUpperCase()}`);
+        lines.push(`  Candidato(a): ${cand.name}`);
+        if (cand.viceName) lines.push(`  Vice: ${cand.viceName}`);
+        lines.push(`  Partido: ${cand.party}${cand.partyNumber ? ' (' + cand.partyNumber + ')' : ''}`);
+        lines.push(`  NÚMERO NA URNA: [ ${cand.numeroUrna.split('').join(' ')} ]`);
+        lines.push('');
+      } else {
+        lines.push(`[ ${seq.orderLabel} ] ${seq.title.toUpperCase()}`);
+        lines.push(`  [ Ainda não definido ]`);
+        lines.push('');
+      }
+    }
+
+    lines.push('----------------------------------------');
+    lines.push('Aviso Oficial TSE (Resolução nº 23.736/2024):');
+    lines.push('* É permitido levar colinha em papel para a cabine de votação.');
+    lines.push('* É PROIBIDO entrar na cabine com celular ou câmera.');
+    lines.push('* Imprima esta colinha ou anote os números no papel!');
+    lines.push('');
+    lines.push(`Visualizar PDF da Colinha: ${pdfViewUrl}`);
+    lines.push('Baixar App Eleições Progressistas: https://eleicoes-progressistas.onrender.com/beta');
+
+    return lines.join('\n');
+  }
+
+  async function handleShareEmail() {
     setHasGeneratedPdfInSession(true);
-    const subject = encodeURIComponent('Minha Cola Eleitoral 2026');
-    const body = encodeURIComponent(
-      `Confira minha colinha eleitoral para o dia da votação:\n\n${pdfViewUrl}\n\nLembre-se de imprimir antes de ir votar!`
-    );
-    Linking.openURL(`mailto:?subject=${subject}&body=${body}`);
+    const subject = 'Minha Cola Eleitoral 2026 - Eleições Progressistas';
+    const emailBody = generateEmailShareText();
+
+    if (Platform.OS !== 'web') {
+      try {
+        await Share.share({
+          title: subject,
+          message: `${subject}\n\n${emailBody}`,
+        });
+        triggerBenefitIfLocked();
+        return;
+      } catch {}
+    }
+
+    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+    Linking.openURL(mailtoUrl);
     triggerBenefitIfLocked();
+  }
+
+  function handleClearColaConfirm() {
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined' && window.confirm('Deseja limpar todos os votos da sua colinha?')) {
+        clearCola();
+      }
+    } else {
+      Alert.alert(
+        'Limpar Cola Eleitoral',
+        'Deseja apagar todos os candidatos salvos na sua colinha?',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Limpar', style: 'destructive', onPress: () => clearCola() },
+        ]
+      );
+    }
   }
 
   return (
@@ -341,6 +428,17 @@ export default function ColaScreen() {
               <Text style={[styles.secondaryBtnLabel, { color: colors.text }]}>Gerenciar</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Botão de Limpar Cola */}
+          {selectedList.length > 0 && (
+            <TouchableOpacity
+              style={styles.clearColaBtn}
+              onPress={handleClearColaConfirm}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.clearColaBtnText}>🗑️ Limpar Toda a Cola</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Apoio Cívico (PixApoio Não-Bloqueante) */}
@@ -557,6 +655,17 @@ const styles = StyleSheet.create({
   secondaryBtnLabel: {
     fontSize: FontSize.xs,
     fontWeight: '600',
+  },
+  clearColaBtn: {
+    marginTop: Spacing.md,
+    paddingVertical: Spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  clearColaBtnText: {
+    color: '#EF4444',
+    fontSize: FontSize.xs + 1,
+    fontWeight: '700',
   },
   supportWrapper: {
     marginTop: Spacing.xs,

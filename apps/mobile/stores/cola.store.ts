@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { AppStorage } from '../src/storage/app-storage';
 
 export interface ColaCandidate {
   id: string;
@@ -41,6 +42,7 @@ interface ColaState {
   removeCandidate: (candidateId: string) => void;
   removeCandidateByCargo: (slotOrCargo: string) => void;
   clearCola: () => void;
+  hydrateCola: () => Promise<void>;
   isCandidateSelected: (candidateId: string) => boolean;
   getCandidateSlot: (candidateId: string) => ColaSlotKey | null;
   getSelectedList: () => ColaCandidate[];
@@ -63,7 +65,34 @@ function normalizeCargoKey(rawCargo: string): ColaSlotKey | null {
   return null;
 }
 
-function loadSavedCola(): Record<string, ColaCandidate> {
+function parseColaData(raw: string): Record<string, ColaCandidate> {
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') {
+      const result: Record<string, ColaCandidate> = {};
+      
+      // Migração e normalização de chaves
+      for (const [k, v] of Object.entries(parsed)) {
+        if (!v || typeof v !== 'object') continue;
+        const cand = v as ColaCandidate;
+        if (k === 'SENADOR' || k === 'SENADOR_1') {
+          result['SENADOR_1'] = cand;
+        } else if (k === 'SENADOR_2') {
+          result['SENADOR_2'] = cand;
+        } else {
+          const slot = normalizeCargoKey(k) || normalizeCargoKey(cand.cargo);
+          if (slot) {
+            result[slot] = cand;
+          }
+        }
+      }
+      return result;
+    }
+  } catch {}
+  return {};
+}
+
+function loadSavedColaSync(): Record<string, ColaCandidate> {
   if (typeof window !== 'undefined' && window.localStorage) {
     try {
       let raw = window.localStorage.getItem(STORAGE_KEY);
@@ -71,27 +100,7 @@ function loadSavedCola(): Record<string, ColaCandidate> {
         raw = window.localStorage.getItem(LEGACY_STORAGE_KEY);
       }
       if (raw) {
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === 'object') {
-          const result: Record<string, ColaCandidate> = {};
-          
-          // Migração de chaves
-          for (const [k, v] of Object.entries(parsed)) {
-            if (!v || typeof v !== 'object') continue;
-            const cand = v as ColaCandidate;
-            if (k === 'SENADOR' || k === 'SENADOR_1') {
-              result['SENADOR_1'] = cand;
-            } else if (k === 'SENADOR_2') {
-              result['SENADOR_2'] = cand;
-            } else {
-              const slot = normalizeCargoKey(k) || normalizeCargoKey(cand.cargo);
-              if (slot) {
-                result[slot] = cand;
-              }
-            }
-          }
-          return result;
-        }
+        return parseColaData(raw);
       }
     } catch {}
   }
@@ -99,20 +108,43 @@ function loadSavedCola(): Record<string, ColaCandidate> {
 }
 
 function saveColaToStorage(data: Record<string, ColaCandidate>) {
+  const serialized = JSON.stringify(data);
+
+  // Web síncrono
   if (typeof window !== 'undefined' && window.localStorage) {
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      window.localStorage.setItem(STORAGE_KEY, serialized);
     } catch {}
   }
+
+  // Persistência assíncrona permanente em disco (Mobile nativo)
+  AppStorage.setItem(STORAGE_KEY, serialized).catch(() => {});
 }
 
 export const useColaStore = create<ColaState>((set, get) => ({
-  selectedCandidates: loadSavedCola(),
+  selectedCandidates: loadSavedColaSync(),
   modalOpen: false,
   hasGeneratedPdfInSession: false,
 
   setModalOpen: (modalOpen) => set({ modalOpen }),
   setHasGeneratedPdfInSession: (hasGeneratedPdfInSession) => set({ hasGeneratedPdfInSession }),
+
+  hydrateCola: async () => {
+    try {
+      const raw = await AppStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = parseColaData(raw);
+        if (parsed && Object.keys(parsed).length > 0) {
+          set((state) => ({
+            selectedCandidates: {
+              ...parsed,
+              ...state.selectedCandidates, // preserva alterações recentes em memória
+            },
+          }));
+        }
+      }
+    } catch {}
+  },
 
   addOrReplaceCandidate: (candidate, targetSlot) => {
     set((state) => {
@@ -132,7 +164,6 @@ export const useColaStore = create<ColaState>((set, get) => ({
           assignedSlot = 'DEPUTADO_ESTADUAL';
         } else if (rawCargo === 'SENADOR' || rawCargo === 'SENADOR_1' || rawCargo === 'SENADOR_2') {
           // Regra de 2 Senadores:
-          // Se já está na vaga 1, substitui vaga 1
           if (current['SENADOR_1']?.id === candidate.id) {
             assignedSlot = 'SENADOR_1';
           } else if (current['SENADOR_2']?.id === candidate.id) {
@@ -142,7 +173,6 @@ export const useColaStore = create<ColaState>((set, get) => ({
           } else if (!current['SENADOR_2']) {
             assignedSlot = 'SENADOR_2';
           } else {
-            // Ambas as vagas ocupadas: substitui a vaga 2 (ou a mais recente)
             assignedSlot = 'SENADOR_2';
           }
         }
@@ -199,7 +229,12 @@ export const useColaStore = create<ColaState>((set, get) => ({
   },
 
   clearCola: () => {
-    saveColaToStorage({});
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        window.localStorage.removeItem(STORAGE_KEY);
+      } catch {}
+    }
+    AppStorage.removeItem(STORAGE_KEY).catch(() => {});
     set({ selectedCandidates: {} });
   },
 
@@ -217,7 +252,6 @@ export const useColaStore = create<ColaState>((set, get) => ({
   },
 
   getSelectedList: () => {
-    // Retorna ordenado conforme a sequência oficial de votação
     const map = get().selectedCandidates;
     const list: ColaCandidate[] = [];
     for (const slot of COLA_SLOTS) {
@@ -233,3 +267,17 @@ export const useColaStore = create<ColaState>((set, get) => ({
   },
 }));
 
+// Hidratação automática e silenciosa na inicialização
+AppStorage.getItem(STORAGE_KEY).then((raw) => {
+  if (raw) {
+    const parsed = parseColaData(raw);
+    if (parsed && Object.keys(parsed).length > 0) {
+      useColaStore.setState((state) => ({
+        selectedCandidates: {
+          ...parsed,
+          ...state.selectedCandidates,
+        },
+      }));
+    }
+  }
+}).catch(() => {});

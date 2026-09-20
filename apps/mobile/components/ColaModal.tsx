@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,9 +9,11 @@ import {
   Image,
   Linking,
   ActivityIndicator,
+  Platform,
+  Share,
 } from 'react-native';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
-import { useBreakpoint } from '../utils/responsive';
+import { useIsDesktop } from '../utils/responsive';
 import { useColaStore, COLA_SLOTS } from '../stores/cola.store';
 import { useLocationStore } from '../stores/location.store';
 import { getCandidatePhotoUrl, API_URL } from '../services/api';
@@ -25,31 +27,32 @@ interface ColaModalProps {
   onSelectCargoToChoose?: (cargo: string) => void;
 }
 
-const VOTING_SEQUENCE = COLA_SLOTS;
-
-function getInitials(name: string): string {
-  const parts = name.trim().split(' ').filter(Boolean);
-  if (parts.length === 1) return parts[0]?.substring(0, 2).toUpperCase() || 'CA';
-  return `${parts[0]?.substring(0, 1)}${parts[parts.length - 1]?.substring(0, 1)}`.toUpperCase();
-}
+const VOTING_SEQUENCE = COLA_SLOTS.map((s, idx) => ({
+  ...s,
+  orderNum: `${idx + 1}º`,
+}));
 
 export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModalProps) {
   const colors = useThemeColors();
-  const bp = useBreakpoint();
-  const isDesktop = bp === 'desktop';
-
+  const isDesktop = useIsDesktop();
   const {
     selectedCandidates,
     removeCandidateByCargo,
     clearCola,
     getSelectedList,
-    hasGeneratedPdfInSession,
     setHasGeneratedPdfInSession,
+    hydrateCola,
   } = useColaStore();
   const { location } = useLocationStore();
-
   const [downloading, setDownloading] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+
+  // Garante a hidratação da cola gravada em disco sempre que o modal é aberto
+  useEffect(() => {
+    if (visible) {
+      hydrateCola?.();
+    }
+  }, [visible, hydrateCola]);
 
   const selectedList = getSelectedList();
   const selectedIds = selectedList.map((c) => c.id).join(',');
@@ -101,7 +104,7 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
     }
   }
 
-  function generateShareText(): string {
+  function generateWhatsAppShareText(): string {
     const lines: string[] = [
       '🏛️ *MINHA COLA ELEITORAL 2026* 🇧🇷',
       'Plataforma Eleições Progressistas • Voto Consciente & Ficha Limpa',
@@ -134,32 +137,91 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
     return lines.join('\n');
   }
 
+  function generateEmailShareText(): string {
+    const lines: string[] = [
+      '========================================',
+      'MINHA COLA ELEITORAL 2026',
+      'Plataforma Eleições Progressistas',
+      'Voto Consciente & Ficha Limpa',
+      `Circunscrição: ${userUf}${userMun ? ' • ' + userMun : ''}`,
+      '========================================',
+      '',
+      'SEQUÊNCIA OFICIAL DE VOTAÇÃO NA URNA ELETRÔNICA:',
+      '',
+    ];
+
+    for (const seq of VOTING_SEQUENCE) {
+      const cand = selectedCandidates[seq.key];
+      if (cand) {
+        lines.push(`[ ${seq.orderLabel} ] ${seq.title.toUpperCase()}`);
+        lines.push(`  Candidato(a): ${cand.name}`);
+        if (cand.viceName) lines.push(`  Vice: ${cand.viceName}`);
+        lines.push(`  Partido: ${cand.party}${cand.partyNumber ? ' (' + cand.partyNumber + ')' : ''}`);
+        lines.push(`  NÚMERO NA URNA: [ ${cand.numeroUrna.split('').join(' ')} ]`);
+        lines.push('');
+      } else {
+        lines.push(`[ ${seq.orderLabel} ] ${seq.title.toUpperCase()}`);
+        lines.push(`  [ Ainda não definido ]`);
+        lines.push('');
+      }
+    }
+
+    lines.push('----------------------------------------');
+    lines.push('Aviso Oficial TSE (Resolução nº 23.736/2024):');
+    lines.push('* É permitido levar colinha em papel para a cabine de votação.');
+    lines.push('* É PROIBIDO entrar na cabine com celular ou câmera.');
+    lines.push('* Imprima esta colinha ou anote os números no papel!');
+    lines.push('');
+    lines.push(`Visualizar PDF da Colinha: ${pdfViewUrl}`);
+    lines.push('Baixar App Eleições Progressistas: https://eleicoes-progressistas.onrender.com/beta');
+
+    return lines.join('\n');
+  }
+
   function handleShareWhatsApp() {
     setHasGeneratedPdfInSession(true);
-    const text = generateShareText();
+    const text = generateWhatsAppShareText();
     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
     Linking.openURL(url);
   }
 
-  function handleShareEmail() {
+  async function handleShareEmail() {
     setHasGeneratedPdfInSession(true);
-    const text = generateShareText();
-    const subject = encodeURIComponent('Minha Cola Eleitoral 2026 - Eleições Progressistas');
-    const body = encodeURIComponent(text);
-    const url = `mailto:?subject=${subject}&body=${body}`;
+    const subject = 'Minha Cola Eleitoral 2026 - Eleições Progressistas';
+    const emailBody = generateEmailShareText();
+
+    // No mobile nativo, o Share.share entrega o texto sem truncar ou corromper via Intent direta
+    if (Platform.OS !== 'web') {
+      try {
+        await Share.share({
+          title: subject,
+          message: `${subject}\n\n${emailBody}`,
+        });
+        return;
+      } catch {}
+    }
+
+    // No Web utiliza o protocolo mailto limpo
+    const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
     Linking.openURL(url);
   }
 
   function handleCopyText() {
     if (typeof window !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(generateShareText());
+      navigator.clipboard.writeText(generateWhatsAppShareText());
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2500);
     }
   }
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+      statusBarTranslucent={true}
+    >
       <View style={styles.overlay}>
         <View
           style={[
@@ -181,8 +243,16 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
             </TouchableOpacity>
           </View>
 
-          {/* Scrollable Content */}
-          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={true}>
+          {/* Scrollable Content com Rolagem e Responsividade 100% no Mobile e Web */}
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={true}
+            nestedScrollEnabled={true}
+            keyboardShouldPersistTaps="handled"
+            bounces={true}
+            overScrollMode="always"
+          >
             {/* Aviso do TSE */}
             <View style={styles.tseAlert}>
               <Text style={styles.tseAlertTitle}>⚖️ AVISO OFICIAL DA JUSTIÇA ELEITORAL (TSE):</Text>
@@ -251,29 +321,28 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
               </View>
             )}
 
-            {/* Apoio Pontual via PIX pós-geração/compartilhamento */}
-            {hasGeneratedPdfInSession && (
-              <PixApoio compact />
-            )}
-
-            {/* Voting sequence list */}
+            {/* Section Title */}
             <Text style={[styles.sectionTitle, { color: colors.text }]}>
               🗳️ Ordem de Votação na Urna Eletrônica
             </Text>
 
-            {VOTING_SEQUENCE.map((seq, index) => {
+            {/* List of 6 voting slots */}
+            {VOTING_SEQUENCE.map((seq) => {
               const cand = selectedCandidates[seq.key];
 
               if (cand) {
-                const resolvedPhoto = getCandidatePhotoUrl(cand.photoUrl, cand.tseId, cand.cargo, cand.name, cand.id);
                 const digits = cand.numeroUrna.split('');
+                const photoSrc = getCandidatePhotoUrl(cand.photoUrl || cand.tseId);
 
                 return (
                   <View
                     key={seq.key}
-                    style={[styles.candidateCard, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
+                    style={[
+                      styles.candidateCard,
+                      { backgroundColor: colors.surfaceAlt, borderColor: colors.border },
+                    ]}
                   >
-                    {/* Cargo Header */}
+                    {/* Header do Cargo */}
                     <View style={styles.cargoHeaderRow}>
                       <View style={styles.cargoTag}>
                         <Text style={styles.cargoTagOrder}>{seq.orderLabel}</Text>
@@ -282,27 +351,32 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
                       <TouchableOpacity
                         onPress={() => removeCandidateByCargo(seq.key)}
                         style={styles.removeBtn}
-                        hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                       >
                         <Text style={styles.removeBtnText}>✕ Remover</Text>
                       </TouchableOpacity>
                     </View>
 
+                    {/* Conteúdo do Candidato */}
                     <View style={styles.cardMainRow}>
-                      {/* Photo or Initials */}
-                      <View style={[styles.photoContainer, { borderColor: colors.primary }]}>
-                        {resolvedPhoto ? (
-                          <Image source={{ uri: resolvedPhoto }} style={styles.photoImage} resizeMode="cover" />
+                      {/* Foto */}
+                      <View style={[styles.photoContainer, { borderColor: colors.border }]}>
+                        {photoSrc ? (
+                          <Image
+                            source={{ uri: photoSrc }}
+                            style={styles.photoImage}
+                            resizeMode="cover"
+                          />
                         ) : (
-                          <View style={[styles.avatarFallback, { backgroundColor: colors.primaryLight }]}>
+                          <View style={[styles.avatarFallback, { backgroundColor: colors.surface }]}>
                             <Text style={[styles.avatarInitials, { color: colors.primary }]}>
-                              {getInitials(cand.name)}
+                              {cand.name.substring(0, 2).toUpperCase()}
                             </Text>
                           </View>
                         )}
                       </View>
 
-                      {/* Info */}
+                      {/* Dados */}
                       <View style={styles.cardInfo}>
                         <Text style={[styles.candidateName, { color: colors.text }]} numberOfLines={1}>
                           {cand.name}
@@ -312,19 +386,21 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
                             Vice: {cand.viceName}
                           </Text>
                         )}
-                        <Text style={[styles.candidateParty, { color: '#047857' }]}>
-                          {cand.party} {cand.partyNumber ? `• ${cand.partyNumber}` : ''}
+                        <Text style={[styles.candidateParty, { color: colors.primary }]}>
+                          {cand.party}{cand.partyNumber ? ` • ${cand.partyNumber}` : ''}
                         </Text>
-                        <Text style={styles.fichaLimpaBadge}>✓ Registro TSE • Ficha Limpa</Text>
+                        <Text style={styles.fichaLimpaBadge}>
+                          ✓ Registro TSE • Ficha Limpa
+                        </Text>
                       </View>
 
-                      {/* Digit boxes in Urna style */}
+                      {/* Dígitos da Urna */}
                       <View style={styles.digitsWrapper}>
                         <Text style={styles.digitsLabel}>Nº NA URNA</Text>
                         <View style={styles.digitsRow}>
-                          {digits.map((digit, dIdx) => (
-                            <View key={dIdx} style={styles.digitBox}>
-                              <Text style={styles.digitNumber}>{digit}</Text>
+                          {digits.map((d, i) => (
+                            <View key={i} style={styles.digitBox}>
+                              <Text style={styles.digitNumber}>{d}</Text>
                             </View>
                           ))}
                         </View>
@@ -334,11 +410,13 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
                 );
               }
 
-              // Empty Slot
               return (
                 <View
                   key={seq.key}
-                  style={[styles.emptySlotCard, { borderColor: colors.border, backgroundColor: colors.surface }]}
+                  style={[
+                    styles.emptySlotCard,
+                    { borderColor: colors.border, backgroundColor: colors.surface },
+                  ]}
                 >
                   <View style={styles.emptySlotLeft}>
                     <View style={styles.emptySlotTag}>
@@ -364,7 +442,7 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
               );
             })}
 
-            {/* Clear button */}
+            {/* Clear button e Ações de rodapé */}
             {selectedList.length > 0 && (
               <View style={styles.footerRow}>
                 <TouchableOpacity onPress={handleCopyText} style={styles.copyBtn}>
@@ -396,11 +474,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.65)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing.md,
+    padding: Spacing.sm,
   },
   modalCard: {
     width: '100%',
-    maxHeight: '90%',
+    maxWidth: 720,
+    height: Platform.OS === 'web' ? undefined : '90%',
+    maxHeight: '92%',
     borderRadius: Radius.lg,
     borderWidth: 1,
     display: 'flex',
@@ -408,7 +488,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   modalCardDesktop: {
-    maxWidth: 720,
+    maxHeight: '85%',
   },
   header: {
     flexDirection: 'row',
@@ -436,9 +516,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
   },
+  scrollView: {
+    flex: 1,
+    width: '100%',
+  },
   scrollContent: {
-    padding: Spacing.lg,
+    padding: Spacing.md,
+    paddingBottom: 90,
     gap: Spacing.md,
+    flexGrow: 1,
   },
   tseAlert: {
     backgroundColor: '#FEF3C7',
