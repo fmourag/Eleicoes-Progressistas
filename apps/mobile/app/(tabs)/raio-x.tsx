@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Linking, TouchableOpacity, Image, TextInput, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { candidatesApi, RaioXData, getCandidatePhotoUrl } from '../../services/api';
 import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
@@ -105,6 +106,7 @@ export default function RaioXScreen() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const colors = useThemeColors();
+  const insets = useSafeAreaInsets();
   const bp = useBreakpoint();
   const maxW = useMaxContentWidth();
   const padding = useResponsivePadding();
@@ -191,7 +193,7 @@ export default function RaioXScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.background, padding: Spacing.xl }]}>
+      <View style={[styles.center, { backgroundColor: colors.background, padding: Spacing.xl, paddingTop: Math.max(insets.top, Spacing.xl) }]}>
         <ActivityIndicator size="large" color={colors.primary} />
         <View
           style={{
@@ -213,22 +215,25 @@ export default function RaioXScreen() {
               textAlign: 'center',
               letterSpacing: 0.3,
             }}
+            maxFontSizeMultiplier={1.2}
           >
             🎯 Buscando Propostas e não Fofocas
           </Text>
         </View>
-        <Text style={{ color: colors.textMuted, fontSize: FontSize.sm, marginTop: Spacing.xs }}>Carregando raio-x e propostas do candidato...</Text>
+        <Text style={{ color: colors.textMuted, fontSize: FontSize.sm, marginTop: Spacing.xs }} maxFontSizeMultiplier={1.15}>
+          Carregando raio-x e propostas do candidato...
+        </Text>
       </View>
     );
   }
 
   if (!data) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.background, padding: Spacing.xl }]}>
-        <Text style={[styles.errorTitle, { color: colors.errorText || '#DC2626' }]}>
+      <View style={[styles.center, { backgroundColor: colors.background, padding: Spacing.xl, paddingTop: Math.max(insets.top, Spacing.xl) }]}>
+        <Text style={[styles.errorTitle, { color: colors.errorText || '#DC2626' }]} maxFontSizeMultiplier={1.2}>
           ⚠️ Erro de Conexão
         </Text>
-        <Text style={[styles.errorSubtitle, { color: colors.textMuted }]}>
+        <Text style={[styles.errorSubtitle, { color: colors.textMuted }]} maxFontSizeMultiplier={1.15}>
           {errorMessage || 'Não foi possível carregar os detalhes do candidato.'}
         </Text>
         <ActionButton title="Tentar Novamente" onPress={loadData} variant="primary" style={{ marginTop: Spacing.md }} />
@@ -293,7 +298,7 @@ export default function RaioXScreen() {
   }
 
   return (
-    <View style={[styles.rootContainer, { backgroundColor: colors.background }]}>
+    <View style={[styles.rootContainer, { backgroundColor: colors.background, paddingTop: Math.max(insets.top, 10) }]}>
       <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.scrollContent}>
       <View style={[styles.inner, { paddingHorizontal: padding }, maxW ? { maxWidth: maxW, alignSelf: 'center' } : undefined]}>
         <TouchableOpacity
@@ -311,7 +316,7 @@ export default function RaioXScreen() {
           onPress={() => router.back()}
           activeOpacity={0.8}
         >
-          <Text style={{ color: colors.primary, fontSize: FontSize.sm, fontWeight: '700' }}>← Voltar</Text>
+          <Text style={{ color: colors.primary, fontSize: FontSize.sm, fontWeight: '700' }} maxFontSizeMultiplier={1.2}>← Voltar</Text>
         </TouchableOpacity>
 
         <CivicBanner variant="compact" />
@@ -331,7 +336,7 @@ export default function RaioXScreen() {
               marginBottom: Spacing.sm,
             }}
           >
-            <Text style={{ fontSize: FontSize.xs, color: '#991B1B', fontWeight: '600', flex: 1 }}>
+            <Text style={{ fontSize: FontSize.xs, color: '#991B1B', fontWeight: '600', flex: 1 }} maxFontSizeMultiplier={1.15}>
               ⚡ Modo Offline: exibindo dados em cache / locais.
             </Text>
             <TouchableOpacity
@@ -344,7 +349,7 @@ export default function RaioXScreen() {
                 marginLeft: Spacing.sm,
               }}
             >
-              <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '700' }}>Reconectar</Text>
+              <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '700' }} maxFontSizeMultiplier={1.15}>Reconectar</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -361,16 +366,16 @@ export default function RaioXScreen() {
               </View>
             ) : null}
             <View style={styles.headerInfo}>
-              <Text style={[styles.name, { color: colors.primary }, isDesktop && styles.nameDesktop]}>{name}</Text>
+              <Text style={[styles.name, { color: colors.primary }, isDesktop && styles.nameDesktop]} maxFontSizeMultiplier={1.25}>{name}</Text>
               {candidate.viceName ? (
-                <Text style={[styles.viceText, { color: colors.textMuted }]}>
+                <Text style={[styles.viceText, { color: colors.textMuted }]} maxFontSizeMultiplier={1.15}>
                   Vice: {candidate.viceName}
                 </Text>
               ) : null}
-              <Text style={[styles.party, { color: colors.textSecondary }]}>
+              <Text style={[styles.party, { color: colors.textSecondary }]} maxFontSizeMultiplier={1.15}>
                 {party} — {cargo?.replace(/_/g, ' ')}
               </Text>
-              {level && <Text style={[styles.level, { color: colors.textFaint }]}>{level}</Text>}
+              {level && <Text style={[styles.level, { color: colors.textFaint }]} maxFontSizeMultiplier={1.15}>{level}</Text>}
             </View>
           </View>
 

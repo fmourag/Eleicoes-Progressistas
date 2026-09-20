@@ -191,7 +191,11 @@ export function CandidateCard({
         {/* Main Details */}
         <View style={styles.detailsContainer}>
           <View style={styles.headerRow}>
-            <Text style={[styles.name, { color: colors.text }, bp === 'desktop' && styles.nameDesktop]} numberOfLines={2}>
+            <Text
+              style={[styles.name, { color: colors.text }, bp === 'desktop' && styles.nameDesktop]}
+              numberOfLines={2}
+              maxFontSizeMultiplier={1.25}
+            >
               {name}
             </Text>
             {isMatchingView ? (
@@ -199,72 +203,78 @@ export function CandidateCard({
                 <View style={styles.headerBadgesRow}>
                   <View
                     style={[
-                      styles.scoreBadge,
-                      {
-                        backgroundColor: '#FEF3C7',
-                        borderColor: '#F59E0B',
-                        borderWidth: 1,
-                      },
-                    ]}
-                  >
-                    <Text style={[styles.scoreText, { color: '#B45309' }]}>
-                      ⚡ — Match
-                    </Text>
-                  </View>
+                    styles.scoreBadge,
+                    {
+                      backgroundColor: '#FEF3C7',
+                      borderColor: '#F59E0B',
+                      borderWidth: 1,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.scoreText, { color: '#B45309' }]} maxFontSizeMultiplier={1.15}>
+                    ⚡ — Match
+                  </Text>
                 </View>
-              ) : (
-                <View style={styles.headerBadgesRow}>
-                  <View
-                    style={[
-                      styles.scoreBadge,
-                      {
-                        backgroundColor: matchScore >= 75 ? colors.primaryLight : matchScore >= 50 ? colors.warningBg : colors.errorBg,
-                        borderColor: matchScore >= 75 ? colors.primaryBorder : matchScore >= 50 ? colors.warningBorder : colors.error,
-                        borderWidth: 1,
-                      },
-                    ]}
-                  >
-                    <Text style={[styles.scoreText, { color: matchScore >= 75 ? colors.primary : matchScore >= 50 ? colors.warning : colors.error }]}>
-                      ⚡ {Math.round(matchScore)}% Match
-                    </Text>
-                  </View>
-                </View>
-              )
-            ) : score !== undefined && score !== null ? (
+              </View>
+            ) : (
               <View style={styles.headerBadgesRow}>
                 <View
                   style={[
                     styles.scoreBadge,
                     {
-                      backgroundColor: score >= 75 ? colors.primaryLight : score >= 50 ? colors.warningBg : colors.surfaceAlt,
-                      borderColor: score >= 75 ? colors.primaryBorder : score >= 50 ? colors.warningBorder : colors.border,
+                      backgroundColor: matchScore >= 75 ? colors.primaryLight : matchScore >= 50 ? colors.warningBg : colors.errorBg,
+                      borderColor: matchScore >= 75 ? colors.primaryBorder : matchScore >= 50 ? colors.warningBorder : colors.error,
                       borderWidth: 1,
                     },
                   ]}
                 >
-                  <Text style={[styles.scoreText, { color: score >= 75 ? colors.primary : score >= 50 ? colors.warning : colors.textMuted }]}>
-                    🏛️ {Math.round(score)}% Alinhamento
+                  <Text
+                    style={[styles.scoreText, { color: matchScore >= 75 ? colors.primary : matchScore >= 50 ? colors.warning : colors.error }]}
+                    maxFontSizeMultiplier={1.15}
+                  >
+                    ⚡ {Math.round(matchScore)}% Match
                   </Text>
                 </View>
               </View>
-            ) : null}
-          </View>
+            )
+          ) : score !== undefined && score !== null ? (
+            <View style={styles.headerBadgesRow}>
+              <View
+                style={[
+                  styles.scoreBadge,
+                  {
+                    backgroundColor: score >= 75 ? colors.primaryLight : score >= 50 ? colors.warningBg : colors.surfaceAlt,
+                    borderColor: score >= 75 ? colors.primaryBorder : score >= 50 ? colors.warningBorder : colors.border,
+                    borderWidth: 1,
+                  },
+                ]}
+              >
+                <Text
+                  style={[styles.scoreText, { color: score >= 75 ? colors.primary : score >= 50 ? colors.warning : colors.textMuted }]}
+                  maxFontSizeMultiplier={1.15}
+                >
+                  🏛️ {Math.round(score)}% Alinhamento
+                </Text>
+              </View>
+            </View>
+          ) : null}
+        </View>
 
           {viceName ? (
-            <Text style={[styles.viceText, { color: colors.textMuted }]} numberOfLines={1}>
+            <Text style={[styles.viceText, { color: colors.textMuted }]} numberOfLines={1} maxFontSizeMultiplier={1.15}>
               Vice: {viceName}
             </Text>
           ) : null}
 
           {/* Cargo Label */}
-          <Text style={[styles.cargoText, { color: colors.primary }]}>
+          <Text style={[styles.cargoText, { color: colors.primary }]} maxFontSizeMultiplier={1.2}>
             {formatCargoLabel(cargo, Boolean(viceName))}
           </Text>
 
           {/* Party, Urna Voting Number & Candidatura Status Badge */}
           <View style={styles.metaRow}>
             <View style={[styles.partyBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
-              <Text style={[styles.partyText, { color: colors.text }]}>
+              <Text style={[styles.partyText, { color: colors.text }]} maxFontSizeMultiplier={1.15}>
                 {party} {cargo === 'PRESIDENTE' ? '(Nacional)' : state ? `(${state})` : ''}
               </Text>
             </View>
@@ -272,8 +282,8 @@ export function CandidateCard({
             {/* Número de Urna Eletrônica */}
             <View style={[styles.urnaBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
               <Text style={styles.urnaBadgeIcon}>🗳️</Text>
-              <Text style={[styles.urnaBadgeLabel, { color: colors.textMuted }]}>Urna:</Text>
-              <Text style={[styles.urnaBadgeNumber, { color: colors.primary }]}>{votingNumber}</Text>
+              <Text style={[styles.urnaBadgeLabel, { color: colors.textMuted }]} maxFontSizeMultiplier={1.15}>Urna:</Text>
+              <Text style={[styles.urnaBadgeNumber, { color: colors.primary }]} maxFontSizeMultiplier={1.15}>{votingNumber}</Text>
             </View>
 
             {/* Status Badge */}
@@ -296,6 +306,7 @@ export function CandidateCard({
                     ? { color: '#991B1B' }
                     : { color: '#B45309' },
                 ]}
+                maxFontSizeMultiplier={1.15}
               >
                 {candidaturaStatus === 'DEFERIDO'
                   ? '🟢 Deferido (TSE)'
@@ -315,7 +326,7 @@ export function CandidateCard({
           {/* Alliance / Coalition / Support Badge if applicable */}
           {hasAlliance && (
             <View style={[styles.allianceBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.primaryBorder }]}>
-              <Text style={[styles.allianceBadgeText, { color: colors.primary }]} numberOfLines={1}>
+              <Text style={[styles.allianceBadgeText, { color: colors.primary }]} numberOfLines={1} maxFontSizeMultiplier={1.15}>
                 🤝 {supportedBy || coalition || 'Apoio de Coligação Progressista'}
               </Text>
             </View>
@@ -324,7 +335,7 @@ export function CandidateCard({
           {/* Insufficient Public Data Warning Badge (only in matching view for neutral profiles) */}
           {isMatchingView && isInsufficient && (
             <View style={[styles.insufficientBadge, { backgroundColor: '#FEF3C7', borderColor: '#F59E0B' }]}>
-              <Text style={[styles.insufficientBadgeText, { color: '#B45309' }]}>
+              <Text style={[styles.insufficientBadgeText, { color: '#B45309' }]} maxFontSizeMultiplier={1.15}>
                 ⚠️ {INSUFFICIENT_DATA_LABEL}
               </Text>
             </View>
@@ -334,7 +345,7 @@ export function CandidateCard({
           <View style={styles.bottomCardRow}>
             {fichaLimpa ? (
               <View style={[styles.fichaLimpaPill, { backgroundColor: colors.tertiaryLight || '#E6F4EA' }]}>
-                <Text style={[styles.fichaLimpa, { color: colors.success }]}>
+                <Text style={[styles.fichaLimpa, { color: colors.success }]} maxFontSizeMultiplier={1.15}>
                   ✓ Ficha Limpa (TSE)
                 </Text>
               </View>
@@ -351,7 +362,7 @@ export function CandidateCard({
                 onPress={handleToggleCola}
                 activeOpacity={0.8}
               >
-                <Text style={[styles.colaBtnText, { color: selectedForCola ? '#FFFFFF' : colors.text }]}>
+                <Text style={[styles.colaBtnText, { color: selectedForCola ? '#FFFFFF' : colors.text }]} maxFontSizeMultiplier={1.15}>
                   {selectedForCola ? '★ Na sua Cola' : '+ Adicionar à Cola'}
                 </Text>
               </TouchableOpacity>
@@ -461,15 +472,16 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    gap: 6,
-    marginBottom: 2,
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 4,
+    marginBottom: 4,
   },
   name: {
     fontSize: FontSize.base + 1,
     fontWeight: 'bold',
-    flex: 1,
-    lineHeight: 20,
+    flexShrink: 1,
+    minWidth: 130,
   },
   nameDesktop: {
     fontSize: FontSize.xl,
@@ -483,8 +495,8 @@ const styles = StyleSheet.create({
     borderRadius: Radius.full,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
-    marginLeft: Spacing.xs,
     flexShrink: 0,
+    alignSelf: 'flex-start',
   },
   scoreText: {
     fontWeight: '800',

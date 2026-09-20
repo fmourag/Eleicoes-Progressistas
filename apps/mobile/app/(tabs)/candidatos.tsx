@@ -12,6 +12,7 @@ import {
   Linking,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PROGRESSIVE_GUIDELINE_NOTICE, getTseDadosAbertosSearchUrl, isCandidateAllowedInProgressiveRoll } from '@np/shared';
 import { candidatesApi, retryWithBackoff } from '../../services/api';
 import { useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
@@ -191,6 +192,7 @@ export default function CandidatosScreen() {
   const colaCount = getColaCount();
 
   const colors = useThemeColors();
+  const insets = useSafeAreaInsets();
   const maxW = useMaxContentWidth();
   const padding = useResponsivePadding();
 
@@ -430,7 +432,7 @@ export default function CandidatosScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.background, padding: Spacing.xl }]}>
+      <View style={[styles.center, { backgroundColor: colors.background, padding: Spacing.xl, paddingTop: Math.max(insets.top, Spacing.xl) }]}>
         <ActivityIndicator size="large" color={colors.primary} />
         <View
           style={{
@@ -452,14 +454,15 @@ export default function CandidatosScreen() {
               textAlign: 'center',
               letterSpacing: 0.3,
             }}
+            maxFontSizeMultiplier={1.2}
           >
             🎯 Buscando Propostas e não Fofocas
           </Text>
         </View>
-        <Text style={{ color: colors.text, fontSize: FontSize.md, fontWeight: '600', marginTop: Spacing.xs, textAlign: 'center' }}>
+        <Text style={{ color: colors.text, fontSize: FontSize.md, fontWeight: '600', marginTop: Spacing.xs, textAlign: 'center' }} maxFontSizeMultiplier={1.2}>
           Carregando candidaturas oficiais do TSE...
         </Text>
-        <Text style={{ color: colors.textMuted, fontSize: FontSize.sm, marginTop: Spacing.xs, textAlign: 'center', maxWidth: 340, lineHeight: 20 }}>
+        <Text style={{ color: colors.textMuted, fontSize: FontSize.sm, marginTop: Spacing.xs, textAlign: 'center', maxWidth: 340, lineHeight: 20 }} maxFontSizeMultiplier={1.15}>
           Aguardando servidor seguro. Caso seja o primeiro acesso, o carregamento pode levar até 60s.
         </Text>
       </View>
@@ -478,53 +481,55 @@ export default function CandidatosScreen() {
       {/* ======================================================== */}
       {/* CABEÇALHO FIXO (STICKY): NUNCA SOME AO ROLAR OS CANDIDATOS*/}
       {/* ======================================================== */}
-      <View style={[styles.pinnedHeader, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+      <View style={[styles.pinnedHeader, { backgroundColor: colors.surface, borderBottomColor: colors.border, paddingTop: Math.max(insets.top, Spacing.xs) }]}>
         <View style={[styles.pinnedHeaderInner, maxW ? { maxWidth: maxW, alignSelf: 'center', width: '100%' } : { width: '100%' }, { paddingHorizontal: padding }]}>
           
-          {/* Linha 1: Voltar + Seletor de Localização + Escopo + Tema */}
-          <View style={styles.topControlRow}>
-            <View style={styles.leftControlGroup}>
+          {/* Linha 1: Voltar + Seletor de Localização Fluido */}
+          <View style={styles.navAndLocationRow}>
+            <TouchableOpacity
+              style={[styles.backButton, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
+              onPress={() => router.replace('/')}
+              activeOpacity={0.75}
+            >
+              <Text style={[styles.backButtonText, { color: colors.primary }]} maxFontSizeMultiplier={1.15}>
+                ← Início
+              </Text>
+            </TouchableOpacity>
+
+            {/* Botão Principal de Localização */}
+            <TouchableOpacity
+              style={[styles.locationSelectorBtn, { backgroundColor: colors.primaryLight, borderColor: colors.primary }]}
+              onPress={handleOpenLocationModal}
+              activeOpacity={0.8}
+              accessibilityLabel="Alterar localização selecionada"
+            >
+              <Text style={[styles.locationSelectorText, { color: colors.primary }]} numberOfLines={1} maxFontSizeMultiplier={1.15}>
+                📍 {locationDisplay} ▾
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Linha 2: Escopo + Minha Cola + Tema */}
+          <View style={styles.toolsRow}>
+            {location?.uf ? (
               <TouchableOpacity
-                style={[styles.backButton, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
-                onPress={() => router.replace('/')}
+                style={[
+                  styles.scopeToggleButton,
+                  {
+                    backgroundColor: showAllStates ? colors.primaryLight : colors.surfaceAlt,
+                    borderColor: showAllStates ? colors.primary : colors.border,
+                  },
+                ]}
+                onPress={() => setShowAllStates(!showAllStates)}
                 activeOpacity={0.75}
               >
-                <Text style={[styles.backButtonText, { color: colors.primary }]}>
-                  ← Início
+                <Text style={[styles.scopeToggleText, { color: colors.primary }]} maxFontSizeMultiplier={1.15}>
+                  {showAllStates ? `📍 ${location.uf}` : '🇧🇷 Brasil'}
                 </Text>
               </TouchableOpacity>
+            ) : <View />}
 
-              {/* Botão Principal de Localização */}
-              <TouchableOpacity
-                style={[styles.locationSelectorBtn, { backgroundColor: colors.primaryLight, borderColor: colors.primary }]}
-                onPress={handleOpenLocationModal}
-                activeOpacity={0.8}
-                accessibilityLabel="Alterar localização selecionada"
-              >
-                <Text style={[styles.locationSelectorText, { color: colors.primary }]} numberOfLines={1}>
-                  📍 {locationDisplay} ▾
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.rightControlGroup}>
-              {location?.uf && (
-                <TouchableOpacity
-                  style={[
-                    styles.scopeToggleButton,
-                    {
-                      backgroundColor: showAllStates ? colors.primaryLight : colors.surfaceAlt,
-                      borderColor: showAllStates ? colors.primary : colors.border,
-                    },
-                  ]}
-                  onPress={() => setShowAllStates(!showAllStates)}
-                  activeOpacity={0.75}
-                >
-                  <Text style={[styles.scopeToggleText, { color: colors.primary }]}>
-                    {showAllStates ? `📍 ${location.uf}` : '🇧🇷 Brasil'}
-                  </Text>
-                </TouchableOpacity>
-              )}
+            <View style={styles.toolsRightGroup}>
               <TouchableOpacity
                 style={[
                   styles.colaHeaderBtn,
@@ -535,7 +540,7 @@ export default function CandidatosScreen() {
                 onPress={() => setColaModalOpen(true)}
                 activeOpacity={0.8}
               >
-                <Text style={[styles.colaHeaderBtnText, { color: colaCount > 0 ? '#FFFFFF' : colors.text }]}>
+                <Text style={[styles.colaHeaderBtnText, { color: colaCount > 0 ? '#FFFFFF' : colors.text }]} maxFontSizeMultiplier={1.15}>
                   📝 Minha Cola{colaCount > 0 ? ` (${colaCount})` : ''}
                 </Text>
               </TouchableOpacity>
@@ -554,10 +559,11 @@ export default function CandidatosScreen() {
               placeholderTextColor={colors.textFaint}
               clearButtonMode="while-editing"
               autoCorrect={false}
+              maxFontSizeMultiplier={1.15}
             />
             {searchQuery.length > 0 && (
               <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearSearchBtn} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                <Text style={[styles.clearSearchText, { color: colors.textMuted }]}>✕</Text>
+                <Text style={[styles.clearSearchText, { color: colors.textMuted }]} maxFontSizeMultiplier={1.15}>✕</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -569,7 +575,7 @@ export default function CandidatosScreen() {
               onPress={() => Linking.openURL(getTseDadosAbertosSearchUrl(searchQuery))}
               activeOpacity={0.8}
             >
-              <Text style={[styles.tseSearchBannerText, { color: colors.primary }]}>
+              <Text style={[styles.tseSearchBannerText, { color: colors.primary }]} maxFontSizeMultiplier={1.15}>
                 🏛️ Buscar "{searchQuery.trim()}" no Portal de Dados Abertos do TSE (Fonte Confiável) ↗
               </Text>
             </TouchableOpacity>
@@ -582,7 +588,7 @@ export default function CandidatosScreen() {
               onPress={() => Linking.openURL('https://dadosabertos.tse.jus.br/')}
               activeOpacity={0.8}
             >
-              <Text style={[styles.tseTrustedBadgeText, { color: colors.textMuted }]}>
+              <Text style={[styles.tseTrustedBadgeText, { color: colors.textMuted }]} maxFontSizeMultiplier={1.15}>
                 ✓ Fonte Oficial e Confiável:{' '}
                 <Text style={{ color: colors.primary, fontWeight: '700', textDecorationLine: 'underline' }}>
                   dadosabertos.tse.jus.br
@@ -640,7 +646,7 @@ export default function CandidatosScreen() {
                       onPress={() => setSelectedCargo(isSelected ? null : p.value)}
                       activeOpacity={0.8}
                     >
-                      <Text style={[styles.cargoPillText, isSelected && { color: '#FFFFFF' }]}>
+                      <Text style={[styles.cargoPillText, isSelected && { color: '#FFFFFF' }]} maxFontSizeMultiplier={1.15}>
                         {p.label} <Text style={isSelected ? styles.countSelected : styles.countUnselected}>({count})</Text>
                       </Text>
                     </TouchableOpacity>
@@ -648,7 +654,7 @@ export default function CandidatosScreen() {
                 })}
                 {hasActiveFilters && (
                   <TouchableOpacity onPress={handleClearFilters} style={[styles.clearPill, { borderColor: colors.primary }]}>
-                    <Text style={[styles.clearPillText, { color: colors.primary }]}>Limpar ↺</Text>
+                    <Text style={[styles.clearPillText, { color: colors.primary }]} maxFontSizeMultiplier={1.15}>Limpar ↺</Text>
                   </TouchableOpacity>
                 )}
               </ScrollView>
@@ -984,20 +990,20 @@ const styles = StyleSheet.create({
   pinnedHeaderInner: {
     gap: 6,
   },
-  topControlRow: {
+  navAndLocationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    width: '100%',
+  },
+  toolsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    flexWrap: 'wrap',
     gap: 6,
+    width: '100%',
   },
-  leftControlGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    flexShrink: 0,
-  },
-  rightControlGroup: {
+  toolsRightGroup: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
@@ -1018,11 +1024,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   locationSelectorBtn: {
+    flex: 1,
     paddingVertical: 5,
     paddingHorizontal: Spacing.sm + 2,
     borderRadius: Radius.full,
     borderWidth: 1,
-    maxWidth: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   locationSelectorText: {
     fontSize: FontSize.xs,

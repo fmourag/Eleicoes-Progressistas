@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuthStore } from '../stores/auth.store';
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
@@ -33,7 +34,7 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <>
+    <SafeAreaProvider>
       {isArchiveMode && (
         <View style={styles.archiveBanner}>
           <Text style={styles.archiveBannerText}>
@@ -50,7 +51,7 @@ export default function RootLayout() {
         }}
       />
       <LocationConsentModal />
-    </>
+    </SafeAreaProvider>
   );
 }
 
