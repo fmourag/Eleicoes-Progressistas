@@ -1,2 +1,2 @@
-301af2a76c1475f4471bf87a315bb48f8f8dce0e54a628da52a53bc2c20eeee3  eleicoes-progressistas-v2.2.9.aab
-cb39f917279c1ed5c874b7762d2fda29e1a6bd281f772a810070e09e41f1933c  eleicoes-progressistas-v2.2.9-beta.apk
+971a1a329e09cc6e43f1a46084d9b01d8ade6edea0867cf38e05394a744a78e7  eleicoes-progressistas-v2.2.10.aab
+f9eed8be3dabb39991aa206574e7fc9edbf943ef75b8f8491e0309a30d89871d  eleicoes-progressistas-v2.2.10-beta.apk
