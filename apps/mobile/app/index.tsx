@@ -631,7 +631,7 @@ export default function HomeScreen() {
             💡 Mapeamento independente com dados abertos oficiais do TSE (DivulgaCandContas) e Congresso Nacional.
           </Text>
           <Text style={[styles.footerText, { color: colors.textFaint }]}>
-            Versão 2.2.3 • 100% Anônimo • Código Auditável • Conforme LGPD
+            Versão {APP_VERSION.replace(/^v/, '')} • 100% Anônimo • Código Auditável • Conforme LGPD
           </Text>
         </View>
 
