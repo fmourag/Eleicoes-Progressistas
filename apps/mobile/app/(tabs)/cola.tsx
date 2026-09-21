@@ -8,9 +8,10 @@ import {
   Linking,
   ActivityIndicator,
   Platform,
-  Share,
   Alert,
 } from 'react-native';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 import { router } from 'expo-router';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
 import { useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
@@ -42,7 +43,7 @@ export default function ColaScreen() {
     hydrateCola,
   } = useColaStore();
   const { location } = useLocationStore();
-  const [downloading, setDownloading] = useState(false);
+  const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [benefitModalVisible, setBenefitModalVisible] = useState(false);
   const [promptedFullCola, setPromptedFullCola] = useState(false);
@@ -82,121 +83,150 @@ export default function ColaScreen() {
     }
   }
 
-  function handleViewPdf() {
-    setHasGeneratedPdfInSession(true);
-    storeReviewService.recordPdfGenerated();
-    storeReviewService.promptIfEligible().catch(() => {});
-    if (typeof window !== 'undefined') {
-      window.open(pdfViewUrl, '_blank');
-    } else {
-      Linking.openURL(pdfViewUrl);
-    }
-    triggerBenefitIfLocked();
+  async function getLocalPdfUri(): Promise<string> {
+    const targetFile = `${FileSystem.cacheDirectory}cola-eleitoral-2026.pdf`;
+    const downloadResult = await FileSystem.downloadAsync(pdfDownloadUrl, targetFile);
+    return downloadResult.uri;
   }
 
-  function handleDownloadPdf() {
+  async function handleViewPdf() {
     setHasGeneratedPdfInSession(true);
     storeReviewService.recordPdfGenerated();
-    storeReviewService.promptIfEligible().catch(() => {});
-    setDownloading(true);
-    if (typeof window !== 'undefined') {
+
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined') {
+        window.open(pdfViewUrl, '_blank');
+      }
+      triggerBenefitIfLocked();
+      return;
+    }
+
+    try {
+      setLoadingAction('view');
+      const localUri = await getLocalPdfUri();
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (isAvailable) {
+        await Sharing.shareAsync(localUri, {
+          mimeType: 'application/pdf',
+          dialogTitle: 'Visualizar Cola Eleitoral 2026',
+          UTI: 'com.adobe.pdf',
+        });
+      } else {
+        await Linking.openURL(pdfViewUrl);
+      }
+    } catch (e) {
+      console.warn('Erro ao visualizar PDF:', e);
+      Alert.alert(
+        'Visualizar PDF',
+        'Não foi possível abrir o arquivo PDF. Verifique sua conexão com a internet.',
+      );
+    } finally {
+      setLoadingAction(null);
+      triggerBenefitIfLocked();
+    }
+  }
+
+  async function handleDownloadPdf() {
+    setHasGeneratedPdfInSession(true);
+    storeReviewService.recordPdfGenerated();
+
+    if (Platform.OS === 'web') {
+      setLoadingAction('download');
       const link = document.createElement('a');
       link.href = pdfDownloadUrl;
       link.download = 'cola-eleitoral-2026.pdf';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      setTimeout(() => setDownloading(false), 1500);
-    } else {
-      Linking.openURL(pdfDownloadUrl);
-      setTimeout(() => setDownloading(false), 1500);
+      setTimeout(() => setLoadingAction(null), 1500);
+      triggerBenefitIfLocked(1500);
+      return;
     }
-    triggerBenefitIfLocked(1500);
+
+    try {
+      setLoadingAction('download');
+      const localUri = await getLocalPdfUri();
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (isAvailable) {
+        await Sharing.shareAsync(localUri, {
+          mimeType: 'application/pdf',
+          dialogTitle: 'Salvar / Baixar Cola Eleitoral',
+          UTI: 'com.adobe.pdf',
+        });
+      } else {
+        await Linking.openURL(pdfDownloadUrl);
+      }
+    } catch (e) {
+      console.warn('Erro ao baixar PDF:', e);
+      Alert.alert(
+        'Baixar PDF',
+        'Não foi possível salvar o arquivo PDF. Verifique sua conexão com a internet.',
+      );
+    } finally {
+      setLoadingAction(null);
+      triggerBenefitIfLocked(1500);
+    }
   }
 
-  function handleShareWhatsApp() {
+  async function handleShareWhatsApp() {
     setHasGeneratedPdfInSession(true);
-    const lines = [
-      '🗳️ MINHA COLA ELEITORAL 2026',
-      'Eleições Gerais 2026 — Ordem Oficial do TSE:',
-      '',
-    ];
-    for (const seq of VOTING_SEQUENCE) {
-      const cand = selectedCandidates[seq.key];
-      if (cand) {
-        lines.push(`• ${seq.orderLabel} — ${seq.title}:`);
-        lines.push(`  ${cand.name} (${cand.party}) - Nº ${cand.numeroUrna}`);
-      } else {
-        lines.push(`• ${seq.orderLabel} — ${seq.title}: [Em aberto]`);
+
+    if (Platform.OS !== 'web') {
+      try {
+        setLoadingAction('whatsapp');
+        const localUri = await getLocalPdfUri();
+        const isAvailable = await Sharing.isAvailableAsync();
+        if (isAvailable) {
+          await Sharing.shareAsync(localUri, {
+            mimeType: 'application/pdf',
+            dialogTitle: 'Cola eleitoral anexa',
+            UTI: 'com.adobe.pdf',
+          });
+          triggerBenefitIfLocked();
+          return;
+        }
+      } catch (e) {
+        console.warn('Erro ao compartilhar PDF:', e);
+      } finally {
+        setLoadingAction(null);
       }
     }
-    lines.push('');
-    lines.push('⚠️ Atenção: Leve a cola impressa! É proibido entrar com celular na cabine (TSE).');
-    lines.push('📲 Baixe o App Eleições Progressistas: https://eleicoes-progressistas.onrender.com/beta');
-    const text = encodeURIComponent(lines.join('\n'));
-    Linking.openURL(`https://api.whatsapp.com/send?text=${text}`);
+
+    // Web fallback
+    const message = `Cola eleitoral anexa:\n\n${pdfViewUrl}`;
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+    Linking.openURL(url).catch(() => {});
     triggerBenefitIfLocked();
-  }
-
-  function generateEmailShareText(): string {
-    const lines: string[] = [
-      '========================================',
-      'MINHA COLA ELEITORAL 2026',
-      'Plataforma Eleições Progressistas',
-      'Voto Consciente & Ficha Limpa',
-      `Circunscrição: ${userUf}${userMun ? ' • ' + userMun : ''}`,
-      '========================================',
-      '',
-      'SEQUÊNCIA OFICIAL DE VOTAÇÃO NA URNA ELETRÔNICA:',
-      '',
-    ];
-
-    for (const seq of VOTING_SEQUENCE) {
-      const cand = selectedCandidates[seq.key];
-      if (cand) {
-        lines.push(`[ ${seq.orderLabel} ] ${seq.title.toUpperCase()}`);
-        lines.push(`  Candidato(a): ${cand.name}`);
-        if (cand.viceName) lines.push(`  Vice: ${cand.viceName}`);
-        lines.push(`  Partido: ${cand.party}${cand.partyNumber ? ' (' + cand.partyNumber + ')' : ''}`);
-        lines.push(`  NÚMERO NA URNA: [ ${cand.numeroUrna.split('').join(' ')} ]`);
-        lines.push('');
-      } else {
-        lines.push(`[ ${seq.orderLabel} ] ${seq.title.toUpperCase()}`);
-        lines.push(`  [ Ainda não definido ]`);
-        lines.push('');
-      }
-    }
-
-    lines.push('----------------------------------------');
-    lines.push('Aviso Oficial TSE (Resolução nº 23.736/2024):');
-    lines.push('* É permitido levar colinha em papel para a cabine de votação.');
-    lines.push('* É PROIBIDO entrar na cabine com celular ou câmera.');
-    lines.push('* Imprima esta colinha ou anote os números no papel!');
-    lines.push('');
-    lines.push(`Visualizar PDF da Colinha: ${pdfViewUrl}`);
-    lines.push('Baixar App Eleições Progressistas: https://eleicoes-progressistas.onrender.com/beta');
-
-    return lines.join('\n');
   }
 
   async function handleShareEmail() {
     setHasGeneratedPdfInSession(true);
-    const subject = 'Minha Cola Eleitoral 2026 - Eleições Progressistas';
-    const emailBody = generateEmailShareText();
 
     if (Platform.OS !== 'web') {
       try {
-        await Share.share({
-          title: subject,
-          message: `${subject}\n\n${emailBody}`,
-        });
-        triggerBenefitIfLocked();
-        return;
-      } catch {}
+        setLoadingAction('email');
+        const localUri = await getLocalPdfUri();
+        const isAvailable = await Sharing.isAvailableAsync();
+        if (isAvailable) {
+          await Sharing.shareAsync(localUri, {
+            mimeType: 'application/pdf',
+            dialogTitle: 'Cola eleitoral anexa',
+            UTI: 'com.adobe.pdf',
+          });
+          triggerBenefitIfLocked();
+          return;
+        }
+      } catch (e) {
+        console.warn('Erro ao compartilhar PDF:', e);
+      } finally {
+        setLoadingAction(null);
+      }
     }
 
-    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
-    Linking.openURL(mailtoUrl);
+    // Web fallback
+    const subject = encodeURIComponent('Cola eleitoral anexa');
+    const body = encodeURIComponent(`Cola eleitoral anexa:\n\n${pdfViewUrl}\n\nPlataforma Eleições Progressistas 2026`);
+    Linking.openURL(`mailto:?subject=${subject}&body=${body}`).catch(() => {});
     triggerBenefitIfLocked();
   }
 
@@ -382,10 +412,10 @@ export default function ColaScreen() {
           <TouchableOpacity
             style={[styles.mainPdfBtn, { backgroundColor: colors.primary }]}
             onPress={handleDownloadPdf}
-            disabled={selectedList.length === 0 || downloading}
+            disabled={selectedList.length === 0 || !!loadingAction}
             activeOpacity={0.8}
           >
-            {downloading ? (
+            {loadingAction === 'download' ? (
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
               <Text style={styles.mainPdfBtnText}>⬇️ Baixar PDF da Colinha (Para Impressão)</Text>
@@ -396,28 +426,46 @@ export default function ColaScreen() {
             <TouchableOpacity
               style={[styles.secondaryActionBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
               onPress={handleViewPdf}
-              disabled={selectedList.length === 0}
+              disabled={selectedList.length === 0 || !!loadingAction}
             >
-              <Text style={{ fontSize: 18 }}>👁️</Text>
-              <Text style={[styles.secondaryBtnLabel, { color: colors.text }]}>Visualizar</Text>
+              {loadingAction === 'view' ? (
+                <ActivityIndicator size="small" color={colors.primary} />
+              ) : (
+                <>
+                  <Text style={{ fontSize: 18 }}>👁️</Text>
+                  <Text style={[styles.secondaryBtnLabel, { color: colors.text }]}>Visualizar</Text>
+                </>
+              )}
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.secondaryActionBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
               onPress={handleShareWhatsApp}
-              disabled={selectedList.length === 0}
+              disabled={selectedList.length === 0 || !!loadingAction}
             >
-              <Text style={{ fontSize: 18 }}>💬</Text>
-              <Text style={[styles.secondaryBtnLabel, { color: colors.text }]}>WhatsApp</Text>
+              {loadingAction === 'whatsapp' ? (
+                <ActivityIndicator size="small" color={colors.primary} />
+              ) : (
+                <>
+                  <Text style={{ fontSize: 18 }}>💬</Text>
+                  <Text style={[styles.secondaryBtnLabel, { color: colors.text }]}>WhatsApp</Text>
+                </>
+              )}
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.secondaryActionBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
               onPress={handleShareEmail}
-              disabled={selectedList.length === 0}
+              disabled={selectedList.length === 0 || !!loadingAction}
             >
-              <Text style={{ fontSize: 18 }}>✉️</Text>
-              <Text style={[styles.secondaryBtnLabel, { color: colors.text }]}>E-mail</Text>
+              {loadingAction === 'email' ? (
+                <ActivityIndicator size="small" color={colors.primary} />
+              ) : (
+                <>
+                  <Text style={{ fontSize: 18 }}>✉️</Text>
+                  <Text style={[styles.secondaryBtnLabel, { color: colors.text }]}>E-mail</Text>
+                </>
+              )}
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -651,6 +699,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     borderWidth: 1,
     gap: 4,
+    minHeight: 52,
   },
   secondaryBtnLabel: {
     fontSize: FontSize.xs,

@@ -81,31 +81,34 @@ export default function TabsLayout() {
           <Tabs.Screen name="perfil" options={{ href: null }} />
         </Tabs>
 
-        {/* Botão Flutuante de Feedback dos Testadores */}
+        {/* Botão Flutuante de Feedback dos Testadores (posicionado acima da barra de cola para não obstruir ações) */}
         <TouchableOpacity
-          onPress={() => Linking.openURL(`${API_URL}/feedback`)}
-          activeOpacity={0.8}
+          onPress={() => Linking.openURL(`${API_URL}/feedback`).catch(() => {})}
+          activeOpacity={0.85}
           style={{
             position: 'absolute',
-            bottom: Platform.OS === 'ios' ? 100 : 76,
-            right: 20,
-            width: 54,
-            height: 54,
-            borderRadius: 27,
+            bottom: Platform.OS === 'ios' ? 160 : 145,
+            right: 16,
+            width: 48,
+            height: 48,
+            borderRadius: 24,
             backgroundColor: '#1B5E20',
             justifyContent: 'center',
             alignItems: 'center',
-            elevation: 6,
+            elevation: 8,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 3 },
-            shadowOpacity: 0.25,
-            shadowRadius: 4,
+            shadowOpacity: 0.3,
+            shadowRadius: 5,
             zIndex: 999,
+            borderWidth: 2,
+            borderColor: '#FFFFFF',
           }}
           accessibilityLabel="Enviar feedback de teste"
           accessibilityRole="button"
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Text style={{ fontSize: 24, color: '#fff' }}>💬</Text>
+          <Text style={{ fontSize: 22, color: '#fff' }}>💬</Text>
         </TouchableOpacity>
       </View>
     </View>
