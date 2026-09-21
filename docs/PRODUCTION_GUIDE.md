@@ -1,7 +1,7 @@
 ---
 title: "Guia de Produção e Deploy"
-version: "2.2.0"
-last_updated: "2026-09-08"
+version: "2.2.12"
+last_updated: "2026-09-21"
 ---
 
 # Guia de Produção — Eleições Progressistas
@@ -10,7 +10,7 @@ last_updated: "2026-09-08"
 
 ## Visão geral da aplicação
 - **Nome:** Eleições Progressistas ("Cheque o passado. Escolha o futuro.")
-- **Versão:** 2.2.0
+- **Versão:** 2.2.12
 - **Arquitetura:** Mobile (Expo React-Native) ↔ Supabase Auth ↔ NestJS API ↔ FastAPI Matching Service ↔ PostgreSQL / SQLite
 - **Principais módulos:** Auth, Priorities Matching, Candidate Management, Geo, ETL, CI/CD, Cola Eleitoral, Ads (Anúncios Éticos), Finance (Sustentabilidade PIX), Public-API (Tiered API), Watchdog (Observatório de Mandatos), Reports (Relatórios B2B), OpsMode (Ciclo de Vida & Sunset)
 

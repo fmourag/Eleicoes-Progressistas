@@ -1,10 +1,10 @@
 ---
 title: "Checklist de Deploy e Lançamento Oficial"
-version: "2.2.5"
-last_updated: "2026-09-17"
+version: "2.2.12"
+last_updated: "2026-09-21"
 ---
 
-# Checklist de Deploy e Pré-Lançamento — Eleições Progressistas v2.2.5
+# Checklist de Deploy e Pré-Lançamento — Eleições Progressistas v2.2.12
 
 Roteiro operacional obrigatório para validação técnica, jurídica e de infraestrutura antes da liberação do tráfego público de produção.
 

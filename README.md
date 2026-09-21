@@ -6,7 +6,7 @@ Plataforma cívica gratuita que conecta eleitores a candidatos progressistas aud
 
 ![API Status](https://img.shields.io/badge/API-LIVE-green)
 ![Web Status](https://img.shields.io/badge/Web-LIVE-green)
-![Version](https://img.shields.io/badge/Version-2.2.5-blue)
+![Version](https://img.shields.io/badge/Version-2.2.12-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ## 🚀 Acesso Rápido
@@ -22,7 +22,7 @@ Plataforma cívica gratuita que conecta eleitores a candidatos progressistas aud
 
 - ✅ **Matching Stateless**: ranking por 13 pilares prioritários (memória de sessão, zero persistência)
 - ✅ **Raio-X Auditável**: memória de cálculo 40/30/30 (ideologia/propostas/histórico)
-- ✅ **Cola Eleitoral**: PDF oficial em conformidade com as regras do TSE para impressão em papel
+- ✅ **Cola Eleitoral Persistente**: PDF oficial TSE gerado uma vez e salvo permanentemente no dispositivo; compartilha por e-mail/WhatsApp com o PDF anexo ("Cola eleitoral anexa"); apagada somente por comando explícito do usuário ou sobrescrita por nova geração
 - ✅ **Apuração em Tempo Real (Election Night)**: dados oficiais do TSE em tempo real para os candidatos da cola
 - ✅ **Apoio Cívico Voluntário**: contribuição independente via PIX celular `(21) 97194-3298` (E.164 BACEN) com persistência 100% local
 - ✅ **Conformidade Google Play & Anti-Gating**: avaliação in-app nativa acionada exclusivamente por marcos neutros e CTA universal
