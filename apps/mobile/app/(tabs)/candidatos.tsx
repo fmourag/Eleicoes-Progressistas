@@ -476,7 +476,7 @@ export default function CandidatosScreen() {
             }}
             maxFontSizeMultiplier={1.2}
           >
-            🎯 Buscando Propostas e não Fofocas
+            🎯 Buscando Propostas
           </Text>
         </View>
         <Text style={{ color: colors.text, fontSize: FontSize.md, fontWeight: '600', marginTop: Spacing.xs, textAlign: 'center' }} maxFontSizeMultiplier={1.2}>
@@ -874,7 +874,7 @@ export default function CandidatosScreen() {
                 📝 Minha Cola Eleitoral ({colaCount} candidato{colaCount > 1 ? 's' : ''})
               </Text>
               <Text style={[styles.floatingColaBtnSubtitle, { color: colors.textMuted }]}>
-                Visualizar PDF, baixar ou compartilhar no WhatsApp
+                Compartilhar PDF ou imprimir para o dia do voto
               </Text>
             </View>
             <View style={styles.floatingColaBtnBadge}>

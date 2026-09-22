@@ -71,7 +71,7 @@ export default function TransparenciaScreen() {
             <View style={styles.itemTextContainer}>
               <Text style={[styles.itemTitle, { color: colors.text }]}>Cola Eleitoral 2026 (100% Local)</Text>
               <Text style={[styles.itemDesc, { color: colors.textMuted }]}>
-                Sequência oficial da urna do TSE, caixas de dígitos grandes, PDF para impressão e compartilhamento WhatsApp/E-mail.
+                Sequência oficial da urna do TSE, caixas de dígitos grandes, PDF para impressão e compartilhamento.
               </Text>
             </View>
           </View>

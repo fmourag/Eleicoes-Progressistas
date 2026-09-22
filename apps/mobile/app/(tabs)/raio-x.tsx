@@ -217,7 +217,7 @@ export default function RaioXScreen() {
             }}
             maxFontSizeMultiplier={1.2}
           >
-            🎯 Buscando Propostas e não Fofocas
+            🎯 Buscando Propostas
           </Text>
         </View>
         <Text style={{ color: colors.textMuted, fontSize: FontSize.sm, marginTop: Spacing.xs }} maxFontSizeMultiplier={1.15}>

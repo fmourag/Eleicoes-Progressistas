@@ -71,7 +71,7 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
     return downloadResult.uri;
   }
 
-  async function handleViewPdf() {
+  async function handleShare() {
     setHasGeneratedPdfInSession(true);
     storeReviewService.recordPdfGenerated();
 
@@ -83,157 +83,27 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
     }
 
     try {
-      setLoadingAction('view');
+      setLoadingAction('share');
       const localUri = await getLocalPdfUri();
       const isAvailable = await Sharing.isAvailableAsync();
       if (isAvailable) {
         await Sharing.shareAsync(localUri, {
           mimeType: 'application/pdf',
-          dialogTitle: 'Visualizar Cola Eleitoral 2026',
+          dialogTitle: 'Compartilhar Cola Eleitoral',
           UTI: 'com.adobe.pdf',
         });
       } else {
         await Linking.openURL(pdfViewUrl);
       }
     } catch (e) {
-      console.warn('Erro ao visualizar PDF:', e);
+      console.warn('Erro ao compartilhar PDF:', e);
       Alert.alert(
-        'Visualizar PDF',
-        'Não foi possível abrir o leitor de PDF. Verifique sua conexão com a internet ou tente novamente.',
+        'Compartilhar',
+        'Não foi possível compartilhar o arquivo PDF. Verifique sua conexão com a internet.',
       );
     } finally {
       setLoadingAction(null);
     }
-  }
-
-  async function handleDownloadPdf() {
-    setHasGeneratedPdfInSession(true);
-    storeReviewService.recordPdfGenerated();
-
-    if (Platform.OS === 'web') {
-      setLoadingAction('download');
-      const link = document.createElement('a');
-      link.href = pdfDownloadUrl;
-      link.download = 'cola-eleitoral-2026.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      setTimeout(() => setLoadingAction(null), 1500);
-      return;
-    }
-
-    try {
-      setLoadingAction('download');
-      const localUri = await getLocalPdfUri();
-      const isAvailable = await Sharing.isAvailableAsync();
-      if (isAvailable) {
-        await Sharing.shareAsync(localUri, {
-          mimeType: 'application/pdf',
-          dialogTitle: 'Salvar / Baixar Cola Eleitoral',
-          UTI: 'com.adobe.pdf',
-        });
-      } else {
-        await Linking.openURL(pdfDownloadUrl);
-      }
-    } catch (e) {
-      console.warn('Erro ao baixar PDF:', e);
-      Alert.alert(
-        'Baixar PDF',
-        'Não foi possível salvar o arquivo PDF. Verifique sua conexão com a internet.',
-      );
-    } finally {
-      setLoadingAction(null);
-    }
-  }
-
-  async function handlePrint() {
-    setHasGeneratedPdfInSession(true);
-    storeReviewService.recordPdfGenerated();
-
-    if (Platform.OS === 'web') {
-      if (typeof window !== 'undefined') {
-        window.open(pdfViewUrl, '_blank');
-      }
-      return;
-    }
-
-    try {
-      setLoadingAction('print');
-      const localUri = await getLocalPdfUri();
-      const isAvailable = await Sharing.isAvailableAsync();
-      if (isAvailable) {
-        await Sharing.shareAsync(localUri, {
-          mimeType: 'application/pdf',
-          dialogTitle: 'Imprimir Cola Eleitoral',
-          UTI: 'com.adobe.pdf',
-        });
-      } else {
-        await Linking.openURL(pdfViewUrl);
-      }
-    } catch {
-      Alert.alert('Imprimir', 'Não foi possível enviar o documento para impressão.');
-    } finally {
-      setLoadingAction(null);
-    }
-  }
-
-  async function handleShareWhatsApp() {
-    setHasGeneratedPdfInSession(true);
-
-    if (Platform.OS !== 'web') {
-      try {
-        setLoadingAction('whatsapp');
-        const localUri = await getLocalPdfUri();
-        const isAvailable = await Sharing.isAvailableAsync();
-        if (isAvailable) {
-          await Sharing.shareAsync(localUri, {
-            mimeType: 'application/pdf',
-            dialogTitle: 'Cola eleitoral anexa',
-            UTI: 'com.adobe.pdf',
-          });
-          return;
-        }
-      } catch (e) {
-        console.warn('Erro ao anexar PDF no WhatsApp:', e);
-      } finally {
-        setLoadingAction(null);
-      }
-    }
-
-    // Web fallback
-    const message = `Cola eleitoral anexa:\n\n${pdfViewUrl}`;
-    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
-    Linking.openURL(url).catch(() => {});
-  }
-
-  async function handleShareEmail() {
-    setHasGeneratedPdfInSession(true);
-
-    if (Platform.OS !== 'web') {
-      try {
-        setLoadingAction('email');
-        const localUri = await getLocalPdfUri();
-        const isAvailable = await Sharing.isAvailableAsync();
-        if (isAvailable) {
-          await Sharing.shareAsync(localUri, {
-            mimeType: 'application/pdf',
-            dialogTitle: 'Cola eleitoral anexa',
-            UTI: 'com.adobe.pdf',
-          });
-          return;
-        }
-      } catch (e) {
-        console.warn('Erro ao anexar PDF no e-mail:', e);
-      } finally {
-        setLoadingAction(null);
-      }
-    }
-
-    // Web fallback
-    const subject = encodeURIComponent('Cola eleitoral anexa');
-    const body = encodeURIComponent(`Cola eleitoral anexa:\n\n${pdfViewUrl}\n\nPlataforma Eleições Progressistas 2026`);
-    const url = `mailto:?subject=${subject}&body=${body}`;
-    Linking.openURL(url).catch(() => {});
   }
 
   function handleCopyText() {
@@ -296,67 +166,15 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
             {/* Quick Action Buttons Toolbar */}
             <View style={styles.actionToolbar}>
               <TouchableOpacity
-                style={[styles.primaryActionBtn, { backgroundColor: '#047857' }]}
-                onPress={handleViewPdf}
-                activeOpacity={0.8}
-                disabled={selectedList.length === 0 || !!loadingAction}
-              >
-                {loadingAction === 'view' ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
-                ) : (
-                  <Text style={styles.primaryActionBtnText}>👁️ Visualizar PDF</Text>
-                )}
-              </TouchableOpacity>
-
-              <TouchableOpacity
                 style={[styles.primaryActionBtn, { backgroundColor: colors.primary }]}
-                onPress={handleDownloadPdf}
+                onPress={handleShare}
                 activeOpacity={0.8}
                 disabled={selectedList.length === 0 || !!loadingAction}
               >
-                {loadingAction === 'download' ? (
+                {loadingAction === 'share' ? (
                   <ActivityIndicator size="small" color="#FFFFFF" />
                 ) : (
-                  <Text style={styles.primaryActionBtnText}>⬇️ Baixar PDF</Text>
-                )}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.secondaryActionBtn, { backgroundColor: '#25D366' }]}
-                onPress={handleShareWhatsApp}
-                activeOpacity={0.8}
-                disabled={selectedList.length === 0 || !!loadingAction}
-              >
-                {loadingAction === 'whatsapp' ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
-                ) : (
-                  <Text style={styles.secondaryActionBtnText}>💬 WhatsApp</Text>
-                )}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.secondaryActionBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
-                onPress={handleShareEmail}
-                activeOpacity={0.8}
-                disabled={selectedList.length === 0 || !!loadingAction}
-              >
-                {loadingAction === 'email' ? (
-                  <ActivityIndicator size="small" color={colors.primary} />
-                ) : (
-                  <Text style={[styles.secondaryActionBtnText, { color: colors.text }]}>✉️ E-mail</Text>
-                )}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.secondaryActionBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
-                onPress={handlePrint}
-                activeOpacity={0.8}
-                disabled={selectedList.length === 0 || !!loadingAction}
-              >
-                {loadingAction === 'print' ? (
-                  <ActivityIndicator size="small" color={colors.primary} />
-                ) : (
-                  <Text style={[styles.secondaryActionBtnText, { color: colors.text }]}>🖨️ Imprimir</Text>
+                  <Text style={styles.primaryActionBtnText}>📤 Compartilhar Cola Eleitoral (PDF)</Text>
                 )}
               </TouchableOpacity>
             </View>

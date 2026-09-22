@@ -529,7 +529,7 @@ export default function HomeScreen() {
 
           <View style={{ marginTop: Spacing.sm }}>
             <ActionButton
-              title="📝 Gerar Cola Eleitoral (PDF & WhatsApp)"
+              title="📝 Gerar Cola Eleitoral (PDF)"
               onPress={() => router.push('/(tabs)/cola')}
               variant="secondary"
             />

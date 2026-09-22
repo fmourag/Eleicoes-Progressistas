@@ -427,7 +427,7 @@ export default function MatchingScreen() {
                   letterSpacing: 0.3,
                 }}
               >
-                🎯 Buscando Propostas e não Fofocas
+                🎯 Buscando Propostas
               </Text>
             </View>
             <Text style={{ color: colors.textMuted, fontSize: FontSize.sm, marginTop: Spacing.xs }}>Carregando candidaturas e prioridades...</Text>
