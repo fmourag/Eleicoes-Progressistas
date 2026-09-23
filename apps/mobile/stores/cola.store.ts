@@ -42,6 +42,7 @@ interface ColaState {
   removeCandidate: (candidateId: string) => void;
   removeCandidateByCargo: (slotOrCargo: string) => void;
   clearCola: () => void;
+  saveCola: () => void;
   hydrateCola: () => Promise<void>;
   isCandidateSelected: (candidateId: string) => boolean;
   getCandidateSlot: (candidateId: string) => ColaSlotKey | null;
@@ -236,6 +237,11 @@ export const useColaStore = create<ColaState>((set, get) => ({
     }
     AppStorage.removeItem(STORAGE_KEY).catch(() => {});
     set({ selectedCandidates: {} });
+  },
+
+  saveCola: () => {
+    const current = get().selectedCandidates;
+    saveColaToStorage(current);
   },
 
   isCandidateSelected: (candidateId) => {

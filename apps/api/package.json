@@ -1,6 +1,6 @@
 {
   "name": "@np/api",
-  "version": "2.2.13",
+  "version": "2.2.14",
   "private": true,
   "scripts": {
     "dev": "tsx watch src/main.ts",

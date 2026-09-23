@@ -41,12 +41,14 @@ export default function ColaScreen() {
     setHasGeneratedPdfInSession,
     clearCola,
     hydrateCola,
+    saveCola,
   } = useColaStore();
   const { location } = useLocationStore();
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [benefitModalVisible, setBenefitModalVisible] = useState(false);
   const [promptedFullCola, setPromptedFullCola] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   // Hidrata a cola salva permanentemente no dispositivo
   useEffect(() => {
@@ -141,6 +143,12 @@ export default function ColaScreen() {
         ]
       );
     }
+  }
+
+  function handleSaveCola() {
+    saveCola();
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2500);
   }
 
   return (
@@ -305,20 +313,39 @@ export default function ColaScreen() {
             Formato pronto para impressão em meia folha A4
           </Text>
 
-          <TouchableOpacity
-            style={[styles.mainPdfBtn, { backgroundColor: colors.primary }]}
-            onPress={handleShare}
-            disabled={selectedList.length === 0 || !!loadingAction}
-            activeOpacity={0.8}
-          >
-            {loadingAction === 'share' ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
-            ) : (
-              <Text style={styles.mainPdfBtnText}>📤 Compartilhar Cola Eleitoral (PDF)</Text>
-            )}
-          </TouchableOpacity>
+          <View style={styles.actionToolbar}>
+            <TouchableOpacity
+              style={[styles.mainPdfBtn, { backgroundColor: colors.primary, flex: 1, marginRight: 8 }]}
+              onPress={handleShare}
+              disabled={selectedList.length === 0 || !!loadingAction}
+              activeOpacity={0.8}
+            >
+              {loadingAction === 'share' ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <Text style={styles.mainPdfBtnText}>📤 Compartilhar (PDF)</Text>
+              )}
+            </TouchableOpacity>
 
-          <View style={styles.secondaryActionsGrid}>
+            <TouchableOpacity
+              style={[styles.secondaryActionBtn, { backgroundColor: saveSuccess ? '#047857' : colors.surfaceAlt, borderColor: saveSuccess ? '#047857' : colors.border, flex: 1 }]}
+              onPress={handleSaveCola}
+              activeOpacity={0.8}
+              disabled={selectedList.length === 0}
+            >
+              <Text style={[styles.secondaryBtnLabel, { color: saveSuccess ? '#FFFFFF' : colors.text }]}>
+                {saveSuccess ? '✅ Salvo!' : '💾 Salvar Cola'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          
+          {saveSuccess && (
+            <View style={[styles.copyNotice, { backgroundColor: '#047857', marginTop: 12 }]}>
+              <Text style={[styles.copyNoticeText, { color: '#FFFFFF' }]}>✓ Cola eleitoral salva no dispositivo!</Text>
+            </View>
+          )}
+
+          <View style={[styles.secondaryActionsGrid, { marginTop: 16 }]}>
             <TouchableOpacity
               style={[styles.secondaryActionBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
               onPress={() => setModalOpen(true)}
@@ -537,6 +564,20 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '800',
     fontSize: FontSize.sm,
+  },
+  actionToolbar: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    marginBottom: Spacing.sm,
+  },
+  copyNotice: {
+    padding: Spacing.sm,
+    borderRadius: Radius.md,
+    alignItems: 'center',
+  },
+  copyNoticeText: {
+    fontSize: FontSize.xs,
+    fontWeight: '600',
   },
   secondaryActionsGrid: {
     flexDirection: 'row',

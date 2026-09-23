@@ -44,10 +44,12 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
     getSelectedList,
     setHasGeneratedPdfInSession,
     hydrateCola,
+    saveCola,
   } = useColaStore();
   const { location } = useLocationStore();
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   // Garante a hidratação da cola gravada em disco sempre que o modal é aberto
   useEffect(() => {
@@ -114,6 +116,12 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
     }
   }
 
+  function handleSaveCola() {
+    saveCola();
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2500);
+  }
+
   return (
     <Modal
       visible={visible}
@@ -166,7 +174,7 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
             {/* Quick Action Buttons Toolbar */}
             <View style={styles.actionToolbar}>
               <TouchableOpacity
-                style={[styles.primaryActionBtn, { backgroundColor: colors.primary }]}
+                style={[styles.primaryActionBtn, { backgroundColor: colors.primary, flex: 1, marginRight: 8 }]}
                 onPress={handleShare}
                 activeOpacity={0.8}
                 disabled={selectedList.length === 0 || !!loadingAction}
@@ -174,14 +182,30 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
                 {loadingAction === 'share' ? (
                   <ActivityIndicator size="small" color="#FFFFFF" />
                 ) : (
-                  <Text style={styles.primaryActionBtnText}>📤 Compartilhar Cola Eleitoral (PDF)</Text>
+                  <Text style={styles.primaryActionBtnText}>📤 Compartilhar Cola (PDF)</Text>
                 )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.secondaryActionBtn, { backgroundColor: saveSuccess ? '#047857' : colors.surfaceAlt, borderColor: saveSuccess ? '#047857' : colors.border, flex: 1 }]}
+                onPress={handleSaveCola}
+                activeOpacity={0.8}
+                disabled={selectedList.length === 0}
+              >
+                <Text style={[styles.secondaryActionBtnText, { color: saveSuccess ? '#FFFFFF' : colors.text }]}>
+                  {saveSuccess ? '✅ Salvo!' : '💾 Salvar Cola'}
+                </Text>
               </TouchableOpacity>
             </View>
 
             {copySuccess && (
               <View style={styles.copyNotice}>
                 <Text style={styles.copyNoticeText}>✓ Link da Cola copiado com sucesso!</Text>
+              </View>
+            )}
+            
+            {saveSuccess && (
+              <View style={[styles.copyNotice, { backgroundColor: '#047857' }]}>
+                <Text style={[styles.copyNoticeText, { color: '#FFFFFF' }]}>✓ Cola eleitoral salva no dispositivo!</Text>
               </View>
             )}
 
