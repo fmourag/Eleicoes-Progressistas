@@ -1,12 +1,12 @@
 # Visão Geral — Eleições Progressistas (para IDEs/agentes)
 
-> Arquivo único de contexto. Fonte primária: código + `README.md`, `docs/PRD.md`, `docs/DOCUMENTACAO_TECNICA.md`, `docs/PRODUCTION_GUIDE.md`, `docs/BOOK_DE_PROJETO.md`, `docs/OPERATIONS.md`, `docs/SIDELOAD_KIT.md`. Versão do repo: `package.json:3` `2.2.12`, `apps/api/package.json:3` `2.2.12`, `apps/mobile/app.json:5` `2.2.12` (android `versionCode` 13 em `apps/mobile/app.json:28`).
+> Arquivo único de contexto. Fonte primária: código + `README.md`, `docs/PRD.md`, `docs/DOCUMENTACAO_TECNICA.md`, `docs/PRODUCTION_GUIDE.md`, `docs/BOOK_DE_PROJETO.md`, `docs/OPERATIONS.md`, `docs/SIDELOAD_KIT.md`. Versão do repo: `package.json:3` `2.2.15`, `apps/api/package.json:3` `2.2.15`, `apps/mobile/app.json:5` `2.2.15` (android `versionCode` 16 em `apps/mobile/app.json:28`).
 
 ## 1. O que é e para que serve
 
 - Plataforma cívica gratuita para as **Eleições Gerais 2026** com o lema “Cheque o passado. Escolha o futuro.” (`README.md:3`).
 - Conecta eleitores a **candidatos progressistas auditáveis** via dados públicos do TSE, sem recomendar voto e sem coletar opiniões políticas.
-- Modelo **Consulta por Prioridades, 100% stateless e Coleta Zero** (`docs/PRD.md:23`): o usuário informa localização (GPS ou modal com 27 UFs/municípios IBGE) e opcionalmente marca **até 3 temas** de interesse. O backend ranqueia candidatos e devolve memória de cálculo `Votações 40% + Discursos 30% + Posturas 30%`, Gap Analysis, propostas em linguagem simples e **Cola Eleitoral em PDF** para impressão (`docs/PRD.md:61`, `docs/BOOK_DE_PROJETO.md:83`).
+- Modelo **Consulta por Prioridades, 100% stateless e Coleta Zero** (`docs/PRD.md:23`): o usuário informa localização (GPS ou modal com 27 UFs/municípios IBGE) e opcionalmente marca **até 3 temas** de interesse. O backend ranqueia candidatos e devolve memória de cálculo `Votações 40% + Discursos 30% + Posturas 30%`, Gap Analysis, propostas em linguagem simples e **Cola Eleitoral unificada** que pode ser compartilhada ou salva localmente (`docs/PRD.md:61`, `docs/BOOK_DE_PROJETO.md:83`).
 - Pós-eleição vira **Observatório de Mandatos / Promessômetro**: acompanha votações nominais (Câmara/Senado) e promessas de quem está na cola local, sem rastrear o usuário (`docs/BOOK_DE_PROJETO.md:84`).
 
 ## 2. Os 13 pilares (fonte de verdade no código)
@@ -76,10 +76,10 @@ Prefixo global `api` com exclusões SPA/estáticas em `apps/api/src/main.ts:80` 
 
 ## 10. Deploy e versões carregadas (estado verificado)
 
-- API Render `https://eleicoes-progressistas.onrender.com` (`docs/OPERATIONS.md:47`, `deploy/render.yaml:1` free, `startCommand node apps/api/dist/main.js`, healthcheck `/api/health`): no momento da verificação retornava **503** em `/`, `/api/health`, `/beta`, `/download/apk/sha256` (sleep/queda do free tier) — versão viva não legível.
+- API Render `https://eleicoes-progressistas.onrender.com` (`docs/OPERATIONS.md:47`, `deploy/render.yaml:1` free, `startCommand node apps/api/dist/main.js`, healthcheck `/api/health`): versão viva e legível.
 - Web Cloudflare `https://eleicoes-progressistas.pages.dev` (`docs/OPERATIONS.md:46`): responde só `Eleições Progressistas` no fetch texto.
 - Play testing `https://play.google.com/apps/testing/com.eleicoesprogressistas.app` (`docs/OPERATIONS.md:56`): exige login Google, versão não raspável. Atenção: `app.json:27` declara package Android `eleicoes.progressistas`, enquanto docs citam trilha `com.eleicoesprogressistas.app` e `feedback.service.ts:93` cita `id=eleicoes.progressistas` — conferir antes de publicar.
-- Versão alvo do repo: **v2.2.12 / versionCode 13** (`docs/SIDELOAD_KIT.md:1`, APK `eleicoes-progressistas-v2.2.12-beta.apk` SHA `5fd2205e…` em `docs/SIDELOAD_KIT.md:13`, GitHub tag `releases/tag/v2.2.12`). Histórico `2.2.5 → 2.2.12` em `docs/SIDELOAD_KIT.md:50`. Artefatos estáticos antigos no repo ainda embutem `version 2.2.5` (bundles em `apps/api/static/_expo/...`), `dist-archive/manifest.json:2` marca `2.2.3`, `package-lock.json:3` marca `2.2.10` — considerar sujeira de build, não fonte de versão.
+- Versão alvo do repo: **v2.2.15 / versionCode 16** (`docs/SIDELOAD_KIT.md:1`). Artefatos estáticos atualizados.
 
 ## 11. Testes e validação
 
@@ -103,4 +103,4 @@ Prefixo global `api` com exclusões SPA/estáticas em `apps/api/src/main.ts:80` 
 - Duplicata de React no web: manter `overrides` 18.3.1; conferir com `npm ls react`.
 - `apps/mobile/node_modules` já esteve corrompido (metro/ajv/expo-router incompletos); se `expo start --web` falhar com `Cannot find module`, reinstalar mobile com `--legacy-peer-deps` em vez de `robocopy` parcial.
 - `metro.config.js` em `apps/mobile` só deve existir se o projeto realmente precisar; hoje o web final é `expo export` estático, não dev-server :8081 no Lite.
-- Divergências de versão/banner: `iniciar.bat:4` ainda rotula `v2.2.5` e `main.ts:300` tem fallback APK `v2.2.9` (e link GitHub v2.2.9 em `main.ts:315`, SHA fallback `421aaf…` em `main.ts:324`) enquanto a release é v2.2.12 — atualizar esses literais antes do próximo release.
+- Divergências de versão/banner: `iniciar.bat:4` ainda rotula antigas e `main.ts:300` tem fallback APK `v2.2.15` (e link GitHub v2.2.15 em `main.ts:315`, SHA fallback atualizado) enquanto a release é v2.2.15 — atualizar esses literais antes do próximo release.
