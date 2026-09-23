@@ -1,6 +1,6 @@
 {
   "name": "@np/mobile",
-  "version": "2.2.14",
+  "version": "2.2.15",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -11,7 +11,9 @@
     "build:web": "npx expo export --platform web --output-dir dist",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
-    "test": "npx tsx ../../scripts/test-pix.ts"
+    "test": "npx tsx ../../scripts/test-pix.ts",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",

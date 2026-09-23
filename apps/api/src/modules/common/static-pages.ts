@@ -100,7 +100,7 @@ export const BETA_HTML = `<!DOCTYPE html>
 </head>
 <body>
     <div class="header">
-        <span class="badge">HOMOLOGAÇÃO v2.2.14</span>
+        <span class="badge">HOMOLOGAÇÃO v2.2.15</span>
         <h1>Eleições Progressistas 2026</h1>
         <p class="subtitle">Acesso direto para cidadãos, testadores e auditores cívicos</p>
     </div>
@@ -202,7 +202,7 @@ export const FEEDBACK_HTML = `<!DOCTYPE html>
     <div class="header">
         <span class="badge">PROGRAMA DE TESTADORES OFICIAIS & AUDITORIA CÍVICA</span>
         <h1>Eleições Progressistas</h1>
-        <p class="subtitle">Inscrição de Testadores Google Play & Homologação da versão 2.2.14</p>
+        <p class="subtitle">Inscrição de Testadores Google Play & Homologação da versão 2.2.15</p>
     </div>
 
     <div class="card" id="formCard">
@@ -226,7 +226,7 @@ export const FEEDBACK_HTML = `<!DOCTYPE html>
         </div>
 
         <form id="feedbackForm">
-            <input type="hidden" id="appVersion" name="appVersion" value="2.2.14">
+            <input type="hidden" id="appVersion" name="appVersion" value="2.2.15">
             <input type="hidden" id="nps" name="nps" value="10">
 
             <div class="form-group">
@@ -310,7 +310,7 @@ export const FEEDBACK_HTML = `<!DOCTYPE html>
 
     <div class="success-box" id="successBox">
         <h2 style="color: #1B5E20; margin-top: 0;">🎉 Inscrição & Relatório Registrados com Sucesso!</h2>
-        <p>Seu e-mail e apontamentos foram integrados à base de homologação da versão 2.2.14.</p>
+        <p>Seu e-mail e apontamentos foram integrados à base de homologação da versão 2.2.15.</p>
         <div>Seu protocolo único de atendimento técnico:</div>
         <div class="protocol-badge" id="protocolBadge">FB-...</div>
 

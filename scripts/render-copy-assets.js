@@ -60,7 +60,7 @@ if (fs.existsSync(rootStaticDir)) {
 }
 
 const apkDir = path.join(apiStaticDir, 'apk');
-let apkFile = path.join(apkDir, 'eleicoes-progressistas-v2.2.14-beta.apk');
+let apkFile = path.join(apkDir, 'eleicoes-progressistas-v2.2.15-beta.apk');
 if (!fs.existsSync(apkFile) && fs.existsSync(apkDir)) {
   const found = fs.readdirSync(apkDir).find(f => f.endsWith('.apk'));
   if (found) apkFile = path.join(apkDir, found);
