@@ -85,6 +85,7 @@ jobs:
           if [ ! -f "$OUTPUT_AAB" ] || [ ! -f "$OUTPUT_APK" ]; then
             echo "Compilando via Expo Prebuild e Gradle..."
             npx expo prebuild --platform android --clean
+            node ../../scripts/configure-android-signing.js
             cd android
             chmod +x gradlew
 
