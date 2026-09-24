@@ -118,7 +118,7 @@ export default function ManualDoUsuarioScreen() {
           <CivicEmblem size={64} />
           <Text style={[styles.title, { color: colors.text }]}>Manual do Usuário</Text>
           <Text style={[styles.subtitle, { color: colors.primary }]}>
-            Guia Completo de Uso & Metodologia Cívica • Versão 2.2.0
+            Guia Completo de Uso & Metodologia Cívica • Versão 2.2.17
           </Text>
           <View style={styles.badgeRow}>
             <View style={[styles.badge, { backgroundColor: colors.primaryLight, borderColor: colors.primary }]}>

@@ -32,7 +32,7 @@ export default function TransparenciaScreen() {
         <View style={styles.header}>
           <CivicEmblem size={56} />
           <Text style={[styles.title, { color: colors.text }]}>Nota de Transparência Pública</Text>
-          <Text style={[styles.subtitle, { color: colors.primary }]}>Evolução para Coleta Zero • Versão 2.2.0</Text>
+          <Text style={[styles.subtitle, { color: colors.primary }]}>Evolução para Coleta Zero • Versão 2.2.17</Text>
           <View style={[styles.badge, { backgroundColor: colors.primaryLight, borderColor: colors.primary }]}>
             <Text style={[styles.badgeText, { color: colors.primary }]}>PRIVACY BY DESIGN • LGPD-FIRST</Text>
           </View>
