@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Elei\u00e7\u00f5es Progressistas",
+    "name": "Eleições Progressistas",
     "slug": "eleicoes-progressistas",
-    "version": "2.2.15",
+    "version": "2.2.16",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -25,7 +25,7 @@
         "backgroundColor": "#1B5E20"
       },
       "package": "eleicoes.progressistas",
-      "versionCode": 16,
+      "versionCode": 17,
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION"

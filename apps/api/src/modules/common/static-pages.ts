@@ -104,7 +104,7 @@ export const BETA_HTML = `<!DOCTYPE html>
 </head>
 <body>
     <div class="header">
-        <span class="badge">HOMOLOGAÇÃO v2.2.15</span>
+        <span class="badge">HOMOLOGAÇÃO v2.2.16</span>
         <h1>Eleições Progressistas 2026</h1>
         <p class="subtitle">Acesso direto para cidadãos, testadores e auditores cívicos</p>
     </div>
@@ -217,7 +217,7 @@ export const FEEDBACK_HTML = `
     <div class="card" id="formCard">
         <!-- Caixa de Justificativa, Transparência e Segurança LGPD -->
         <form id="feedbackForm">
-            <input type="hidden" id="appVersion" name="appVersion" value="2.2.15">
+            <input type="hidden" id="appVersion" name="appVersion" value="2.2.16">
             <input type="hidden" id="nps" name="nps" value="10">
             <input type="hidden" id="feedbackType" name="type" value="APP_REVIEW">
 
