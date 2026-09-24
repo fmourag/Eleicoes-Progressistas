@@ -3,6 +3,7 @@ import { View, Text, Platform, TouchableOpacity, Linking } from 'react-native';
 import { useBreakpoint, useMaxContentWidth } from '../../utils/responsive';
 import { useThemeColors, Spacing } from '../../utils/theme';
 import { ThemeToggle } from '../../components/ThemeToggle';
+import { FeedbackFab } from '../../components/FeedbackFab';
 import { API_URL } from '../../services/api';
 
 export default function TabsLayout() {
@@ -81,35 +82,7 @@ export default function TabsLayout() {
           <Tabs.Screen name="perfil" options={{ href: null }} />
         </Tabs>
 
-        {/* Botão Flutuante de Feedback dos Testadores (posicionado acima da barra de cola para não obstruir ações) */}
-        <TouchableOpacity
-          onPress={() => Linking.openURL(`${API_URL}/feedback`).catch(() => {})}
-          activeOpacity={0.85}
-          style={{
-            position: 'absolute',
-            bottom: Platform.OS === 'ios' ? 160 : 145,
-            right: 16,
-            width: 48,
-            height: 48,
-            borderRadius: 24,
-            backgroundColor: '#1B5E20',
-            justifyContent: 'center',
-            alignItems: 'center',
-            elevation: 8,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 3 },
-            shadowOpacity: 0.3,
-            shadowRadius: 5,
-            zIndex: 999,
-            borderWidth: 2,
-            borderColor: '#FFFFFF',
-          }}
-          accessibilityLabel="Enviar feedback de teste"
-          accessibilityRole="button"
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Text style={{ fontSize: 22, color: '#fff' }}>💬</Text>
-        </TouchableOpacity>
+        <FeedbackFab />
       </View>
     </View>
   );

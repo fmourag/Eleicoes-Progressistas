@@ -34,7 +34,7 @@
 | Tipo de Dado no Google Play | Campo no Schema | Obrigatório ou Opcional? | Finalidade Declarada | Compartilhado com Terceiros? | Tratamento Efêmero? |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Nome** (`Personal info -> Name`) | `nome` / `testerName` | **Opcional** | Comunicação com o desenvolvedor / Auditoria voluntária | **NÃO** | Não |
-| **Endereço de e-mail** (`Personal info -> Email address`) | `email` | **Opcional** | Comunicação com o desenvolvedor / Retorno de dúvidas técnicas | **NÃO** | Não |
+| **Endereço de e-mail** (`Personal info -> Email address`) | `playTesterEmail` / `email` | **Obrigatório (Apenas para Teste Fechado)** / **Opcional (Feedback)** | Gestão da lista de testes fechados (Closed Testing) da Play Store (Com consentimento explícito) | **NÃO** | Não |
 | **Identificadores de Dispositivo e Protocolo** (`Device or other IDs`) | `device`, `androidVersion`, `protocol` | **Obrigatório no Feedback** | Funcionalidade do app / Diagnóstico, rastreamento de protocolo e correção de bugs por modelo | **NÃO** | Não |
 | **Conteúdo e Avaliação** (`App info and performance -> Other actions`) | `nps`, `problema`, `descricao`, `screenshotDesc` | **Obrigatório / Opcional** | Análise de estabilidade / Avaliação de qualidade do release | **NÃO** | Não |
 

@@ -140,13 +140,6 @@ export default function HomeScreen() {
 
           <View style={styles.topRightControls}>
             <TouchableOpacity
-              style={[styles.manualBtn, { backgroundColor: '#1B5E20', borderColor: '#2E7D32' }]}
-              onPress={() => Linking.openURL(`${API_URL}/feedback`)}
-              activeOpacity={0.7}
-            >
-              <Text style={[styles.manualBtnText, { color: '#ffffff', fontWeight: 'bold' }]}>💬 Feedback</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
               style={[styles.manualBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
               onPress={() => router.push('/manual')}
               activeOpacity={0.7}

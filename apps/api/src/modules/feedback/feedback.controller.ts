@@ -331,6 +331,11 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
           <div class="card-sub" id="npsStatus">Calculando...</div>
         </div>
         <div class="card">
+          <div class="card-label">🧪 Testers Play Store</div>
+          <div class="card-value" id="playTestersCount">0</div>
+          <div class="card-sub">Aceitaram convite (LGPD consentido)</div>
+        </div>
+        <div class="card">
           <div class="card-label">Status Operacional</div>
           <div class="card-value" style="color: #3fb950;">100% ONLINE</div>
           <div class="card-sub">Render + Supabase + Cloudflare</div>
@@ -415,6 +420,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
 
     function renderDashboard(data) {
       document.getElementById('totalCount').textContent = data.total;
+      document.getElementById('playTestersCount').textContent = data.playTestersCount || 0;
       document.getElementById('avgNps').textContent = Number(data.avgNps).toFixed(1);
 
       const npsStatus = document.getElementById('npsStatus');
@@ -514,7 +520,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
 
     function exportarTestadores() {
       const token = document.getElementById('adminToken').value.trim();
-      window.location.href = '/api/feedback/testers.csv?token=' + encodeURIComponent(token);
+      window.location.href = '/api/feedback/play-testers/export?token=' + encodeURIComponent(token);
     }
 
     // Inicialização automática
@@ -579,7 +585,7 @@ export class FeedbackController {
     return res.send(csvData);
   }
 
-  @Get('testers.csv')
+  @Get('play-testers/export')
   async exportTestersCsv(
     @Res() res: Response,
     @Headers('x-admin-token') adminToken?: string,
@@ -592,7 +598,7 @@ export class FeedbackController {
       throw new UnauthorizedException('Token administrativo inválido ou ausente.');
     }
 
-    const testersData = await this.feedbackService.getPlayStoreTestersCsv();
+    const testersData = await this.feedbackService.getPlayTestersExportCsv();
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="google-play-testers-${new Date().toISOString().slice(0, 10)}.csv"`);
     return res.send(testersData);

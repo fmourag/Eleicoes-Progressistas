@@ -1,4 +1,5 @@
-export const PRIVACY_HTML = `<!DOCTYPE html>
+export const PRIVACY_HTML = `
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -16,7 +17,7 @@ export const PRIVACY_HTML = `<!DOCTYPE html>
 </head>
 <body>
     <h1>Política de Privacidade — Eleições Progressistas</h1>
-    <div class="meta"><strong>Vigência:</strong> 11 de setembro de 2026 • <strong>Versão:</strong> 2.2.2</div>
+    <div class="meta"><strong>Vigência:</strong> 11 de setembro de 2026 • <strong>Versão:</strong> 2.2.3</div>
 
     <div class="card">
         <strong>Compromisso Central:</strong> O <em>Eleições Progressistas</em> opera sob o <strong>Princípio da Coleta Zero</strong> de dados políticos e pessoais. A plataforma foi desenhada para garantir o exercício do voto consciente com sigilo e transparência absolutos.
@@ -49,21 +50,24 @@ export const PRIVACY_HTML = `<!DOCTYPE html>
     <h2>9. Transparência Radical e Código Aberto</h2>
     <p>O código-fonte integral da plataforma é auditável publicamente no GitHub: <a href="https://github.com/fmourag/Eleicoes-Progressistas" target="_blank">github.com/fmourag/Eleicoes-Progressistas</a>.</p>
 
-    <h2>10. Feedback Voluntário e Auditoria Cívica</h2>
-    <p>Durante a fase de testes e homologação, os cidadãos e auditores cívicos podem enviar relatórios técnicos voluntários através do formulário de feedback (<code>/feedback</code>). Os dados coletados limitam-se a:</p>
+    <h2>10. Feedback Voluntário, Inscrição de Testadores (Google Play) e Auditoria Cívica</h2>
+    <p>Os cidadãos e auditores cívicos podem enviar relatórios técnicos voluntários e/ou se inscrever no programa de testes fechados através do formulário de feedback (<code>/feedback</code>). Os dados coletados limitam-se a:</p>
     <ul>
+        <li><strong>E-mail para Teste Fechado (Obrigatório para Testadores):</strong> Coletado <em>exclusivamente</em>, mediante <strong>Consentimento Explícito (Art. 7º, I da LGPD)</strong>, para cadastro na lista de testes fechados do Google Play Console. O e-mail não é usado para marketing, newsletters ou qualquer outra finalidade.</li>
         <li><strong>Protocolo de Atendimento:</strong> Código único gerado automaticamente no envio (ex.: <code>FB-1710000000-abcd</code>) para rastreamento técnico do relatório.</li>
-        <li><strong>Informações do Dispositivo:</strong> Modelo e versão do sistema operacional (Android/iOS/Web) para reprodução de eventuais falhas.</li>
-        <li><strong>Avaliação e Relato:</strong> Nota NPS (0-10), tipo de problema reportado e descrição textual voluntária.</li>
-        <li><strong>Dados de Contato Opcionais:</strong> Nome e endereço de e-mail informados voluntariamente para esclarecimentos técnicos.</li>
+        <li><strong>Informações do Dispositivo:</strong> Modelo e versão do sistema operacional para reprodução de falhas (Legítimo Interesse técnico, Art. 7º, IX da LGPD).</li>
+        <li><strong>Avaliação e Relato:</strong> Nota NPS (0-10), tipo de problema reportado e descrição textual.</li>
+        <li><strong>Nome de Contato:</strong> Informado voluntariamente.</li>
     </ul>
-    <p>A base legal para este tratamento é o <strong>Legítimo Interesse técnico e aprimoramento da ferramenta (Art. 7º, IX da LGPD)</strong>. Os dados não são compartilhados com terceiros e qualquer participante pode solicitar a exclusão de seu registro de feedback pelo canal <a href="mailto:fmourag@gmail.com">fmourag@gmail.com</a>.</p>
+    <p>Os dados não são compartilhados com terceiros. A qualquer momento, você pode revogar seu consentimento e solicitar a exclusão do seu e-mail da lista de testadores através do e-mail de suporte <a href="mailto:fmourag@gmail.com">fmourag@gmail.com</a>, nos termos do Art. 18 da LGPD.</p>
 
     <footer>
         <p>© 2026 Eleições Progressistas • Plataforma cívica sem fins lucrativos • Contato: <a href="mailto:fmourag@gmail.com">fmourag@gmail.com</a></p>
     </footer>
 </body>
-</html>`;
+</html>
+
+`;
 
 export const BETA_HTML = `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -148,7 +152,8 @@ export const BETA_HTML = `<!DOCTYPE html>
 </body>
 </html>`;
 
-export const FEEDBACK_HTML = `<!DOCTYPE html>
+export const FEEDBACK_HTML = `
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -194,6 +199,10 @@ export const FEEDBACK_HTML = `<!DOCTYPE html>
         .success-box { display: none; background: #E8F5E9; border-left: 5px solid #1B5E20; padding: 24px; border-radius: 8px; text-align: center; }
         .protocol-badge { display: inline-block; background: #1B5E20; color: #fff; font-family: monospace; font-size: 18px; padding: 6px 16px; border-radius: 6px; margin: 14px 0; word-break: break-all; }
         .error-msg { color: #d32f2f; font-size: 13px; margin-top: 4px; display: none; }
+        .segment-group { display: flex; background: #eef2eb; border-radius: 8px; padding: 4px; margin-bottom: 24px; }
+        .segment-btn { flex: 1; text-align: center; padding: 12px 8px; font-size: 14px; font-weight: 600; color: #555; cursor: pointer; border-radius: 6px; transition: all 0.2s; border: none; background: transparent; }
+        .segment-btn.active { background: #fff; color: #1B5E20; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .hidden-section { display: none !important; }
         footer { text-align: center; font-size: 13px; color: #777; margin-top: 30px; border-top: 1px solid #ddd; padding-top: 15px; }
         a { color: #1B5E20; }
     </style>
@@ -202,89 +211,102 @@ export const FEEDBACK_HTML = `<!DOCTYPE html>
     <div class="header">
         <span class="badge">PROGRAMA DE TESTADORES OFICIAIS & AUDITORIA CÍVICA</span>
         <h1>Eleições Progressistas</h1>
-        <p class="subtitle">Inscrição de Testadores Google Play & Homologação da versão 2.2.15</p>
+        <p class="subtitle">Inscrição de Testadores Google Play & Homologação da versão 2.2.9</p>
     </div>
 
     <div class="card" id="formCard">
         <!-- Caixa de Justificativa, Transparência e Segurança LGPD -->
-        <div class="security-card">
-            <div class="security-title">
-                🛡️ Uso Específico do E-mail e Garantia de Privacidade (LGPD)
-            </div>
-            <p class="security-text">
-                <strong>• Finalidade Específica:</strong> O seu e-mail do Google (Gmail ou Google Workspace) é coletado <em>exclusivamente</em> para inclusão na lista autorizada de testadores do <strong>Google Play Console (Teste Interno / Teste Fechado)</strong>, liberando a instalação direta pelo Google Play oficial.
-            </p>
-            <p class="security-text">
-                <strong>• Princípio da Coleta Zero & Sem Compartilhamento:</strong> Seus dados pessoais ou preferências políticas jamais serão comercializados, compartilhados com terceiros, partidos políticos, campanhas eleitorais ou utilizados para spam e publicidade.
-            </p>
-            <p class="security-text">
-                <strong>• Segurança dos Dados:</strong> A comunicação é 100% criptografada (HTTPS/TLS) e armazenada em banco de dados isolado com controle rigoroso de acesso técnico.
-            </p>
-            <p class="security-text">
-                <strong>• Direito de Exclusão (Art. 18 LGPD):</strong> Você pode revogar seu consentimento e solicitar a exclusão de seu e-mail a qualquer momento pelo canal: <a href="mailto:fmourag@gmail.com" style="color: #1B5E20; font-weight: bold;">fmourag@gmail.com</a>.
-            </p>
-        </div>
-
         <form id="feedbackForm">
             <input type="hidden" id="appVersion" name="appVersion" value="2.2.15">
             <input type="hidden" id="nps" name="nps" value="10">
+            <input type="hidden" id="feedbackType" name="type" value="APP_REVIEW">
 
-            <div class="form-group">
-                <label for="email">Seu E-mail Google / Gmail (Para Acesso Antecipado no Google Play) *</label>
-                <input type="email" id="email" name="email" placeholder="exemplo@gmail.com" required>
-                <div class="label-desc">Informe o e-mail da conta Google vinculada à Play Store do seu smartphone Android para liberação do download oficial.</div>
+            <div class="segment-group" id="typeSelector">
+                <button type="button" class="segment-btn active" data-type="APP_REVIEW">📝 Avaliar o app</button>
+                <button type="button" class="segment-btn" data-type="PLAY_TESTER">🧪 Teste fechado Play</button>
+                <button type="button" class="segment-btn" data-type="BOTH">Ambos</button>
             </div>
 
+            <!-- Seção do Testador (Oculta por Padrão) -->
+            <div id="testerFields" class="hidden-section">
+                <div class="security-card">
+                    <div class="security-title">
+                        🛡️ Uso Específico do E-mail e Garantia de Privacidade (LGPD)
+                    </div>
+                    <p class="security-text">
+                        <strong>• Finalidade Específica:</strong> O seu e-mail do Google (Gmail ou Google Workspace) é coletado <em>exclusivamente</em> para inclusão na lista autorizada de testadores do <strong>Google Play Console (Teste Interno / Teste Fechado)</strong>.
+                    </p>
+                    <p class="security-text">
+                        <strong>• Princípio da Coleta Zero & Sem Compartilhamento:</strong> Seus dados pessoais ou preferências políticas jamais serão comercializados ou compartilhados com terceiros.
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Seu E-mail Google / Gmail (Para Acesso na Play Store) *</label>
+                    <input type="email" id="email" name="email" placeholder="exemplo@gmail.com">
+                </div>
+
+                <div class="consent-box" style="margin-bottom: 18px;">
+                    <label class="consent-label">
+                        <input type="checkbox" id="consentTester" name="consentTester">
+                        <span>Concordo em fornecer meu e-mail exclusivamente para a gestão do teste fechado na Google Play Store (Base Legal: LGPD, Art. 7º, I). Estou ciente do direito de exclusão a qualquer momento pelo e-mail fmourag@gmail.com.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Comum a Ambos -->
             <div class="form-group">
                 <label for="testerName">Seu Nome ou Identificação Cívica (Opcional)</label>
                 <input type="text" id="testerName" name="testerName" placeholder="Ex.: Maria Silva ou Auditor Cívico SP">
-                <div class="label-desc">Opcional: utilizado apenas para identificar seu feedback nos relatórios de teste.</div>
             </div>
 
-            <div class="form-group">
-                <label for="npsSelect">Qual a probabilidade de recomendar este app para sua rede? (0 a 10) *</label>
-                <div class="nps-container" id="npsContainer">
-                    <button type="button" class="nps-btn" data-val="0">0</button>
-                    <button type="button" class="nps-btn" data-val="1">1</button>
-                    <button type="button" class="nps-btn" data-val="2">2</button>
-                    <button type="button" class="nps-btn" data-val="3">3</button>
-                    <button type="button" class="nps-btn" data-val="4">4</button>
-                    <button type="button" class="nps-btn" data-val="5">5</button>
-                    <button type="button" class="nps-btn" data-val="6">6</button>
-                    <button type="button" class="nps-btn" data-val="7">7</button>
-                    <button type="button" class="nps-btn" data-val="8">8</button>
-                    <button type="button" class="nps-btn" data-val="9">9</button>
-                    <button type="button" class="nps-btn selected" data-val="10">10</button>
+            <!-- Seção de Review -->
+            <div id="reviewFields">
+                <div class="form-group">
+                    <label for="npsSelect">Qual a probabilidade de recomendar este app para sua rede? (0 a 10) *</label>
+                    <div class="nps-container" id="npsContainer">
+                        <button type="button" class="nps-btn" data-val="0">0</button>
+                        <button type="button" class="nps-btn" data-val="1">1</button>
+                        <button type="button" class="nps-btn" data-val="2">2</button>
+                        <button type="button" class="nps-btn" data-val="3">3</button>
+                        <button type="button" class="nps-btn" data-val="4">4</button>
+                        <button type="button" class="nps-btn" data-val="5">5</button>
+                        <button type="button" class="nps-btn" data-val="6">6</button>
+                        <button type="button" class="nps-btn" data-val="7">7</button>
+                        <button type="button" class="nps-btn" data-val="8">8</button>
+                        <button type="button" class="nps-btn" data-val="9">9</button>
+                        <button type="button" class="nps-btn selected" data-val="10">10</button>
+                    </div>
+                    <div class="nps-labels">
+                        <span>0 = Pouco provável</span>
+                        <span>10 = Altamente provável</span>
+                    </div>
                 </div>
-                <div class="nps-labels">
-                    <span>0 = Pouco provável</span>
-                    <span>10 = Altamente provável</span>
+
+                <div class="form-group">
+                    <label for="problema">Status da Avaliação / Tipo de Apontamento *</label>
+                    <select id="problema" name="problema">
+                        <option value="nenhum">✅ Nenhum problema — Testei e tudo funcionou perfeitamente</option>
+                        <option value="fotos">📸 Dúvida ou falha no carregamento de fotos</option>
+                        <option value="layout">📱 Problema visual / texto cortado em tela pequena</option>
+                        <option value="lentidao">⏳ Lentidão na listagem de candidatos</option>
+                        <option value="crash">💥 Fechamento inesperado do app</option>
+                        <option value="outro">📝 Sugestão de melhoria ou outro apontamento</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="descricao">Observações, Sugestões ou Relato de Teste (Opcional)</label>
+                    <textarea id="descricao" name="descricao" rows="3" placeholder="Ex.: Testei deputados do meu estado, matching rápido e intuitivo..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="screenshotDesc">Descrição de Captura de Tela ou Evidência (Opcional)</label>
+                    <input type="text" id="screenshotDesc" name="screenshotDesc" placeholder="Ex.: Verifiquei aba de candidatos sem erros">
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="problema">Status da Avaliação / Tipo de Apontamento *</label>
-                <select id="problema" name="problema" required>
-                    <option value="nenhum">✅ Nenhum problema — Testei e tudo funcionou perfeitamente</option>
-                    <option value="interesse_teste">📲 Quero ser testador oficial no Google Play</option>
-                    <option value="fotos">📸 Dúvida ou falha no carregamento de fotos</option>
-                    <option value="layout">📱 Problema visual / texto cortado em tela pequena</option>
-                    <option value="lentidao">⏳ Lentidão na listagem de candidatos</option>
-                    <option value="crash">💥 Fechamento inesperado do app</option>
-                    <option value="outro">📝 Sugestão de melhoria ou outro apontamento</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="descricao">Observações, Sugestões ou Relato de Teste (Opcional)</label>
-                <textarea id="descricao" name="descricao" rows="3" placeholder="Ex.: Testei deputados do meu estado, matching rápido e intuitivo. Aguardo link da Play Store..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="screenshotDesc">Descrição de Captura de Tela ou Evidência (Opcional)</label>
-                <input type="text" id="screenshotDesc" name="screenshotDesc" placeholder="Ex.: Verifiquei aba de candidatos sem erros">
-            </div>
-
+            <!-- Dados do Dispositivo -->
             <div class="form-group">
                 <label for="device">Dispositivo / Modelo *</label>
                 <input type="text" id="device" name="device" required>
@@ -296,25 +318,18 @@ export const FEEDBACK_HTML = `<!DOCTYPE html>
                 <input type="text" id="androidVersion" name="androidVersion">
             </div>
 
-            <div class="consent-box">
-                <label class="consent-label">
-                    <input type="checkbox" id="consentTester" name="consentTester" checked required>
-                    <span>Concordo em fornecer meu e-mail exclusivamente para receber o convite de testador oficial na Google Play Store, ciente de que não haverá compartilhamento com terceiros conforme a <a href="/privacidade" target="_blank">Política de Privacidade</a>.</span>
-                </label>
-            </div>
-
-            <button type="submit" class="btn-submit" id="submitBtn">🚀 Enviar Inscrição de Testador & Relatório</button>
+            <button type="submit" class="btn-submit" id="submitBtn">🚀 Enviar Feedback</button>
             <div class="error-msg" id="submitError" style="margin-top: 10px; text-align: center;"></div>
         </form>
     </div>
 
     <div class="success-box" id="successBox">
         <h2 style="color: #1B5E20; margin-top: 0;">🎉 Inscrição & Relatório Registrados com Sucesso!</h2>
-        <p>Seu e-mail e apontamentos foram integrados à base de homologação da versão 2.2.15.</p>
+        <p>Seu e-mail e apontamentos foram integrados à base de homologação da versão 2.2.9.</p>
         <div>Seu protocolo único de atendimento técnico:</div>
         <div class="protocol-badge" id="protocolBadge">FB-...</div>
 
-        <div class="next-steps-card" style="margin-top: 20px; padding: 18px; background: #ffffff; border: 1px solid #c8e6c9; border-radius: 8px; text-align: left;">
+        <div class="next-steps-card" id="nextStepsCard" style="margin-top: 20px; padding: 18px; background: #ffffff; border: 1px solid #c8e6c9; border-radius: 8px; text-align: left;">
             <h3 style="color: #1B5E20; margin-top: 0; font-size: 16px; display: flex; align-items: center; gap: 8px;">
                 📋 Como Instalar o App no Google Play
             </h3>
@@ -370,9 +385,9 @@ export const FEEDBACK_HTML = `<!DOCTYPE html>
             var os = "";
 
             if (/android/i.test(ua)) {
-                var match = ua.match(/Android\s([0-9\.]*)/i);
+                var match = ua.match(/Android\\s([0-9\\.]*)/i);
                 os = match ? "Android " + match[1] : "Android";
-                var devMatch = ua.match(/\((.*?)\)/);
+                var devMatch = ua.match(/\\((.*?)\\)/);
                 dev = devMatch ? devMatch[1] : "Dispositivo Android";
             } else if (/iPhone|iPad/i.test(ua)) {
                 dev = "Apple iOS Device";
@@ -399,6 +414,49 @@ export const FEEDBACK_HTML = `<!DOCTYPE html>
             });
         });
 
+        // Alternância de abas (Segmented Control)
+        var segmentBtns = document.querySelectorAll(".segment-btn");
+        var testerFields = document.getElementById("testerFields");
+        var reviewFields = document.getElementById("reviewFields");
+        var feedbackTypeInput = document.getElementById("feedbackType");
+        var submitBtn = document.getElementById("submitBtn");
+        var emailInput = document.getElementById("email");
+        var consentTester = document.getElementById("consentTester");
+
+        function updateFormState(type) {
+            feedbackTypeInput.value = type;
+            if (type === "APP_REVIEW") {
+                testerFields.classList.add("hidden-section");
+                reviewFields.classList.remove("hidden-section");
+                emailInput.required = false;
+                consentTester.required = false;
+                submitBtn.innerText = "🚀 Enviar Avaliação";
+            } else if (type === "PLAY_TESTER") {
+                testerFields.classList.remove("hidden-section");
+                reviewFields.classList.add("hidden-section");
+                emailInput.required = true;
+                consentTester.required = true;
+                submitBtn.innerText = "✉️ Inscrever no Teste Fechado";
+            } else if (type === "BOTH") {
+                testerFields.classList.remove("hidden-section");
+                reviewFields.classList.remove("hidden-section");
+                emailInput.required = true;
+                consentTester.required = true;
+                submitBtn.innerText = "🚀 Enviar Avaliação & Inscrição";
+            }
+        }
+
+        segmentBtns.forEach(function(btn) {
+            btn.addEventListener("click", function() {
+                segmentBtns.forEach(function(b) { b.classList.remove("active"); });
+                btn.classList.add("active");
+                updateFormState(btn.getAttribute("data-type"));
+            });
+        });
+
+        // Estado inicial
+        updateFormState("APP_REVIEW");
+
         // Envio do formulário
         document.getElementById("feedbackForm").addEventListener("submit", async function(e) {
             e.preventDefault();
@@ -410,11 +468,15 @@ export const FEEDBACK_HTML = `<!DOCTYPE html>
             submitBtn.innerText = "⏳ Registrando testador...";
 
             var testerNameVal = document.getElementById("testerName").value.trim();
+            var feedbackType = document.getElementById("feedbackType").value;
 
             var payload = {
+                type: feedbackType,
                 testerName: testerNameVal || undefined,
                 nome: testerNameVal || undefined,
-                email: document.getElementById("email").value.trim() || undefined,
+                email: undefined, // Email is now just for tester via playTesterEmail
+                playTesterEmail: (feedbackType === "PLAY_TESTER" || feedbackType === "BOTH") ? document.getElementById("email").value.trim() : undefined,
+                playTesterConsent: (feedbackType === "PLAY_TESTER" || feedbackType === "BOTH") ? document.getElementById("consentTester").checked : undefined,
                 device: document.getElementById("device").value,
                 androidVersion: document.getElementById("androidVersion").value || undefined,
                 appVersion: document.getElementById("appVersion").value,
@@ -455,16 +517,22 @@ export const FEEDBACK_HTML = `<!DOCTYPE html>
                     mailLink.href = "mailto:fmourag@gmail.com?subject=" + encodeURIComponent("Suporte Testador " + protocolStr);
                 }
 
-                // Sincroniza links do Google Play retornados pelo backend
-                if (data.reviewCta) {
-                    var playLink = document.getElementById("playStoreLink");
-                    if (playLink && data.reviewCta.playStoreUrl) {
-                        playLink.href = data.reviewCta.playStoreUrl;
+                // Sincroniza links do Google Play retornados pelo backend se for PLAY_TESTER ou BOTH
+                var nextStepsCard = document.getElementById("nextStepsCard");
+                if (feedbackType === "PLAY_TESTER" || feedbackType === "BOTH") {
+                    if (data.reviewCta) {
+                        var playLink = document.getElementById("playStoreLink");
+                        if (playLink && data.reviewCta.playStoreUrl) {
+                            playLink.href = data.reviewCta.playStoreUrl;
+                        }
+                        var testLink = document.getElementById("testingTrackLink");
+                        if (testLink && data.reviewCta.testingTrackUrl) {
+                            testLink.href = data.reviewCta.testingTrackUrl;
+                        }
                     }
-                    var testLink = document.getElementById("testingTrackLink");
-                    if (testLink && data.reviewCta.testingTrackUrl) {
-                        testLink.href = data.reviewCta.testingTrackUrl;
-                    }
+                    if (nextStepsCard) nextStepsCard.style.display = "block";
+                } else {
+                    if (nextStepsCard) nextStepsCard.style.display = "none";
                 }
 
                 document.getElementById("formCard").style.display = "none";
@@ -482,7 +550,8 @@ export const FEEDBACK_HTML = `<!DOCTYPE html>
 </html>
 `;
 
-export const DASHBOARD_HTML = `<!DOCTYPE html>
+export const DASHBOARD_HTML = `
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -743,10 +812,10 @@ export const DASHBOARD_HTML = `<!DOCTYPE html>
         <h1>📊 Monitor de Feedbacks & Beta</h1>
         <p>Eleições Progressistas — Painel Administrativo em Tempo Real</p>
       </div>
-      <div class="auth-bar">
         <input type="password" id="adminToken" placeholder="Token Admin (ex: dev-secret)" value="dev-secret">
         <button class="btn" onclick="carregarDados()">Carregar</button>
         <button class="btn btn-secondary" onclick="exportarCsv()">📥 CSV</button>
+        <button class="btn" style="background: #1B5E20; color: #fff;" onclick="exportarTestadores()">👥 Testadores Play Store</button>
       </div>
     </header>
 
@@ -766,6 +835,11 @@ export const DASHBOARD_HTML = `<!DOCTYPE html>
           <div class="card-label">Média NPS / Avaliação</div>
           <div class="card-value"><span id="avgNps">0.0</span> <span style="font-size: 18px; color: #8b949e;">/ 10</span></div>
           <div class="card-sub" id="npsStatus">Calculando...</div>
+        </div>
+        <div class="card">
+          <div class="card-label">🧪 Testers Play Store</div>
+          <div class="card-value" id="playTestersCount">0</div>
+          <div class="card-sub">Aceitaram convite (LGPD consentido)</div>
         </div>
         <div class="card">
           <div class="card-label">Status Operacional</div>
@@ -852,6 +926,7 @@ export const DASHBOARD_HTML = `<!DOCTYPE html>
 
     function renderDashboard(data) {
       document.getElementById('totalCount').textContent = data.total;
+      document.getElementById('playTestersCount').textContent = data.playTestersCount || 0;
       document.getElementById('avgNps').textContent = Number(data.avgNps).toFixed(1);
 
       const npsStatus = document.getElementById('npsStatus');
@@ -876,9 +951,11 @@ export const DASHBOARD_HTML = `<!DOCTYPE html>
           const pct = Math.round((count / total) * 100);
           const row = document.createElement('div');
           row.className = 'bar-row';
-          row.innerHTML = '<div class="bar-label">' + formatarProblema(nome) + '</div>' +
-            '<div class="bar-track"><div class="bar-fill" style="width: ' + pct + '%"></div></div>' +
-            '<div class="bar-count">' + count + ' <span style="font-size: 11px; color: #8b949e;">(' + pct + '%)</span></div>';
+          row.innerHTML = \\\`
+            <div class="bar-label">\\\${formatarProblema(nome)}</div>
+            <div class="bar-track"><div class="bar-fill" style="width: \\\${pct}%"></div></div>
+            <div class="bar-count">\\\${count} <span style="font-size: 11px; color: #8b949e;">(\\\${pct}%)</span></div>
+          \\\`;
           problemasDiv.appendChild(row);
         });
       }
@@ -903,13 +980,15 @@ export const DASHBOARD_HTML = `<!DOCTYPE html>
         const isBug = f.problema && f.problema !== 'nenhum';
         const probClass = isBug ? 'problem-bug' : 'problem-nenhum';
 
-        tr.innerHTML = '<td><span class="protocol-tag">' + (f.protocol || '-') + '</span></td>' +
-          '<td>' + dt + '</td>' +
-          '<td><strong>' + escapeHtml(f.testerName || 'Anônimo') + '</strong><br><small style="color: #8b949e;">' + escapeHtml(f.email || '-') + '</small></td>' +
-          '<td><span style="font-weight: 800; font-size: 15px; color: ' + (f.nps >= 8 ? '#3fb950' : f.nps >= 6 ? '#d29922' : '#f85149') + '">' + f.nps + '</span></td>' +
-          '<td><span class="problem-tag ' + probClass + '">' + formatarProblema(f.problema) + '</span></td>' +
-          '<td><small>' + escapeHtml(f.device || '-') + ' (v' + escapeHtml(f.appVersion || '-') + ')</small></td>' +
-          '<td style="max-width: 340px; word-break: break-word;">' + escapeHtml(f.descricao || '-') + '</td>';
+        tr.innerHTML = \\\`
+          <td><span class="protocol-tag">\\\${f.protocol || '-'}</span></td>
+          <td>\\\${dt}</td>
+          <td><strong>\\\${escapeHtml(f.testerName || 'Anônimo')}</strong><br><small style="color: #8b949e;">\\\${escapeHtml(f.email || '-')}</small></td>
+          <td><span style="font-weight: 800; font-size: 15px; color: \\\${f.nps >= 8 ? '#3fb950' : f.nps >= 6 ? '#d29922' : '#f85149'}">\\\${f.nps}</span></td>
+          <td><span class="problem-tag \\\${probClass}">\\\${formatarProblema(f.problema)}</span></td>
+          <td><small>\\\${escapeHtml(f.device || '-')} (v\\\${escapeHtml(f.appVersion || '-')})</small></td>
+          <td style="max-width: 340px; word-break: break-word;">\\\${escapeHtml(f.descricao || '-')}</td>
+        \\\`;
         tbody.appendChild(tr);
       });
     }
@@ -917,7 +996,7 @@ export const DASHBOARD_HTML = `<!DOCTYPE html>
     function filtrarTabela() {
       const q = document.getElementById('filterInput').value.toLowerCase();
       const filtrados = rawFeedbacks.filter(f => {
-        const str = (f.protocol + ' ' + f.testerName + ' ' + f.email + ' ' + f.problema + ' ' + f.device + ' ' + f.descricao).toLowerCase();
+        const str = \\\`\\\${f.protocol} \\\${f.testerName} \\\${f.email} \\\${f.problema} \\\${f.device} \\\${f.descricao}\\\`.toLowerCase();
         return str.includes(q);
       });
       renderTabela(filtrados);
@@ -943,6 +1022,11 @@ export const DASHBOARD_HTML = `<!DOCTYPE html>
     function exportarCsv() {
       const token = document.getElementById('adminToken').value.trim();
       window.location.href = '/api/feedback/export.csv?token=' + encodeURIComponent(token);
+    }
+
+    function exportarTestadores() {
+      const token = document.getElementById('adminToken').value.trim();
+      window.location.href = '/api/feedback/play-testers/export?token=' + encodeURIComponent(token);
     }
 
     // Inicialização automática

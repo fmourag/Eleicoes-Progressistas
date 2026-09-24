@@ -41,6 +41,9 @@ export class FeedbackService implements OnModuleInit {
     const pgMigrations = [
       `ALTER TABLE "Feedback" ADD COLUMN IF NOT EXISTS "protocol" VARCHAR(60)`,
       `ALTER TABLE "Feedback" ADD COLUMN IF NOT EXISTS "testerName" TEXT`,
+      `ALTER TABLE "Feedback" ADD COLUMN IF NOT EXISTS "type" TEXT DEFAULT 'APP_REVIEW'`,
+      `ALTER TABLE "Feedback" ADD COLUMN IF NOT EXISTS "playTesterEmail" TEXT`,
+      `ALTER TABLE "Feedback" ADD COLUMN IF NOT EXISTS "playTesterConsent" BOOLEAN`,
       `ALTER TABLE "Feedback" ALTER COLUMN "testerCode" DROP NOT NULL`,
       `ALTER TABLE "Feedback" ALTER COLUMN "testerCode" SET DEFAULT ''`,
       `UPDATE "Feedback" SET "protocol" = 'FB-' || "id" WHERE "protocol" IS NULL`,
@@ -76,6 +79,9 @@ export class FeedbackService implements OnModuleInit {
     const sqliteMigrations = [
       `ALTER TABLE "Feedback" ADD COLUMN "protocol" TEXT`,
       `ALTER TABLE "Feedback" ADD COLUMN "testerName" TEXT`,
+      `ALTER TABLE "Feedback" ADD COLUMN "type" TEXT DEFAULT 'APP_REVIEW'`,
+      `ALTER TABLE "Feedback" ADD COLUMN "playTesterEmail" TEXT`,
+      `ALTER TABLE "Feedback" ADD COLUMN "playTesterConsent" BOOLEAN`,
     ];
 
     for (const sql of sqliteMigrations) {
@@ -102,6 +108,9 @@ export class FeedbackService implements OnModuleInit {
           testerName: resolvedName,
           nome: resolvedName,
           email: dto.email?.trim() || null,
+          type: dto.type || 'APP_REVIEW',
+          playTesterEmail: dto.playTesterEmail?.trim() || null,
+          playTesterConsent: dto.playTesterConsent || false,
           device: dto.device?.trim() || 'Desconhecido',
           androidVersion: dto.androidVersion?.trim() || null,
           appVersion: dto.appVersion?.trim() || '2.2.9',
@@ -126,10 +135,10 @@ export class FeedbackService implements OnModuleInit {
 
       try {
         const result: any = await this.prisma.$queryRawUnsafe(`
-          INSERT INTO "Feedback" ("protocol", "testerName", "nome", "email", "device", "androidVersion", "appVersion", "nps", "problema", "descricao", "screenshotDesc")
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+          INSERT INTO "Feedback" ("protocol", "testerName", "nome", "email", "type", "playTesterEmail", "playTesterConsent", "device", "androidVersion", "appVersion", "nps", "problema", "descricao", "screenshotDesc")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
           RETURNING "id", "protocol"
-        `, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.9', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
+        `, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.type || 'APP_REVIEW', dto.playTesterEmail?.trim() || null, dto.playTesterConsent || false, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.9', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
 
         const newId = result[0]?.id || Date.now();
         const retProtocol = result[0]?.protocol || protocol;
@@ -142,10 +151,10 @@ export class FeedbackService implements OnModuleInit {
         this.logger.warn(`Tentando fallback com coluna testerCode caso ainda exista na tabela...`);
         try {
           const result: any = await this.prisma.$queryRawUnsafe(`
-            INSERT INTO "Feedback" ("protocol", "testerCode", "testerName", "nome", "email", "device", "androidVersion", "appVersion", "nps", "problema", "descricao", "screenshotDesc")
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+            INSERT INTO "Feedback" ("protocol", "testerCode", "testerName", "nome", "email", "type", "playTesterEmail", "playTesterConsent", "device", "androidVersion", "appVersion", "nps", "problema", "descricao", "screenshotDesc")
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
             RETURNING "id", "protocol"
-          `, protocol, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.9', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
+          `, protocol, protocol, resolvedName, resolvedName, dto.email?.trim() || null, dto.type || 'APP_REVIEW', dto.playTesterEmail?.trim() || null, dto.playTesterConsent || false, dto.device?.trim() || 'Desconhecido', dto.androidVersion?.trim() || null, dto.appVersion?.trim() || '2.2.9', Number(dto.nps), dto.problema?.trim() || 'nenhum', dto.descricao?.trim() || null, dto.screenshotDesc?.trim() || null);
 
           const newId = result[0]?.id || Date.now();
           const retProtocol = result[0]?.protocol || protocol;
@@ -168,6 +177,8 @@ export class FeedbackService implements OnModuleInit {
     });
 
     const total = feedbacks.length;
+    const playTestersCount = feedbacks.filter((f: any) => f.type === 'PLAY_TESTER' || f.type === 'BOTH' || f.playTesterEmail).length;
+    
     const avgNps = total > 0
       ? Number((feedbacks.reduce((acc: number, f: any) => acc + f.nps, 0) / total).toFixed(2))
       : 0;
@@ -180,6 +191,7 @@ export class FeedbackService implements OnModuleInit {
 
     return {
       total,
+      playTestersCount,
       avgNps,
       porProblema,
       ultimos: feedbacks.slice(0, 100).map((f: any) => ({
@@ -250,34 +262,25 @@ export class FeedbackService implements OnModuleInit {
     return '\uFEFF' + [header, ...rows].join('\r\n');
   }
 
-  async getPlayStoreTestersCsv(): Promise<string> {
+  async getPlayTestersExportCsv(): Promise<string> {
     const feedbacks = await this.prisma.feedback.findMany({
       where: {
-        email: { not: null },
+        OR: [
+          { type: 'PLAY_TESTER' },
+          { type: 'BOTH' },
+          { playTesterEmail: { not: null } }
+        ]
       },
-      select: {
-        email: true,
-      },
-      orderBy: { id: 'asc' },
+      orderBy: { createdAt: 'asc' },
     });
 
-    const emailSet = new Set<string>();
-    const validEmails: string[] = [];
+    const header = 'email;protocol;created_at;status';
+    const rows = feedbacks.map(f => {
+      const email = f.playTesterEmail || f.email || '';
+      const status = f.playTesterConsent ? 'CONSENTED' : 'PENDING';
+      return `${email};${f.protocol};${f.createdAt?.toISOString?.() || f.createdAt};${status}`;
+    });
 
-    // Sempre inclui o desenvolvedor principal como testador
-    const defaultDev = 'fmourag@gmail.com';
-    emailSet.add(defaultDev);
-    validEmails.push(defaultDev);
-
-    for (const f of feedbacks) {
-      if (!f.email) continue;
-      const clean = f.email.trim().toLowerCase();
-      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean) && !emailSet.has(clean)) {
-        emailSet.add(clean);
-        validEmails.push(clean);
-      }
-    }
-
-    return validEmails.join('\r\n');
+    return '\uFEFF' + [header, ...rows].join('\r\n');
   }
 }

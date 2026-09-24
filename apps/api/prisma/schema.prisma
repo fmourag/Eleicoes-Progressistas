@@ -412,6 +412,9 @@ model Feedback {
   testerName     String?
   nome           String?
   email          String?
+  type           String   @default("APP_REVIEW")
+  playTesterEmail   String?
+  playTesterConsent Boolean?
   device         String
   androidVersion String?
   appVersion     String   @default("2.2.2")

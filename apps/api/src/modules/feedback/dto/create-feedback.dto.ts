@@ -1,6 +1,23 @@
-import { IsString, IsNotEmpty, IsOptional, IsInt, Min, Max, MaxLength } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsInt, Min, Max, MaxLength, IsIn, IsEmail, ValidateIf, IsBoolean, Equals } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateFeedbackDto {
+  @IsOptional()
+  @IsString()
+  @IsIn(['APP_REVIEW', 'PLAY_TESTER', 'BOTH'])
+  type?: 'APP_REVIEW' | 'PLAY_TESTER' | 'BOTH' = 'APP_REVIEW';
+
+  @ValidateIf(o => o.type === 'PLAY_TESTER' || o.type === 'BOTH')
+  @IsNotEmpty({ message: 'E-mail obrigatório para o teste fechado.' })
+  @IsEmail({}, { message: 'Formato de e-mail inválido.' })
+  @MaxLength(150)
+  playTesterEmail?: string;
+
+  @ValidateIf(o => o.type === 'PLAY_TESTER' || o.type === 'BOTH')
+  @IsBoolean()
+  @Equals(true, { message: 'Consentimento explícito LGPD é obrigatório para ser testador.' })
+  playTesterConsent?: boolean;
+
   @IsString()
   @IsOptional()
   @MaxLength(120, { message: 'Nome do testador não pode exceder 120 caracteres.' })
