@@ -69,7 +69,8 @@ export const PRIVACY_HTML = `
 
 `;
 
-export const BETA_HTML = `<!DOCTYPE html>
+export const BETA_HTML = `
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -119,7 +120,7 @@ export const BETA_HTML = `<!DOCTYPE html>
 
         <div class="hash-box">
             <strong>🔐 Integridade do APK Android (SHA-256):</strong><br>
-            8c631b9af8843446b166da8bf5d7034b9089e2e112c0fcffa75d785de56df15e
+            d61388039f7c3aeb7500f58cb263eb59abca37960f130ccafa2c8d6913cdf50f
         </div>
 
         <div class="qr-box">
@@ -150,7 +151,8 @@ export const BETA_HTML = `<!DOCTYPE html>
         </p>
     </footer>
 </body>
-</html>`;
+</html>
+`;
 
 export const FEEDBACK_HTML = `
 <!DOCTYPE html>
