@@ -39,6 +39,8 @@
     "ioredis": "^6.0.0",
     "jose": "^6.0.0",
     "pdfkit": "^0.20.2",
+    "qrcode": "^1.5.4",
+    "@types/qrcode": "^1.5.5",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.0"
   },
