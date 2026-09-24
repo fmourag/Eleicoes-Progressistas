@@ -1,9 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const TARGET_VERSION = '2.2.17';
-const TARGET_TAG = 'v2.2.17';
-const TARGET_APK = 'eleicoes-progressistas-v2.2.17-beta.apk';
+const TARGET_VERSION = '2.2.18';
+const TARGET_TAG = 'v2.2.18';
+const TARGET_VERSION_CODE = 19;
+const TARGET_APK = 'eleicoes-progressistas-v2.2.18-beta.apk';
 
 const rootDir = path.resolve(__dirname, '..');
 
@@ -23,45 +24,79 @@ function replaceInFile(relPathSegments, replacerFn) {
   }
 }
 
-// 1. apps/mobile/src/constants/app-version.ts
-replaceInFile(['apps', 'mobile', 'src', 'constants', 'app-version.ts'], (c) => {
+// 1. package.json (root)
+replaceInFile(['package.json'], (c) => {
+  return c.replace(/"version":\s*"[^"]+"/, `"version": "${TARGET_VERSION}"`);
+});
+
+// 2. packages/shared/package.json
+replaceInFile(['packages', 'shared', 'package.json'], (c) => {
+  return c.replace(/"version":\s*"[^"]+"/, `"version": "${TARGET_VERSION}"`);
+});
+
+// 3. apps/api/package.json
+replaceInFile(['apps', 'api', 'package.json'], (c) => {
+  return c.replace(/"version":\s*"[^"]+"/, `"version": "${TARGET_VERSION}"`);
+});
+
+// 4. apps/mobile/package.json
+replaceInFile(['apps', 'mobile', 'package.json'], (c) => {
+  return c.replace(/"version":\s*"[^"]+"/, `"version": "${TARGET_VERSION}"`);
+});
+
+// 5. apps/mobile/app.json
+replaceInFile(['apps', 'mobile', 'app.json'], (c) => {
   return c
-    .replace(/APP_VERSION\s*=\s*['"][^'"]+['"]/g, `APP_VERSION = '${TARGET_VERSION}'`)
-    .replace(/APP_VERSION_LABEL\s*=\s*['"][^'"]+['"]/g, `APP_VERSION_LABEL = '${TARGET_VERSION}'`)
-    .replace(/APP_VERSION_TAG\s*=\s*['"][^'"]+['"]/g, `APP_VERSION_TAG = '${TARGET_TAG}'`)
-    .replace(/APK_DOWNLOAD_FILENAME\s*=\s*['"][^'"]+['"]/g, `APK_DOWNLOAD_FILENAME = '${TARGET_APK}'`);
+    .replace(/"version":\s*"[^"]+"/, `"version": "${TARGET_VERSION}"`)
+    .replace(/"versionCode":\s*\d+/, `"versionCode": ${TARGET_VERSION_CODE}`);
 });
 
-// 2. apps/mobile/app/(tabs)/index.tsx
-replaceInFile(['apps', 'mobile', 'app', '(tabs)', 'index.tsx'], (c) => {
-  return c.replace(/const APP_VERSION\s*=\s*['"][^'"]+['"]/g, `const APP_VERSION = '${TARGET_TAG}'`);
-});
-
-// 3. apps/mobile/app/index.tsx
-replaceInFile(['apps', 'mobile', 'app', 'index.tsx'], (c) => {
-  return c.replace(/const APP_VERSION\s*=\s*['"][^'"]+['"]/g, `const APP_VERSION = '${TARGET_TAG}'`);
-});
-
-// 4. apps/mobile/app/(tabs)/ranking.tsx
-replaceInFile(['apps', 'mobile', 'app', '(tabs)', 'ranking.tsx'], (c) => {
-  return c.replace(/const APP_VERSION\s*=\s*['"][^'"]+['"]/g, `const APP_VERSION = '${TARGET_TAG}'`);
-});
-
-// 5. apps/mobile/components/OfflineDisclaimer.tsx
-replaceInFile(['apps', 'mobile', 'components', 'OfflineDisclaimer.tsx'], (c) => {
-  return c.replace(/const APP_VERSION\s*=\s*['"][^'"]+['"]/g, `const APP_VERSION = '${TARGET_TAG}'`);
-});
-
-// 6. apps/mobile/app/(tabs)/more.tsx
-replaceInFile(['apps', 'mobile', 'app', '(tabs)', 'more.tsx'], (c) => {
-  return c.replace(/v2\.[0-9.]+\s*•\s*Offline First/g, `${TARGET_TAG} • Offline First`);
-});
-
-// 7. apps/mobile/android/app/build.gradle
+// 6. apps/mobile/android/app/build.gradle
 replaceInFile(['apps', 'mobile', 'android', 'app', 'build.gradle'], (c) => {
   return c
     .replace(/versionName\s+["'][^"']+["']/g, `versionName "${TARGET_VERSION}"`)
-    .replace(/versionCode\s+\d+/g, `versionCode 17`);
+    .replace(/versionCode\s+\d+/g, `versionCode ${TARGET_VERSION_CODE}`);
 });
 
-console.log('--- Done syncing versions ---');
+// 7. apps/mobile/src/constants/app.ts
+replaceInFile(['apps', 'mobile', 'src', 'constants', 'app.ts'], (c) => {
+  return c
+    .replace(/APP_VERSION\s*=\s*['"][^'"]+['"]/g, `APP_VERSION = '${TARGET_TAG}'`)
+    .replace(/APP_VERSION_CODE\s*=\s*\d+/g, `APP_VERSION_CODE = ${TARGET_VERSION_CODE}`);
+});
+
+// 8. apps/mobile/app/manual.tsx
+replaceInFile(['apps', 'mobile', 'app', 'manual.tsx'], (c) => {
+  return c.replace(/v2\.[0-9.]+/g, TARGET_TAG);
+});
+
+// 9. apps/mobile/app/transparencia.tsx
+replaceInFile(['apps', 'mobile', 'app', 'transparencia.tsx'], (c) => {
+  return c.replace(/v2\.[0-9.]+/g, TARGET_TAG);
+});
+
+// 10. apps/api/src/main.ts
+replaceInFile(['apps', 'api', 'src', 'main.ts'], (c) => {
+  return c
+    .replace(/eleicoes-progressistas-v2\.[0-9.]+-beta\.apk/g, TARGET_APK)
+    .replace(/v2\.[0-9.]+/g, TARGET_TAG);
+});
+
+// 11. apps/api/src/modules/common/static-pages.ts
+replaceInFile(['apps', 'api', 'src', 'modules', 'common', 'static-pages.ts'], (c) => {
+  return c
+    .replace(/eleicoes-progressistas-v2\.[0-9.]+-beta\.apk/g, TARGET_APK)
+    .replace(/v2\.[0-9.]+/g, TARGET_TAG);
+});
+
+// 12. apps/api/src/modules/common/static-assets.controller.ts
+replaceInFile(['apps', 'api', 'src', 'modules', 'common', 'static-assets.controller.ts'], (c) => {
+  return c.replace(/eleicoes-progressistas-v2\.[0-9.]+-beta\.apk/g, TARGET_APK);
+});
+
+// 13. scripts/render-copy-assets.js
+replaceInFile(['scripts', 'render-copy-assets.js'], (c) => {
+  return c.replace(/eleicoes-progressistas-v2\.[0-9.]+-beta\.apk/g, TARGET_APK);
+});
+
+console.log(`--- Done syncing versions to ${TARGET_TAG} (code: ${TARGET_VERSION_CODE}) ---`);
