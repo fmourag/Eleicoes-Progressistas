@@ -1,0 +1,158 @@
+{
+  "metadata": {
+    "campanha": "Eleições Progressistas 2026",
+    "data_coleta": "2026-01-21",
+    "responsavel": "Análise OSINT Growth",
+    "base_legal": "LGPD art. 7º, IX - legítimo interesse",
+    "finalidade": "Contato institucional para outreach de campanha política",
+    "metodologia": "Coleta manual de dados manifestamente públicos em sites institucionais oficiais"
+  },
+  "audit_trail": [
+    {
+      "id": "001",
+      "fonte_url": "https://pt.org.br/contato/",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Diretório Nacional do PT - Email: contato@pt.org.br - Fones: (61) 3213-1313",
+      "metodo_coleta": "Navegação site institucional - página contato",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "002",
+      "fonte_url": "https://psol50.org.br/enderecos-e-telefones/",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Email: [email protected] - Assessoria de imprensa: [email protected]",
+      "metodo_coleta": "Navegação site institucional - página endereços",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "003",
+      "fonte_url": "https://psb40.org.br/contatos-ascom/",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "ASSESSORIA DE COMUNICAÇÃO – PSB NACIONAL - E-mail: imprensa@psbnacional.org.br",
+      "metodo_coleta": "Navegação site institucional - página ASCOM",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "004",
+      "fonte_url": "https://pdt.org.br/index.php/contato/",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Telefone: (61) 3224-0791 - Formulário de contato (sem email visível)",
+      "metodo_coleta": "Navegação site institucional - página contato",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "005",
+      "fonte_url": "https://pcdob.org.br/contato/",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Comunicação/assessoria de imprensa: comunicacao@pcdob.org.br - Organização: organizacao@pcdob.org.br",
+      "metodo_coleta": "Navegação site institucional - página contato",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "006",
+      "fonte_url": "https://unidadepopular.org.br/contato",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Whatsapp: +55 11 91240-8881 - Redes sociais - sem email institucional",
+      "metodo_coleta": "Navegação site institucional - página contato",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "007",
+      "fonte_url": "https://progressistas.org.br/informacoes-gerais/",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Email: pp@pp.org.br - Telefone: (61) 3321-9499",
+      "metodo_coleta": "Navegação site institucional - página informações",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "009",
+      "fonte_url": "https://apublica.org/contato/",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Gov.br: contato@apublica.org; redacao@apublica.org - LinkedIn: chave Pix contato@apublica.org",
+      "metodo_coleta": "Navegação site institucional + verificação Gov.br",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "010",
+      "fonte_url": "https://ponte.org/sobre/contato/",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "E-mail: [email protected]",
+      "metodo_coleta": "Navegação site institucional - página contato",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "011",
+      "fonte_url": "https://marcozero.org/contato/",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Pelo e-mail: marcozero@marcozero.org",
+      "metodo_coleta": "Navegação site institucional - página contato",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "012",
+      "fonte_url": "https://staging-intercept.intercept.com.br/sobre/",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Você é profissional de imprensa? Entre em contato pelo e-mail: imprensa@staging-intercept.intercept.com.br",
+      "metodo_coleta": "Navegação site institucional - página sobre",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "013",
+      "fonte_url": "https://revistaforum.com.br/contato/",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Facebook: contato@revistaforum.com.br",
+      "metodo_coleta": "Navegação site institucional + verificação Facebook",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "015",
+      "fonte_url": "https://www.youtube.com/@MeteoroBrasil",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Caixa Postal: 17905 CEP: 80410-981 - Sobre o canal",
+      "metodo_coleta": "Navegação aba Sobre YouTube - endereço postal público",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "016",
+      "fonte_url": "https://www.facebook.com/teseonze/",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Página Facebook: contato@teseonze.com.br - Canal encerrado em julho/2023",
+      "metodo_coleta": "Navegação página Facebook oficial - aba Sobre",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "017",
+      "fonte_url": "https://www.cut.org.br/noticias/cntt-cut-inaugura-novo-portal-na-internet-www-cntt-org-br-5387",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "emails: imprensa@cntt.org.br e transporta...",
+      "metodo_coleta": "Navegação site CUT - notícia CNTT",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "018",
+      "fonte_url": "https://df.cut.org.br/conteudo/diretoria-executiva-2019-2023",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Secretário de Comunicação Rodrigo Britto - imprensa@cutdf.org.br",
+      "metodo_coleta": "Navegação site CUT-DF - página diretoria",
+      "responsavel": "OSINT Growth"
+    },
+    {
+      "id": "022",
+      "fonte_url": "https://www.facebook.com/teseonze/",
+      "data_coleta": "2026-01-21",
+      "trecho_onde_aparece": "Canal criado por Sabrina Fernandes - contato@teseonze.com.br",
+      "metodo_coleta": "Navegação página Facebook - aba Sobre",
+      "responsavel": "OSINT Growth"
+    }
+  ],
+  "conformidade": {
+    "zero_dados_privados": true,
+    "zero_bancos_vazados": true,
+    "zero_listas_compradas": true,
+    "apenas_sites_institucionais": true,
+    "respeito_robots_txt": true,
+    "rate_limit_1reqs": true,
+    "opt_out_estruturado": true,
+    "tos_respeitadas": true
+  }
+}

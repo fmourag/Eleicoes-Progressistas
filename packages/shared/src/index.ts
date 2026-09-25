@@ -478,6 +478,7 @@ export const TRUSTED_DATA_SOURCES: TrustedDataSource[] = [
 
 export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
   // Presidente 2026 / 2022
+  'c1': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
   '280002542548': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
   '280001600001': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
   'pres_lula': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
@@ -648,6 +649,10 @@ export function resolveCandidatePhotoFallbackChain(candidate: {
   }
   if (cleanPhotoKey && KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]) {
     urls.push(KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]);
+  }
+  const normName = (candidate.name || '').toLowerCase();
+  if (normName.includes('lula') || normName.includes('luiz inácio')) {
+    urls.push(KNOWN_PARLIAMENTARY_PHOTOS['pres_lula']);
   }
 
   // 3. Imagem estática hospedada no backend da aplicação

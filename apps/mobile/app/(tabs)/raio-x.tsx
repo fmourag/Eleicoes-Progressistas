@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Linking, TouchableOpacity, Image, TextInput, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { candidatesApi, RaioXData, getCandidatePhotoUrl } from '../../services/api';
+import { candidatesApi, RaioXData, getCandidatePhotoFallbackChain } from '../../services/api';
 import { useBreakpoint, useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
 import { searchMandateProposals, extractKeywords, expandKeywords } from '../../utils/civic-search';
@@ -20,7 +20,14 @@ import {
   resolveCandidateMandateProposals,
   MandateProposalDetail,
   buildPillarJustificativa,
+  getPartyColors,
 } from '@np/shared';
+
+function getInitials(name: string): string {
+  const parts = (name || '').trim().split(' ');
+  if (parts.length === 1) return parts[0]?.substring(0, 2).toUpperCase() || 'CA';
+  return `${parts[0]?.substring(0, 1)}${parts[parts.length - 1]?.substring(0, 1)}`.toUpperCase();
+}
 
 function renderHighlightedText(text: string, queryTerms: string[], defaultColor: string) {
   if (!queryTerms || queryTerms.length === 0 || !text) {
@@ -121,6 +128,14 @@ export default function RaioXScreen() {
   const [copiedProposalIndex, setCopiedProposalIndex] = useState<number | null>(null);
   const [selectedProposalModal, setSelectedProposalModal] = useState<any | null>(null);
   const [proposalSearchQuery, setProposalSearchQuery] = useState<string>('');
+
+  const [currentSourceIndex, setCurrentSourceIndex] = useState(0);
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    setCurrentSourceIndex(0);
+    setImageError(false);
+  }, [id, data?.photoUrl, data?.tseId]);
 
   // Mecanismo de Cola Eleitoral
   const { isCandidateSelected, addOrReplaceCandidate, modalOpen: colaModalOpen, setModalOpen: setColaModalOpen } = useColaStore();
@@ -252,7 +267,33 @@ export default function RaioXScreen() {
   const planSummary = candidate.governmentPlanSummary || data.governmentPlanSummary;
   const photoUrl = candidate.photoUrl || data.photoUrl;
   const tseId = candidate.tseId || data.tseId;
-  const resolvedPhoto = getCandidatePhotoUrl(photoUrl, tseId, cargo, name, candidate.id || data.id);
+  const state = candidate.state || data.state;
+
+  const fallbackChain = useMemo(() => {
+    return getCandidatePhotoFallbackChain({
+      photoUrl,
+      tseId,
+      cargo,
+      name,
+      id: candidate.id || data?.id,
+      state,
+      party,
+    });
+  }, [photoUrl, tseId, cargo, name, candidate.id, data?.id, state, party]);
+
+  const currentPhoto = fallbackChain[currentSourceIndex] || '';
+  const showImage = Boolean(currentPhoto) && !imageError;
+
+  const handleImageError = () => {
+    if (currentSourceIndex < fallbackChain.length - 1) {
+      setCurrentSourceIndex((prev) => prev + 1);
+    } else {
+      setImageError(true);
+    }
+  };
+
+  const initials = getInitials(name);
+  const partyTheme = getPartyColors(party);
 
   const isExecutiveCargo = ['PRESIDENTE', 'GOVERNADOR', 'PREFEITO'].includes(cargo);
   const classification = data.classification ?? candidate.classification;
@@ -289,7 +330,7 @@ export default function RaioXScreen() {
         party: candidate.party,
         partyNumber: candidate.partyNumber,
         numeroUrna: votingNumber,
-        photoUrl: candidate.photoUrl,
+        photoUrl: currentPhoto || candidate.photoUrl,
         tseId: candidate.tseId,
         state: candidate.state,
         fichaLimpa: candidate.fichaLimpa,
@@ -356,15 +397,23 @@ export default function RaioXScreen() {
 
         <View style={[styles.header, { backgroundColor: colors.surfaceAlt, paddingHorizontal: padding }]}>
           <View style={styles.headerRow}>
-            {resolvedPhoto ? (
-              <View style={[styles.photoContainer, { borderColor: colors.primary, backgroundColor: colors.surface }]}>
+            <View style={[styles.photoContainer, { backgroundColor: partyTheme.primary, borderColor: partyTheme.border || colors.primary }]}>
+              {showImage ? (
                 <Image
-                  source={{ uri: resolvedPhoto }}
+                  source={{ uri: currentPhoto }}
                   style={styles.photoImage}
                   resizeMode="cover"
+                  onError={handleImageError}
                 />
-              </View>
-            ) : null}
+              ) : (
+                <View style={[styles.avatarFallback, { backgroundColor: partyTheme.primary }]}>
+                  <Text style={[styles.avatarInitials, { color: partyTheme.text }]}>{initials}</Text>
+                  <View style={[styles.avatarPartyPill, { backgroundColor: partyTheme.secondary || '#00000088' }]}>
+                    <Text style={[styles.avatarPartyPillText, { color: partyTheme.text }]}>{party}</Text>
+                  </View>
+                </View>
+              )}
+            </View>
             <View style={styles.headerInfo}>
               <Text style={[styles.name, { color: colors.primary }, isDesktop && styles.nameDesktop]} maxFontSizeMultiplier={1.25}>{name}</Text>
               {candidate.viceName ? (
@@ -1919,6 +1968,32 @@ const styles = StyleSheet.create({
   photoImage: {
     width: '100%',
     height: '100%',
+  },
+  avatarFallback: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  avatarInitials: {
+    fontSize: FontSize.xl,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+    marginTop: -4,
+  },
+  avatarPartyPill: {
+    position: 'absolute',
+    bottom: 3,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: Radius.sm,
+  },
+  avatarPartyPillText: {
+    fontSize: 8,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
   },
   name: { fontSize: FontSize.title, fontWeight: 'bold' },
   nameDesktop: { fontSize: 28 },

@@ -123,37 +123,39 @@ export default function HomeScreen() {
         {/* STITCH CIVIC TOP BAR                                     */}
         {/* ======================================================== */}
         <View style={[styles.topBar, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <View style={styles.brandRow}>
-            <View style={styles.brandLogo}>
-              <CivicEmblem size={36} />
-            </View>
-            <View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Text style={[styles.brandTitle, { color: colors.text }]}>Eleições Progressistas</Text>
-                <View style={[styles.versionBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.warning }]}>
-                  <Text style={[styles.versionBadgeText, { color: colors.warning }]}>{APP_VERSION}</Text>
-                </View>
+          <View style={styles.topBarHeader}>
+            <View style={styles.brandRow}>
+              <View style={styles.brandLogo}>
+                <CivicEmblem size={36} />
               </View>
-              <Text style={[styles.brandSub, { color: colors.textMuted }]}>Cheque o passado. Escolha o futuro.</Text>
+              <View style={{ flexShrink: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                  <Text style={[styles.brandTitle, { color: colors.text }]}>Eleições Progressistas</Text>
+                  <View style={[styles.versionBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.warning }]}>
+                    <Text style={[styles.versionBadgeText, { color: colors.warning }]}>{APP_VERSION}</Text>
+                  </View>
+                </View>
+                <Text style={[styles.brandSub, { color: colors.textMuted }]}>Cheque o passado. Escolha o futuro.</Text>
+              </View>
             </View>
+            <ThemeToggle />
           </View>
 
-          <View style={styles.topRightControls}>
+          <View style={styles.topActionPillsRow}>
             <TouchableOpacity
-              style={[styles.manualBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
+              style={[styles.manualBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border, flex: 1 }]}
               onPress={() => router.push('/manual')}
               activeOpacity={0.7}
             >
-              <Text style={[styles.manualBtnText, { color: colors.text }]}>📖 Manual</Text>
+              <Text style={[styles.manualBtnText, { color: colors.primary }]}>📖 Manual do Usuário</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.manualBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
+              style={[styles.manualBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border, flex: 1 }]}
               onPress={() => setShowShareModal(true)}
               activeOpacity={0.7}
             >
-              <Text style={[styles.manualBtnText, { color: colors.text, fontWeight: 'bold' }]}>🔗 Compartilhar</Text>
+              <Text style={[styles.manualBtnText, { color: colors.text, fontWeight: '700' }]}>🔗 Compartilhar</Text>
             </TouchableOpacity>
-            <ThemeToggle />
           </View>
         </View>
 
@@ -646,19 +648,26 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: Spacing.sm,
+    flexDirection: 'column',
+    paddingVertical: Spacing.sm + 2,
     paddingHorizontal: Spacing.md,
     borderRadius: Radius.xl,
     borderWidth: 1,
     marginBottom: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  topBarHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
   },
   brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
+    flex: 1,
+    marginRight: Spacing.xs,
   },
   brandLogo: {
     width: 36,
@@ -685,15 +694,16 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
   },
-  topRightControls: {
+  topActionPillsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
+    width: '100%',
   },
   manualBtn: {
     paddingHorizontal: Spacing.sm + 2,
-    paddingVertical: 5,
-    borderRadius: Radius.full,
+    paddingVertical: 7,
+    borderRadius: Radius.md,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -701,6 +711,7 @@ const styles = StyleSheet.create({
   manualBtnText: {
     fontSize: FontSize.xs,
     fontWeight: '700',
+    textAlign: 'center',
   },
   watchdogBadge: {
     flexDirection: 'row',
