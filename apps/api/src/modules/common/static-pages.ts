@@ -120,7 +120,7 @@ export const BETA_HTML = `
 
         <div class="hash-box">
             <strong>🔐 Integridade do APK Android (SHA-256):</strong><br>
-            d61388039f7c3aeb7500f58cb263eb59abca37960f130ccafa2c8d6913cdf50f
+            cecc877d3a61c4cba30f10517a2aca00528b44f718576a0dc4a4cab7d60545f0
         </div>
 
         <div class="qr-box">

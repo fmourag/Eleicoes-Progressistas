@@ -10,7 +10,7 @@ https://eleicoes-progressistas.onrender.com/web/
 
 📱 OU BAIXE O APP ANDROID (61,48 MB):
 https://eleicoes-progressistas.onrender.com/download/apk
-🔐 SHA-256: 421aaf52ebc730d839cfadb50c3b47fbb26870855c5c02d9dd14484a1404dbba
+🔐 SHA-256: cecc877d3a61c4cba30f10517a2aca00528b44f718576a0dc4a4cab7d60545f0
 
 ✅ O QUE VOCÊ ENCONTRA:
 • 7.256 candidatos oficiais do TSE (todos os cargos e estados)
@@ -40,7 +40,7 @@ Existe um aplicativo GRATUITO pra ajudar a escolher candidatos nas eleições de
 
 📱 Ou baixe o aplicativo nativo para Android (61,48 MB):
 👉 https://eleicoes-progressistas.onrender.com/download/apk
-🔐 SHA-256: 421aaf52ebc730d839cfadb50c3b47fbb26870855c5c02d9dd14484a1404dbba
+🔐 SHA-256: cecc877d3a61c4cba30f10517a2aca00528b44f718576a0dc4a4cab7d60545f0
 
 Diferente dos outros:
 ✅ Não pede cadastro e não guarda seus dados (Coleta Zero)

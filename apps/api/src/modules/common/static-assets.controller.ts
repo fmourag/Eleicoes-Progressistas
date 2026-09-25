@@ -41,7 +41,7 @@ export class StaticAssetsController {
     }
 
     // Fallback caso o arquivo físico não tenha sido sincronizado
-    return res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.17/eleicoes-progressistas-v2.2.19-beta.apk');
+    return res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.19/eleicoes-progressistas-v2.2.19-beta.apk');
   }
 
   @Get('download/apk/sha256')
@@ -56,7 +56,7 @@ export class StaticAssetsController {
     }
 
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    return res.send('d61388039f7c3aeb7500f58cb263eb59abca37960f130ccafa2c8d6913cdf50f\n');
+    return res.send('cecc877d3a61c4cba30f10517a2aca00528b44f718576a0dc4a4cab7d60545f0\n');
   }
 
   @Get(['web', 'web/*path'])
