@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const TARGET_VERSION = '2.2.18';
-const TARGET_TAG = 'v2.2.18';
-const TARGET_VERSION_CODE = 19;
-const TARGET_APK = 'eleicoes-progressistas-v2.2.18-beta.apk';
+const TARGET_VERSION = '2.2.19';
+const TARGET_TAG = 'v2.2.19';
+const TARGET_VERSION_CODE = 20;
+const TARGET_APK = 'eleicoes-progressistas-v2.2.19-beta.apk';
 
 const rootDir = path.resolve(__dirname, '..');
 

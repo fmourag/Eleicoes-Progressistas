@@ -1,6 +1,6 @@
 {
   "name": "@np/mobile",
-  "version": "2.2.18",
+  "version": "2.2.19",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
