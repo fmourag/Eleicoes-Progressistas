@@ -40,3 +40,22 @@ Quando um usuário solicita a remoção via `fmourag@gmail.com`:
 2. Acessar a Play Console > Testes > Teste fechado > Testadores.
 3. Remover o e-mail manualmente da lista.
 4. Responder ao usuário com a confirmação de exclusão em até 48 horas úteis.
+
+## 5. Gabarito dos Questionários Pendentes (Play Console)
+
+- **Classificação IARC:** Violência NÃO, Sexo/Nudez NÃO, Linguagem forte NÃO, Drogas NÃO, Apostas NÃO, Ódio NÃO → **Classificação: Livre (Everyone / L)**.
+- **Segurança dos Dados (Data Safety):**
+  - Coleta: SIM (Opcionais mediante consentimento explícito).
+  - Categorias: Informações pessoais (Nome, E-mail) + Atividade no app (Feedback: NPS, comentário textual, modelo do dispositivo).
+  - Finalidades: Funcionalidade do app + Comunicações do desenvolvedor (gestão do teste fechado).
+  - Criptografia em trânsito: SIM (HTTPS/TLS).
+  - Exclusão sob pedido: SIM (mecanismo previsto e documentado via e-mail).
+  - Telemetria / Rastreamento anônimo: Não declarada / inexistente.
+- **Apps de Saúde:** NÃO.
+- **Anúncios:** NÃO exibe.
+- **Notícias / Revistas (Declaração de Entidade):**
+  - Pessoa jurídica: SIM (conta pessoal/desenvolvedor responsável).
+  - URL de Privacidade: `https://eleicoes-progressistas.onrender.com/privacidade`.
+  - Conteúdo: Curadoria editorial própria + dados públicos oficiais abertos do TSE (Tribunal Superior Eleitoral).
+  - Credencial de imprensa: Sem credencial de imprensa governamental (iniciativa independente de dados abertos).
+

@@ -27,6 +27,8 @@ ios/Pods/
 android/.gradle/
 android/app/build/
 android/build/
+apps/mobile/android/local-maven/
+build_artifacts/
 
 # Environment
 .env

@@ -2,7 +2,7 @@
   "name": "@np/mobile",
   "version": "2.2.20",
   "private": true,
-  "main": "expo-router/entry",
+  "main": "index.js",
   "scripts": {
     "dev": "npx expo start",
     "dev:web": "npx expo start --web",
