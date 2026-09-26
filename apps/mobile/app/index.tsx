@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Pressable, Platform, Linking } from 'react-native';
-import { useState, useEffect } from 'react';
-import { router } from 'expo-router';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { router, useFocusEffect } from 'expo-router';
 import { PILLAR_DISPLAY_LIST } from '@np/shared';
 import { useMaxContentWidth, useResponsivePadding, useBreakpoint } from '../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
@@ -12,6 +12,7 @@ import { PrivacyBanner } from '../components/PrivacyBanner';
 import { ApoioVoluntarioBanner } from '../components/ApoioVoluntarioBanner';
 import { Dropdown, DropdownOption } from '../components/Dropdown';
 import { ShareModal } from '../components/ShareModal';
+import { FeedbackReturnModal } from '../components/FeedbackReturnModal';
 import { useLocationStore } from '../stores/location.store';
 import { fetchMunicipalities } from '../services/location.service';
 import { API_URL } from '../services/api';
@@ -24,6 +25,8 @@ const UF_OPTIONS: DropdownOption[] = [
 
 export default function HomeScreen() {
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showFeedbackReturnModal, setShowFeedbackReturnModal] = useState(false);
+  const hasLeftHomeRef = useRef(false);
   const bp = useBreakpoint();
   const isDesktop = bp === 'desktop';
   const colors = useThemeColors();
@@ -60,6 +63,29 @@ export default function HomeScreen() {
       );
     }
   }, [location]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (hasLeftHomeRef.current) {
+        setShowFeedbackReturnModal(true);
+      }
+
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        const navigatedAway = sessionStorage.getItem('ep_navigated_away');
+        if (navigatedAway === 'true') {
+          sessionStorage.removeItem('ep_navigated_away');
+          setShowFeedbackReturnModal(true);
+        }
+      }
+
+      return () => {
+        hasLeftHomeRef.current = true;
+        if (Platform.OS === 'web' && typeof window !== 'undefined') {
+          sessionStorage.setItem('ep_navigated_away', 'true');
+        }
+      };
+    }, [])
+  );
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -631,6 +657,14 @@ export default function HomeScreen() {
         </View>
 
         <ShareModal visible={showShareModal} onClose={() => setShowShareModal(false)} />
+        <FeedbackReturnModal
+          visible={showFeedbackReturnModal}
+          onClose={() => setShowFeedbackReturnModal(false)}
+          onFeedback={() => {
+            setShowFeedbackReturnModal(false);
+            router.push('/feedback');
+          }}
+        />
       </View>
     </ScrollView>
   );
