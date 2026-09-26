@@ -40,7 +40,7 @@ export function FeedbackFab() {
     router.push('/feedback');
   };
 
-  const bottomOffset = isDesktop ? 24 : Platform.OS === 'ios' ? 84 + 12 : 60 + 12;
+  const bottomOffset = isDesktop ? 96 : Platform.OS === 'ios' ? 84 + 16 : 60 + 16;
   const paddingBottom = Math.max(insets.bottom + bottomOffset, bottomOffset);
 
   const fabWidth = animation.interpolate({
@@ -54,6 +54,7 @@ export function FeedbackFab() {
         styles.container,
         {
           bottom: paddingBottom,
+          right: isDesktop ? 24 : 16,
           width: fabWidth,
         }
       ]}

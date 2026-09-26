@@ -201,7 +201,7 @@ export default function FeedbackScreen() {
               <Text style={{ fontSize: 32 }}>💬</Text>
               <Text style={[styles.title, { color: colors.text }]}>Suporte & Feedback Cívico</Text>
               <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-                Sua voz constrói uma ferramenta cívica transparente e auditável. Compartilhe sua experiência, relate falhas ou participe do grupo fechado de testes.
+                Sua voz constrói uma ferramenta cívica transparente e auditável! Compartilhe sua experiência, relate sugestões ou participe ativamente do nosso teste oficial na Google Play Store para nos ajudar no lançamento.
               </Text>
             </View>
 
@@ -233,6 +233,20 @@ export default function FeedbackScreen() {
                 );
               })}
             </View>
+
+            {category === 'TESTADOR' && (
+              <View style={[styles.testadorCallout, { backgroundColor: '#ECFDF5', borderColor: '#10B981' }]}>
+                <Text style={{ fontSize: 22 }}>🚀</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.testadorCalloutTitle, { color: '#065F46' }]}>
+                    Faça parte do time de Testadores na Google Play!
+                  </Text>
+                  <Text style={[styles.testadorCalloutText, { color: '#047857' }]}>
+                    Cadastre o e-mail da sua conta Google abaixo. Você receberá acesso antecipado às versões mais recentes, ajudará a validar as novidades diretamente no seu Android e contribuirá para a aprovação do app na Play Store!
+                  </Text>
+                </View>
+              </View>
+            )}
 
             {/* Avaliação Geral (NPS) */}
             <Text style={[styles.sectionLabel, { color: colors.text, marginTop: Spacing.md }]}>
@@ -487,6 +501,24 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     fontSize: FontSize.sm,
     textAlignVertical: 'top',
+  },
+  testadorCallout: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    padding: Spacing.md,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    marginTop: Spacing.md,
+  },
+  testadorCalloutTitle: {
+    fontSize: FontSize.sm,
+    fontWeight: '800',
+    marginBottom: 3,
+  },
+  testadorCalloutText: {
+    fontSize: FontSize.xs,
+    lineHeight: 18,
   },
   consentRow: {
     flexDirection: 'row',
