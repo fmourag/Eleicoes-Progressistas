@@ -81,9 +81,8 @@ export default function TabsLayout() {
           />
           <Tabs.Screen name="perfil" options={{ href: null }} />
         </Tabs>
-
-        <FeedbackFab />
       </View>
+      <FeedbackFab />
     </View>
   );
 }
