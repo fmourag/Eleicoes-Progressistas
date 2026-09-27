@@ -6,7 +6,7 @@ Plataforma cívica gratuita que conecta eleitores a candidatos progressistas aud
 
 ![API Status](https://img.shields.io/badge/API-LIVE-green)
 ![Web Status](https://img.shields.io/badge/Web-LIVE-green)
-![Version](https://img.shields.io/badge/Version-2.2.12-blue)
+![Version](https://img.shields.io/badge/Version-2.2.20-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ## 🚀 Acesso Rápido
@@ -25,6 +25,7 @@ Plataforma cívica gratuita que conecta eleitores a candidatos progressistas aud
 - ✅ **Cola Eleitoral Persistente**: PDF oficial TSE gerado uma vez e salvo permanentemente no dispositivo; compartilha por e-mail/WhatsApp com o PDF anexo ("Cola eleitoral anexa"); apagada somente por comando explícito do usuário ou sobrescrita por nova geração
 - ✅ **Apuração em Tempo Real (Election Night)**: dados oficiais do TSE em tempo real para os candidatos da cola
 - ✅ **Apoio Cívico Voluntário**: contribuição independente via PIX celular `(21) 97194-3298` (E.164 BACEN) com persistência 100% local
+- ✅ **Canal de Feedback & Popup Cívico**: botão flutuante com rótulo permanente e card popup contextual de retorno à home com apelo aos testadores da Play Store
 - ✅ **Conformidade Google Play & Anti-Gating**: avaliação in-app nativa acionada exclusivamente por marcos neutros e CTA universal
 - ✅ **Coleta Zero**: nenhum dado político ou pessoal do eleitor é transmitido ou armazenado em servidores
 - ✅ **Blackout Eleitoral**: anúncios comerciais totalmente desativados durante o período eleitoral
@@ -66,6 +67,7 @@ npm install
 ## 📚 Documentação
 
 - [Índice Geral de Documentação (Markdown Index)](docs/MARKDOWN.md)
+- [Relatório Técnico de Atualizações v2.2.20](docs/RELATORIO_CORRECOES_V2.2.20.md)
 - [Política de Avaliações Google Play (Anti-Gating)](docs/PLAYSTORE_REVIEW_POLICY.md)
 - [Declaração de Segurança de Dados (Data Safety)](docs/PLAYSTORE_DATA_SAFETY.md)
 - [Kit de Distribuição Sideload APK](docs/SIDELOAD_KIT.md)
