@@ -50,7 +50,7 @@ export function CivicBanner({ variant = 'hero', showSubtitle = true }: CivicBann
               </View>
               <View style={[styles.badgePill, styles.badgePillTse]}>
                 <View style={[styles.badgeDot, { backgroundColor: '#059669' }]} />
-                <Text style={styles.badgeTextTse}>TSE 2026</Text>
+                <Text style={styles.badgeTextTse}>Dados: TSE</Text>
               </View>
               <View style={[styles.badgePill, styles.badgePillGreen]}>
                 <View style={[styles.badgeDot, { backgroundColor: '#059669' }]} />
@@ -98,7 +98,7 @@ export function CivicBanner({ variant = 'hero', showSubtitle = true }: CivicBann
 
           <View style={[styles.badgePill, styles.badgePillTse]}>
             <View style={[styles.badgeDot, { backgroundColor: '#059669' }]} />
-            <Text style={styles.badgeTextTse}>TSE 2026</Text>
+            <Text style={styles.badgeTextTse}>Dados: TSE</Text>
           </View>
 
           <View style={[styles.badgePill, styles.badgePillGreen]}>
@@ -145,7 +145,7 @@ export function CivicBanner({ variant = 'hero', showSubtitle = true }: CivicBann
               TECNOLOGIA CÍVICA AUDITÁVEL • 100% INDEPENDENTE
             </Text>
             <Text style={[styles.heroDescription, { color: colors.textSecondary }]}>
-              Classificação oficial e grau de compromisso com os 13 pilares progressistas através de votações nominais e posturas legislativas registradas.
+              Classificação independente calculada sobre registros oficiais de votações nominais e posturas legislativas.
             </Text>
           </View>
         )}

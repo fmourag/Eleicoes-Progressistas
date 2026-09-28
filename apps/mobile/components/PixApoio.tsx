@@ -18,7 +18,7 @@ interface PixApoioProps {
 const PRESET_VALUES = [
   { label: 'R$ 3', value: '3.00', desc: 'Apoio Cívico Básico' },
   { label: 'R$ 5', value: '5.00', desc: 'Ajuda servidores' },
-  { label: 'R$ 15', value: '15.00', desc: 'Sincroniza TSE 2026' },
+  { label: 'R$ 15', value: '15.00', desc: 'Sincroniza Dados TSE' },
   { label: 'R$ 30', value: '30.00', desc: 'CDN & Infraestrutura' },
   { label: 'Livre', value: '', desc: 'Qualquer quantia' },
 ];

@@ -16,6 +16,7 @@ import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { useMaxContentWidth, useResponsivePadding, useBreakpoint } from '../utils/responsive';
 import { CivicEmblem } from '../components/CivicEmblem';
 import { CivicBanner } from '../components/CivicBanner';
+import { GovDisclaimer } from '../components/GovDisclaimer';
 import { APP_VERSION } from '../src/constants/app';
 import { API_URL } from '../services/api';
 import { unlockApuracaoViaFeedback } from '../src/storage/civic-support-storage';
@@ -375,6 +376,9 @@ export default function FeedbackScreen() {
             </View>
           </View>
         )}
+
+        {/* Disclaimer Universal de Independência e Fontes Oficiais */}
+        <GovDisclaimer compact />
 
         {/* Links Rápidos Úteis */}
         <View style={styles.quickLinksRow}>

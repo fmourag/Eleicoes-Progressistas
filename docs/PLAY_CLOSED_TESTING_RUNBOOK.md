@@ -53,9 +53,24 @@ Quando um usuário solicita a remoção via `fmourag@gmail.com`:
   - Telemetria / Rastreamento anônimo: Não declarada / inexistente.
 - **Apps de Saúde:** NÃO.
 - **Anúncios:** NÃO exibe.
-- **Notícias / Revistas (Declaração de Entidade):**
-  - Pessoa jurídica: SIM (conta pessoal/desenvolvedor responsável).
-  - URL de Privacidade: `https://eleicoes-progressistas.onrender.com/privacidade`.
-  - Conteúdo: Curadoria editorial própria + dados públicos oficiais abertos do TSE (Tribunal Superior Eleitoral).
-  - Credencial de imprensa: Sem credencial de imprensa governamental (iniciativa independente de dados abertos).
+- **Categoria Principal do Aplicativo:**
+  - **Categoria:** Livros e referência (Books & Reference).
+  - **Declaração de App Governamental:** NÃO representa entidade governamental.
+  - **Fontes Oficiais Declaradas:** `tse.jus.br`, `dadosabertos.tse.jus.br`, `resultados.tse.jus.br`.
+  - **URL de Privacidade:** `https://eleicoes-progressistas.onrender.com/privacidade`.
+
+---
+
+## 6. Incidente 28/09 — Violações de Política e Correção
+
+### ⚠️ Diagnóstico da Violação:
+1. **Declarações Enganosas (Deceptive Claims / Government Misrepresentation):** Uso de expressões e badges como "Classificação oficial" ou "TSE 2026" que poderiam gerar a impressão indevida de chancela, patrocínio ou afiliação oficial com o Tribunal Superior Eleitoral.
+2. **Ausência de Disclaimer Visível e Fontes Clicáveis:** Falta de aviso explícito de independência e de links diretos às 3 fontes governamentais no topo da listagem da loja e no aplicativo.
+3. **Enquadramento de Categoria:** Categorização anterior exigia declarações e credenciais de notícias.
+
+### 🛡️ Ações Executadas (v2.2.21 / Build 22):
+1. **Aviso Universal & Fontes:** Criado componente `GovDisclaimer` com links clicáveis para `tse.jus.br`, `dadosabertos.tse.jus.br` e `resultados.tse.jus.br`, posicionado na Home, Modal Sobre, Feedback, `/privacidade`, `/beta`, `README.md` e na 1ª linha da descrição da Google Play (`docs/STORE_LISTING_PTBR.md`).
+2. **Remoção de Linguagem de Endosso:** Todas as menções a "Classificação oficial" foram substituídas por "Classificação independente calculada sobre registros oficiais de votações nominais e posturas legislativas" e badges ajustados para "Dados: TSE".
+3. **Recategorização:** Categoria alterada para **Livros e referência (Books & Reference)**.
+
 

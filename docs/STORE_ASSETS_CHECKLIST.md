@@ -43,11 +43,11 @@ Vote consciente. Cheque o passado, escolha o futuro!
 
 ## ⚙️ Configurações da Loja
 
-- **Categoria Principal:** Notícias e Revistas / Política e Sociedade
+- **Categoria Principal:** Livros e referência (Books & Reference)
 - **Classificação de Conteúdo (IARC):** Livre (Classificação indicativa para todas as idades)
 - **Data Safety (Segurança dos Dados):**
-  - O app não coleta dados pessoais.
+  - O app não coleta dados pessoais (Princípio da Coleta Zero).
   - Telemetria de diagnóstico anônima para correção de erros técnicos.
   - Não há compartilhamento com terceiros.
-- **URL da Política de Privacidade:** `https://eleicoes-progressistas.pages.dev/privacidade`
-- **E-mail de Suporte:** `contato@eleicoesprogressistas.org.br`
+- **URL da Política de Privacidade:** `https://eleicoes-progressistas.onrender.com/privacidade`
+- **E-mail de Suporte:** `fmourag@gmail.com`

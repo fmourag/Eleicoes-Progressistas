@@ -56,5 +56,20 @@ Os dados de candidaturas exibidos no aplicativo são originários dos canais pú
 2. **In-App Review API Oficial:** O aplicativo utiliza exclusivamente a biblioteca oficial `expo-store-review` disparada por marcos neutros de engajamento (3+ sessões ativas ou geração da cola em PDF), respeitando o intervalo de 30 dias do Google Play.
 3. **Persistência Estritamente Local:** As variáveis de controle de cotas de avaliação (`activeSessionsCount`, `hasGeneratedPdf`, `lastPromptTimestamp`) residem 100% no armazenamento local do dispositivo do usuário e **nunca** são transmitidas a servidores ou terceiros. Detalhes completos disponíveis em [PLAYSTORE_REVIEW_POLICY.md](./PLAYSTORE_REVIEW_POLICY.md).
 
+---
+
+## 6. Incidente 28/09 — Violações de Política e Correções Aplicadas
+
+- **Causa Raiz do Apontamento:**
+  1. *Declarações Enganosas / Endosso Governamental:* Presença de termos como "Classificação oficial" e badges que podiam ser interpretados como chancela institucional do TSE.
+  2. *Ausência de Disclaimer Universal Visível:* Necessidade de explicitar em destaque e em todas as superfícies que o aplicativo é independente e indicar os 3 URLs das fontes oficiais governamentais do TSE.
+  3. *Inconsistência de Categoria:* Enquadramento prévio suscetível a exigências de credencial de imprensa.
+
+- **Medidas Corretivas Implementadas (v2.2.21 / Build 22):**
+  1. *Componente GovDisclaimer Universal:* Inserido com links clicáveis em Home, Sobre, Feedback, `/privacidade`, `/beta`, `README.md` e metadados da loja.
+  2. *Eliminação de Linguagem de Endosso:* Substituição integral de "Classificação oficial..." por "Classificação independente calculada sobre registros oficiais de votações nominais e posturas legislativas" e badges alterados para "Dados: TSE".
+  3. *Recategorização Oficial:* Aplicativo formalmente enquadrado na categoria **Livros e referência (Books & Reference)** na Play Console.
+
+
 
 

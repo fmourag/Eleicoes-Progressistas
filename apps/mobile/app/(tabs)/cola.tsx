@@ -213,7 +213,7 @@ export default function ColaScreen() {
                   ATENÇÃO ELEITOR(A)
                 </Text>
                 <View style={[styles.tsePill, { backgroundColor: colors.surface }]}>
-                  <Text style={[styles.tsePillText, { color: colors.secondary }]}>TSE 2026</Text>
+                  <Text style={[styles.tsePillText, { color: colors.secondary }]}>Dados: TSE</Text>
                 </View>
               </View>
               <Text style={[styles.tseBannerBody, { color: colors.onSecondaryContainer || '#78350F' }]}>

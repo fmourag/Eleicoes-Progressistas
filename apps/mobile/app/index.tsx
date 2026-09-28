@@ -13,6 +13,8 @@ import { ApoioVoluntarioBanner } from '../components/ApoioVoluntarioBanner';
 import { Dropdown, DropdownOption } from '../components/Dropdown';
 import { ShareModal } from '../components/ShareModal';
 import { FeedbackReturnModal } from '../components/FeedbackReturnModal';
+import { GovDisclaimer } from '../components/GovDisclaimer';
+import { AboutModal } from '../components/AboutModal';
 import { useLocationStore } from '../stores/location.store';
 import { fetchMunicipalities } from '../services/location.service';
 import { API_URL } from '../services/api';
@@ -26,6 +28,7 @@ const UF_OPTIONS: DropdownOption[] = [
 export default function HomeScreen() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showFeedbackReturnModal, setShowFeedbackReturnModal] = useState(false);
+  const [showAboutModal, setShowAboutModal] = useState(false);
   const hasLeftHomeRef = useRef(false);
   const bp = useBreakpoint();
   const isDesktop = bp === 'desktop';
@@ -631,6 +634,14 @@ export default function HomeScreen() {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() => setShowAboutModal(true)}
+              activeOpacity={0.7}
+            >
+              <Text style={{ fontSize: FontSize.xs, fontWeight: '700', color: colors.primary, textDecorationLine: 'underline' }}>
+                ℹ️ Sobre o Aplicativo
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => {
                 const url = typeof window !== 'undefined' && window.location?.origin
                   ? `${window.location.origin}/dashboard`
@@ -648,6 +659,10 @@ export default function HomeScreen() {
               </Text>
             </TouchableOpacity>
           </View>
+
+          {/* Disclaimer Universal de Independência e Fontes Oficiais do TSE */}
+          <GovDisclaimer />
+
           <Text style={[styles.guidelineNotice, { color: colors.textMuted }]}>
             💡 Mapeamento independente com dados abertos oficiais do TSE (DivulgaCandContas) e Congresso Nacional.
           </Text>
@@ -657,6 +672,7 @@ export default function HomeScreen() {
         </View>
 
         <ShareModal visible={showShareModal} onClose={() => setShowShareModal(false)} />
+        <AboutModal visible={showAboutModal} onClose={() => setShowAboutModal(false)} />
         <FeedbackReturnModal
           visible={showFeedbackReturnModal}
           onClose={() => setShowFeedbackReturnModal(false)}

@@ -17,7 +17,16 @@ export const PRIVACY_HTML = `
 </head>
 <body>
     <h1>Política de Privacidade — Eleições Progressistas</h1>
-    <div class="meta"><strong>Vigência:</strong> 11 de setembro de 2026 • <strong>Versão:</strong> 2.2.3</div>
+    <div class="meta"><strong>Vigência:</strong> 28 de setembro de 2026 • <strong>Versão:</strong> 2.2.21</div>
+
+    <div class="card" style="background: #FFF8E1; border-left: 4px solid #F57F17; color: #3E2723;">
+        <strong>🏛️ Exoneração de Responsabilidade & Fonte Oficial:</strong><br>
+        O <strong>Eleições Progressistas</strong> é um aplicativo independente, sem vínculo com o Tribunal Superior Eleitoral (TSE), governo ou partidos políticos.<br>
+        <strong>Fonte oficial dos dados:</strong> 
+        <a href="https://www.tse.jus.br" target="_blank" rel="noopener noreferrer">tse.jus.br</a> • 
+        <a href="https://dadosabertos.tse.jus.br" target="_blank" rel="noopener noreferrer">dadosabertos.tse.jus.br</a> • 
+        <a href="https://resultados.tse.jus.br" target="_blank" rel="noopener noreferrer">resultados.tse.jus.br</a>
+    </div>
 
     <div class="card">
         <strong>Compromisso Central:</strong> O <em>Eleições Progressistas</em> opera sob o <strong>Princípio da Coleta Zero</strong> de dados políticos e pessoais. A plataforma foi desenhada para garantir o exercício do voto consciente com sigilo e transparência absolutos.
@@ -105,9 +114,19 @@ export const BETA_HTML = `
 </head>
 <body>
     <div class="header">
-        <span class="badge">HOMOLOGAÇÃO v2.2.20</span>
+        <span class="badge">HOMOLOGAÇÃO v2.2.21</span>
         <h1>Eleições Progressistas 2026</h1>
         <p class="subtitle">Acesso direto para cidadãos, testadores e auditores cívicos</p>
+    </div>
+
+    <!-- Bloco de Exoneração de Responsabilidade e Fontes Oficiais -->
+    <div style="background: #FFF8E1; border: 1px solid #FFE082; border-left: 4px solid #F57F17; padding: 14px 18px; border-radius: 8px; margin: 16px 0; font-size: 13px; color: #3E2723; line-height: 1.5; text-align: left;">
+        <strong>🏛️ Exoneração de Responsabilidade & Fonte Oficial:</strong><br>
+        O <strong>Eleições Progressistas</strong> é um aplicativo independente, sem vínculo com o Tribunal Superior Eleitoral (TSE), governo ou partidos políticos.<br>
+        <strong>Fonte oficial dos dados:</strong> 
+        <a href="https://www.tse.jus.br" target="_blank" rel="noopener noreferrer" style="color: #1B5E20; font-weight: bold;">tse.jus.br</a> • 
+        <a href="https://dadosabertos.tse.jus.br" target="_blank" rel="noopener noreferrer" style="color: #1B5E20; font-weight: bold;">dadosabertos.tse.jus.br</a> • 
+        <a href="https://resultados.tse.jus.br" target="_blank" rel="noopener noreferrer" style="color: #1B5E20; font-weight: bold;">resultados.tse.jus.br</a>
     </div>
 
     <div class="access-card">

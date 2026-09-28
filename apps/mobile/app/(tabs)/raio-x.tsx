@@ -269,17 +269,15 @@ export default function RaioXScreen() {
   const tseId = candidate.tseId || data.tseId;
   const state = candidate.state || data.state;
 
-  const fallbackChain = useMemo(() => {
-    return getCandidatePhotoFallbackChain({
-      photoUrl,
-      tseId,
-      cargo,
-      name,
-      id: candidate.id || data?.id,
-      state,
-      party,
-    });
-  }, [photoUrl, tseId, cargo, name, candidate.id, data?.id, state, party]);
+  const fallbackChain = getCandidatePhotoFallbackChain({
+    photoUrl,
+    tseId,
+    cargo,
+    name,
+    id: candidate.id || data?.id,
+    state,
+    party,
+  });
 
   const currentPhoto = fallbackChain[currentSourceIndex] || '';
   const showImage = Boolean(currentPhoto) && !imageError;

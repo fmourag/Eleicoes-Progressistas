@@ -2,11 +2,18 @@
 
 🇧🇷 **Cheque o passado. Escolha o futuro.**
 
-Plataforma cívica gratuita que conecta eleitores a candidatos progressistas auditáveis via TSE.
+Plataforma cívica gratuita que conecta eleitores a candidatos progressistas auditáveis via registros públicos do TSE.
+
+> ### 🏛️ Aviso de Independência & Fontes Oficiais
+> **Eleições Progressistas é um aplicativo independente, sem vínculo com o Tribunal Superior Eleitoral (TSE), governo ou partidos políticos.**  
+> **Fontes oficiais dos dados:**
+> - Portal Institucional do TSE: [https://www.tse.jus.br](https://www.tse.jus.br)
+> - Portal de Dados Abertos do TSE: [https://dadosabertos.tse.jus.br](https://dadosabertos.tse.jus.br)
+> - Divulgação de Resultados do TSE: [https://resultados.tse.jus.br](https://resultados.tse.jus.br)
 
 ![API Status](https://img.shields.io/badge/API-LIVE-green)
 ![Web Status](https://img.shields.io/badge/Web-LIVE-green)
-![Version](https://img.shields.io/badge/Version-2.2.20-blue)
+![Version](https://img.shields.io/badge/Version-2.2.21-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ## 🚀 Acesso Rápido

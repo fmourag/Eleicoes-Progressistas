@@ -23,7 +23,7 @@ export class StaticAssetsController {
   downloadApk(@Res() res: Response) {
     const GITHUB_RELEASE_APK_URL =
       process.env.GITHUB_RELEASE_APK_URL ||
-      'https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.20/eleicoes-progressistas-v2.2.20-beta.apk';
+      'https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.20/eleicoes-progressistas-v2.2.21-beta.apk';
 
     // Redirecionamento 302 para CDN ilimitada do GitHub Releases (0 MB de banda no Render)
     return res.redirect(302, GITHUB_RELEASE_APK_URL);
