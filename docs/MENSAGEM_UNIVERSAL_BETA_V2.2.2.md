@@ -1,6 +1,6 @@
 # Mensagem Universal de Campanha — Eleições Progressistas 2026
 
-**Versão:** 2.2.5  
+**Versão:** 2.2.20  
 **Finalidade:** Divulgação cívica ampla em canais de campanha, comitês e redes sociais.
 
 ---
@@ -13,11 +13,11 @@ Cheque o passado dos candidatos. Escolha o futuro do Brasil com dados oficiais d
 🌐 ACESSE OU INSTALE:
 
 1. Toque para usar direto no navegador (sem instalar nada):
-👉 https://eleicoes-progressistas.onrender.com/web/
+👉 https://eleicoes-progressistas.pages.dev/
 
-2. Ou baixe o APK para Android (61,48 MB):
+2. Ou baixe o APK para Android (~61,6 MB):
 👉 https://eleicoes-progressistas.onrender.com/download/apk
-🔐 SHA-256: 421aaf52ebc730d839cfadb50c3b47fbb26870855c5c02d9dd14484a1404dbba
+🔐 SHA-256: 644c60e50971ba3ac95403a98556b44c131dabccdd54aa3414f765fc64fde10c
 
 POR QUE USAR O ELEIÇÕES PROGRESSISTAS?
 ✅ 7.256 candidatos oficiais do TSE catalogados

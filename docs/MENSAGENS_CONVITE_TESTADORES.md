@@ -19,7 +19,7 @@ Este documento reúne os modelos oficiais de comunicação para convidar volunt�
 ```text
 🇧🇷 *ELEIÇÕES PROGRESSISTAS 2026 — CONVITE PARA TESTADOR OFICIAL NO GOOGLE PLAY*
 
-Olá! Você foi convidado(a) para participar do grupo pioneiro de homologação cívica do app *Eleições Progressistas* (versão 2.2.6) diretamente pela Google Play Store!
+Olá! Você foi convidado(a) para participar do grupo pioneiro de homologação cívica do app *Eleições Progressistas* (versão 2.2.20) diretamente pela Google Play Store!
 
 🔐 *Privacidade Garantida:* Não coletamos intenções de voto e seus dados nunca são compartilhados. O e-mail serve unicamente para liberar o seu acesso na Play Store oficial.
 
@@ -48,7 +48,7 @@ Contamos com seu olhar atento para fortalecer a transparência democrática! �
 ```text
 Prezado(a) Cidadão(ã) e Auditor(a) Cívico(a),
 
-Você foi convidado(a) a fazer parte do Programa de Testadores Oficiais do aplicativo "Eleições Progressistas" (versão 2.2.6, código 7), desenvolvido para oferecer transparência eleitoral radical, matching imparcial de propostas e acesso público aos dados do Tribunal Superior Eleitoral (TSE).
+Você foi convidado(a) a fazer parte do Programa de Testadores Oficiais do aplicativo "Eleições Progressistas" (versão 2.2.20, código 21), desenvolvido para oferecer transparência eleitoral radical, matching imparcial de propostas e acesso público aos dados do Tribunal Superior Eleitoral (TSE).
 
 A versão de teste já se encontra publicada na infraestrutura oficial do Google Play. Para participar, basta seguir o procedimento abaixo:
 
@@ -63,7 +63,7 @@ A versão de teste já se encontra publicada na infraestrutura oficial do Google
 3. Toque no link "Fazer o download no Google Play" para instalar o app oficial:
    👉 https://play.google.com/store/apps/details?id=eleicoes.progressistas
 
-*(Caso prefira testar no navegador sem instalar nada, acesse: https://eleicoes-progressistas.onrender.com/web/)*
+*(Caso prefira testar no navegador sem instalar nada, acesse: https://eleicoes-progressistas.pages.dev/)*
 
 ----------------------------------------------------------------------
 🛡️ SEGURANÇA DA INFORMAÇÃO, PRIVACIDADE E CONFORMIDADE COM A LGPD:

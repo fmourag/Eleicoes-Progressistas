@@ -222,17 +222,31 @@ async function bootstrap() {
     ? join(webDistDir, 'candidates')
     : null;
 
-  // Servir rotas estáticas críticas com prioridade máxima
+  // Servir rotas estáticas críticas com prioridade máxima e cache imutável (1 ano)
   if (expoDir) {
     logger.log(`Serving _expo bundles from ${expoDir}`);
-    expressApp.use('/_expo', expressStatic(expoDir, { maxAge: '1y', immutable: true }));
-    expressApp.use('/web/_expo', expressStatic(expoDir, { maxAge: '1y', immutable: true }));
+    const expoCacheOpts = {
+      maxAge: 31536000000,
+      immutable: true,
+      setHeaders: (res: Response) => {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      },
+    };
+    expressApp.use('/_expo', expressStatic(expoDir, expoCacheOpts));
+    expressApp.use('/web/_expo', expressStatic(expoDir, expoCacheOpts));
   }
 
   if (assetsDir) {
     logger.log(`Serving web assets from ${assetsDir}`);
-    expressApp.use('/assets', expressStatic(assetsDir, { maxAge: '30d' }));
-    expressApp.use('/web/assets', expressStatic(assetsDir, { maxAge: '30d' }));
+    const assetsCacheOpts = {
+      maxAge: 31536000000,
+      immutable: true,
+      setHeaders: (res: Response) => {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      },
+    };
+    expressApp.use('/assets', expressStatic(assetsDir, assetsCacheOpts));
+    expressApp.use('/web/assets', expressStatic(assetsDir, assetsCacheOpts));
   }
 
   if (candidatesDir) {
@@ -256,28 +270,9 @@ async function bootstrap() {
     logger.log(`API static web assets served from ${staticWebDir}`);
   }
 
-  const getSpaIndexHtml = (): string | null => {
-    const candidates = [
-      join(apiStaticDir, 'index.html'),
-      join(apiStaticDir, 'web', 'index.html'),
-      join(webDistDir, 'index.html'),
-    ];
-    for (const p of candidates) {
-      if (existsSync(p)) return p;
-    }
-    return null;
-  };
+  const PAGES_BASE_URL = process.env.PAGES_BASE_URL || 'https://eleicoes-progressistas.pages.dev/';
 
-  // Rota raiz: serve o App SPA diretamente com alta performance
-  expressApp.get('/', (_req: Request, res: Response) => {
-    const spaIndex = getSpaIndexHtml();
-    if (spaIndex) {
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      return res.sendFile(spaIndex);
-    }
-    res.redirect('/beta');
-  });
-
+  // 1. Rotas do App e Portal no NestJS
   expressApp.get('/privacidade', (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(PRIVACY_HTML);
@@ -312,18 +307,7 @@ async function bootstrap() {
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.send('644c60e50971ba3ac95403a98556b44c131dabccdd54aa3414f765fc64fde10c\n');
   });
-  expressApp.get(['/web', '/web/*path'], (req: Request, res: Response, next: () => void) => {
-    // Se for requisição de recurso estático com extensão de arquivo, entrega para os middlewares estáticos
-    if (/\.[a-zA-Z0-9]+$/.test(req.path)) {
-      return next();
-    }
-    const spaIndex = getSpaIndexHtml();
-    if (spaIndex) {
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      return res.sendFile(spaIndex);
-    }
-    res.redirect('/beta');
-  });
+
   expressApp.get('/feedback', (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(FEEDBACK_HTML);
@@ -336,6 +320,12 @@ async function bootstrap() {
   expressApp.get(['/dashboard', '/painel/acessos', '/metricas', '/acessos'], (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(ACCESS_DASHBOARD_HTML);
+  });
+
+  // 2. Redirecionamento 301 da Web e Raiz para Cloudflare Pages
+  expressApp.get(['/', '/web', '/web/*path'], (_req: Request, res: Response) => {
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.redirect(301, PAGES_BASE_URL);
   });
 
   const apiPublicDir = existsSync(join(__dirname, '..', 'public'))
@@ -354,14 +344,11 @@ async function bootstrap() {
     logger.log(`API public assets served from ${apiPublicDir}`);
   }
 
-  // Fallback SPA para navegação do Expo Router no navegador
-  const spaIndex = getSpaIndexHtml();
-  if (spaIndex) {
-    expressApp.get(/^\/(?!api|privacidade|beta|feedback|dashboard|painel|metricas|acessos|candidates|download|apk|_expo|assets).*/, (_req: Request, res: Response) => {
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.sendFile(spaIndex);
-    });
-  }
+  // 3. Fallback para rotas não-API redirecionarem 301 para Cloudflare Pages
+  expressApp.get(/^\/(?!api|privacidade|beta|download|app|apk|feedback|dashboard|painel|metricas|acessos|candidates|_expo|assets).*/, (_req: Request, res: Response) => {
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.redirect(301, PAGES_BASE_URL);
+  });
 
   const port = process.env.PORT || 3000;
   await app.listen(port);

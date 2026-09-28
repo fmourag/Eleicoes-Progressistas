@@ -21,27 +21,12 @@ export class StaticAssetsController {
 
   @Get('download/apk')
   downloadApk(@Res() res: Response) {
-    const staticDir = this.getStaticDir();
-    const apkDir = join(staticDir, 'apk');
-    let apkFile = 'eleicoes-progressistas-v2.2.20-beta.apk';
-    let apkPath = join(apkDir, apkFile);
-    if (!existsSync(apkPath) && existsSync(apkDir)) {
-      const found = readdirSync(apkDir).filter((f) => f.endsWith('.apk')).sort().reverse()[0];
-      if (found) {
-        apkFile = found;
-        apkPath = join(apkDir, found);
-      }
-    }
+    const GITHUB_RELEASE_APK_URL =
+      process.env.GITHUB_RELEASE_APK_URL ||
+      'https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.20/eleicoes-progressistas-v2.2.20-beta.apk';
 
-    if (existsSync(apkPath)) {
-      res.setHeader('Content-Type', 'application/vnd.android.package-archive');
-      res.setHeader('Content-Disposition', `attachment; filename="${apkFile}"`);
-      const stream = createReadStream(apkPath);
-      return stream.pipe(res);
-    }
-
-    // Fallback caso o arquivo físico não tenha sido sincronizado
-    return res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.19/eleicoes-progressistas-v2.2.20-beta.apk');
+    // Redirecionamento 302 para CDN ilimitada do GitHub Releases (0 MB de banda no Render)
+    return res.redirect(302, GITHUB_RELEASE_APK_URL);
   }
 
   @Get('download/apk/sha256')
@@ -56,36 +41,13 @@ export class StaticAssetsController {
     }
 
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    return res.send('cecc877d3a61c4cba30f10517a2aca00528b44f718576a0dc4a4cab7d60545f0\n');
+    return res.send('644c60e50971ba3ac95403a98556b44c131dabccdd54aa3414f765fc64fde10c\n');
   }
 
   @Get(['web', 'web/*path'])
   getWebSpa(@Req() req: Request, @Res() res: Response) {
-    const staticDir = this.getStaticDir();
-
-    // Se a requisição for de arquivo com extensão (ex: .js, .css, .png, .svg, .json), tenta servir o arquivo real
-    if (/\.[a-zA-Z0-9]+$/.test(req.path)) {
-      const relPath = req.path.replace(/^\/web\/?/, '');
-      const candidates = [
-        join(staticDir, 'web', relPath),
-        join(staticDir, relPath),
-        join(staticDir, req.path),
-      ];
-      for (const p of candidates) {
-        if (existsSync(p)) return res.sendFile(p);
-      }
-      return res.status(404).send('Not Found');
-    }
-
-    const indexPath = existsSync(join(staticDir, 'web', 'index.html'))
-      ? join(staticDir, 'web', 'index.html')
-      : join(staticDir, 'index.html');
-
-    if (existsSync(indexPath)) {
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      return res.sendFile(indexPath);
-    }
-
-    return res.redirect('/beta');
+    const PAGES_BASE_URL = process.env.PAGES_BASE_URL || 'https://eleicoes-progressistas.pages.dev/';
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    return res.redirect(301, PAGES_BASE_URL);
   }
 }

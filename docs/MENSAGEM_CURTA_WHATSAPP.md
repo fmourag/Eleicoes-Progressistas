@@ -6,11 +6,12 @@
 🇧🇷 ELEIÇÕES PROGRESSISTAS 2026 — Auditoria cívica na sua mão
 
 🌐 USE AGORA NO NAVEGADOR (sem instalar nada):
-https://eleicoes-progressistas.onrender.com/web/
+https://eleicoes-progressistas.pages.dev/
+*(Links antigos onrender.com/web continuam válidos por redirect)*
 
-📱 OU BAIXE O APP ANDROID (61,48 MB):
+📱 OU BAIXE O APP ANDROID (61,60 MB):
 https://eleicoes-progressistas.onrender.com/download/apk
-🔐 SHA-256: cecc877d3a61c4cba30f10517a2aca00528b44f718576a0dc4a4cab7d60545f0
+🔐 SHA-256: 644c60e50971ba3ac95403a98556b44c131dabccdd54aa3414f765fc64fde10c
 
 ✅ O QUE VOCÊ ENCONTRA:
 • 7.256 candidatos oficiais do TSE (todos os cargos e estados)
@@ -36,11 +37,11 @@ Olá Progressistas!
 Existe um aplicativo GRATUITO pra ajudar a escolher candidatos nas eleições de 2026 com base em dados oficiais do TSE:
 
 🌐 Acesse direto pelo navegador (sem instalar nada):
-👉 https://eleicoes-progressistas.onrender.com/web/
+👉 https://eleicoes-progressistas.pages.dev/
 
-📱 Ou baixe o aplicativo nativo para Android (61,48 MB):
+📱 Ou baixe o aplicativo nativo para Android (61,60 MB):
 👉 https://eleicoes-progressistas.onrender.com/download/apk
-🔐 SHA-256: cecc877d3a61c4cba30f10517a2aca00528b44f718576a0dc4a4cab7d60545f0
+🔐 SHA-256: 644c60e50971ba3ac95403a98556b44c131dabccdd54aa3414f765fc64fde10c
 
 Diferente dos outros:
 ✅ Não pede cadastro e não guarda seus dados (Coleta Zero)

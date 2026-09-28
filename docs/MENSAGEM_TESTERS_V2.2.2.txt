@@ -27,7 +27,7 @@ milhões de brasileiros escolhem seus representantes em 04/10/2026.
 🌐 ACESSE OU INSTALE:
 
 1. Use direto no navegador (sem instalar nada):
-   👉 https://eleicoes-progressistas.onrender.com/web/
+   👉 https://eleicoes-progressistas.pages.dev/
 
 2. Ou instale o APK no celular Android (61,48 MB):
    👉 https://eleicoes-progressistas.onrender.com/download/apk

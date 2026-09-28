@@ -1,18 +1,18 @@
-# Kit de Distribuição Cívica — Versão v2.2.19
+# Kit de Distribuição Cívica — Versão v2.2.20
 
-**Data:** 21 de setembro de 2026  
-**Versão:** 2.2.12 (versionCode 13)  
+**Data:** 28 de setembro de 2026  
+**Versão:** 2.2.20 (versionCode 21)  
 **Aplicativo:** Eleições Progressistas (`com.eleicoesprogressistas.app`)  
 
 ---
 
 ## 📦 Dados dos Canais Oficiais
 
-- **1. Versão Web Canônica (Sem instalação):** https://eleicoes-progressistas.onrender.com/web/
-- **2. Link Direto do APK Android (Render):** [Download APK v2.2.19](https://eleicoes-progressistas.onrender.com/download/apk)
-- **Verificação de Integridade do APK (SHA-256):** `cecc877d3a61c4cba30f10517a2aca00528b44f718576a0dc4a4cab7d60545f0` ([Checar via API](https://eleicoes-progressistas.onrender.com/download/apk/sha256))
+- **1. Versão Web Canônica (Cloudflare Pages):** https://eleicoes-progressistas.pages.dev/ *(links legados onrender.com/web redirecionam via 301)*
+- **2. Link Direto do APK Android (Render):** [Download APK v2.2.20](https://eleicoes-progressistas.onrender.com/download/apk) *(redireciona via 302 para GitHub Release)*
+- **Verificação de Integridade do APK (SHA-256):** `644c60e50971ba3ac95403a98556b44c131dabccdd54aa3414f765fc64fde10c` ([Checar via API](https://eleicoes-progressistas.onrender.com/download/apk/sha256))
 - **Landing Page de Acesso e Download:** https://eleicoes-progressistas.onrender.com/beta
-- **Releases no GitHub (Espelho):** https://github.com/fmourag/Eleicoes-Progressistas/releases/tag/v2.2.19
+- **Releases no GitHub (Espelho):** https://github.com/fmourag/Eleicoes-Progressistas/releases/tag/v2.2.20
 - **Política de Privacidade:** https://eleicoes-progressistas.onrender.com/privacidade
 - **Canal de Feedback e Homologação:** https://eleicoes-progressistas.onrender.com/feedback
 
@@ -22,7 +22,7 @@
 
 Para máxima conversão e menor fricção, qualquer usuário em celular (Android, iOS) ou computador pode utilizar o Eleições Progressistas imediatamente no navegador:
 
-👉 **URL de Acesso:** https://eleicoes-progressistas.onrender.com/web/
+👉 **URL de Acesso:** https://eleicoes-progressistas.pages.dev/
 - Não exige cadastro nem instalação de aplicativo
 - Acesso completo a todos os 7.256 candidatos oficiais do TSE
 - Cálculo de matching cívico 100% no navegador (zero dados enviados ao servidor)
@@ -35,11 +35,11 @@ Para máxima conversão e menor fricção, qualquer usuário em celular (Android
 Para testadores, auditores e usuários que preferem o aplicativo instalado nativamente:
 
 1. No celular Android, acesse: **https://eleicoes-progressistas.onrender.com/beta** (ou clique no link direto do APK: `https://eleicoes-progressistas.onrender.com/download/apk`).
-2. Ao término do download, abra o arquivo `eleicoes-progressistas-v2.2.19-beta.apk`.
+2. Ao término do download, abra o arquivo `eleicoes-progressistas-v2.2.20-beta.apk`.
 3. Se o Android solicitar, habilite **"Permitir desta fonte"**.
 4. Toque em **Instalar** e abra o app.
 
-⚠️ **Integridade do APK:** Confira o hash SHA-256: `cecc877d3a61c4cba30f10517a2aca00528b44f718576a0dc4a4cab7d60545f0`.  
+⚠️ **Integridade do APK:** Confira o hash SHA-256: `644c60e50971ba3ac95403a98556b44c131dabccdd54aa3414f765fc64fde10c`.  
 ⚠️ **Importante:** desinstale versões de teste anteriores antes de instalar.
 
 ---
@@ -79,14 +79,14 @@ Para testadores, auditores e usuários que preferem o aplicativo instalado nativ
 
 ### 🟢 WhatsApp / 🔵 Telegram
 ```text
-🇧🇷 [NOME], atualização v2.2.19 do Eleições Progressistas disponível!
+🇧🇷 [NOME], atualização v2.2.20 do Eleições Progressistas disponível!
 
 🌐 USE AGORA NO NAVEGADOR (sem instalar nada):
-https://eleicoes-progressistas.onrender.com/web/
+https://eleicoes-progressistas.pages.dev/
 
 📱 OU BAIXE O APP ANDROID (~61 MB):
 https://eleicoes-progressistas.onrender.com/download/apk
-🔐 SHA-256: cecc877d3a61c4cba30f10517a2aca00528b44f718576a0dc4a4cab7d60545f0
+🔐 SHA-256: 644c60e50971ba3ac95403a98556b44c131dabccdd54aa3414f765fc64fde10c
 
 ✅ O QUE VOCÊ ENCONTRA:
 • 7.256 candidatos oficiais do TSE (todos os cargos e estados)
@@ -104,20 +104,20 @@ Compartilhe com quem vai votar em outubro! 🗳️
 ```
 
 ### ✉️ E-mail
-**Assunto:** `🇧🇷 Eleições Progressistas v2.2.19: cola eleitoral persistente e compartilhamento por PDF`  
+**Assunto:** `🇧🇷 Eleições Progressistas v2.2.20: cola eleitoral persistente e compartilhamento por PDF`  
 
 **Corpo:**
 ```text
 Olá [NOME],
 
-A versão v2.2.19 do Eleições Progressistas está no ar com melhorias importantes na cola eleitoral:
+A versão v2.2.20 do Eleições Progressistas está no ar com melhorias importantes na cola eleitoral:
 
 🌐 USE AGORA NO NAVEGADOR (sem instalar nada):
-https://eleicoes-progressistas.onrender.com/web/
+https://eleicoes-progressistas.pages.dev/
 
 📱 OU BAIXE O APP ANDROID (~61 MB):
 https://eleicoes-progressistas.onrender.com/download/apk
-🔐 SHA-256: cecc877d3a61c4cba30f10517a2aca00528b44f718576a0dc4a4cab7d60545f0
+🔐 SHA-256: 644c60e50971ba3ac95403a98556b44c131dabccdd54aa3414f765fc64fde10c
 
 ✅ O QUE VOCÊ ENCONTRA:
 • 7.256 candidatos oficiais do TSE (todos os cargos e estados)
@@ -132,5 +132,5 @@ https://eleicoes-progressistas.onrender.com/download/apk
 📧 Dúvidas ou suporte direto: fmourag@gmail.com
 
 Equipe Eleições Progressistas
-https://eleicoes-progressistas.onrender.com/
+https://eleicoes-progressistas.pages.dev/
 ```

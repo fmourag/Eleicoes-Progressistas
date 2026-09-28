@@ -18,7 +18,7 @@ interface ShareModalProps {
   onClose: () => void;
 }
 
-export const SHARE_URL = 'https://eleicoes-progressistas.onrender.com/web/';
+export const SHARE_URL = 'https://eleicoes-progressistas.pages.dev/';
 export const SHARE_MESSAGE =
   'Descobri o Aplicativo Eleições Progressistas, um conjunto de informações para auxiliar na escolha de candidatos, é gratuito e não coleta dados. Acesse em ' +
   SHARE_URL;

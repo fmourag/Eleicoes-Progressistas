@@ -6,12 +6,26 @@ on:
     - cron: '*/10 * * * *'
   workflow_dispatch:
 
+env:
+  BASE_URL: https://eleicoes-progressistas.onrender.com
+
 jobs:
   ping:
-    name: Ping Health Endpoint
+    name: Ping Health & Validate Redirects
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
       - name: Ping Healthcheck
         run: |
-          curl -s --connect-timeout 20 --max-time 30 https://eleicoes-progressistas.onrender.com/api/health || echo "Ping failed or timed out"
+          curl -s --connect-timeout 20 --max-time 30 ${{ env.BASE_URL }}/api/health || echo "Ping failed or timed out"
+
+      - name: Validate Redirects & Bandwidth Protection
+        run: |
+          apk_code=$(curl -s -o /dev/null -w "%{http_code}" -I ${{ env.BASE_URL }}/download/apk)
+          web_code=$(curl -s -o /dev/null -w "%{http_code}" -I ${{ env.BASE_URL }}/web/)
+          if [ "$apk_code" != "302" ] || [ "$web_code" != "301" ]; then
+            echo "⚠️ REDIRECTS FALHARAM — VERIFICAR BANDA/STATUS DO WORKSPACE RENDER"
+            echo "APK: $apk_code (esperado 302) | Web: $web_code (esperado 301)"
+            exit 1
+          fi
+          echo "✅ Redirects OK: APK=302 (Zero Render Bandwidth), Web=301 (Cloudflare Pages)"

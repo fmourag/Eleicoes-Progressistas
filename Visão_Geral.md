@@ -1,6 +1,6 @@
 # Visão Geral — Eleições Progressistas (para IDEs/agentes)
 
-> Arquivo único de contexto. Fonte primária: código + `README.md`, `docs/PRD.md`, `docs/DOCUMENTACAO_TECNICA.md`, `docs/PRODUCTION_GUIDE.md`, `docs/BOOK_DE_PROJETO.md`, `docs/OPERATIONS.md`, `docs/SIDELOAD_KIT.md`. Versão do repo: `package.json:3` `2.2.20`, `apps/api/package.json:3` `2.2.20`, `apps/mobile/app.json:5` `2.2.20` (android `versionCode` 20 em `apps/mobile/app.json:28`).
+> Arquivo único de contexto. Fonte primária: código + `README.md`, `docs/PRD.md`, `docs/DOCUMENTACAO_TECNICA.md`, `docs/PRODUCTION_GUIDE.md`, `docs/BOOK_DE_PROJETO.md`, `docs/OPERATIONS.md`, `docs/SIDELOAD_KIT.md`. Versão do repo: `package.json:3` `2.2.20`, `apps/api/package.json:3` `2.2.20`, `apps/mobile/app.json:5` `2.2.20` (android `versionCode` 21 em `apps/mobile/app.json:31`).
 
 ## 1. O que é e para que serve
 
@@ -79,7 +79,7 @@ Prefixo global `api` com exclusões SPA/estáticas em `apps/api/src/main.ts:80` 
 - API Render `https://eleicoes-progressistas.onrender.com` (`docs/OPERATIONS.md:47`, `deploy/render.yaml:1` free, `startCommand node apps/api/dist/main.js`, healthcheck `/api/health`): versão viva e legível.
 - Web Cloudflare `https://eleicoes-progressistas.pages.dev` (`docs/OPERATIONS.md:46`): responde só `Eleições Progressistas` no fetch texto.
 - Play testing `https://play.google.com/apps/testing/com.eleicoesprogressistas.app` (`docs/OPERATIONS.md:56`): exige login Google, versão não raspável. Atenção: `app.json:27` declara package Android `eleicoes.progressistas`, enquanto docs citam trilha `com.eleicoesprogressistas.app` e `feedback.service.ts:93` cita `id=eleicoes.progressistas` — conferir antes de publicar.
-- Versão alvo do repo: **v2.2.20 / versionCode 20** (`docs/SIDELOAD_KIT.md:1`). Artefatos estáticos atualizados.
+- Versão alvo do repo: **v2.2.20 / versionCode 21** (`docs/SIDELOAD_KIT.md:1`). Artefatos estáticos atualizados.
 
 ## 11. Testes e validação
 

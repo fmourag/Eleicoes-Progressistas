@@ -1,4 +1,4 @@
-# Template de E-mail — Eleições Progressistas v2.2.5
+# Template de E-mail — Eleições Progressistas v2.2.20
 
 **Assunto:** 🇧🇷 Eleições Progressistas: use no navegador ou baixe o app
 
@@ -6,14 +6,14 @@
 ```text
 Olá [NOME],
 
-A plataforma cívica Eleições Progressistas 2026 está no ar em sua versão v2.2.5, agora oferecendo dois caminhos práticos de acesso para auxiliar você e sua rede na escolha de candidatos oficiais do TSE:
+A plataforma cívica Eleições Progressistas 2026 está no ar em sua versão v2.2.20, agora oferecendo dois caminhos práticos de acesso para auxiliar você e sua rede na escolha de candidatos oficiais do TSE:
 
 🌐 USE AGORA NO NAVEGADOR (sem instalar nada):
-https://eleicoes-progressistas.onrender.com/web/
+https://eleicoes-progressistas.pages.dev/
 
-📱 OU BAIXE O APP ANDROID (61,48 MB):
+📱 OU BAIXE O APP ANDROID (~61,6 MB):
 https://eleicoes-progressistas.onrender.com/download/apk
-🔐 SHA-256: 421aaf52ebc730d839cfadb50c3b47fbb26870855c5c02d9dd14484a1404dbba
+🔐 SHA-256: 644c60e50971ba3ac95403a98556b44c131dabccdd54aa3414f765fc64fde10c
 
 ✅ O QUE VOCÊ ENCONTRA:
 • 7.256 candidatos oficiais do TSE (todos os cargos e estados)
@@ -28,5 +28,5 @@ https://eleicoes-progressistas.onrender.com/download/apk
 
 Atenciosamente,
 Equipe Eleições Progressistas
-https://eleicoes-progressistas.onrender.com/
+https://eleicoes-progressistas.pages.dev/
 ```
