@@ -222,7 +222,19 @@ async function bootstrap() {
     ? join(webDistDir, 'candidates')
     : null;
 
-  // Servir rotas estáticas críticas com prioridade máxima e cache imutável (1 ano)
+  const PAGES_BASE_URL = process.env.PAGES_BASE_URL || 'https://eleicoes-progressistas.pages.dev/';
+
+  // 1. Redirecionamento 301 Imediato para Cloudflare Pages (Raiz / e /web/*)
+  expressApp.use((req: Request, res: Response, next: () => void) => {
+    const p = req.path;
+    if (p === '/' || p === '/web' || p.startsWith('/web/')) {
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.redirect(301, PAGES_BASE_URL);
+    }
+    next();
+  });
+
+  // Servir rotas estáticas críticas com prioridade e cache imutável
   if (expoDir) {
     logger.log(`Serving _expo bundles from ${expoDir}`);
     const expoCacheOpts = {
@@ -233,7 +245,6 @@ async function bootstrap() {
       },
     };
     expressApp.use('/_expo', expressStatic(expoDir, expoCacheOpts));
-    expressApp.use('/web/_expo', expressStatic(expoDir, expoCacheOpts));
   }
 
   if (assetsDir) {
@@ -246,13 +257,11 @@ async function bootstrap() {
       },
     };
     expressApp.use('/assets', expressStatic(assetsDir, assetsCacheOpts));
-    expressApp.use('/web/assets', expressStatic(assetsDir, assetsCacheOpts));
   }
 
   if (candidatesDir) {
     logger.log(`Serving candidate portraits from ${candidatesDir}`);
     expressApp.use('/candidates', expressStatic(candidatesDir, { maxAge: '7d' }));
-    expressApp.use('/web/candidates', expressStatic(candidatesDir, { maxAge: '7d' }));
   }
 
   if (existsSync(apiStaticDir)) {
@@ -261,16 +270,6 @@ async function bootstrap() {
     });
     logger.log(`API static assets served from ${apiStaticDir}`);
   }
-
-  const staticWebDir = join(apiStaticDir, 'web');
-  if (existsSync(staticWebDir)) {
-    app.useStaticAssets(staticWebDir, {
-      prefix: '/web',
-    });
-    logger.log(`API static web assets served from ${staticWebDir}`);
-  }
-
-  const PAGES_BASE_URL = process.env.PAGES_BASE_URL || 'https://eleicoes-progressistas.pages.dev/';
 
   // 1. Rotas do App e Portal no NestJS
   expressApp.get('/privacidade', (_req: Request, res: Response) => {
