@@ -288,7 +288,7 @@ async function bootstrap() {
   });
   const GITHUB_RELEASE_APK_URL =
     process.env.GITHUB_RELEASE_APK_URL ||
-    'https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.19/eleicoes-progressistas-v2.2.19-beta.apk';
+    'https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.20/eleicoes-progressistas-v2.2.20-beta.apk';
 
   expressApp.get(['/download/apk', '/app.apk', '/download/latest', '/download/apk-arm64'], (req: Request, res: Response) => {
     try {
@@ -310,7 +310,7 @@ async function bootstrap() {
       return res.sendFile(shaPath);
     }
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.send('cecc877d3a61c4cba30f10517a2aca00528b44f718576a0dc4a4cab7d60545f0\n');
+    res.send('b0d124e2d89c5c5a8dadb315b966e727c239edb5598403758be35b830ab34bd4\n');
   });
   expressApp.get(['/web', '/web/*path'], (req: Request, res: Response, next: () => void) => {
     // Se for requisição de recurso estático com extensão de arquivo, entrega para os middlewares estáticos
