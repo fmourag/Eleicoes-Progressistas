@@ -286,7 +286,11 @@ async function bootstrap() {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(BETA_HTML);
   });
-  expressApp.get(['/download/apk', '/app.apk'], (req: Request, res: Response) => {
+  const GITHUB_RELEASE_APK_URL =
+    process.env.GITHUB_RELEASE_APK_URL ||
+    'https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.19/eleicoes-progressistas-v2.2.19-beta.apk';
+
+  expressApp.get(['/download/apk', '/app.apk', '/download/latest', '/download/apk-arm64'], (req: Request, res: Response) => {
     try {
       const userAgent = (req.headers['user-agent'] as string) || '';
       const referer = (req.headers['referer'] as string) || undefined;
@@ -296,23 +300,8 @@ async function bootstrap() {
       // Ignora falhas de telemetria para não afetar o download
     }
 
-    const apkDir = join(apiStaticDir, 'apk');
-    let apkFile = 'eleicoes-progressistas-v2.2.20-beta.apk';
-    let apkPath = join(apkDir, apkFile);
-    if (!existsSync(apkPath) && existsSync(apkDir)) {
-      const found = readdirSync(apkDir).filter((f) => f.endsWith('.apk')).sort().reverse()[0];
-      if (found) {
-        apkFile = found;
-        apkPath = join(apkDir, found);
-      }
-    }
-
-    if (existsSync(apkPath)) {
-      res.setHeader('Content-Type', 'application/vnd.android.package-archive');
-      res.setHeader('Content-Disposition', `attachment; filename="${apkFile}"`);
-      return res.sendFile(apkPath);
-    }
-    res.redirect('https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.20/eleicoes-progressistas-v2.2.20-beta.apk');
+    // Redireciona via HTTP 302 para o GitHub Releases (CDN ilimitada e gratuita, consumindo 0 bytes de banda no Render)
+    res.redirect(302, GITHUB_RELEASE_APK_URL);
   });
   expressApp.get('/download/apk/sha256', (_req: Request, res: Response) => {
     const shaPath = join(apiStaticDir, 'apk', 'sha256.txt');
@@ -321,7 +310,7 @@ async function bootstrap() {
       return res.sendFile(shaPath);
     }
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.send('d61388039f7c3aeb7500f58cb263eb59abca37960f130ccafa2c8d6913cdf50f\n');
+    res.send('cecc877d3a61c4cba30f10517a2aca00528b44f718576a0dc4a4cab7d60545f0\n');
   });
   expressApp.get(['/web', '/web/*path'], (req: Request, res: Response, next: () => void) => {
     // Se for requisição de recurso estático com extensão de arquivo, entrega para os middlewares estáticos
