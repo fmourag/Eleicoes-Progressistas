@@ -310,7 +310,7 @@ async function bootstrap() {
       return res.sendFile(shaPath);
     }
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.send('b0d124e2d89c5c5a8dadb315b966e727c239edb5598403758be35b830ab34bd4\n');
+    res.send('644c60e50971ba3ac95403a98556b44c131dabccdd54aa3414f765fc64fde10c\n');
   });
   expressApp.get(['/web', '/web/*path'], (req: Request, res: Response, next: () => void) => {
     // Se for requisição de recurso estático com extensão de arquivo, entrega para os middlewares estáticos
