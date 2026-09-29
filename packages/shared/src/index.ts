@@ -171,6 +171,9 @@ export const KNOWN_URNA_NUMBERS: Record<string, string> = {
   'sen_rj_benedita': '133',
   'sen_rj_tarcisio': '500',
   'sen_rj_molon': '400',
+  'sen_rj_pedropaulo': '555',
+  'dep_122974': '5555',
+  '122974': '5555',
   // Deputados Estaduais RJ
   'dep_est_rj_dani': '50123',
   'dep_est_rj_minc': '40123',
@@ -384,7 +387,18 @@ export function isCandidateAllowedInProgressiveRoll(candidate: {
     if (!isExcluded) return true;
     if (candidate.coalition) {
       const coalUpper = candidate.coalition.toUpperCase();
-      return PROGRESSIVE_COALITION_KEYWORDS.some((p) => coalUpper.includes(p.toUpperCase()));
+      const normalizedCoal = normalizePartyName(candidate.coalition);
+      const hasProgressive = PROGRESSIVE_COALITION_KEYWORDS.some((p) => {
+        const pUpper = p.toUpperCase();
+        return coalUpper.includes(pUpper) || (pUpper.length >= 3 && normalizedCoal.includes(normalizePartyName(pUpper)));
+      });
+      if (hasProgressive) return true;
+    }
+    // Parties in democratic fronts / coalitions with progressive field (e.g. PSD, SOLIDARIEDADE, MDB, CIDADANIA, PSB, PDT, etc.)
+    if (['PSD', 'SOLIDARIEDADE', 'CIDADANIA', 'MOBILIZA', 'AGIR', 'PMB', 'MDB', 'PSDB'].includes(partyUpper)) {
+      if (candidate.isProgressiveSupported || candidate.supportedBy || candidate.coalition) {
+        return true;
+      }
     }
     return false;
   }
@@ -582,6 +596,9 @@ export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
   'sen_rj_molon': 'https://www.camara.leg.br/internet/deputado/bandep/160511.jpg',
   'sen_rj_lindbergh': 'https://www.camara.leg.br/internet/deputado/bandep/74858.jpg',
   'sen_rj_tarcisio': 'https://www.camara.leg.br/internet/deputado/bandep/220598.jpg',
+  'sen_rj_pedropaulo': 'https://www.camara.leg.br/internet/deputado/bandep/122974.jpg',
+  'dep_122974': 'https://www.camara.leg.br/internet/deputado/bandep/122974.jpg',
+  '122974': 'https://www.camara.leg.br/internet/deputado/bandep/122974.jpg',
 
   // Lideranças Estaduais / Deputados Estaduais
   'ale_rj_renatasouza': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/Renata_Souza_em_2022.jpg/500px-Renata_Souza_em_2022.jpg',

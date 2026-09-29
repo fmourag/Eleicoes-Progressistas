@@ -252,6 +252,25 @@ const REAL_SENATORS = [
       { pillar: 'p8', title: 'Cultura Popular e Democracia Participativa', description: 'Fomento descentralizado à cultura popular, favelada e comunitária e orçamentos participativos deliberativos.' },
     ],
   },
+  {
+    tseId: 'sen_rj_pedropaulo',
+    name: 'Pedro Paulo Carvalho Teixeira',
+    socialName: 'Pedro Paulo',
+    party: 'PSD',
+    numeroUrna: '555',
+    state: 'RJ',
+    municipality: 'Rio de Janeiro',
+    photoUrl: 'https://www.camara.leg.br/internet/deputado/bandep/122974.jpg',
+    coalition: 'Frente Ampla Democrática e Progressista (PSD, Federação Brasil da Esperança PT/PCdoB/PV, PSB, Solidariedade, PDT)',
+    isProgressiveSupported: true,
+    supportedBy: 'Coligação Frente Ampla Progressista',
+    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Defesa da modernização da gestão pública, investimentos estruturantes em infraestrutura e pacto federativo para o Rio de Janeiro.',
+    proposals: [
+      { pillar: 'p5', title: 'Infraestrutura Urbana e Desenvolvimento Metropolitano', description: 'Atração de investimentos federais para a mobilidade urbana, infraestrutura e expansão da malha logística do Rio.' },
+      { pillar: 'p8', title: 'Eficiência Fiscal e Responsabilidade Pública', description: 'Gestão orientada a resultados, desburocratização e modernização tributária com garantia de serviços essenciais.' },
+      { pillar: 'p13', title: 'Estímulo ao Empreendedorismo e Geração de Emprego', description: 'Apoio aos microempreendedores e incentivo ao turismo, inovação e setor de serviços no Estado do Rio de Janeiro.' },
+    ],
+  },
   // São Paulo (SP)
   {
     tseId: 'sen_sp_franca',

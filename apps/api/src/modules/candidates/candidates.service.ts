@@ -450,6 +450,56 @@ export class CandidatesService implements OnModuleInit {
         },
       });
 
+      // 3. Garantir presença de Pedro Paulo (PSD/RJ - Senado) com apoio da Frente Ampla Progressista
+      await this.prisma.candidate.upsert({
+        where: {
+          tseId_electionYear: {
+            tseId: 'sen_rj_pedropaulo',
+            electionYear: 2026,
+          },
+        },
+        update: {
+          name: 'Pedro Paulo Carvalho Teixeira',
+          socialName: 'Pedro Paulo',
+          party: 'PSD',
+          partyNumber: 55,
+          numeroUrna: '555',
+          cargo: 'SENADOR',
+          level: 'ESTADUAL',
+          candidaturaStatus: 'DEFERIDO',
+          state: 'RJ',
+          municipality: 'Rio de Janeiro',
+          photoUrl: 'https://www.camara.leg.br/internet/deputado/bandep/122974.jpg',
+          coalition: 'Frente Ampla Democrática e Progressista (PSD, Federação Brasil da Esperança PT/PCdoB/PV, PSB, Solidariedade, PDT)',
+          isProgressiveSupported: true,
+          supportedBy: 'Coligação Frente Ampla Progressista',
+          fichaLimpa: true,
+          visible: true,
+        },
+        create: {
+          tseId: 'sen_rj_pedropaulo',
+          electionYear: 2026,
+          name: 'Pedro Paulo Carvalho Teixeira',
+          socialName: 'Pedro Paulo',
+          party: 'PSD',
+          partyNumber: 55,
+          numeroUrna: '555',
+          cargo: 'SENADOR',
+          level: 'ESTADUAL',
+          candidaturaStatus: 'DEFERIDO',
+          state: 'RJ',
+          municipality: 'Rio de Janeiro',
+          photoUrl: 'https://www.camara.leg.br/internet/deputado/bandep/122974.jpg',
+          coalition: 'Frente Ampla Democrática e Progressista (PSD, Federação Brasil da Esperança PT/PCdoB/PV, PSB, Solidariedade, PDT)',
+          isProgressiveSupported: true,
+          supportedBy: 'Coligação Frente Ampla Progressista',
+          fichaLimpa: true,
+          visible: true,
+          cpfHash: 'hash_tse_sen_rj_pedropaulo_2026',
+          profileScores: { p1: 0.85, p2: 0.80, p3: 0.82, p4: 0.85, p5: 0.85, p6: 0.78, p7: 0.80, p8: 0.82, p9: 0.85, p10: 0.85, p11: 0.85, p12: 0.80, p13: 0.88 },
+        },
+      });
+
       this.candidatesCache.clear();
     } catch {
       // Falha silenciosa em caso de tabela ainda não inicializada
