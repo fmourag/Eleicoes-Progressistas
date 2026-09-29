@@ -321,9 +321,30 @@ export const PROGRESSIVE_COALITION_CORE_PARTIES = [
   'PCB',
   'PCO',
   'PSTU',
+  'FE BRASIL',
+  'FEDERAÇÃO BRASIL DA ESPERANÇA',
+  'FEDERACAO BRASIL DA ESPERANCA',
+  'FEDERAÇÃO PSOL REDE',
+  'FEDERACAO PSOL REDE',
+  'PSOL-REDE',
+] as const;
+
+export const PROGRESSIVE_COALITION_KEYWORDS = [
+  ...PROGRESSIVE_COALITION_CORE_PARTIES,
+  'FRENTE PROGRESSISTA',
+  'FRENTE POPULAR',
+  'FRENTE DEMOCRATICA',
+  'FRENTE DEMOCRÁTICA',
+  'FRENTE AMPLA',
+  'COLIGAÇÃO PROGRESSISTA',
+  'COLIGACAO PROGRESSISTA',
+  'ALIANÇA PROGRESSISTA',
+  'ALIANCA PROGRESSISTA',
+  'PROGRESSISTAS',
 ] as const;
 
 export function isCandidateAllowedInProgressiveRoll(candidate: {
+  cargo?: Cargo | string;
   party: string;
   isProgressiveSupported?: boolean;
   supportedBy?: string | null;
@@ -331,6 +352,20 @@ export function isCandidateAllowedInProgressiveRoll(candidate: {
 }): boolean {
   if (candidate.isProgressiveSupported) return true;
   if (candidate.supportedBy && candidate.supportedBy.trim().length > 0) return true;
+
+  const cargoUpper = String(candidate.cargo || '').toUpperCase();
+  const isSenado = cargoUpper === 'SENADOR' || cargoUpper.includes('SENAD');
+
+  // Check if candidate is part of a progressive alliance/coalition
+  if (candidate.coalition) {
+    const coalUpper = candidate.coalition.toUpperCase();
+    const normalizedCoal = normalizePartyName(candidate.coalition);
+    const hasProgressivePartner = PROGRESSIVE_COALITION_KEYWORDS.some((p) => {
+      const pUpper = p.toUpperCase();
+      return coalUpper.includes(pUpper) || (pUpper.length >= 3 && normalizedCoal.includes(normalizePartyName(pUpper)));
+    });
+    if (hasProgressivePartner) return true;
+  }
 
   const partyUpper = (candidate.party || '').trim().toUpperCase();
   const normalizedParty = normalizePartyName(candidate.party);
@@ -344,16 +379,17 @@ export function isCandidateAllowedInProgressiveRoll(candidate: {
     normalizedParty.includes('MISSAO') ||
     normalizedParty.includes('DEMOCRATA');
 
-  if (!isExcluded) return true;
-
-  // If candidate is from an excluded party, allow if they are part of a progressive alliance/coalition
-  if (candidate.coalition) {
-    const coalUpper = candidate.coalition.toUpperCase();
-    const hasProgressivePartner = PROGRESSIVE_COALITION_CORE_PARTIES.some((p) =>
-      coalUpper.includes(p)
-    );
-    if (hasProgressivePartner) return true;
+  // For Senate candidates in broad democratic front or coalition:
+  if (isSenado) {
+    if (!isExcluded) return true;
+    if (candidate.coalition) {
+      const coalUpper = candidate.coalition.toUpperCase();
+      return PROGRESSIVE_COALITION_KEYWORDS.some((p) => coalUpper.includes(p.toUpperCase()));
+    }
+    return false;
   }
+
+  if (!isExcluded) return true;
 
   return false;
 }

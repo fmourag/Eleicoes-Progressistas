@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
 import { PrismaService } from '../common/prisma.service';
-import { ElectionLevel, Cargo, CARGOS_BY_LEVEL, UPCOMING_ELECTION, EXCLUDED_CONSERVATIVE_PARTIES, PROGRESSIVE_COALITION_CORE_PARTIES, KNOWN_PARLIAMENTARY_PHOTOS, CandidateClassification, PillarCommitment, GovernmentPlanDetail, getNumeroUrna, computeCandidatePollResult, resolveCandidateMandateProposals, buildPillarJustificativa, resolveCandidatePhotoUrl, isNeutralMatchingProfile } from '@np/shared';
+import { ElectionLevel, Cargo, CARGOS_BY_LEVEL, UPCOMING_ELECTION, EXCLUDED_CONSERVATIVE_PARTIES, PROGRESSIVE_COALITION_CORE_PARTIES, PROGRESSIVE_COALITION_KEYWORDS, KNOWN_PARLIAMENTARY_PHOTOS, CandidateClassification, PillarCommitment, GovernmentPlanDetail, getNumeroUrna, computeCandidatePollResult, resolveCandidateMandateProposals, buildPillarJustificativa, resolveCandidatePhotoUrl, isNeutralMatchingProfile } from '@np/shared';
 import { OFFICIAL_ELECTION_POLLS } from './data/election-polls.data';
 import { TsePhotoPrefetchService } from './tse/tse-photo-prefetch.service';
 
@@ -473,9 +473,20 @@ export class CandidatesService implements OnModuleInit {
         { party: { notIn: excludedParties } },
         { isProgressiveSupported: true },
         { supportedBy: { not: null } },
+        {
+          cargo: 'SENADOR',
+          OR: [
+            { isProgressiveSupported: true },
+            { supportedBy: { not: null } },
+            { coalition: { not: null } },
+          ],
+        },
       ];
       for (const prog of progressiveCore) {
-        orConditions.push({ coalition: { contains: prog } });
+        orConditions.push({ coalition: { contains: prog, mode: 'insensitive' } });
+      }
+      for (const kw of PROGRESSIVE_COALITION_KEYWORDS) {
+        orConditions.push({ coalition: { contains: kw, mode: 'insensitive' } });
       }
 
       const whereClause: any = {

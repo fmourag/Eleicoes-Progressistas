@@ -32,6 +32,16 @@ describe('TseMapperService', () => {
     });
   });
 
+  describe('isCandidateExcluded', () => {
+    it('should allow candidates from excluded parties if in progressive coalition or support', () => {
+      expect(service.isCandidateExcluded('PSD', 'Frente Progressista (PT, PSB, PCdoB)', Cargo.SENADOR)).toBe(false);
+      expect(service.isCandidateExcluded('MDB', 'Coligação Brasil da Esperança (PT, PV, PCdoB)', Cargo.SENADOR)).toBe(false);
+      expect(service.isCandidateExcluded('SOLIDARIEDADE', 'Frente Democrática', Cargo.SENADOR)).toBe(false);
+      expect(service.isCandidateExcluded('PL', null, Cargo.SENADOR)).toBe(true);
+      expect(service.isCandidateExcluded('PT', null, Cargo.SENADOR)).toBe(false);
+    });
+  });
+
   describe('mapStatus', () => {
     it('should map TSE status correctly', () => {
       expect(service.mapStatus('DEFERIDO')).toBe(CandidaturaStatus.DEFERIDO);

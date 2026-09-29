@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cargo, ElectionLevel, CandidaturaStatus } from '@prisma/client';
-import { EXCLUDED_CONSERVATIVE_PARTIES, normalizePartyName } from '@np/shared';
+import { EXCLUDED_CONSERVATIVE_PARTIES, normalizePartyName, PROGRESSIVE_COALITION_KEYWORDS } from '@np/shared';
 import * as crypto from 'crypto';
 import {
   TseCandidateResponse,
@@ -39,6 +39,27 @@ export class TseMapperService {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Verifica se o candidato deve ser excluído, considerando cargo (ex.: Senador) e coligações/apoios progressistas
+   */
+  isCandidateExcluded(partySigla: string, coalition?: string | null, cargo?: Cargo | string | number): boolean {
+    const isPartyEx = this.isPartyExcluded(partySigla);
+    if (!isPartyEx) return false;
+
+    // Se estiver em coligação com partidos progressistas, NÃO excluir
+    if (coalition) {
+      const coalUpper = coalition.toUpperCase();
+      const normalizedCoal = normalizePartyName(coalition);
+      const hasProgressive = PROGRESSIVE_COALITION_KEYWORDS.some((p) => {
+        const pUpper = p.toUpperCase();
+        return coalUpper.includes(pUpper) || (pUpper.length >= 3 && normalizedCoal.includes(normalizePartyName(pUpper)));
+      });
+      if (hasProgressive) return false;
+    }
+
+    return true;
   }
 
   /**

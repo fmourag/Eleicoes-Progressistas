@@ -1,6 +1,6 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
-import { EXCLUDED_CONSERVATIVE_PARTIES, Cargo, CandidaturaStatus } from '@np/shared';
+import { EXCLUDED_CONSERVATIVE_PARTIES, Cargo, CandidaturaStatus, isCandidateAllowedInProgressiveRoll } from '@np/shared';
 
 export interface TseRawCandidate {
   id: number;
@@ -165,7 +165,12 @@ export class TseCandidatesService {
       const candidatos: TseRawCandidate[] = data.candidatos ?? [];
 
       return candidatos
-        .filter((c) => !excludedParties.includes(c.partido?.sigla?.toUpperCase()))
+        .filter((c) =>
+          isCandidateAllowedInProgressiveRoll({
+            party: c.partido?.sigla || '',
+            cargo: cargoName,
+          }),
+        )
         .map((c) => {
           const strId = String(c.id);
           return {

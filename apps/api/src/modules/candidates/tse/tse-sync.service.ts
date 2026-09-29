@@ -192,8 +192,9 @@ export class TseSyncService {
             const tseId = String(candItem.id);
             const partySigla = candItem.partido?.sigla || '';
 
-            // Filtragem partidária
-            if (this.mapper.isPartyExcluded(partySigla)) {
+            // Filtragem partidária e coligações/apoio progressista
+            const coalition = candItem.nomeColigacao || candItem.composicaoColigacao || '';
+            if (this.mapper.isCandidateExcluded(partySigla, coalition, role.codigo)) {
               totalExcluded++;
               continue;
             }
@@ -531,8 +532,10 @@ export class TseSyncService {
     for await (const record of parser) {
       processed++;
       const partySigla = record.SG_PARTIDO || '';
+      const coalition = record.DS_COMPOSICAO_COLIGACAO || '';
+      const cargo = record.CD_CARGO || record.DS_CARGO || '';
 
-      if (this.mapper.isPartyExcluded(partySigla)) {
+      if (this.mapper.isCandidateExcluded(partySigla, coalition, cargo)) {
         excluded++;
         continue;
       }
