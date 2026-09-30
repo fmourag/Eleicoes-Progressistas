@@ -1,7 +1,7 @@
 ---
 title: "Markdown Index"
-version: "2.2.20"
-last_updated: "2026-09-26"
+version: "2.2.21"
+last_updated: "2026-09-29"
 ---
 
 # Markdown Master Index
@@ -10,7 +10,7 @@ last_updated: "2026-09-26"
 
 ## Visão geral da aplicação
 - **Nome:** Eleições Progressistas ("Cheque o passado. Escolha o futuro.")
-- **Versão:** 2.2.20
+- **Versão:** 2.2.21
 - **Arquitetura:** Mobile (Expo React-Native) ↔ Supabase Auth ↔ NestJS API ↔ FastAPI Matching Service ↔ PostgreSQL / SQLite
 - **Principais módulos:** Auth, Prioridades (Stateless), Matching, Candidate Management, Geo, ETL, CI/CD, Cola Eleitoral, Apuração em Tempo Real (Election Night), Apoio Cívico PIX, Feedback & Popup Retorno, In-App Review Google Play, Ads (Anúncios Éticos), Finance, Public-API, Watchdog, Reports
 
@@ -55,6 +55,8 @@ A plataforma opera no modelo **Consulta por Prioridades (100% stateless e Coleta
 | [NOTA_TRANSPARENCIA_LANCAMENTO.md](./NOTA_TRANSPARENCIA_LANCAMENTO.md) | Nota Oficial de Transparência do Lançamento v2.2.5 |
 | [NOTA_TRANSPARENCIA.md](./NOTA_TRANSPARENCIA.md) | Nota de Transparência Pública — Evolução para Coleta Zero e Consulta por Prioridades |
 | [OPERATIONS.md](./OPERATIONS.md) | Manual Operacional, runbooks de incidentes e links críticos de infraestrutura |
+| [MENSAGENS_CAMPANHA_CARD.md](./MENSAGENS_CAMPANHA_CARD.md) | Kit de Mensagens Curtas por canal e Legendas de Vídeo Reels/TikTok com Card Oficial |
+| [RELATORIO_CORRECOES_V2.2.21.md](./RELATORIO_CORRECOES_V2.2.21.md) | Relatório técnico de melhorias v2.2.21: Correção de banner PDF na Cola Eleitoral e build AAB Play Store |
 | [RELATORIO_CORRECOES_V2.2.20.md](./RELATORIO_CORRECOES_V2.2.20.md) | Relatório técnico de melhorias v2.2.20: Feedback FAB persistente, popup card de retorno à home e apelo de teste Play Store |
 | [RELATORIO_CORRECOES_V2.2.12.md](./RELATORIO_CORRECOES_V2.2.12.md) | Relatório técnico de correções v2.2.10 a v2.2.12: cola persistente, PDF anexo, crash PDF, scroll, FAB, versão dinâmica |
 | [RELATORIO_CORRECOES_V2.2.2.md](./RELATORIO_CORRECOES_V2.2.2.md) | Relatório técnico de correções v2.2.0 a v2.2.2 |

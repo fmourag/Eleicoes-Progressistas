@@ -1,9 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
-title Publicar Eleicoes Progressistas Web v2.2.5 no Cloudflare Pages
+title Publicar Eleicoes Progressistas Web v2.2.21 no Cloudflare Pages
 
 echo =====================================================================
-echo   PUBLICADOR WEB - ELEICOES PROGRESSISTAS v2.2.5 (Cloudflare Pages)
+echo   PUBLICADOR WEB - ELEICOES PROGRESSISTAS v2.2.21 (Cloudflare Pages)
 echo =====================================================================
 echo.
 
@@ -51,7 +51,7 @@ if %errorlevel% neq 0 (
 
 echo.
 echo =====================================================================
-echo   SUCESSO! Versao v2.2.5 publicada com exito em:
+echo   SUCESSO! Versao v2.2.21 publicada com exito em:
 echo   https://eleicoes-progressistas.pages.dev
 echo =====================================================================
 echo.

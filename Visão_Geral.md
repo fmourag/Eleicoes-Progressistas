@@ -1,6 +1,6 @@
 # Visão Geral — Eleições Progressistas (para IDEs/agentes)
 
-> Arquivo único de contexto. Fonte primária: código + `README.md`, `docs/PRD.md`, `docs/DOCUMENTACAO_TECNICA.md`, `docs/PRODUCTION_GUIDE.md`, `docs/BOOK_DE_PROJETO.md`, `docs/OPERATIONS.md`, `docs/SIDELOAD_KIT.md`. Versão do repo: `package.json:3` `2.2.20`, `apps/api/package.json:3` `2.2.20`, `apps/mobile/app.json:5` `2.2.20` (android `versionCode` 21 em `apps/mobile/app.json:31`).
+> Arquivo único de contexto. Fonte primária: código + `README.md`, `docs/PRD.md`, `docs/DOCUMENTACAO_TECNICA.md`, `docs/PRODUCTION_GUIDE.md`, `docs/BOOK_DE_PROJETO.md`, `docs/OPERATIONS.md`, `docs/SIDELOAD_KIT.md`. Versão do repo: `package.json:3` `2.2.21`, `apps/api/package.json:3` `2.2.21`, `apps/mobile/app.json:5` `2.2.21` (android `versionCode` 22 em `apps/mobile/app.json:31`).
 
 ## 1. O que é e para que serve
 

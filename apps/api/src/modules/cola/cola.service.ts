@@ -565,7 +565,7 @@ export class ColaService {
           doc.fillColor('#15803D')
             .font('Helvetica')
             .fontSize(6.8)
-            .text('✓ Registro Deferido no TSE • Ficha Limpa', textX, infoY);
+            .text('• Registro Deferido no TSE • Ficha Limpa', textX, infoY);
         }
 
         // ─── Caixa de Dígitos de Urna (Estilo Teclado Eletrônico) ────
@@ -638,7 +638,7 @@ export class ColaService {
       doc.fillColor('#166534')
         .font('Helvetica-Bold')
         .fontSize(8.5)
-        .text('🛡️ AJUDA CÍVICA • FINANCIAMENTO COLETIVO INDEPENDENTE', civicTextX, civicY + 6);
+        .text('AJUDA CÍVICA • FINANCIAMENTO COLETIVO INDEPENDENTE', civicTextX, civicY + 6);
 
       doc.fillColor('#334155')
         .font('Helvetica')
