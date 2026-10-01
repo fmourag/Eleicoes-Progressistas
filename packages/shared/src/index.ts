@@ -547,86 +547,62 @@ export const TRUSTED_DATA_SOURCES: TrustedDataSource[] = [
 
 export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
   // Presidente 2026 / 2022
-  'c1': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
-  '280002542548': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
-  '280001600001': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
-  'pres_lula': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg/500px-Foto_oficial_de_Luiz_In%C3%A1cio_Lula_da_Silva_%28ombros%29_denoise.jpg',
-  '280002551975': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3d/Edmilson_Costa_-_PCB.jpg/500px-Edmilson_Costa_-_PCB.jpg',
-  '280002538811': 'https://upload.wikimedia.org/wikipedia/commons/d/d9/Samara_Martins_UP.jpg',
-  '280002541457': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Hertz_Dias_PSTU.jpg/500px-Hertz_Dias_PSTU.jpg',
-  '280002552487': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Rui_Costa_Pimenta_Close.jpg/500px-Rui_Costa_Pimenta_Close.jpg',
+  'c1': '/candidates/pres_lula.jpg',
+  '280002542548': '/candidates/pres_lula.jpg',
+  '280001600001': '/candidates/pres_lula.jpg',
+  'pres_lula': '/candidates/pres_lula.jpg',
+  'pres_ciro': '/candidates/pres_ciro.jpg',
+  'pres_glauber': '/candidates/pres_glauber.jpg',
+  'pres_leonardo': '/candidates/pres_leonardo.jpg',
+  'pres_sofia': '/candidates/pres_sofia.jpg',
+  'pres_veralucia': '/candidates/pres_veralucia.jpg',
+  'pres_ruicosta': '/candidates/pres_ruicosta.jpg',
+  '280002551975': '/candidates/pres_sofia.jpg',
+  '280002538811': '/candidates/pres_leonardo.jpg',
+  '280002541457': '/candidates/pres_veralucia.jpg',
+  '280002552487': '/candidates/pres_ruicosta.jpg',
 
   // Governadores
-  '190002540001': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Eduardo_Paes%2C_October_2024.jpg/500px-Eduardo_Paes%2C_October_2024.jpg',
-  'gov_rj_paes': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Eduardo_Paes%2C_October_2024.jpg/500px-Eduardo_Paes%2C_October_2024.jpg',
-  '190002536162': 'https://upload.wikimedia.org/wikipedia/commons/1/16/2026_WILLIAM_SIRI_CANDIDATO_GOVERNADOR_TSE_RJ_%28190002536162%29.jpg',
-  'gov_rj_siri': 'https://upload.wikimedia.org/wikipedia/commons/1/16/2026_WILLIAM_SIRI_CANDIDATO_GOVERNADOR_TSE_RJ_%28190002536162%29.jpg',
-  '190002552513': 'https://upload.wikimedia.org/wikipedia/commons/5/57/2026_LUAN_MONTEIRO_CANDIDATO_GOVERNADOR_RJ_TSE_%28190002552513%29.jpg',
-  'gov_rj_luan': 'https://upload.wikimedia.org/wikipedia/commons/5/57/2026_LUAN_MONTEIRO_CANDIDATO_GOVERNADOR_RJ_TSE_%28190002552513%29.jpg',
-  '190002540198': 'https://upload.wikimedia.org/wikipedia/commons/a/a1/FOTO_CYRO_GARCIA_2026.jpg',
-  'gov_rj_cyro': 'https://upload.wikimedia.org/wikipedia/commons/a/a1/FOTO_CYRO_GARCIA_2026.jpg',
-  '190002540200': 'https://upload.wikimedia.org/wikipedia/commons/3/37/FOTO_JULIETE_PANTOJA_2026.jpg',
-  '190002547272': 'https://upload.wikimedia.org/wikipedia/commons/3/37/FOTO_JULIETE_PANTOJA_2026.jpg',
-  'gov_rj_juliete': 'https://upload.wikimedia.org/wikipedia/commons/3/37/FOTO_JULIETE_PANTOJA_2026.jpg',
-  '190002536164': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/M%C3%B4nica_Ben%C3%ADcio_%2849234235991%29_%28cropped_2%29.jpg/500px-M%C3%B4nica_Ben%C3%ADcio_%2849234235991%29_%28cropped_2%29.jpg',
-  '190002539827': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Paula_Falc%C3%A3o_PSTU.jpg/500px-Paula_Falc%C3%A3o_PSTU.jpg',
-  '190002548589': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Michelly_Xavier_UP.jpg/500px-Michelly_Xavier_UP.jpg',
-  '190002552521': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Luiz_Eug%C3%AAnio_Honorato_PCO.jpg/500px-Luiz_Eug%C3%AAnio_Honorato_PCO.jpg',
-  '190002548590': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Vinicius_Benevides_UP.jpg/500px-Vinicius_Benevides_UP.jpg',
-  '190002536163': 'https://upload.wikimedia.org/wikipedia/commons/f/ff/2026_JULIANA_CARVALHO_CANDIDATA_VICE-GOVERNADORA_TSE_RJ_%28190002536163%29.jpg',
-  'gov_sp_haddad': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Fernando_Haddad_posse_min._da_Fazenda.jpg/500px-Fernando_Haddad_posse_min._da_Fazenda.jpg',
-  '250002549705': 'https://upload.wikimedia.org/wikipedia/commons/d/d0/2026_FERNANDO_HADDAD_CANDIDATO_GOVERNADOR_TSE_SP_%28250002549705%29.jpg',
-  'gov_sp_franca': 'https://www.camara.leg.br/internet/deputado/bandep/160535.jpg',
-  '250002549704': 'https://upload.wikimedia.org/wikipedia/commons/a/a3/2026_M%C3%81RCIO_FRAN%C3%87A_CANDIDATO_VICE-GOVERNADOR_TSE_SP_%28250002549704%29.jpg',
-  '250002536915': 'https://upload.wikimedia.org/wikipedia/commons/a/a6/2026_VERA_L%C3%9ACIA_CANDIDATA_GOVERNADORA_TSE_SP_%28250002536915%29.jpg',
-  '250002544912': 'https://upload.wikimedia.org/wikipedia/commons/e/e4/2026_VIVIAN_MENDES_CANDIDATA_GOVERNADORA_TSE_SP_%28250002544912%29.jpg',
-  '250002551501': 'https://upload.wikimedia.org/wikipedia/commons/1/14/2026_MARINA_SILVA_CANDIDATA_SENADORA_TSE_SP_%28250002551501%29.jpg',
-  '250002551502': 'https://upload.wikimedia.org/wikipedia/commons/a/af/2026_SIMONE_TEBET_CANDIDATA_SENADORA_TSE_SP_%28250002551502%29.jpg',
-  '250002552369': 'https://upload.wikimedia.org/wikipedia/commons/b/b6/2026_SONINHA_FRANCINE_CANIDATA_SENADORA_TSE_SP_%28250002552369%29.jpg',
-  '130002539775': 'https://upload.wikimedia.org/wikipedia/commons/4/49/2026_ALEXANDRE_KALIL_CANDIDATO_GOVERNADOR_MG_TSE_%28130002539775%29.jpg',
-  '130002550464': 'https://upload.wikimedia.org/wikipedia/commons/b/be/2026_PATRUS_ANANIAS_CANDIDATO_GOVERNADOR_MG_TSE_%28130002550464%29.jpg',
-  '130002547874': 'https://upload.wikimedia.org/wikipedia/commons/c/c4/2026_INDIRA_XAVIER_CANDIDATA_GOVERNADORA_MG_TSE_%28130002547874%29.jpg',
-  'gov_ba_jeronimo': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8c/18_01_2023_-_Visita_de_Cortesia_Jer%C3%B4nimo_Rodrigues_%28Governador_do_Estado_da_Bahia-BA%29_%2852635213362%29_%28cropped%29.jpg/500px-18_01_2023_-_Visita_de_Cortesia_Jer%C3%B4nimo_Rodrigues_%28Governador_do_Estado_da_Bahia-BA%29_%2852635213362%29_%28cropped%29.jpg',
-  'gov_ce_elmano': 'https://www.camara.leg.br/internet/deputado/bandep/204554.jpg',
-  'gov_pi_rafael': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/Rafael_Fonteles_%28Foto_Oficial%29.jpg/500px-Rafael_Fonteles_%28Foto_Oficial%29.jpg',
-  'gov_rn_fatima': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/F%C3%A1tima_Bezerra%2C_2023.jpg/500px-F%C3%A1tima_Bezerra%2C_2023.jpg',
-  'gov_pb_azevedo': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/Jo%C3%A3o_Azev%C3%AAdo%2C_May_2023_%28cropped%29.jpg/500px-Jo%C3%A3o_Azev%C3%AAdo%2C_May_2023_%28cropped%29.jpg',
-  'gov_ma_brandao': 'https://www.camara.leg.br/internet/deputado/bandep/141408.jpg',
-  'gov_es_casagrande': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/4525.jpg',
-  'gov_ap_clecio': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Cl%C3%A9cio_Lu%C3%ADs_em_2023.jpg/500px-Cl%C3%A9cio_Lu%C3%ADs_em_2023.jpg',
-  'gov_ac_jorge': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/4981.jpg',
-  'gov_am_marcelo': 'https://www.camara.leg.br/internet/deputado/bandep/204552.jpg',
-  'gov_pa_beto': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/141335.jpg',
-  'gov_mg_silveira': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/5386.jpg',
-  'gov_mg_rogerio': 'https://www.camara.leg.br/internet/deputado/bandep/204481.jpg',
-  'gov_rj_neves': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/Rodrigo_Neves_em_2018.jpg/500px-Rodrigo_Neves_em_2018.jpg',
-  'gov_pr_requiao': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/24.jpg',
-  'gov_rs_pretto': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d7/Edegar_Pretto_em_2022.jpg/500px-Edegar_Pretto_em_2022.jpg',
-  'gov_sc_decio': 'https://www.camara.leg.br/internet/deputado/bandep/141413.jpg',
-  'gov_df_grass': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Leandro_Grass_em_2022.jpg/500px-Leandro_Grass_em_2022.jpg',
-  'gov_pe_cabral': 'https://www.camara.leg.br/internet/deputado/bandep/160528.jpg',
-  'gov_se_mitidieri': 'https://www.camara.leg.br/internet/deputado/bandep/178969.jpg',
-  'gov_se_rogerio': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/5979.jpg',
-  'gov_to_mourao': 'https://www.camara.leg.br/internet/deputado/bandep/74044.jpg',
+  '190002540001': '/candidates/gov_rj_paes.jpg',
+  'gov_rj_paes': '/candidates/gov_rj_paes.jpg',
+  '190002536162': '/candidates/gov_rj_siri.jpg',
+  'gov_rj_siri': '/candidates/gov_rj_siri.jpg',
+  '190002552513': '/candidates/gov_rj_neves.jpg',
+  'gov_rj_neves': '/candidates/gov_rj_neves.jpg',
+  '190002540198': '/candidates/gov_rj_cyro.jpg',
+  'gov_rj_cyro': '/candidates/gov_rj_cyro.jpg',
+  '190002540200': '/candidates/gov_rj_juliete.jpg',
+  '190002547272': '/candidates/gov_rj_juliete.jpg',
+  'gov_rj_juliete': '/candidates/gov_rj_juliete.jpg',
+  'gov_sp_haddad': '/candidates/gov_sp_haddad.jpg',
+  '250002549705': '/candidates/gov_sp_haddad.jpg',
+  'gov_sp_franca': '/candidates/gov_sp_franca.jpg',
+  '250002549704': '/candidates/gov_sp_franca.jpg',
+  '250002536915': '/candidates/gov_sp_veralucia.jpg',
+  '250002544912': '/candidates/gov_sp_vivian.jpg',
 
   // Senadores
-  '190002548141': 'https://www.camara.leg.br/internet/deputado/bandep/73701.jpg',
-  'sen_rj_benedita': 'https://www.camara.leg.br/internet/deputado/bandep/73701.jpg',
-  'sen_rj_portinho': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/5982.jpg',
-  'sen_rj_jordy': 'https://www.camara.leg.br/internet/deputado/bandep/204460.jpg',
-  'sen_rj_crivella': 'https://www.camara.leg.br/internet/deputado/bandep/204462.jpg',
-  'sen_rj_luizeugenio': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Luiz_Eug%C3%AAnio_Honorato_PCO.jpg/500px-Luiz_Eug%C3%AAnio_Honorato_PCO.jpg',
-  'sen_rj_michelly': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Michelly_Xavier_UP.jpg/500px-Michelly_Xavier_UP.jpg',
-  'sen_rj_monica': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/M%C3%B4nica_Ben%C3%ADcio_%2849234235991%29_%28cropped_2%29.jpg/500px-M%C3%B4nica_Ben%C3%ADcio_%2849234235991%29_%28cropped_2%29.jpg',
-  'sen_rj_paulafalcao': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Paula_Falc%C3%A3o_PSTU.jpg/500px-Paula_Falc%C3%A3o_PSTU.jpg',
-  'sen_rj_pedropaulo': 'https://www.camara.leg.br/internet/deputado/bandep/122974.jpg',
+  '190002548141': '/candidates/sen_rj_benedita.jpg',
+  'sen_rj_benedita': '/candidates/sen_rj_benedita.jpg',
+  'sen_rj_portinho': '/candidates/sen_rj_portinho.jpg',
+  'sen_rj_jordy': '/candidates/sen_rj_jordy.jpg',
+  'sen_rj_crivella': '/candidates/sen_rj_crivella.jpg',
+  'sen_rj_pedropaulo': '/candidates/sen_rj_pedropaulo.jpg',
+  'sen_rj_luizeugenio': '/candidates/sen_rj_luizeugenio.jpg',
+  'sen_rj_michelly': '/candidates/sen_rj_michelly.jpg',
+  'sen_rj_monica': '/candidates/sen_rj_monica.jpg',
+  'sen_rj_paulafalcao': '/candidates/sen_rj_paulafalcao.jpg',
+  'sen_rj_waguinho': '/candidates/sen_rj_waguinho.jpg',
+  'sen_rj_lucianomattos': '/candidates/sen_rj_lucianomattos.jpg',
+  'sen_rj_marcosdias': '/candidates/sen_rj_marcosdias.jpg',
+  'sen_rj_heliosecco': '/candidates/sen_rj_heliosecco.jpg',
   'dep_122974': 'https://www.camara.leg.br/internet/deputado/bandep/122974.jpg',
   '122974': 'https://www.camara.leg.br/internet/deputado/bandep/122974.jpg',
-  'sen_rj_molon': 'https://www.camara.leg.br/internet/deputado/bandep/160511.jpg',
+  'sen_rj_molon': '/candidates/sen_rj_molon.jpg',
   'dep_160511': 'https://www.camara.leg.br/internet/deputado/bandep/160511.jpg',
-  'sen_rj_lindbergh': 'https://www.camara.leg.br/internet/deputado/bandep/74858.jpg',
+  'sen_rj_lindbergh': '/candidates/sen_rj_lindbergh.jpg',
   'dep_74858': 'https://www.camara.leg.br/internet/deputado/bandep/74858.jpg',
-  'sen_rj_tarcisio': 'https://www.camara.leg.br/internet/deputado/bandep/220598.jpg',
+  'sen_rj_tarcisio': '/candidates/sen_rj_tarcisio.jpg',
   'dep_220598': 'https://www.camara.leg.br/internet/deputado/bandep/220598.jpg',
 
   // Lideranças Estaduais / Deputados Estaduais
@@ -720,21 +696,29 @@ export function resolveCandidatePhotoFallbackChain(candidate: {
   const base = (candidate.baseUrl || 'https://eleicoes-progressistas.onrender.com').replace(/\/+$/, '');
   const partyKey = (candidate.party || '').toLowerCase().trim().replace(/[^a-z0-9]/g, '');
 
-  // 1. URL explícita válida externa (HTTPS)
+  // 1. URL explícita válida externa (HTTPS) ou relativa
   if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
     urls.push(photoUrl.replace(/^http:\/\//i, 'https://'));
+  } else if (photoUrl.startsWith('/')) {
+    urls.push(photoUrl);
+    urls.push(`${base}${photoUrl}`);
   }
 
   // 2. Mapeamento explícito de fotos parlamentares e lideranças nacionais
   if (tseId && KNOWN_PARLIAMENTARY_PHOTOS[tseId]) {
-    urls.push(KNOWN_PARLIAMENTARY_PHOTOS[tseId]);
+    const p = KNOWN_PARLIAMENTARY_PHOTOS[tseId];
+    urls.push(p);
+    if (p.startsWith('/')) urls.push(`${base}${p}`);
   }
   if (cleanPhotoKey && KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]) {
-    urls.push(KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]);
+    const p = KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey];
+    urls.push(p);
+    if (p.startsWith('/')) urls.push(`${base}${p}`);
   }
   const normName = (candidate.name || '').toLowerCase();
   if (normName.includes('lula') || normName.includes('luiz inácio')) {
     urls.push(KNOWN_PARLIAMENTARY_PHOTOS['pres_lula']);
+    urls.push(`${base}${KNOWN_PARLIAMENTARY_PHOTOS['pres_lula']}`);
   }
 
   // 3. Imagem estática hospedada no backend da aplicação
