@@ -155,6 +155,12 @@ export const KNOWN_URNA_NUMBERS: Record<string, string> = {
   // Presidente
   'pres_lula': '13',
   '280001600001': '13',
+  'pres_ciro': '12',
+  'pres_glauber': '50',
+  'pres_leonardo': '80',
+  'pres_sofia': '21',
+  'pres_veralucia': '16',
+  'pres_ruicosta': '29',
   // Governadores SP
   'gov_sp_tarcisio': '10',
   'gov_sp_haddad': '13',
@@ -166,6 +172,39 @@ export const KNOWN_URNA_NUMBERS: Record<string, string> = {
   'gov_sp_vivian': '80',
   // Governador RJ
   'gov_rj_paes': '55',
+  'gov_rj_siri': '50',
+  'gov_rj_neves': '12',
+  'gov_rj_juliete': '80',
+  'gov_rj_cyro': '16',
+  'gov_rj_eduardoserra': '21',
+  // Governadores outros estados
+  'gov_pe_luciana': '65',
+  'gov_ba_jeronimo': '13',
+  'gov_ce_elmano': '13',
+  'gov_ma_brandao': '40',
+  'gov_pb_azevedo': '40',
+  'gov_pe_cabral': '40',
+  'gov_pi_rafael': '13',
+  'gov_rn_fatima': '13',
+  'gov_se_rogerio': '13',
+  'gov_se_mitidieri': '55',
+  'gov_df_grass': '43',
+  'gov_go_wolmir': '13',
+  'gov_mt_natasha': '40',
+  'gov_ms_giselle': '13',
+  'gov_es_casagrande': '40',
+  'gov_mg_silveira': '55',
+  'gov_mg_rogerio': '13',
+  'gov_pr_requiao': '13',
+  'gov_rs_pretto': '13',
+  'gov_sc_decio': '13',
+  'gov_ac_jorge': '13',
+  'gov_ap_clecio': '77',
+  'gov_am_marcelo': '13',
+  'gov_pa_beto': '13',
+  'gov_ro_daniel': '77',
+  'gov_rr_evangelista': '13',
+  'gov_to_mourao': '13',
   // Senadores RJ (13 Candidatos Oficiais no Pleito 2026)
   'sen_rj_portinho': '222',
   'sen_rj_benedita': '130',
@@ -185,9 +224,25 @@ export const KNOWN_URNA_NUMBERS: Record<string, string> = {
   '190002539827': '160',
   'sen_rj_pedropaulo': '555',
   'sen_rj_waguinho': '101',
+  'sen_rj_ivan': '210',
+  'sen_rj_mauroiasi': '211',
   'dep_122974': '5555',
   '122974': '5555',
-  // Deputados Estaduais RJ
+  // Senadores outros estados
+  'sen_rs_manuela': '650',
+  'sen_sp_colombo': '210',
+  'sen_pe_jones': '210',
+  'sen_sp_franca': '400',
+  'sen_sp_juliana': '131',
+  'sen_mg_reginaldo': '130',
+  'sen_mg_duda': '120',
+  'sen_df_erika': '130',
+  'sen_ba_lidice': '400',
+  'sen_ce_luizianne': '130',
+  'sen_pe_marilia': '770',
+  'sen_pr_carol': '131',
+  'sen_sc_decio': '130',
+  // Deputados Estaduais RJ & Nacional
   'dep_est_rj_dani': '50123',
   'dep_est_rj_minc': '40123',
   'dep_est_rj_serafini': '50456',
@@ -199,9 +254,17 @@ export const KNOWN_URNA_NUMBERS: Record<string, string> = {
   'dep_est_rj_josemar': '50100',
   'dep_est_rj_luizpaulo': '55123',
   'dep_est_rj_martha': '12123',
-  // Deputados Federais RJ
+  'ale_ba_olivia': '65000',
+  'ale_ac_edvaldo': '65123',
+  'ale_ma_rodrigolago': '65123',
+  'ale_sp_leci': '65065',
+  'ale_pe_cidapedrosa': '65123',
+  'ale_sp_antonioalves': '21000',
+  'ale_pe_jones': '21000',
+  'ale_rj_ivan': '21000',
+  // Deputados Federais RJ & Nacional
   'dep_220606': '1333', // Reimont
-  'dep_74848': '6565', // Jandira Feghali
+  'dep_74848': '6565', // Jandira Feghali (PCdoB)
   'dep_152605': '5050', // Glauber Braga
   'dep_74171': '5015', // Chico Alencar
   'dep_204464': '5000', // Talíria Petrone
@@ -212,6 +275,22 @@ export const KNOWN_URNA_NUMBERS: Record<string, string> = {
   'dep_rj_tarcisio': '5000',
   'dep_160511': '4000', // Alessandro Molon
   'dep_rj_molon': '4000',
+  'dep_74057': '6565', // Alice Portugal (PCdoB)
+  'dep_74060': '6555', // Daniel Almeida (PCdoB)
+  'dep_141533': '6565', // Orlando Silva (PCdoB)
+  'dep_220545': '6565', // Daiana Santos (PCdoB)
+  'dep_204489': '6565', // Márcio Jerry (PCdoB)
+  'dep_73808': '6565', // Renildo Calheiros (PCdoB)
+  'dep_160538': '6565', // Professora Marcivânia (PCdoB)
+  'dep_74079': '6565', // Vanessa Grazziotin (PCdoB)
+  'dep_74075': '6565', // Perpétua Almeida (PCdoB)
+  'dep_mg_anakaren': '2121', // Ana Karen (PCB)
+  'dep_sp_colombo': '2121', // Gabriel Colombo (PCB)
+  'dep_pe_jones': '2121', // Jones Manoel (PCB)
+  'dep_rj_ivan': '2121', // Ivan Pinheiro (PCB)
+  'dep_rj_mauroiasi': '2121', // Mauro Iasi (PCB)
+  'dep_sp_raul': '2100', // Raul Silvestre (PCB)
+  'dep_rj_heitor': '2121', // Heitor Cesar (PCB)
 };
 
 export function getNumeroUrna(candidate: {
@@ -604,27 +683,63 @@ export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
   'dep_74858': 'https://www.camara.leg.br/internet/deputado/bandep/74858.jpg',
   'sen_rj_tarcisio': '/candidates/sen_rj_tarcisio.jpg',
   'dep_220598': 'https://www.camara.leg.br/internet/deputado/bandep/220598.jpg',
+  'sen_rs_manuela': '/candidates/pcdob_manueladavila.jpg',
+  'gov_pe_luciana': '/candidates/pcdob_lucianasantos.jpg',
+  'gov_rj_eduardoserra': '/candidates/pcb_eduardoserra.jpg',
+  'sen_sp_colombo': '/candidates/pcb_gabrielcolombo.jpg',
+  'dep_sp_colombo': '/candidates/pcb_gabrielcolombo.jpg',
+  'sen_pe_jones': '/candidates/pcb_jonesmanoel.jpg',
+  'dep_pe_jones': '/candidates/pcb_jonesmanoel.jpg',
+  'sen_rj_ivan': '/candidates/pcb_ivanpinheiro.jpg',
+  'dep_rj_ivan': '/candidates/pcb_ivanpinheiro.jpg',
+  'sen_rj_mauroiasi': '/candidates/pcb_mauroiasi.jpg',
+  'dep_rj_mauroiasi': '/candidates/pcb_mauroiasi.jpg',
+  'dep_mg_anakaren': '/candidates/pcb_anakaren.jpg',
+  'dep_sp_raul': '/candidates/pcb_gabrielcolombo.jpg',
+  'dep_rj_heitor': '/candidates/pcb_ivanpinheiro.jpg',
+  'ale_sp_antonioalves': '/candidates/pcb_antonioalves.jpg',
+  'ale_pe_jones': '/candidates/pcb_jonesmanoel.jpg',
+  'ale_rj_ivan': '/candidates/pcb_ivanpinheiro.jpg',
+  'ale_sp_leci': '/candidates/280001600026.jpg',
+  'ale_pe_cidapedrosa': '/candidates/pcdob_lucianasantos.jpg',
+  'ale_am_brunabrelaz': '/candidates/pcdob_manueladavila.jpg',
+  'ale_ce_inacioarruda': '/candidates/dep_74060.jpg',
+  'dep_rj_rejane': '/candidates/dep_74848.jpg',
 
   // Lideranças Estaduais / Deputados Estaduais
-  'ale_rj_renatasouza': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/Renata_Souza_em_2022.jpg/500px-Renata_Souza_em_2022.jpg',
-  'ale_rj_carlosminc': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Carlos_Minc_2022.jpg/500px-Carlos_Minc_2022.jpg',
-  'ale_sp_suplicy': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/38.jpg',
-  'ale_rs_lucianagenro': 'https://www.camara.leg.br/internet/deputado/bandep/74844.jpg',
-  'ale_rj_danimonteiro': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Renata_Souza_em_2022.jpg/500px-Renata_Souza_em_2022.jpg',
+  'ale_rj_renatasouza': '/candidates/280001600026.jpg',
+  'ale_rj_carlosminc': '/candidates/280001600027.jpg',
+  'ale_sp_suplicy': '/candidates/280001600018.jpg',
+  'ale_rs_lucianagenro': '/candidates/ale_rs_lucianagenro.jpg',
+  'ale_rj_danimonteiro': '/candidates/ale_rj_danimonteiro.jpg',
+  'ale_rj_flavioserafini': '/candidates/ale_rj_flavioserafini.jpg',
 
   // Outras Lideranças e Deputados Estaduais / Federais
-  'dep_ap_acacio': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Acacio_Favacho.jpg/500px-Acacio_Favacho.jpg',
-  'sen_pr_carol': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/2023-07-03_Ses%C3%A3o_Solene_-_Dia_Mundial_do_Refugiado_06_%28cropped%29.jpg/500px-2023-07-03_Ses%C3%A3o_Solene_-_Dia_Mundial_do_Refugiado_06_%28cropped%29.jpg',
-  'ale_mg_andreia': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/Andr%C3%A9ia_de_Jesus.jpg/500px-Andr%C3%A9ia_de_Jesus.jpg',
-  'ale_mg_beatrizcerqueira': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Deputada_Beatriz_Cerqueira_2023.jpg/500px-Deputada_Beatriz_Cerqueira_2023.jpg',
-  'ale_go_biadelima': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/Bia_de_Lima_em_2022.jpg/500px-Bia_de_Lima_em_2022.jpg',
-  'sen_es_camila': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/2023-02-01_Deputada_Camila_Valad%C3%A3o.jpg/500px-2023-02-01_Deputada_Camila_Valad%C3%A3o.jpg',
-  'ale_es_camila': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/2023-02-01_Deputada_Camila_Valad%C3%A3o.jpg/500px-2023-02-01_Deputada_Camila_Valad%C3%A3o.jpg',
-  'dep_es_camila': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/2023-02-01_Deputada_Camila_Valad%C3%A3o.jpg/500px-2023-02-01_Deputada_Camila_Valad%C3%A3o.jpg',
-  'sen_ap_camilo': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/Camilo_Capiberibe_em_novembro_de_2011_%28cropped%29.jpg/500px-Camilo_Capiberibe_em_novembro_de_2011_%28cropped%29.jpg',
+  'dep_ap_acacio': '/candidates/dep_ap_acacio.jpg',
+  'sen_pr_carol': '/candidates/ale_pr_anajulia.jpg',
+  'ale_mg_andreia': '/candidates/ale_mg_andreia.jpg',
+  'ale_mg_beatrizcerqueira': '/candidates/ale_mg_beatrizcerqueira.jpg',
+  'ale_go_biadelima': '/candidates/ale_go_biadelima.jpg',
+  'sen_es_camila': '/candidates/ale_es_camila.jpg',
+  'ale_es_camila': '/candidates/ale_es_camila.jpg',
+  'dep_es_camila': '/candidates/ale_es_camila.jpg',
+  'sen_ap_camilo': '/candidates/dep_204495.jpg',
   'dep_pi_castro': 'https://www.camara.leg.br/internet/deputado/bandep/220699.jpg',
-  'ale_df_chicovigilante': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Chico_Vigilante_%28cropped%29.jpg/500px-Chico_Vigilante_%28cropped%29.jpg',
-  'ale_ma_carloslula': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Carlos_Minc_2022.jpg/500px-Carlos_Minc_2022.jpg',
+  'ale_df_chicovigilante': '/candidates/ale_df_chicovigilante.jpg',
+  'ale_ma_carloslula': '/candidates/ale_ma_carloslula.jpg',
+  'ale_ba_olivia': '/candidates/ale_ba_olivia.jpg',
+  'ale_ac_edvaldo': '/candidates/ale_ac_edvaldo.jpg',
+  'ale_ma_rodrigolago': '/candidates/ale_ma_rodrigolago.jpg',
+  'dep_74848': '/candidates/dep_74848.jpg',
+  'dep_74057': '/candidates/dep_74057.jpg',
+  'dep_74060': '/candidates/dep_74060.jpg',
+  'dep_141533': '/candidates/dep_141533.jpg',
+  'dep_220545': '/candidates/dep_220545.jpg',
+  'dep_204489': '/candidates/dep_204489.jpg',
+  'dep_73808': '/candidates/dep_73808.jpg',
+  'dep_160538': '/candidates/dep_160538.jpg',
+  'dep_74079': '/candidates/dep_74079.jpg',
+  'dep_74075': '/candidates/dep_74075.jpg',
 };
 
 export interface PartyColorTheme {
