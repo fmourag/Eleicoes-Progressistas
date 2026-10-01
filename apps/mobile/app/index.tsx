@@ -37,13 +37,8 @@ export default function HomeScreen() {
   const padding = useResponsivePadding();
   const { location, resetLocation, setLocation, setConsent, openConsentModal } = useLocationStore();
 
-  const apkDownloadUrl = typeof window !== 'undefined' && window.location?.origin
-    ? `${window.location.origin}/download/apk`
-    : `${API_URL}/download/apk`;
-
-  const betaGuideUrl = typeof window !== 'undefined' && window.location?.origin
-    ? `${window.location.origin}/beta`
-    : `${API_URL}/beta`;
+  const apkDownloadUrl = 'https://eleicoes-progressistas.onrender.com/download/apk';
+  const betaGuideUrl = 'https://eleicoes-progressistas.onrender.com/beta';
 
   const [selectedUf, setSelectedUf] = useState(location?.uf ?? '');
   const [selectedMunicipio, setSelectedMunicipio] = useState(location?.municipality ?? '');

@@ -1,12 +1,7 @@
-import { useEffect } from 'react';
-import { router } from 'expo-router';
 import HomeScreen from './index';
 
 export default function NotFoundScreen() {
-  useEffect(() => {
-    // Redireciona suavemente para a tela principal caso seja acessada uma rota desconhecida
-    router.replace('/');
-  }, []);
-
+  // Renderiza a tela inicial diretamente em caso de rota desconhecida, sem disparar navegação prematura antes do Root Layout
   return <HomeScreen />;
 }
+
