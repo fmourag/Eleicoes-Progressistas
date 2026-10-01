@@ -239,11 +239,17 @@ export default function HomeScreen() {
               </View>
             </View>
 
-            {/* Bloco de Ação Centralizado e Totalmente Confinado no Card */}
+              {/* Bloco de Ação Centralizado e Totalmente Confinado no Card */}
             <View style={styles.downloadActionBox}>
               <TouchableOpacity
                 style={[styles.downloadBtn, { backgroundColor: '#1B5E20', borderColor: '#2E7D32' }]}
-                onPress={() => Linking.openURL(apkDownloadUrl)}
+                onPress={() => {
+                  if (Platform.OS === 'web' && typeof window !== 'undefined') {
+                    window.location.href = apkDownloadUrl;
+                  } else {
+                    Linking.openURL(apkDownloadUrl);
+                  }
+                }}
                 activeOpacity={0.85}
               >
                 <Text style={styles.downloadBtnText}>📥 Baixar APK Android (61,5 MB)</Text>
@@ -255,7 +261,13 @@ export default function HomeScreen() {
                 </Text>
                 <Text style={{ color: colors.textMuted }}>•</Text>
                 <TouchableOpacity
-                  onPress={() => Linking.openURL(betaGuideUrl)}
+                  onPress={() => {
+                    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+                      window.location.href = betaGuideUrl;
+                    } else {
+                      Linking.openURL(betaGuideUrl);
+                    }
+                  }}
                   activeOpacity={0.7}
                 >
                   <Text style={[styles.downloadHelpLink, { color: colors.primary }]}>
