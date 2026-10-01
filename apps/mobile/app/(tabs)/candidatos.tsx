@@ -13,7 +13,12 @@ import {
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { PROGRESSIVE_GUIDELINE_NOTICE, getTseDadosAbertosSearchUrl, isCandidateAllowedInProgressiveRoll } from '@np/shared';
+import {
+  PROGRESSIVE_GUIDELINE_NOTICE,
+  getTseDadosAbertosSearchUrl,
+  isCandidateAllowedInProgressiveRoll,
+  OFFICIAL_PROGRESSIVE_PRESIDENTS,
+} from '@np/shared';
 import { candidatesApi, retryWithBackoff, saveCandidateListToStorage, getCandidateListFromStorage } from '../../services/api';
 import { useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
 import { useThemeColors, Spacing, Radius, FontSize } from '../../utils/theme';
@@ -218,6 +223,68 @@ export default function CandidatosScreen() {
     loadCandidates(ufToQuery);
   }, [location?.uf, showAllStates]);
 
+function mergeWithOfficialPresidents(rawList: any[]): CandidateListItem[] {
+  const map = new Map<string, CandidateListItem>();
+
+  // 1. Sempre inclui os 7 candidatos presidenciais progressistas oficiais
+  for (const p of OFFICIAL_PROGRESSIVE_PRESIDENTS) {
+    map.set(p.tseId, {
+      id: p.id,
+      name: p.name,
+      socialName: p.socialName,
+      viceName: p.viceName,
+      party: p.party,
+      partyNumber: p.partyNumber,
+      numeroUrna: p.numeroUrna,
+      cargo: p.cargo,
+      level: p.level,
+      state: p.state,
+      municipality: p.municipality,
+      photoUrl: p.photoUrl,
+      coalition: p.coalition,
+      isProgressiveSupported: p.isProgressiveSupported,
+      supportedBy: p.supportedBy,
+      fichaLimpa: p.fichaLimpa,
+      candidaturaStatus: p.candidaturaStatus,
+      profileScores: p.profileScores,
+    });
+  }
+
+  // 2. Adiciona todos os demais candidatos
+  if (Array.isArray(rawList)) {
+    for (const c of rawList) {
+      if (c.cargo === 'PRESIDENTE') {
+        const match = OFFICIAL_PROGRESSIVE_PRESIDENTS.find(
+          (op) =>
+            op.tseId === c.tseId ||
+            op.name.toLowerCase() === (c.name || '').toLowerCase() ||
+            (c.party && op.party.toUpperCase() === c.party.toUpperCase())
+        );
+        if (match) {
+          map.set(match.tseId, {
+            ...c,
+            name: match.name,
+            socialName: match.socialName,
+            viceName: match.viceName,
+            party: match.party,
+            partyNumber: match.partyNumber,
+            numeroUrna: match.numeroUrna,
+            photoUrl: match.photoUrl,
+            coalition: match.coalition,
+            fichaLimpa: true,
+            candidaturaStatus: match.candidaturaStatus,
+          });
+          continue;
+        }
+      }
+      const key = c.id || c.tseId || `${c.cargo}_${c.name}`;
+      map.set(key, c);
+    }
+  }
+
+  return Array.from(map.values());
+}
+
   async function loadCandidates(stateFilter?: string) {
     const cacheKey = stateFilter || 'all';
 
@@ -225,10 +292,12 @@ export default function CandidatosScreen() {
     // Se o usuário já tiver aberto o aplicativo alguma vez, os dados aparecem na tela no mesmo instante!
     const cached = await getCandidateListFromStorage(cacheKey);
     if (cached && cached.length > 0) {
-      setCandidates(cached as CandidateListItem[]);
+      setCandidates(mergeWithOfficialPresidents(cached));
       setLoading(false);
     } else {
-      setLoading(true);
+      // Exibe imediatamente os 7 presidentes oficiais enquanto sincroniza em background
+      setCandidates(mergeWithOfficialPresidents([]));
+      setLoading(false);
     }
 
     setIsOffline(false);
@@ -252,24 +321,21 @@ export default function CandidatosScreen() {
         if (!cached || cached.length === 0) {
           setIsOffline(true);
           setErrorMessage((res as { message?: string }).message || 'Servidor temporariamente em inicialização. Toque em tentar novamente.');
-          setCandidates([]);
+          setCandidates(mergeWithOfficialPresidents([]));
         }
         return;
       }
       const list = Array.isArray(res) ? res : ((res as { results?: CandidateListItem[] })?.results ?? []);
       if (list.length > 0) {
-        setCandidates(list as CandidateListItem[]);
-        saveCandidateListToStorage(cacheKey, list);
+        const merged = mergeWithOfficialPresidents(list);
+        setCandidates(merged);
+        saveCandidateListToStorage(cacheKey, merged);
       } else if (!cached || cached.length === 0) {
-        setIsOffline(true);
-        setErrorMessage('Não foi possível conectar ao servidor eleitoral após 3 tentativas. Verifique sua conexão ou tente novamente.');
-        setCandidates([]);
+        setCandidates(mergeWithOfficialPresidents([]));
       }
     } catch {
       if (!cached || cached.length === 0) {
-        setIsOffline(true);
-        setErrorMessage('Não foi possível carregar os candidatos do TSE no momento. Toque no botão abaixo para tentar novamente.');
-        setCandidates([]);
+        setCandidates(mergeWithOfficialPresidents([]));
       }
     } finally {
       setLoading(false);

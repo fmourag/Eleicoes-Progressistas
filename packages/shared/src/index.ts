@@ -812,40 +812,72 @@ export function resolveCandidatePhotoFallbackChain(candidate: {
   const partyKey = (candidate.party || '').toLowerCase().trim().replace(/[^a-z0-9]/g, '');
 
   // 1. URL explícita válida externa (HTTPS) ou relativa
+  const globalWin: any = typeof globalThis !== 'undefined' ? (globalThis as any).window : undefined;
+  const clientOrigin = globalWin?.location?.origin ? String(globalWin.location.origin).replace(/\/+$/, '') : '';
+  const isWeb = typeof globalWin !== 'undefined';
+
   if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
     urls.push(photoUrl.replace(/^http:\/\//i, 'https://'));
   } else if (photoUrl.startsWith('/')) {
-    urls.push(photoUrl);
+    if (isWeb) {
+      urls.push(photoUrl);
+      if (clientOrigin) urls.push(`${clientOrigin}${photoUrl}`);
+    }
     urls.push(`${base}${photoUrl}`);
+    urls.push(`https://eleicoes-progressistas.pages.dev${photoUrl}`);
+    urls.push(`https://eleicoes-progressistas.onrender.com${photoUrl}`);
   }
 
   // 2. Mapeamento explícito de fotos parlamentares e lideranças nacionais
   if (tseId && KNOWN_PARLIAMENTARY_PHOTOS[tseId]) {
     const p = KNOWN_PARLIAMENTARY_PHOTOS[tseId];
-    urls.push(p);
-    if (p.startsWith('/')) urls.push(`${base}${p}`);
+    if (p.startsWith('http')) {
+      urls.push(p);
+    } else {
+      if (isWeb) {
+        urls.push(p);
+        if (clientOrigin) urls.push(`${clientOrigin}${p}`);
+      }
+      urls.push(`${base}${p}`);
+      urls.push(`https://eleicoes-progressistas.pages.dev${p}`);
+      urls.push(`https://eleicoes-progressistas.onrender.com${p}`);
+    }
   }
   if (cleanPhotoKey && KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]) {
     const p = KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey];
-    urls.push(p);
-    if (p.startsWith('/')) urls.push(`${base}${p}`);
+    if (p.startsWith('http')) {
+      urls.push(p);
+    } else {
+      if (isWeb) {
+        urls.push(p);
+        if (clientOrigin) urls.push(`${clientOrigin}${p}`);
+      }
+      urls.push(`${base}${p}`);
+      urls.push(`https://eleicoes-progressistas.pages.dev${p}`);
+      urls.push(`https://eleicoes-progressistas.onrender.com${p}`);
+    }
   }
   const normName = (candidate.name || '').toLowerCase();
   if (normName.includes('lula') || normName.includes('luiz inácio')) {
-    urls.push(KNOWN_PARLIAMENTARY_PHOTOS['pres_lula']);
-    urls.push(`${base}${KNOWN_PARLIAMENTARY_PHOTOS['pres_lula']}`);
+    const p = KNOWN_PARLIAMENTARY_PHOTOS['pres_lula'];
+    if (isWeb) {
+      urls.push(p);
+      if (clientOrigin) urls.push(`${clientOrigin}${p}`);
+    }
+    urls.push(`${base}${p}`);
+    urls.push(`https://eleicoes-progressistas.pages.dev${p}`);
   }
 
   // 3. Imagem estática hospedada no backend da aplicação
-  if (photoUrl && photoUrl.startsWith('/')) {
-    urls.push(`${base}${photoUrl}`);
-  }
   if (tseId) {
+    if (isWeb) urls.push(`/candidates/${tseId}.jpg`);
     urls.push(`${base}/candidates/${tseId}.jpg`);
-    urls.push(`${base}/candidates/tse_${tseId}.jpg`);
+    urls.push(`https://eleicoes-progressistas.pages.dev/candidates/${tseId}.jpg`);
   }
   if (cleanPhotoKey && cleanPhotoKey !== tseId) {
+    if (isWeb) urls.push(`/candidates/${cleanPhotoKey}.jpg`);
     urls.push(`${base}/candidates/${cleanPhotoKey}.jpg`);
+    urls.push(`https://eleicoes-progressistas.pages.dev/candidates/${cleanPhotoKey}.jpg`);
   }
 
   // 3.5. CDN Oficial de Fotos e Santinhos TSE 2026 (Hermes Media / Tribuna PR / Gazeta do Povo)
@@ -912,6 +944,8 @@ export function getTseDadosAbertosSearchUrl(query: string): string {
 export * from './polls';
 export * from './mandate-proposals';
 export * from './pillar-justificativa';
+export * from './official-candidates';
+
 
 
 
