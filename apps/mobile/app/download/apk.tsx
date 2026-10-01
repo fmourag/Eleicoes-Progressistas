@@ -72,7 +72,13 @@ export default function DownloadApkScreen() {
             label="🌐 Usar no Navegador (Sem Instalar)"
             variant="outline"
             size="md"
-            onPress={() => router.replace('/')}
+            onPress={() => {
+              if (Platform.OS === 'web' && typeof window !== 'undefined') {
+                window.location.href = '/';
+              } else {
+                router.replace('/');
+              }
+            }}
           />
         </View>
 
