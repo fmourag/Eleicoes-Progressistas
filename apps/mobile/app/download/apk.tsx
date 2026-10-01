@@ -62,16 +62,14 @@ export default function DownloadApkScreen() {
 
         <View style={styles.actions}>
           <ActionButton
-            label="⬇️ Baixar APK Diretamente"
+            title="⬇️ Baixar APK Diretamente"
             variant="primary"
-            size="lg"
             onPress={handleManualDownload}
           />
 
           <ActionButton
-            label="🌐 Usar no Navegador (Sem Instalar)"
-            variant="outline"
-            size="md"
+            title="🌐 Usar no Navegador (Sem Instalar)"
+            variant="secondary"
             onPress={() => {
               if (Platform.OS === 'web' && typeof window !== 'undefined') {
                 window.location.href = '/';
