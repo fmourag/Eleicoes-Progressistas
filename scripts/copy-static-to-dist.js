@@ -19,12 +19,23 @@ function copyRecursiveSync(src, dest) {
       copyRecursiveSync(path.join(src, entry), path.join(dest, entry));
     }
   } else {
+    // Cloudflare Pages has a hard limit of 25MB per file. Skip large binaries like APKs.
+    if (src.endsWith('.apk') || stat.size > 20 * 1024 * 1024) {
+      console.log(`[copy-static-to-dist] Skipping large binary from Pages dist: ${path.basename(src)} (${(stat.size / 1024 / 1024).toFixed(1)} MB)`);
+      return;
+    }
     const parent = path.dirname(dest);
     if (!fs.existsSync(parent)) {
       fs.mkdirSync(parent, { recursive: true });
     }
     fs.copyFileSync(src, dest);
   }
+}
+
+// Clean up any previously copied APKs in dist
+const distApkDir = path.join(distDir, 'apk');
+if (fs.existsSync(distApkDir)) {
+  fs.rmSync(distApkDir, { recursive: true, force: true });
 }
 
 if (fs.existsSync(staticDir)) {
