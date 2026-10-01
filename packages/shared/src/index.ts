@@ -166,12 +166,25 @@ export const KNOWN_URNA_NUMBERS: Record<string, string> = {
   'gov_sp_vivian': '80',
   // Governador RJ
   'gov_rj_paes': '55',
-  // Senadores RJ
-  'sen_rj_lindbergh': '131',
-  'sen_rj_benedita': '133',
-  'sen_rj_tarcisio': '500',
-  'sen_rj_molon': '400',
+  // Senadores RJ (13 Candidatos Oficiais no Pleito 2026)
+  'sen_rj_portinho': '222',
+  'sen_rj_benedita': '130',
+  '190002548141': '130',
+  'sen_rj_jordy': '220',
+  'sen_rj_heliosecco': '888',
+  'sen_rj_lucianomattos': '280',
+  'sen_rj_luizeugenio': '290',
+  '190002552521': '290',
+  'sen_rj_crivella': '100',
+  'sen_rj_marcosdias': '200',
+  'sen_rj_michelly': '800',
+  '190002548589': '800',
+  'sen_rj_monica': '500',
+  '190002536164': '500',
+  'sen_rj_paulafalcao': '160',
+  '190002539827': '160',
   'sen_rj_pedropaulo': '555',
+  'sen_rj_waguinho': '101',
   'dep_122974': '5555',
   '122974': '5555',
   // Deputados Estaduais RJ
@@ -193,6 +206,12 @@ export const KNOWN_URNA_NUMBERS: Record<string, string> = {
   'dep_74171': '5015', // Chico Alencar
   'dep_204464': '5000', // Talíria Petrone
   'dep_220597': '5010', // Henrique Vieira
+  'dep_74858': '1313', // Lindbergh Farias
+  'dep_rj_lindbergh': '1313',
+  'dep_220598_rj': '5000', // Tarcísio Motta
+  'dep_rj_tarcisio': '5000',
+  'dep_160511': '4000', // Alessandro Molon
+  'dep_rj_molon': '4000',
 };
 
 export function getNumeroUrna(candidate: {
@@ -593,12 +612,22 @@ export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
   // Senadores
   '190002548141': 'https://www.camara.leg.br/internet/deputado/bandep/73701.jpg',
   'sen_rj_benedita': 'https://www.camara.leg.br/internet/deputado/bandep/73701.jpg',
-  'sen_rj_molon': 'https://www.camara.leg.br/internet/deputado/bandep/160511.jpg',
-  'sen_rj_lindbergh': 'https://www.camara.leg.br/internet/deputado/bandep/74858.jpg',
-  'sen_rj_tarcisio': 'https://www.camara.leg.br/internet/deputado/bandep/220598.jpg',
+  'sen_rj_portinho': 'https://www.senado.leg.br/senadores/img/fotos-oficiais/5982.jpg',
+  'sen_rj_jordy': 'https://www.camara.leg.br/internet/deputado/bandep/204460.jpg',
+  'sen_rj_crivella': 'https://www.camara.leg.br/internet/deputado/bandep/204462.jpg',
+  'sen_rj_luizeugenio': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Luiz_Eug%C3%AAnio_Honorato_PCO.jpg/500px-Luiz_Eug%C3%AAnio_Honorato_PCO.jpg',
+  'sen_rj_michelly': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Michelly_Xavier_UP.jpg/500px-Michelly_Xavier_UP.jpg',
+  'sen_rj_monica': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/M%C3%B4nica_Ben%C3%ADcio_%2849234235991%29_%28cropped_2%29.jpg/500px-M%C3%B4nica_Ben%C3%ADcio_%2849234235991%29_%28cropped_2%29.jpg',
+  'sen_rj_paulafalcao': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Paula_Falc%C3%A3o_PSTU.jpg/500px-Paula_Falc%C3%A3o_PSTU.jpg',
   'sen_rj_pedropaulo': 'https://www.camara.leg.br/internet/deputado/bandep/122974.jpg',
   'dep_122974': 'https://www.camara.leg.br/internet/deputado/bandep/122974.jpg',
   '122974': 'https://www.camara.leg.br/internet/deputado/bandep/122974.jpg',
+  'sen_rj_molon': 'https://www.camara.leg.br/internet/deputado/bandep/160511.jpg',
+  'dep_160511': 'https://www.camara.leg.br/internet/deputado/bandep/160511.jpg',
+  'sen_rj_lindbergh': 'https://www.camara.leg.br/internet/deputado/bandep/74858.jpg',
+  'dep_74858': 'https://www.camara.leg.br/internet/deputado/bandep/74858.jpg',
+  'sen_rj_tarcisio': 'https://www.camara.leg.br/internet/deputado/bandep/220598.jpg',
+  'dep_220598': 'https://www.camara.leg.br/internet/deputado/bandep/220598.jpg',
 
   // Lideranças Estaduais / Deputados Estaduais
   'ale_rj_renatasouza': 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/Renata_Souza_em_2022.jpg/500px-Renata_Souza_em_2022.jpg',

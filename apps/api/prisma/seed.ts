@@ -45,7 +45,9 @@ const PARTY_NUMBERS: Record<string, number> = {
   SOLIDARIEDADE: 77,
   AVANTE: 70,
   PODE: 20,
+  PODEMOS: 20,
   MDB: 15,
+  PMDB: 15,
   PSD: 55,
   PSDB: 45,
   AGIR: 36,
@@ -56,6 +58,22 @@ const PARTY_NUMBERS: Record<string, number> = {
   PSTU: 16,
   UP: 80,
   REPUBLICANOS: 10,
+  REPUBLICANO: 10,
+  PL: 22,
+  PP: 11,
+  'PROGRESSISTAS': 11,
+  UNIÃO: 44,
+  UNIAO: 44,
+  'UNIÃO BRASIL': 44,
+  'UNIAO BRASIL': 44,
+  NOVO: 30,
+  PRD: 25,
+  PRTB: 28,
+  MOBILIZA: 33,
+  MISSÃO: 88,
+  MISSAO: 88,
+  PATRIOTA: 51,
+  PATRIOTAS: 51,
 };
 
 function getPartyNumber(partySigla: string): number {
@@ -76,13 +94,13 @@ function generateScores(party: string, cargo: string): Record<string, number> {
   if (['REDE', 'PV'].includes(p)) {
     return { p1: 0.90, p2: 0.86, p3: 0.99, p4: 0.88, p5: 0.86, p6: 0.84, p7: 0.90, p8: 0.86, p9: 0.90, p10: 0.85, p11: 0.92, p12: 0.88, p13: 0.89 };
   }
-  if (['AGIR', 'SOLIDARIEDADE'].includes(p)) {
+  if (['AGIR', 'SOLIDARIEDADE', 'MOBILIZA'].includes(p)) {
     return { p1: 0.86, p2: 0.82, p3: 0.80, p4: 0.84, p5: 0.84, p6: 0.84, p7: 0.88, p8: 0.82, p9: 0.88, p10: 0.82, p11: 0.86, p12: 0.82, p13: 0.86 };
   }
   if (['PSD', 'CIDADANIA', 'PMB'].includes(p)) {
     return { p1: 0.85, p2: 0.80, p3: 0.82, p4: 0.85, p5: 0.85, p6: 0.78, p7: 0.80, p8: 0.82, p9: 0.85, p10: 0.85, p11: 0.85, p12: 0.80, p13: 0.88 };
   }
-  if (['REPUBLICANOS', 'PL', 'NOVO', 'PP', 'UNIÃO', 'PRD', 'PATRIOTA', 'AVANTE', 'PODE', 'PODEMOS', 'PSDB'].includes(p)) {
+  if (['REPUBLICANOS', 'REPUBLICANO', 'PL', 'NOVO', 'PP', 'UNIÃO', 'UNIAO', 'UNIÃO BRASIL', 'UNIAO BRASIL', 'PRD', 'PATRIOTA', 'PATRIOTAS', 'AVANTE', 'PODE', 'PODEMOS', 'PSDB', 'PRTB', 'MISSÃO', 'MISSAO', 'DC'].includes(p)) {
     return { p1: 0.32, p2: 0.28, p3: 0.22, p4: 0.35, p5: 0.40, p6: 0.20, p7: 0.24, p8: 0.30, p9: 0.32, p10: 0.35, p11: 0.30, p12: 0.25, p13: 0.45 };
   }
   return { p1: 0.88, p2: 0.85, p3: 0.85, p4: 0.75, p5: 0.80, p6: 0.85, p7: 0.88, p8: 0.80, p9: 0.90, p10: 0.85, p11: 0.88, p12: 0.86, p13: 0.88 };
@@ -187,37 +205,21 @@ const REAL_GOVERNORS = [
 ];
 
 const REAL_SENATORS = [
-  // Rio de Janeiro (RJ)
+  // Rio de Janeiro (RJ) - 13 Candidatos Oficiais ao Senado Federal no Pleito 2026
   {
-    tseId: 'sen_rj_molon',
-    name: 'Alessandro Lucci Cavalcanti Molon',
-    socialName: 'Alessandro Molon',
-    party: 'PSB',
-    numeroUrna: '400',
+    tseId: 'sen_rj_portinho',
+    name: 'Carlos Francisco Portinho',
+    socialName: 'Carlos Portinho',
+    party: 'PL',
+    numeroUrna: '222',
     state: 'RJ',
     municipality: 'Rio de Janeiro',
-    photoUrl: '/candidates/sen_rj_molon.jpg',
-    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Defesa da sustentabilidade ambiental, inovação tecnológica, integridade governamental e fortalecimento das instituições republicanas.',
+    photoUrl: 'https://www.senado.leg.br/senadores/img/fotos-oficiais/5982.jpg',
+    isProgressiveSupported: false,
+    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Senador da República, liderança do PL, atuação na modernização jurídica (Lei da SAF), desregulamentação econômica e pautas liberais.',
     proposals: [
-      { pillar: 'p3', title: 'Defesa Ambiental e Transição Ecológica Justa', description: 'Proteção dos biomas Mata Atlântica e Amazônia, combate ao desmatamento e fomento à bioeconomia.' },
-      { pillar: 'p10', title: 'Transparência Pública e Combate à Corrupção', description: 'Autor do Marco Civil da Internet; defesa do controle social, integridade governamental e dados abertos.' },
-      { pillar: 'p11', title: 'Educação Pública e Ciência Soberana', description: 'Fortalecimento do Fundeb, valorização do magistério e ampliação de investimentos em pesquisa científica.' },
-    ],
-  },
-  {
-    tseId: 'sen_rj_lindbergh',
-    name: 'Lindbergh Farias',
-    socialName: 'Lindbergh Farias',
-    party: 'PT',
-    numeroUrna: '131',
-    state: 'RJ',
-    municipality: 'Nova Iguaçu',
-    photoUrl: '/candidates/sen_rj_lindbergh.jpg',
-    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Foco na valorização salarial, reindustrialização nacional e investimentos públicos em infraestrutura e seguridade social.',
-    proposals: [
-      { pillar: 'p2', title: 'Revogação dos Retrocessos Trabalhistas e Salário Digno', description: 'Fortalecimento dos direitos da classe trabalhadora, valorização real do salário mínimo e geração de empregos.' },
-      { pillar: 'p5', title: 'Soberania Nacional e Reindustrialização Fluminense', description: 'Recuperação do parque naval e da cadeia produtiva de óleo, gás e energia no Estado do Rio de Janeiro.' },
-      { pillar: 'p6', title: 'Combate à Desigualdade e Justiça Social', description: 'Reforma tributária progressiva, tributação de super-ricos e reforço contínuo dos programas de transferência de renda.' },
+      { pillar: 'p5', title: 'Modernização Econômica e Sociedades Anônimas do Futebol (SAF)', description: 'Autor da Lei da SAF e relator de projetos de modernização da gestão e atração de investimentos privados.' },
+      { pillar: 'p8', title: 'Governança Desportiva e Incentivo Fiscal', description: 'Incentivos fiscais a clubes e projetos socioesportivos no Estado do Rio de Janeiro.' },
     ],
   },
   {
@@ -228,7 +230,8 @@ const REAL_SENATORS = [
     numeroUrna: '130',
     state: 'RJ',
     municipality: 'Rio de Janeiro',
-    photoUrl: '/candidates/sen_rj_benedita.jpg',
+    photoUrl: 'https://www.camara.leg.br/internet/deputado/bandep/73701.jpg',
+    isProgressiveSupported: true,
     governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Trajetória histórica na Constituinte de 1988, defesa dos direitos humanos, igualdade racial, direitos das mulheres e fortalecimento integral do SUS.',
     proposals: [
       { pillar: 'p7', title: 'Igualdade Racial e Defesa das Comunidades Periféricas', description: 'Políticas afirmativas, combate ao racismo estrutural, regularização fundiária e urbanização das favelas.' },
@@ -237,19 +240,148 @@ const REAL_SENATORS = [
     ],
   },
   {
-    tseId: 'sen_rj_tarcisio',
-    name: 'Tarcísio Motta de Carvalho',
-    socialName: 'Tarcísio Motta',
+    tseId: 'sen_rj_jordy',
+    name: 'Carlos Roberto Coelho de Mattos Júnior',
+    socialName: 'Carlos Jordy',
+    party: 'PL',
+    numeroUrna: '220',
+    state: 'RJ',
+    municipality: 'Niterói',
+    photoUrl: 'https://www.camara.leg.br/internet/deputado/bandep/204460.jpg',
+    isProgressiveSupported: false,
+    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Defesa de pautas conservadoras, endurecimento penal na segurança pública, livre mercado e desregulamentação econômica.',
+    proposals: [
+      { pillar: 'p10', title: 'Endurecimento Penal e Segurança Pública Rigorosa', description: 'Fim das saídas temporárias, aumento do rigor penal para crimes violentos e armamento legal.' },
+      { pillar: 'p8', title: 'Desregulamentação e Livre Mercado', description: 'Redução do tamanho do Estado, corte de gastos públicos e estímulo à livre iniciativa.' },
+    ],
+  },
+  {
+    tseId: 'sen_rj_heliosecco',
+    name: 'Hélio Ferreira Secco',
+    socialName: 'Hélio Secco',
+    party: 'MISSÃO',
+    numeroUrna: '888',
+    state: 'RJ',
+    municipality: 'Rio de Janeiro',
+    photoUrl: '',
+    isProgressiveSupported: false,
+    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Defesa dos valores liberais na economia, reformas de Estado e combate à corrupção.',
+    proposals: [
+      { pillar: 'p8', title: 'Eficiência Fiscal e Reforma Administrativa', description: 'Redução de privilégios corporativos no setor público e modernização do Estado.' },
+      { pillar: 'p13', title: 'Livre Empreendedorismo e Desoneração', description: 'Estímulo à criação de empresas e redução da carga tributária sobre pequenos negócios.' },
+    ],
+  },
+  {
+    tseId: 'sen_rj_lucianomattos',
+    name: 'Luciano Oliveira Mattos de Souza',
+    socialName: 'Luciano Mattos',
+    party: 'PRTB',
+    numeroUrna: '280',
+    state: 'RJ',
+    municipality: 'Niterói',
+    photoUrl: '',
+    isProgressiveSupported: false,
+    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Ex-Procurador-Geral de Justiça do MPRJ, atuação com foco no combate ao crime organizado, defesa da ordem jurídica e transparência no Ministério Público.',
+    proposals: [
+      { pillar: 'p10', title: 'Combate ao Crime Organizado e Segurança Jurídica', description: 'Fortalecimento dos órgãos de investigação, integração de inteligência contra milícias e narcotráfico.' },
+      { pillar: 'p8', title: 'Transparência e Controle da Administração Pública', description: 'Aprimoramento dos mecanismos de fiscalização e combate ao desvio de verbas públicas.' },
+    ],
+  },
+  {
+    tseId: 'sen_rj_luizeugenio',
+    name: 'Luiz Eugênio Honorato',
+    socialName: 'Luiz Eugenio',
+    party: 'PCO',
+    numeroUrna: '290',
+    state: 'RJ',
+    municipality: 'Volta Redonda',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Luiz_Eug%C3%AAnio_Honorato_PCO.jpg/500px-Luiz_Eug%C3%AAnio_Honorato_PCO.jpg',
+    isProgressiveSupported: true,
+    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Liderança operária metalúrgica da CSN, defesa dos direitos dos trabalhadores, estatização de empresas estratégicas e soberania operária.',
+    proposals: [
+      { pillar: 'p2', title: 'Defesa Intransigente da Classe Trabalhadora e Salário Digno', description: 'Revogação integral de reformas antioperárias, estabilidade no emprego e jornada de 35h semanais.' },
+      { pillar: 'p4', title: 'Soberania Nacional e Reestatização Estratégica', description: 'Defesa das riquezas minerais, petróleo e energia sob controle público e soberano.' },
+    ],
+  },
+  {
+    tseId: 'sen_rj_crivella',
+    name: 'Marcelo Bezerra Crivella',
+    socialName: 'Marcelo Crivella',
+    party: 'REPUBLICANOS',
+    numeroUrna: '100',
+    state: 'RJ',
+    municipality: 'Rio de Janeiro',
+    photoUrl: 'https://www.camara.leg.br/internet/deputado/bandep/204462.jpg',
+    isProgressiveSupported: false,
+    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Ex-prefeito do Rio de Janeiro, ex-ministro e ex-senador, pauta voltada à assistência social comunitária, valores tradicionais e saneamento.',
+    proposals: [
+      { pillar: 'p1', title: 'Assistência Social e Apoio às Famílias Periféricas', description: 'Programas de acolhimento social, cuidado com a primeira infância e saúde básica comunitária.' },
+      { pillar: 'p8', title: 'Gestão de Recursos Hídricos e Saneamento', description: 'Aporte de recursos federais para contenção de encostas e drenagem urbana na Baixada e capital.' },
+    ],
+  },
+  {
+    tseId: 'sen_rj_marcosdias',
+    name: 'Marcos Dias de Oliveira',
+    socialName: 'Marcos Dias',
+    party: 'PODE',
+    numeroUrna: '200',
+    state: 'RJ',
+    municipality: 'Rio de Janeiro',
+    photoUrl: '',
+    isProgressiveSupported: false,
+    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Foco na defesa do consumidor, desregulamentação, transparência governamental e segurança cidadã.',
+    proposals: [
+      { pillar: 'p8', title: 'Transparência nos Serviços Públicos e Defesa do Cidadão', description: 'Modernização de serviços públicos e combate a cobranças indevidas de concessionárias.' },
+      { pillar: 'p10', title: 'Segurança Cidadã e Inteligência Policial', description: 'Integração de câmeras e inteligência urbana na prevenção à violência.' },
+    ],
+  },
+  {
+    tseId: 'sen_rj_michelly',
+    name: 'Michelly Xavier de Andrade',
+    socialName: 'Michelly Xavier',
+    party: 'UP',
+    numeroUrna: '800',
+    state: 'RJ',
+    municipality: 'Rio de Janeiro',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Michelly_Xavier_UP.jpg/500px-Michelly_Xavier_UP.jpg',
+    isProgressiveSupported: true,
+    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Liderança do movimento de mulheres Olga Benario e da Unidade Popular, luta contra o fascismo, moradia popular e poder popular.',
+    proposals: [
+      { pillar: 'p1', title: 'Reforma Urbana, Moradia Popular e Fim dos Despejos', description: 'Desapropriação de imóveis abandonados para moradia social e regularização das favelas.' },
+      { pillar: 'p6', title: 'Nacionalização dos Recursos e Tributação dos Super-Ricos', description: 'Fim da isenção sobre lucros e dividendos e direcionamento de recursos para saúde e educação.' },
+    ],
+  },
+  {
+    tseId: 'sen_rj_monica',
+    name: 'Mônica Tereza Azeredo Benício',
+    socialName: 'Mônica Benício',
     party: 'PSOL',
     numeroUrna: '500',
     state: 'RJ',
     municipality: 'Rio de Janeiro',
-    photoUrl: '/candidates/sen_rj_tarcisio.jpg',
-    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Defesa da educação pública de qualidade, segurança cidadã com inteligência policial, direitos humanos e cultura popular.',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/M%C3%B4nica_Ben%C3%ADcio_%2849234235991%29_%28cropped_2%29.jpg/500px-M%C3%B4nica_Ben%C3%ADcio_%2849234235991%29_%28cropped_2%29.jpg',
+    isProgressiveSupported: true,
+    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Arquiteta e urbanista, defensora dos direitos humanos, população LGBTQIA+, justiça por Marielle Franco e direito à cidade.',
     proposals: [
-      { pillar: 'p11', title: 'Educação Pública Emancipatória e Valorização Docente', description: 'Garantia de 10% do PIB para educação, piso salarial nacional dos profissionais da educação e escolas inclusivas.' },
-      { pillar: 'p10', title: 'Segurança Cidadã e Combate às Milícias e Crime Organizado', description: 'Desmilitarização, inteligência contra lavagem de dinheiro das milícias e defesa intransigente dos Direitos Humanos.' },
-      { pillar: 'p8', title: 'Cultura Popular e Democracia Participativa', description: 'Fomento descentralizado à cultura popular, favelada e comunitária e orçamentos participativos deliberativos.' },
+      { pillar: 'p7', title: 'Direitos LGBTQIA+ e Defesa dos Direitos Humanos', description: 'Cidadania plena, acolhimento de vulneráveis e combate intransigente à violência de gênero.' },
+      { pillar: 'p1', title: 'Direito à Cidade, Urbanismo Social e Moradia Digna', description: 'Planejamento urbano integrado, mobilidade sustentável e infraestrutura nas periferias.' },
+      { pillar: 'p10', title: 'Segurança Cidadã e Combate à Violência Política', description: 'Desmantelamento das redes de milícias e proteção a defensores de direitos humanos.' },
+    ],
+  },
+  {
+    tseId: 'sen_rj_paulafalcao',
+    name: 'Paula Falcão de Oliveira',
+    socialName: 'Paula Falcão',
+    party: 'PSTU',
+    numeroUrna: '160',
+    state: 'RJ',
+    municipality: 'Rio de Janeiro',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Paula_Falc%C3%A3o_PSTU.jpg/500px-Paula_Falc%C3%A3o_PSTU.jpg',
+    isProgressiveSupported: true,
+    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Professora da rede pública, defesa do socialismo, educação 100% pública e estatização dos transportes e energia.',
+    proposals: [
+      { pillar: 'p11', title: 'Educação Pública, Gratuita e Laica com 10% do PIB', description: 'Revogação do Novo Ensino Médio, piso salarial unificado e valorização da escola pública.' },
+      { pillar: 'p2', title: 'Estatização das Grandes Empresas sem Indenização', description: 'Estatização do transporte coletivo e dos serviços essenciais sob controle dos trabalhadores.' },
     ],
   },
   {
@@ -269,6 +401,24 @@ const REAL_SENATORS = [
       { pillar: 'p5', title: 'Infraestrutura Urbana e Desenvolvimento Metropolitano', description: 'Atração de investimentos federais para a mobilidade urbana, infraestrutura e expansão da malha logística do Rio.' },
       { pillar: 'p8', title: 'Eficiência Fiscal e Responsabilidade Pública', description: 'Gestão orientada a resultados, desburocratização e modernização tributária com garantia de serviços essenciais.' },
       { pillar: 'p13', title: 'Estímulo ao Empreendedorismo e Geração de Emprego', description: 'Apoio aos microempreendedores e incentivo ao turismo, inovação e setor de serviços no Estado do Rio de Janeiro.' },
+    ],
+  },
+  {
+    tseId: 'sen_rj_waguinho',
+    name: 'Wagner dos Santos Carneiro',
+    socialName: 'Waguinho',
+    party: 'REPUBLICANOS',
+    numeroUrna: '101',
+    state: 'RJ',
+    municipality: 'Belford Roxo',
+    photoUrl: '',
+    coalition: 'Aliança pelo Rio',
+    isProgressiveSupported: true,
+    supportedBy: 'Aliança com lideranças da Baixada Fluminense e Governo Federal',
+    governmentPlanSummary: 'Mandato no Senado Federal pelo RJ: Ex-prefeito de Belford Roxo, atuação na Baixada Fluminense com foco em saúde pública, saneamento básico e investimentos na Baixada.',
+    proposals: [
+      { pillar: 'p1', title: 'Saneamento Básico e Infraestrutura para a Baixada Fluminense', description: 'Canalização de recursos federais para saneamento, asfalto e macrodrenagem na Baixada.' },
+      { pillar: 'p9', title: 'Expansão de Hospitais e Clínicas da Família', description: 'Abertura de complexos de saúde e maternidades públicas na região metropolitana.' },
     ],
   },
   // São Paulo (SP)
@@ -829,6 +979,9 @@ const REAL_FEDERAL_DEPUTIES = [
   { tseId: 'dep_74171', name: 'Francisco Rodrigues de Alencar Filho', socialName: 'Chico Alencar', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/dep_74171.jpg', numeroUrna: '5015' },
   { tseId: 'dep_204464', name: 'Talíria Petrone Soares', socialName: 'Talíria Petrone', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/dep_204464.jpg', numeroUrna: '5000' },
   { tseId: 'dep_220597', name: 'Henrique Vieira dos Santos', socialName: 'Pastor Henrique Vieira', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/dep_220597.jpg', numeroUrna: '5010' },
+  { tseId: 'dep_74858', name: 'Lindbergh Farias', socialName: 'Lindbergh Farias', party: 'PT', state: 'RJ', photoUrl: '/candidates/sen_rj_lindbergh.jpg', numeroUrna: '1313' },
+  { tseId: 'dep_220598_rj', name: 'Tarcísio Motta de Carvalho', socialName: 'Tarcísio Motta', party: 'PSOL', state: 'RJ', photoUrl: '/candidates/sen_rj_tarcisio.jpg', numeroUrna: '5000' },
+  { tseId: 'dep_160511', name: 'Alessandro Lucci Cavalcanti Molon', socialName: 'Alessandro Molon', party: 'PSB', state: 'RJ', photoUrl: '/candidates/sen_rj_molon.jpg', numeroUrna: '4000' },
   { tseId: 'dep_220553', name: 'Dimas Silva Gadelha Júnior', socialName: 'Dimas Gadelha', party: 'PT', state: 'RJ', photoUrl: '/candidates/dep_220553.jpg', numeroUrna: '1340' },
   { tseId: 'dep_74856', name: 'Laura Carneiro', socialName: 'Laura Carneiro', party: 'PSD', state: 'RJ', photoUrl: '/candidates/dep_74856.jpg', numeroUrna: '5555', isProgressiveSupported: true, supportedBy: 'Apoio Frente Ampla Democrática RJ / Coligação Eduardo Paes' },
   { tseId: 'dep_220713', name: 'Washington Luiz Cardoso Siqueira', socialName: 'Washington Quaquá', party: 'PT', state: 'RJ', photoUrl: '/candidates/dep_220713.jpg', numeroUrna: '1313' },
@@ -1152,8 +1305,6 @@ async function main() {
   // Candidatos que disputam o Senado Federal em 2026 (evita duplicidade eleitoral com a Câmara)
   const DEPUTIES_RUNNING_FOR_SENATE = new Set([
     73701, // Benedita da Silva (Disputa o Senado pelo RJ)
-    74858, // Lindbergh Farias (Disputa o Senado pelo RJ)
-    220598, // Tarcísio Motta (Disputa o Senado pelo RJ)
   ]);
 
   // 4. Deputados Federais (Base Real Estática e Abrangente de Todos os 27 Estados do Brasil + Integração Oficial da Câmara)

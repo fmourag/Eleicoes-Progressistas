@@ -539,13 +539,18 @@ export class CandidatesService implements OnModuleInit {
         orConditions.push({ coalition: { contains: kw, mode: 'insensitive' } });
       }
 
+      const hasExplicitSearch = Boolean((search && search.trim().length > 0) || (party && party.trim().length > 0));
+
       const whereClause: any = {
         cargo: cargo ? (cargo as Cargo) : { in: upcomingCargos },
         electionYear: UPCOMING_ELECTION.year,
         fichaLimpa: true,
         visible: true,
-        OR: orConditions,
       };
+
+      if (!hasExplicitSearch) {
+        whereClause.OR = orConditions;
+      }
 
       if (party && party.trim()) {
         const cleanParty = party.trim().toUpperCase();
