@@ -440,18 +440,16 @@ export class CandidatesService implements OnModuleInit {
           tseId: { in: ['pres_glauber'] },
         },
       });
-      // Remove duplicatas do Lula (manter apenas o registro com tseId canônico)
-      const lulaEntries = await this.prisma.candidate.findMany({
+       // Remove duplicatas do Lula: manter APENAS o canônico (tseId=pres_lula), deletar todos os demais
+      // (o ETL pode ter inserido um registro com tseId do TSE como '280001600001' que conflita)
+      await this.prisma.candidate.deleteMany({
         where: {
-          name: { contains: 'Lula', mode: 'insensitive' },
           cargo: 'PRESIDENTE',
+          party: 'PT',
+          name: { contains: 'Lula', mode: 'insensitive' },
+          NOT: { tseId: 'pres_lula' },
         },
-        orderBy: { createdAt: 'asc' },
       });
-      if (lulaEntries.length > 1) {
-        const toDelete = lulaEntries.slice(1).map((e: any) => e.id);
-        await this.prisma.candidate.deleteMany({ where: { id: { in: toDelete } } });
-      }
 
       // 1. Atualização oficial da vice de Eduardo Paes no Rio de Janeiro (Jane Reis - MDB)
       await this.prisma.candidate.updateMany({
