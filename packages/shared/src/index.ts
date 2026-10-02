@@ -686,20 +686,13 @@ export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
   'sen_rs_manuela': '/candidates/pcdob_manueladavila.jpg',
   'gov_pe_luciana': '/candidates/pcdob_lucianasantos.jpg',
   'gov_rj_eduardoserra': '/candidates/pcb_eduardoserra.jpg',
-  'sen_sp_colombo': '/candidates/pcb_gabrielcolombo.jpg',
-  'dep_sp_colombo': '/candidates/pcb_gabrielcolombo.jpg',
   'sen_pe_jones': '/candidates/pcb_jonesmanoel.jpg',
   'dep_pe_jones': '/candidates/pcb_jonesmanoel.jpg',
-  'sen_rj_ivan': '/candidates/pcb_ivanpinheiro.jpg',
-  'dep_rj_ivan': '/candidates/pcb_ivanpinheiro.jpg',
   'sen_rj_mauroiasi': '/candidates/pcb_mauroiasi.jpg',
   'dep_rj_mauroiasi': '/candidates/pcb_mauroiasi.jpg',
   'dep_mg_anakaren': '/candidates/pcb_anakaren.jpg',
   'ale_sp_antonioalves': '/candidates/pcb_antonioalves.jpg',
   'ale_pe_jones': '/candidates/pcb_jonesmanoel.jpg',
-  'ale_rj_ivan': '/candidates/pcb_ivanpinheiro.jpg',
-  'ale_sp_leci': '/candidates/280001600026.jpg',
-  'dep_rj_rejane': '/candidates/dep_74848.jpg',
 
   // Lideranças Estaduais / Deputados Estaduais
   'ale_rj_renatasouza': '/candidates/280001600026.jpg',
@@ -711,7 +704,6 @@ export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
 
   // Outras Lideranças e Deputados Estaduais / Federais
   'dep_ap_acacio': '/candidates/dep_ap_acacio.jpg',
-  'sen_pr_carol': '/candidates/ale_pr_anajulia.jpg',
   'ale_mg_andreia': '/candidates/ale_mg_andreia.jpg',
   'ale_mg_beatrizcerqueira': '/candidates/ale_mg_beatrizcerqueira.jpg',
   'ale_go_biadelima': '/candidates/ale_go_biadelima.jpg',
