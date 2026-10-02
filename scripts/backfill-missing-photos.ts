@@ -59,16 +59,17 @@ async function download(url: string): Promise<Buffer | null> {
 }
 
 async function urlOk(url: string): Promise<boolean> {
+  // Baixa o corpo (limite 64KB) — Range 0-0 não permite validar magic bytes.
   try {
     const r = await axios.get(url, {
       responseType: 'arraybuffer',
-      timeout: 15000,
+      timeout: 20000,
       maxRedirects: 3,
       httpsAgent: agent,
-      headers: { 'User-Agent': UA, Range: 'bytes=0-0', Accept: 'image/*,*/*;q=0.8' },
+      headers: { 'User-Agent': UA, Accept: 'image/*,*/*;q=0.8' },
       validateStatus: () => true,
     });
-    if (r.status !== 200 && r.status !== 206) return false;
+    if (r.status !== 200) return false;
     return validImage(Buffer.from(r.data));
   } catch { return false; }
 }
@@ -96,7 +97,28 @@ async function wikiExactThumbnail(name: string): Promise<string | null> {
 
 async function main() {
   const apply = process.argv.includes('--apply');
-  console.log(`[backfill] modo: ${apply ? 'APPLY' : 'DRY-RUN'}`);
+  const downloadOnly = process.argv.includes('--download-only');
+  const applyDb = process.argv.includes('--apply-db');
+  console.log(`[backfill] modo: ${applyDb ? 'APPLY-DB (só banco, via manifest)' : downloadOnly ? 'DOWNLOAD-ONLY (só arquivos + manifest)' : apply ? 'APPLY' : 'DRY-RUN'}`);
+
+  if (applyDb) {
+    const manifestPath = path.resolve(process.cwd(), 'scripts/backfill-manifest.json');
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as Record<string, string>;
+    let n = 0;
+    for (const [tseId, localPath] of Object.entries(manifest)) {
+      const fname = path.basename(localPath);
+      const diskFile = path.join(DIRS[0], fname);
+      if (!fs.existsSync(diskFile)) { console.log(`  PULA ${tseId} (arquivo ausente após curadoria)`); continue; }
+      const rows = await prisma.candidate.findMany({ where: { tseId }, select: { id: true } });
+      for (const r of rows) {
+        await prisma.candidate.update({ where: { id: r.id }, data: { photoUrl: `https://eleicoes-progressistas.onrender.com/candidates/${fname}` } });
+        n++;
+      }
+      console.log(`  OK banco ${tseId} <- /candidates/${fname} (${rows.length} reg)`);
+    }
+    console.log(`[backfill] banco atualizado: ${n} registros`);
+    return;
+  }
   const cands = await prisma.candidate.findMany({
     select: { id: true, tseId: true, name: true, socialName: true, cargo: true, state: true, photoUrl: true },
     orderBy: { name: 'asc' },
@@ -125,10 +147,12 @@ async function main() {
       const buf = await download(url);
       if (!buf) continue;
       const fname = `${c.tseId}.jpg`;
-      if (apply) {
+      if (apply || downloadOnly) {
         for (const d of DIRS) fs.writeFileSync(path.join(d, fname), buf);
-        const publicUrl = `https://eleicoes-progressistas.onrender.com/candidates/${fname}`;
-        await prisma.candidate.update({ where: { id: c.id }, data: { photoUrl: publicUrl } });
+        if (apply) {
+          const publicUrl = `https://eleicoes-progressistas.onrender.com/candidates/${fname}`;
+          await prisma.candidate.update({ where: { id: c.id }, data: { photoUrl: publicUrl } });
+        }
       }
       manifest[c.tseId] = `/candidates/${fname}`;
       fixed++;
@@ -142,6 +166,6 @@ async function main() {
     }
   }
   console.log(`[backfill] ok existentes: ${okSkip} | corrigidos: ${fixed} | sem fonte: ${stillMissing.length}`);
-  if (apply) fs.writeFileSync(path.resolve(process.cwd(), 'scripts/backfill-manifest.json'), JSON.stringify(manifest, null, 2));
+  if (apply || downloadOnly) fs.writeFileSync(path.resolve(process.cwd(), 'scripts/backfill-manifest.json'), JSON.stringify(manifest, null, 2));
 }
 main().catch((e) => { console.error('[backfill] ERRO:', e.message); process.exit(1); }).finally(() => prisma.$disconnect());
