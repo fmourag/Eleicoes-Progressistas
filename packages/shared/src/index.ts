@@ -695,15 +695,10 @@ export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
   'sen_rj_mauroiasi': '/candidates/pcb_mauroiasi.jpg',
   'dep_rj_mauroiasi': '/candidates/pcb_mauroiasi.jpg',
   'dep_mg_anakaren': '/candidates/pcb_anakaren.jpg',
-  'dep_sp_raul': '/candidates/pcb_gabrielcolombo.jpg',
-  'dep_rj_heitor': '/candidates/pcb_ivanpinheiro.jpg',
   'ale_sp_antonioalves': '/candidates/pcb_antonioalves.jpg',
   'ale_pe_jones': '/candidates/pcb_jonesmanoel.jpg',
   'ale_rj_ivan': '/candidates/pcb_ivanpinheiro.jpg',
   'ale_sp_leci': '/candidates/280001600026.jpg',
-  'ale_pe_cidapedrosa': '/candidates/pcdob_lucianasantos.jpg',
-  'ale_am_brunabrelaz': '/candidates/pcdob_manueladavila.jpg',
-  'ale_ce_inacioarruda': '/candidates/dep_74060.jpg',
   'dep_rj_rejane': '/candidates/dep_74848.jpg',
 
   // Lideranças Estaduais / Deputados Estaduais
@@ -792,6 +787,7 @@ export function getPartyBadgeUrl(party?: string | null, baseUrl?: string): strin
 
 /**
  * Retorna uma cadeia ordenada de URLs de fallback para a foto do candidato.
+ * ORDEM OFICIAL: TSE primeiro, outras fontes somente se o TSE não tiver.
  * Permite que o componente de UI tente a próxima fonte caso a primeira falhe (404/400).
  */
 export function resolveCandidatePhotoFallbackChain(candidate: {
@@ -809,109 +805,95 @@ export function resolveCandidatePhotoFallbackChain(candidate: {
   const tseId = candidate.tseId?.trim() || candidate.id?.trim() || '';
   const cleanPhotoKey = photoUrl.replace(/^\/?candidates\//, '').replace(/\.jpg$/i, '');
   const base = (candidate.baseUrl || 'https://eleicoes-progressistas.onrender.com').replace(/\/+$/, '');
-  const partyKey = (candidate.party || '').toLowerCase().trim().replace(/[^a-z0-9]/g, '');
 
-  // 1. URL explícita válida externa (HTTPS) ou relativa
   const globalWin: any = typeof globalThis !== 'undefined' ? (globalThis as any).window : undefined;
   const clientOrigin = globalWin?.location?.origin ? String(globalWin.location.origin).replace(/\/+$/, '') : '';
   const isWeb = typeof globalWin !== 'undefined';
 
+  const pushStatic = (p: string) => {
+    if (!p) return;
+    if (p.startsWith('http')) {
+      urls.push(p.replace(/^http:\/\//i, 'https://'));
+    } else {
+      if (isWeb) {
+        urls.push(p);
+        if (clientOrigin) urls.push(`${clientOrigin}${p}`);
+      }
+      urls.push(`${base}${p}`);
+      urls.push(`https://eleicoes-progressistas.pages.dev${p}`);
+      urls.push(`https://eleicoes-progressistas.onrender.com${p}`);
+    }
+  };
+
+  const isTseUrl = (u: string) =>
+    /divulgacand(contas)?\.tse\.jus\.br/i.test(u) || /dadosabertos\.tse\.jus\.br/i.test(u);
+  const isNumericTseId = /^\d+$/.test(tseId) || /^\d+$/.test(cleanPhotoKey);
+  const numericTseId = /^\d+$/.test(tseId) ? tseId : /^\d+$/.test(cleanPhotoKey) ? cleanPhotoKey : '';
+
+  // 1. TSE PRIMEIRO: photoUrl explícita somente se já for do TSE (evita foto errada de outras fontes).
   if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
-    urls.push(photoUrl.replace(/^http:\/\//i, 'https://'));
-  } else if (photoUrl.startsWith('/')) {
-    if (isWeb) {
-      urls.push(photoUrl);
-      if (clientOrigin) urls.push(`${clientOrigin}${photoUrl}`);
+    if (isTseUrl(photoUrl)) {
+      urls.push(photoUrl.replace(/^http:\/\//i, 'https://'));
     }
-    urls.push(`${base}${photoUrl}`);
-    urls.push(`https://eleicoes-progressistas.pages.dev${photoUrl}`);
-    urls.push(`https://eleicoes-progressistas.onrender.com${photoUrl}`);
+  } else if (photoUrl.startsWith('/') && (isTseUrl(photoUrl) || photoUrl.startsWith('/candidates/tse_'))) {
+    pushStatic(photoUrl);
   }
 
-  // 2. Mapeamento explícito de fotos parlamentares e lideranças nacionais
+  // 2. Foto oficial de urna DivulgaCandContas do TSE por sqCandidato numérico (fonte primária).
+  if (numericTseId) {
+    urls.push(`https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto/2045202026/${numericTseId}`);
+  }
+
+  // 3. Cópia local espelhada do TSE (tse_{id}.jpg baixado do DivulgaCand).
+  if (numericTseId) {
+    pushStatic(`/candidates/tse_${numericTseId}.jpg`);
+  }
+
+  // 4. Mapeamento explícito por tseId EXATO (sem fuzzy por nome). Só entra se o id bater exatamente.
   if (tseId && KNOWN_PARLIAMENTARY_PHOTOS[tseId]) {
-    const p = KNOWN_PARLIAMENTARY_PHOTOS[tseId];
-    if (p.startsWith('http')) {
-      urls.push(p);
-    } else {
-      if (isWeb) {
-        urls.push(p);
-        if (clientOrigin) urls.push(`${clientOrigin}${p}`);
-      }
-      urls.push(`${base}${p}`);
-      urls.push(`https://eleicoes-progressistas.pages.dev${p}`);
-      urls.push(`https://eleicoes-progressistas.onrender.com${p}`);
-    }
-  }
-  if (cleanPhotoKey && KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]) {
-    const p = KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey];
-    if (p.startsWith('http')) {
-      urls.push(p);
-    } else {
-      if (isWeb) {
-        urls.push(p);
-        if (clientOrigin) urls.push(`${clientOrigin}${p}`);
-      }
-      urls.push(`${base}${p}`);
-      urls.push(`https://eleicoes-progressistas.pages.dev${p}`);
-      urls.push(`https://eleicoes-progressistas.onrender.com${p}`);
-    }
-  }
-  const normName = (candidate.name || '').toLowerCase();
-  if (normName.includes('lula') || normName.includes('luiz inácio')) {
-    const p = KNOWN_PARLIAMENTARY_PHOTOS['pres_lula'];
-    if (isWeb) {
-      urls.push(p);
-      if (clientOrigin) urls.push(`${clientOrigin}${p}`);
-    }
-    urls.push(`${base}${p}`);
-    urls.push(`https://eleicoes-progressistas.pages.dev${p}`);
+    pushStatic(KNOWN_PARLIAMENTARY_PHOTOS[tseId]);
   }
 
-  // 3. Imagem estática hospedada no backend da aplicação
-  if (tseId) {
-    if (isWeb) urls.push(`/candidates/${tseId}.jpg`);
-    urls.push(`${base}/candidates/${tseId}.jpg`);
-    urls.push(`https://eleicoes-progressistas.pages.dev/candidates/${tseId}.jpg`);
-  }
-  if (cleanPhotoKey && cleanPhotoKey !== tseId) {
-    if (isWeb) urls.push(`/candidates/${cleanPhotoKey}.jpg`);
-    urls.push(`${base}/candidates/${cleanPhotoKey}.jpg`);
-    urls.push(`https://eleicoes-progressistas.pages.dev/candidates/${cleanPhotoKey}.jpg`);
+  // 5. Cópia estática local por chave exata (ex.: pres_lula) — somente chaves conhecidas, sem adivinhar.
+  if (cleanPhotoKey && cleanPhotoKey !== tseId && KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]) {
+    pushStatic(KNOWN_PARLIAMENTARY_PHOTOS[cleanPhotoKey]);
   }
 
-  // 3.5. CDN Oficial de Fotos e Santinhos TSE 2026 (Hermes Media / Tribuna PR / Gazeta do Povo)
+  // 6. Portais institucionais somente para IDs institucionais exatos (dep_/sen_).
+  const depMatch = tseId.match(/^dep_(\d+)$/);
+  if (depMatch && depMatch[1]) {
+    urls.push(`https://www.camara.leg.br/internet/deputado/bandep/${depMatch[1]}.jpg`);
+  }
+  const senMatch = tseId.match(/^sen_(\d+)$/);
+  if (senMatch && senMatch[1]) {
+    urls.push(`https://www.senado.leg.br/senadores/img/fotos-oficiais/${senMatch[1]}.jpg`);
+  }
+
+  // 7. photoUrl explícita NÃO-TSE (outras fontes): somente após esgotar o TSE.
+  if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
+    if (!isTseUrl(photoUrl)) {
+      urls.push(photoUrl.replace(/^http:\/\//i, 'https://'));
+    }
+  } else if (photoUrl.startsWith('/')) {
+    if (!isTseUrl(photoUrl) && !photoUrl.startsWith('/candidates/tse_')) {
+      pushStatic(photoUrl);
+    }
+  }
+
+  // 8. CDN espelho de santinhos (não-oficial): após TSE.
   if (tseId && /^\d+$/.test(tseId)) {
     const uf = (candidate.state || 'rj').toLowerCase();
     urls.push(`https://www.tribunapr.com.br/hermes-media/eleicoes/2026/candidatos/${uf}/${tseId}.jpg`);
   }
 
-  // 4. Portal da Câmara dos Deputados (para deputados federais)
-  const depMatch = tseId.match(/^dep_(\d+)$/) || photoUrl.match(/dep_(\d+)/);
-  if (depMatch && depMatch[1]) {
-    urls.push(`https://www.camara.leg.br/internet/deputado/bandep/${depMatch[1]}.jpg`);
-  }
-
-  // 5. Portal do Senado Federal (para senadores)
-  const senMatch = tseId.match(/^sen_(\d+)$/) || photoUrl.match(/sen_(\d+)/);
-  if (senMatch && senMatch[1]) {
-    urls.push(`https://www.senado.leg.br/senadores/img/fotos-oficiais/${senMatch[1]}.jpg`);
-  }
-
-  // 6. Proxy Inteligente de Fotos do Backend (busca dinâmica na Wikipédia e Dados Abertos)
+  // 9. Proxy inteligente POR ÚLTIMO (busca fuzzy por nome pode trazer homônimo).
+  // Mantido apenas como último recurso; o backend deve exigir nome exato antes de retornar.
   const searchName = candidate.name?.trim() || candidate.tseId || '';
   if (searchName) {
     const qName = encodeURIComponent(searchName);
     const qUf = encodeURIComponent(candidate.state || 'BR');
     const qTseId = encodeURIComponent(tseId);
-    urls.push(`${base}/api/candidates/photo-proxy?name=${qName}&state=${qUf}&tseId=${qTseId}`);
-  }
-
-  // 7. Fallback oficial DivulgaCandContas do TSE (se disponível)
-  const isNumericTseId = /^\d+$/.test(tseId) || /^\d+$/.test(cleanPhotoKey);
-  if (isNumericTseId) {
-    const numId = /^\d+$/.test(tseId) ? tseId : cleanPhotoKey;
-    urls.push(`https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto/2045202026/${numId}`);
+    urls.push(`${base}/api/candidates/photo-proxy?name=${qName}&state=${qUf}&tseId=${qTseId}&strict=true`);
   }
 
   // Remove duplicados e strings vazias preservando a ordem de prioridade
@@ -920,11 +902,10 @@ export function resolveCandidatePhotoFallbackChain(candidate: {
 
 /**
  * Resolve a melhor URL de foto disponível para um candidato:
- * 1. URL direta válida e acessível (HTTPS/HTTP)
- * 2. Mapeamento parlamentar oficial conhecido (Câmara, Senado, etc.)
- * 3. Foto isolada da Câmara dos Deputados (para IDs dep_{id})
- * 4. Foto isolada do Senado Federal (para IDs sen_{id})
- * 5. Foto oficial de urna/campanha no portal DivulgaCandContas do TSE
+ * 1. Foto oficial de urna no portal DivulgaCandContas do TSE (fonte primária)
+ * 2. Cópia local espelhada do TSE (tse_{id}.jpg)
+ * 3. Mapeamento institucional exato por tseId (Câmara, Senado, etc.)
+ * 4. Outras fontes somente se o TSE não tiver (CDN, photo-proxy fuzzy por último)
  */
 export function resolveCandidatePhotoUrl(candidate: {
   photoUrl?: string | null;

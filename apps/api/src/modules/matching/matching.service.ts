@@ -334,8 +334,17 @@ export class MatchingService {
       });
 
       const combinedMap = new Map<string, any>();
+      const dedupKey = (c: any) => {
+        const normName = (c.socialName || c.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().replace(/\s+/g, ' ');
+        // tseId numérico tem prioridade; ids sintéticos (pres_lula etc.) caem para nome+cargo+uf.
+        if (c.tseId && /^\d+$/.test(String(c.tseId))) return `tse:${c.tseId}|${c.cargo}`;
+        return `nom:${normName}|${c.cargo}|${c.state || ''}|${c.party || ''}`;
+      };
       for (const c of [...presidentialCandidates, ...stateCandidates]) {
-        combinedMap.set((c as any).id, c);
+        const k = dedupKey(c);
+        if (!Array.from(combinedMap.values()).some((e) => dedupKey(e) === k)) {
+          combinedMap.set((c as any).id, c);
+        }
       }
 
       for (const cargo of upcomingCargos) {

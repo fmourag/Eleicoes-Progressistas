@@ -932,19 +932,30 @@ export class CandidatesService implements OnModuleInit {
         };
       });
 
+      // Deduplica por tseId + cargo + nome normalizado (evita mesma pessoa 2x via seed + sync TSE).
+      const seen = new Set<string>();
+      const deduped: any[] = [];
+      for (const c of result) {
+        const normName = (c.socialName || c.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().replace(/\s+/g, ' ');
+        const key = `${c.tseId || ''}|${c.cargo || ''}|${normName}|${c.state || ''}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        deduped.push(c);
+      }
+
       // Ordena por ordem alfabética de nome de campanha (socialName ou name)
-      result.sort((a: any, b: any) => {
+      deduped.sort((a: any, b: any) => {
         const nameA = (a.socialName || a.name || '').trim();
         const nameB = (b.socialName || b.name || '').trim();
         return nameA.localeCompare(nameB, 'pt-BR', { sensitivity: 'base' });
       });
 
       this.candidatesCache.set(cacheKey, {
-        data: result,
+        data: deduped,
         expiresAt: Date.now() + this.CACHE_TTL_MS,
       });
 
-      return result;
+      return deduped;
     } catch (error) {
       this.logger.warn(`[CandidatesService] Database error or offline: ${(error as Error).message}`);
       return {
@@ -1147,21 +1158,50 @@ export class CandidatesService implements OnModuleInit {
     cargo?: string,
   ): Promise<string | null> {
     if (!name && !tseId) return null;
+    const isNumericTse = !!(tseId && /^\d+$/.test(tseId));
 
     let dbCandidate: any = null;
-    // 1. Tenta buscar no banco de dados se já temos a URL cadastrada
+    // 1. Banco: aceita de imediato somente se já for URL oficial do TSE.
     if (tseId) {
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(tseId);
       dbCandidate = await this.prisma.candidate.findFirst({
         where: isUuid ? { OR: [{ tseId }, { id: tseId }] } : { tseId },
         select: { photoUrl: true, tseId: true, name: true, socialName: true, cargo: true },
       });
-      if (dbCandidate?.photoUrl && dbCandidate.photoUrl.startsWith('http')) {
+      if (dbCandidate?.photoUrl && /divulgacand(contas)?\.tse\.jus\.br/i.test(dbCandidate.photoUrl)) {
         return dbCandidate.photoUrl;
       }
     }
 
-    // 2. Mapeamento de fotos oficiais conhecidas (Lula, Paes, Benedita, governadores, presidenciáveis)
+    // 2. TSE PRIMEIRO: foto oficial de urna DivulgaCandContas (fonte primária, antes de qualquer outra).
+    if (isNumericTse) {
+      const tsePhotoUrl = `https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto/2045202026/${tseId}`;
+      try {
+        const check = await axios.head(tsePhotoUrl, {
+          timeout: 4000,
+          headers: { 'User-Agent': 'EleicoesProgressistas/2.2.3 (+https://eleicoes-progressistas.pages.dev)' },
+        });
+        if (check.status === 200) {
+          this.prisma.candidate.updateMany({
+            where: { tseId },
+            data: { photoUrl: tsePhotoUrl },
+          }).catch(() => {});
+          return tsePhotoUrl;
+        }
+      } catch {}
+    }
+
+    // 2.5. Arquivo local espelhado do TSE (tse_{id}.jpg)
+    if (tseId) {
+      const candidateDir = path.resolve(process.cwd(), 'apps/api/public/candidates');
+      const f1 = path.join(candidateDir, `${tseId}.jpg`);
+      const f2 = path.join(candidateDir, `tse_${tseId}.jpg`);
+      if ((fs.existsSync(f1) && fs.statSync(f1).size > 800) || (fs.existsSync(f2) && fs.statSync(f2).size > 800)) {
+        return `https://eleicoes-progressistas.onrender.com/candidates/${tseId}.jpg`;
+      }
+    }
+
+    // 3. Mapeamento institucional por tseId EXATO (sem fuzzy por nome).
     if (tseId && (KNOWN_PARLIAMENTARY_PHOTOS as Record<string, string>)[tseId]) {
       const knownUrl = (KNOWN_PARLIAMENTARY_PHOTOS as Record<string, string>)[tseId];
       if (tseId) {
@@ -1173,17 +1213,12 @@ export class CandidatesService implements OnModuleInit {
       return knownUrl;
     }
 
-    // 2.5. Arquivo local no backend
-    if (tseId) {
-      const candidateDir = path.resolve(process.cwd(), 'apps/api/public/candidates');
-      const f1 = path.join(candidateDir, `${tseId}.jpg`);
-      const f2 = path.join(candidateDir, `tse_${tseId}.jpg`);
-      if ((fs.existsSync(f1) && fs.statSync(f1).size > 800) || (fs.existsSync(f2) && fs.statSync(f2).size > 800)) {
-        return `https://eleicoes-progressistas.onrender.com/candidates/${tseId}.jpg`;
-      }
+    // 4. Se o banco já tem qualquer URL, usa como fallback (após TSE).
+    if (dbCandidate?.photoUrl && dbCandidate.photoUrl.startsWith('http')) {
+      return dbCandidate.photoUrl;
     }
 
-    // 3. CDN Oficial de Fotos e Santinhos TSE 2026 (Hermes Media / Tribuna PR / Gazeta do Povo)
+    // 5. CDN espelho (não-oficial): somente após TSE.
     if (tseId && /^\d{11,13}$/.test(tseId)) {
       const uf = (state || dbCandidate?.state || 'rj').toLowerCase();
       const cdnUrl = `https://www.tribunapr.com.br/hermes-media/eleicoes/2026/candidatos/${uf}/${tseId}.jpg`;
@@ -1202,43 +1237,23 @@ export class CandidatesService implements OnModuleInit {
       } catch {}
     }
 
-    // 3.5. Busca na API oficial de fotos do TSE (DivulgaCandContas) para 2026
-    if (tseId && /^\d{11,13}$/.test(tseId)) {
-      const tsePhotoUrl = `https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto/2045202026/${tseId}`;
-      try {
-        const check = await axios.head(tsePhotoUrl, {
-          timeout: 4000,
-          headers: { 'User-Agent': 'EleicoesProgressistas/2.2.3 (+https://eleicoes-progressistas.pages.dev)' },
-        });
-        if (check.status === 200) {
-          this.prisma.candidate.updateMany({
-            where: { tseId },
-            data: { photoUrl: tsePhotoUrl },
-          }).catch(() => {});
-          return tsePhotoUrl;
-        }
-      } catch {}
-    }
-
     const effectiveName = name || dbCandidate?.socialName || dbCandidate?.name;
+    const norm = (s?: string | null) =>
+      (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().replace(/\s+/g, ' ');
 
-    // 4. Busca na Wikipédia (PageImages API)
-    const searchTerms = [
-      effectiveName,
-      effectiveName ? effectiveName.split(' ').slice(0, 2).join(' ') : null,
-      effectiveName ? effectiveName.split(' ')[0] : null,
-    ].filter(Boolean) as string[];
-
-    for (const term of searchTerms) {
+    // 6. Wikipédia POR ÚLTIMO e somente com título EXATO (evita homônimo com 1-2 palavras).
+    if (effectiveName && norm(effectiveName).split(' ').length >= 2) {
       try {
-        const encoded = encodeURIComponent(term);
+        const encoded = encodeURIComponent(effectiveName);
         const res = await fetch(`https://pt.wikipedia.org/w/api.php?action=query&titles=${encoded}&prop=pageimages&format=json&pithumbsize=500`);
         if (res.ok) {
           const json = await res.json();
           const pages = json?.query?.pages;
           if (pages) {
             const firstPage = Object.values(pages)[0] as any;
-            if (firstPage?.thumbnail?.source) {
+            const pageTitle = norm(firstPage?.title);
+            // Exige título idêntico ao nome pesquisado e página existente (sem "missing").
+            if (!firstPage?.missing && pageTitle === norm(effectiveName) && firstPage?.thumbnail?.source) {
               const url = firstPage.thumbnail.source;
               if (url.startsWith('http') && !url.includes('Replace_this_image')) {
                 if (tseId) {
@@ -1255,22 +1270,23 @@ export class CandidatesService implements OnModuleInit {
       } catch {}
     }
 
-    // 5. Se for Deputado Federal ou tiver nome, busca na API da Câmara dos Deputados
-    if (name) {
+    // 7. Câmara POR ÚLTIMO e somente com nome EXATO (evita primeiro resultado parecido).
+    if (name && norm(name).split(' ').length >= 2) {
       try {
         const encoded = encodeURIComponent(name);
         const res = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados?nome=${encoded}&ordem=ASC&ordenarPor=nome`);
         if (res.ok) {
           const json = await res.json();
-          const dep = json?.dados?.[0];
-          if (dep?.urlFoto) {
+          const dados: any[] = Array.isArray(json?.dados) ? json.dados : [];
+          const exact = dados.find((d) => norm(d?.nome) === norm(name) || norm(d?.nomeCivil) === norm(name));
+          if (exact?.urlFoto) {
             if (tseId) {
               this.prisma.candidate.updateMany({
                 where: { tseId },
-                data: { photoUrl: dep.urlFoto },
+                data: { photoUrl: exact.urlFoto },
               }).catch(() => {});
             }
-            return dep.urlFoto;
+            return exact.urlFoto;
           }
         }
       } catch {}

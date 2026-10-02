@@ -254,11 +254,12 @@ function mergeWithOfficialPresidents(rawList: any[]): CandidateListItem[] {
   if (Array.isArray(rawList)) {
     for (const c of rawList) {
       if (c.cargo === 'PRESIDENTE') {
+        const norm = (s: any) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().replace(/\s+/g, ' ');
         const match = OFFICIAL_PROGRESSIVE_PRESIDENTS.find(
           (op) =>
             op.tseId === c.tseId ||
-            op.name.toLowerCase() === (c.name || '').toLowerCase() ||
-            (c.party && op.party.toUpperCase() === c.party.toUpperCase())
+            op.id === c.id ||
+            (norm(op.name) === norm(c.name) && op.party.toUpperCase() === (c.party || '').toUpperCase())
         );
         if (match) {
           map.set(match.tseId, {
@@ -277,6 +278,18 @@ function mergeWithOfficialPresidents(rawList: any[]): CandidateListItem[] {
           continue;
         }
       }
+      const normKey = (s: any) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().replace(/\s+/g, ' ');
+      // Deduplica por tseId numérico ou por nome+cargo+uf (evita seed + API duplicados).
+      const dedupKey = c.tseId && /^\d+$/.test(String(c.tseId))
+        ? `tse:${c.tseId}|${c.cargo}`
+        : `nom:${normKey(c.socialName || c.name)}|${c.cargo}|${c.state || ''}`;
+      const alreadyExists = Array.from(map.values()).some((e: any) => {
+        const ek = e.tseId && /^\d+$/.test(String(e.tseId))
+          ? `tse:${e.tseId}|${e.cargo}`
+          : `nom:${normKey(e.socialName || e.name)}|${e.cargo}|${e.state || ''}`;
+        return ek === dedupKey;
+      });
+      if (alreadyExists) continue;
       const key = c.id || c.tseId || `${c.cargo}_${c.name}`;
       map.set(key, c);
     }
