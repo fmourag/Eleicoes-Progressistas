@@ -41,7 +41,7 @@ export class StaticAssetsController {
     }
 
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    return res.send('644c60e50971ba3ac95403a98556b44c131dabccdd54aa3414f765fc64fde10c\n');
+    return res.send('72799d22d732c3a58b399a095ec8390e48869699b58927361b80eae255950b7a\n');
   }
 
   @Get(['web', 'web/*path'])

@@ -1,4 +1,4 @@
-# Operações — Eleições Progressistas v2.2.12
+# Operações — Eleições Progressistas v2.2.21
 
 ## 🚀 Comandos Rápidos
 
@@ -47,7 +47,7 @@ npm run test:feedback
 | API Backend | https://eleicoes-progressistas.onrender.com |
 | Beta Sideload APK | https://eleicoes-progressistas.onrender.com/beta |
 | Feedback Cívico | https://eleicoes-progressistas.onrender.com/feedback |
-| Dashboard Feedbacks | https://eleicoes-progressistas.onrender.com/feedback/dashboard |
+| Dashboard Feedbacks | https://eleicoes-progressistas.onrender.com/feedback/painel |
 | Supabase | https://supabase.com/dashboard/project/zsrjpitpyhsmsxerzxzc |
 | Render | https://dashboard.render.com |
 | Cloudflare | https://dash.cloudflare.com |

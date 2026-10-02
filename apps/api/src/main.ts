@@ -177,14 +177,24 @@ async function bootstrap() {
   const expressApp = app.getHttpAdapter().getInstance();
   const telemetryService = app.get(TelemetryService);
 
-  // Compatibilidade transparente: roteia requisições de /api/feedback para /feedback (GET, POST, CSV, painel)
+  // Compatibilidade transparente: roteia base /api/feedback para /feedback (POST compat + HTML),
+  // preservando endpoints JSON no NestJS (/dashboard, /export.csv, /play-testers/*).
+  // Sem isso, /api/feedback/dashboard (JSON com auth) era reescrito para /feedback/dashboard (sem handler) → 404.
+  const FEEDBACK_JSON_PREFIXES = ['/api/feedback/dashboard', '/api/feedback/export.csv', '/api/feedback/play-testers'];
   expressApp.use((req: Request, _res: Response, next: () => void) => {
-    if (req.url === '/api/feedback') {
-      req.url = '/feedback';
-    } else if (req.url.startsWith('/api/feedback?')) {
-      req.url = '/feedback' + req.url.substring('/api/feedback'.length);
-    } else if (req.url.startsWith('/api/feedback/')) {
-      req.url = req.url.replace(/^\/api\/feedback/, '/feedback');
+    const urlPath = req.url.split('?')[0];
+    // '/api/feedback/dashboard-view' tem '-' após 'dashboard', não '/' — cai no rewrite HTML, correto.
+    const isJsonApi = FEEDBACK_JSON_PREFIXES.some(
+      (p) => urlPath === p || urlPath.startsWith(p + '/'),
+    );
+    if (!isJsonApi) {
+      if (req.url === '/api/feedback') {
+        req.url = '/feedback';
+      } else if (req.url.startsWith('/api/feedback?')) {
+        req.url = '/feedback' + req.url.substring('/api/feedback'.length);
+      } else if (req.url.startsWith('/api/feedback/')) {
+        req.url = req.url.replace(/^\/api\/feedback/, '/feedback');
+      }
     }
     next();
   });
@@ -264,12 +274,8 @@ async function bootstrap() {
     expressApp.use('/candidates', expressStatic(candidatesDir, { maxAge: '7d' }));
   }
 
-  if (existsSync(apiStaticDir)) {
-    app.useStaticAssets(apiStaticDir, {
-      prefix: '/',
-    });
-    logger.log(`API static assets served from ${apiStaticDir}`);
-  }
+  // NOTE: static assets registrados APÓS rotas explícitas (ver abaixo) para evitar
+  // shadowing de /download/apk pelo diretório static/download/apk/ (redirect 301 trailing-slash).
 
   // 1. Rotas do App e Portal no NestJS
   expressApp.get('/privacidade', (_req: Request, res: Response) => {
@@ -284,7 +290,7 @@ async function bootstrap() {
     process.env.GITHUB_RELEASE_APK_URL ||
     'https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.21/eleicoes-progressistas-v2.2.21-beta.apk';
 
-  expressApp.get(['/download/apk', '/app.apk', '/download/latest', '/download/apk-arm64'], (req: Request, res: Response) => {
+  expressApp.get(['/download/apk', '/download/apk/', '/app.apk', '/download/latest', '/download/apk-arm64'], (req: Request, res: Response) => {
     try {
       const userAgent = (req.headers['user-agent'] as string) || '';
       const referer = (req.headers['referer'] as string) || undefined;
@@ -304,22 +310,35 @@ async function bootstrap() {
       return res.sendFile(shaPath);
     }
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.send('644c60e50971ba3ac95403a98556b44c131dabccdd54aa3414f765fc64fde10c\n');
+    res.send('72799d22d732c3a58b399a095ec8390e48869699b58927361b80eae255950b7a\n');
   });
 
   expressApp.get('/feedback', (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(FEEDBACK_HTML);
   });
-  expressApp.get(['/feedback/painel', '/painel', '/admin/feedback', '/api/feedback/painel', '/api/feedback/dashboard-view'], (_req: Request, res: Response) => {
+  expressApp.get(['/feedback/painel', '/feedback/painel/', '/feedback/dashboard-view', '/painel', '/admin/feedback', '/api/feedback/painel', '/api/feedback/dashboard-view'], (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(DASHBOARD_HTML);
+  });
+  // Alias de compatibilidade: docs antigas apontavam /feedback/dashboard (404).
+  // Redireciona para o canônico /feedback/painel. JSON continua em /api/feedback/dashboard (Nest, com auth).
+  expressApp.get(['/feedback/dashboard', '/feedback/dashboard/'], (_req: Request, res: Response) => {
+    res.redirect(301, '/feedback/painel');
   });
 
   expressApp.get(['/dashboard', '/painel/acessos', '/metricas', '/acessos'], (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(ACCESS_DASHBOARD_HTML);
   });
+
+  // Static servido DEPOIS das rotas explícitas para não sombrear /download/apk, /feedback/*, etc.
+  if (existsSync(apiStaticDir)) {
+    app.useStaticAssets(apiStaticDir, {
+      prefix: '/',
+    });
+    logger.log(`API static assets served from ${apiStaticDir}`);
+  }
 
   // 2. Redirecionamento 301 da Web e Raiz para Cloudflare Pages
   expressApp.get(['/', '/web', '/web/*path'], (_req: Request, res: Response) => {

@@ -2951,4 +2951,4 @@ export const OFFICIAL_STATE_DEPUTIES_RJ: OfficialCandidateSeed[] = [
     profileScores: { p1: 0.95, p2: 0.96, p3: 0.90, p4: 0.92, p5: 0.91, p6: 0.95, p7: 0.96, p8: 0.88, p9: 0.95, p10: 0.88, p11: 0.96, p12: 0.97, p13: 0.92 },
     visible: true,
   }
-\n];
+];

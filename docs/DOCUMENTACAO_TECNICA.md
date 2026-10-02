@@ -1,7 +1,7 @@
 ---
 title: "Documentação Técnica"
-version: "2.2.12"
-last_updated: "2026-09-21"
+version: "2.2.21"
+last_updated: "2026-10-02"
 ---
 
 # Documentação Técnica
@@ -10,7 +10,7 @@ last_updated: "2026-09-21"
 
 ## Visão geral da aplicação
 - **Nome:** Eleições Progressistas
-- **Versão:** 2.2.12
+- **Versão:** 2.2.21
 - **Arquitetura:** Mobile (Expo React-Native) ↔ Supabase Auth ↔ NestJS API ↔ FastAPI Matching Service ↔ PostgreSQL
 - **Principais módulos:** Auth, Priorities Matching, Candidate Management, Geo, ETL, CI/CD, Cola Eleitoral, Watchdog (Observatório de Mandatos), Ads (Anúncios Éticos), Finance (Sustentabilidade PIX), Public-API (Tiered API), Reports (Relatórios B2B)
 
@@ -560,6 +560,20 @@ RankMatchDto {
 | GET | `/api/reports/admin/orders` | Admin (`x-admin-secret`) | — | Listagem de pedidos corporativos recebidos |
 | PATCH | `/api/reports/admin/orders/:id/confirm` | Admin (`x-admin-secret`) | `{ paymentRef }` | Conciliação manual de pagamento PIX e liberação |
 | PATCH | `/api/reports/admin/orders/:id/deliver` | Admin (`x-admin-secret`) | — | Marcação formal de entrega |
+
+#### Feedback & Painel Cívico (HTML × JSON)
+| Método | Endpoint | Auth | Body/Query | Response |
+|--------|----------|------|------|----------|
+| POST | `/api/feedback` | Não (throttle 10 req/min) | `CreateFeedbackDto { device, nps (0-10), problema, ... }` | `201 { id, protocol (FB-...), reviewCta }` |
+| GET | `/feedback` | Não | — | `FEEDBACK_HTML` (formulário cívico) |
+| GET | `/feedback/painel`, `/painel`, `/admin/feedback` | Não | — | `DASHBOARD_HTML` (painel, pede token admin no cliente) |
+| GET | `/api/feedback/painel`, `/api/feedback/dashboard-view` | Não | — | `DASHBOARD_HTML` (aliases HTML) |
+| GET | `/feedback/dashboard` | Não | — | `301 → /feedback/painel` (alias legado de docs antigas) |
+| GET | `/api/feedback/dashboard` | Admin (`x-admin-token`/`x-admin-key` ou `?token=`) | `token` | JSON agregados `{ total, avgNps, playTestersCount, ultimos }` |
+| GET | `/api/feedback/export.csv` | Admin (mesmo esquema) | `token` | Download CSV (`Content-Disposition: attachment`) |
+| GET | `/api/feedback/play-testers/export` | Admin (mesmo esquema) | `token` | CSV formatado para importação no Play Console |
+
+> **Nota de roteamento (`apps/api/src/main.ts`):** middleware de compatibilidade reescreve `/api/feedback*` → `/feedback*`, **exceto** os endpoints JSON (`FEEDBACK_JSON_PREFIXES = ['/api/feedback/dashboard', '/api/feedback/export.csv', '/api/feedback/play-testers']`) — sem essa exceção o dashboard JSON caía em 404. Assets estáticos são registrados **depois** das rotas explícitas para não sombrear `/download/apk` (o diretório `static/download/apk/` causava 301 com trailing-slash); o handler explícito cobre `/download/apk` **e** `/download/apk/` com 302 para o GitHub Release. Auth admin via `isValidAdmin()` (`ADMIN_SECRET` ou `ADMIN_FEEDBACK_TOKEN`).
 
 #### Health
 | Método | Endpoint | Response |

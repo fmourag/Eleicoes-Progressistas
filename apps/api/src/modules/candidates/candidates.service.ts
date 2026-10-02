@@ -1,4 +1,4 @@
-import { Injectable, Inject, Optional, OnModuleInit } from '@nestjs/common';
+import { Injectable, Inject, Logger, Optional, OnModuleInit } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
@@ -422,6 +422,7 @@ export function buildGovernmentPlanDetail(candidate: any): GovernmentPlanDetail 
 
 @Injectable()
 export class CandidatesService implements OnModuleInit {
+  private readonly logger = new Logger(CandidatesService.name);
   private candidatesCache = new Map<string, { data: any; expiresAt: number }>();
   private readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos de cache em memória
 
@@ -432,6 +433,26 @@ export class CandidatesService implements OnModuleInit {
 
   async onModuleInit() {
     try {
+      // 0. Limpeza de candidatos inválidos ou com cargo errado no banco de dados
+      // Remove pres_glauber (Glauber Braga estava incorretamente como PRESIDENTE — é Dep. Federal)
+      await this.prisma.candidate.deleteMany({
+        where: {
+          tseId: { in: ['pres_glauber'] },
+        },
+      });
+      // Remove duplicatas do Lula (manter apenas o registro com tseId canônico)
+      const lulaEntries = await this.prisma.candidate.findMany({
+        where: {
+          name: { contains: 'Lula', mode: 'insensitive' },
+          cargo: 'PRESIDENTE',
+        },
+        orderBy: { createdAt: 'asc' },
+      });
+      if (lulaEntries.length > 1) {
+        const toDelete = lulaEntries.slice(1).map((e: any) => e.id);
+        await this.prisma.candidate.deleteMany({ where: { id: { in: toDelete } } });
+      }
+
       // 1. Atualização oficial da vice de Eduardo Paes no Rio de Janeiro (Jane Reis - MDB)
       await this.prisma.candidate.updateMany({
         where: {
@@ -927,7 +948,7 @@ export class CandidatesService implements OnModuleInit {
 
       return result;
     } catch (error) {
-      console.warn(`[CandidatesService] Database error or offline: ${(error as Error).message}`);
+      this.logger.warn(`[CandidatesService] Database error or offline: ${(error as Error).message}`);
       return {
         results: [],
         isFallback: true,

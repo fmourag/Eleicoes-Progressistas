@@ -13,7 +13,7 @@ O Eleições Progressistas opera sob uma arquitetura consolidada em um único se
 - **API REST NestJS:** Endpoints em `/api/*` (`/api/candidates`, `/api/health`, `/api/feedback`, etc.).
 - **Frontend SPA (Expo Web):** Servido diretamente em `/web/` e redirecionado na raiz `/`.
 - **Download do APK de Sideload:** Servido estaticamente em `/download/apk` e `/download/apk/sha256`.
-- **Módulo de Feedback & Beta:** Páginas e APIs em `/feedback`, `/feedback/dashboard`, `/beta` e `/privacidade`.
+- **Módulo de Feedback & Beta:** Páginas e APIs em `/feedback`, `/feedback/painel` (JSON em `/api/feedback/dashboard` com auth), `/beta` e `/privacidade`.
 
 ---
 
@@ -102,10 +102,10 @@ Quando um novo APK for compilado via EAS Build:
 
 ### Endpoints de Diagnóstico:
 - **API Health:** `https://eleicoes-progressistas.onrender.com/api/health`
-- **Download do APK:** `https://eleicoes-progressistas.onrender.com/download/apk` (302 Redirect para GitHub Release v2.2.20)
+- **Download do APK:** `https://eleicoes-progressistas.onrender.com/download/apk` (302 Redirect para GitHub Release v2.2.21)
 - **Hash de Integridade:** `https://eleicoes-progressistas.onrender.com/download/apk/sha256`
 - **Aplicação Web (Cloudflare Pages):** `https://eleicoes-progressistas.pages.dev/` (com 301 Redirect a partir de `/` e `/web/`)
-- **Dashboard de Feedback:** `https://eleicoes-progressistas.onrender.com/feedback/dashboard`
+- **Dashboard de Feedback:** `https://eleicoes-progressistas.onrender.com/feedback/painel` (alias legado `/feedback/dashboard` redireciona 301 para o canônico)
 
 ### Acompanhamento de Logs:
 No painel do Render, selecione o serviço `eleicoes-progressistas` > aba **Logs**.  
