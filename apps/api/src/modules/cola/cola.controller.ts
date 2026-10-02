@@ -11,6 +11,8 @@ export class ColaController {
   /**
    * Visualização direta do PDF no navegador (inline).
    * Exemplo: GET /api/cola/pdf?ids=id1,id2&state=RJ
+   * Nota de privacidade: prefira POST /api/cola/pdf (body) para não expor
+   * intenção de voto na URL/logs. GET mantido por compatibilidade.
    */
   @Throttle({ default: { limit: 15, ttl: 60000 } })
   @Get('pdf')
@@ -37,7 +39,7 @@ export class ColaController {
       'Content-Type': 'application/pdf',
       'Content-Disposition': 'inline; filename="cola-eleitoral-2026.pdf"',
       'Content-Length': pdfBuffer.length,
-      'Cache-Control': 'no-cache',
+      'Cache-Control': 'no-store',
     });
 
     res.status(HttpStatus.OK).end(pdfBuffer);
@@ -46,6 +48,7 @@ export class ColaController {
   /**
    * Download direto do arquivo PDF (attachment).
    * Exemplo: GET /api/cola/pdf/download?ids=id1,id2&state=RJ
+   * Nota de privacidade: prefira POST /api/cola/pdf com {"download": true} via body.
    */
   @Throttle({ default: { limit: 15, ttl: 60000 } })
   @Get('pdf/download')
@@ -72,7 +75,7 @@ export class ColaController {
       'Content-Type': 'application/pdf',
       'Content-Disposition': 'attachment; filename="cola-eleitoral-2026.pdf"',
       'Content-Length': pdfBuffer.length,
-      'Cache-Control': 'no-cache',
+      'Cache-Control': 'no-store',
     });
 
     res.status(HttpStatus.OK).end(pdfBuffer);

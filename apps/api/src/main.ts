@@ -30,8 +30,15 @@ async function bootstrap() {
     if (!process.env.PIX_WEBHOOK_SECRET) {
       missingSecrets.push('PIX_WEBHOOK_SECRET (essencial para autenticar webhooks de doações)');
     }
+    const criticalMissing = missingSecrets.filter((s) => s.startsWith('JWT_SECRET') || s.startsWith('DEVICE_HASH_SALT'));
+    if (criticalMissing.length > 0) {
+      logger.error(
+        `[SEGURANÇA] Variáveis críticas ausentes em produção, abortando boot: ${criticalMissing.join(', ')}`,
+      );
+      process.exit(1);
+    }
     if (missingSecrets.length > 0) {
-      logger.warn(`[AVISO DE SEGURANÇA] Variáveis críticas não configuradas para produção: ${missingSecrets.join(', ')}`);
+      logger.warn(`[AVISO DE SEGURANÇA] Variáveis recomendadas não configuradas para produção: ${missingSecrets.join(', ')}`);
     }
   }
 

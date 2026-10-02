@@ -433,10 +433,21 @@ export class MatchingService {
       let totalWeight = 0;
       let totalWeightedFocus = 0;
       const priorityAligned: string[] = [];
+      let isEstimated = false;
+
+      if (!cScores || Object.keys(cScores).length === 0) {
+        isEstimated = true;
+      }
 
       for (const p of pillars) {
         const rawVal = cScores[p] as unknown;
-        let candVal: number = typeof rawVal === 'number' ? rawVal : 0.5;
+        let candVal: number;
+        if (typeof rawVal === 'number') {
+          candVal = rawVal;
+        } else {
+          candVal = 0.5;
+          isEstimated = true;
+        }
         if (candVal > 1.0) candVal = candVal / 100.0;
 
         const weight = priorities.has(p) ? 3.0 : 1.0;
@@ -469,7 +480,7 @@ export class MatchingService {
         matchScore: hasInsufficientData ? null : score,
         hasInsufficientData,
         matchReason: hasInsufficientData ? INSUFFICIENT_DATA_LABEL : reason,
-        isEstimated: false,
+        isEstimated: hasInsufficientData ? true : isEstimated,
         priorityAligned: hasInsufficientData ? [] : priorityAligned,
         candidate: {
           id: cand.id,

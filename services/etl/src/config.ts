@@ -9,7 +9,7 @@ function env(key: string, fallback?: string): string {
 export const config = {
   db: env('DATABASE_URL'),
   tse: {
-    divulgaUrl: env('TSE_DIVULGA_URL', 'https://divulgacaocontas.tse.jus.br/divulga/rest/v1'),
+    divulgaUrl: env('TSE_DIVULGA_URL', 'https://divulgacandcontas.tse.jus.br/divulga/rest/v1'),
     repositorioUrl: env('TSE_REPOSITORIO_URL', 'https://cdn.tse.jus.br/estatistica/sead/odsele'),
     resultadosUrl: env('TSE_RESULTADOS_URL', 'https://resultados.tse.jus.br/oficial'),
   },

@@ -61,24 +61,7 @@ const FALLBACK_CANDIDATES: MatchResult[] = [
       coalition: 'Trabalhismo e Desenvolvimento Nacional (PDT)',
     },
   },
-  {
-    id: 'pres_glauber',
-    score: 95,
-    candidate: {
-      id: 'pres_glauber',
-      name: 'Glauber de Medeiros Braga',
-      socialName: 'Glauber Braga',
-      viceName: 'Samia Bomfim',
-      party: 'PSOL',
-      partyNumber: 50,
-      numeroUrna: '50',
-      tseId: 'pres_glauber',
-      cargo: 'PRESIDENTE',
-      fichaLimpa: true,
-      photoUrl: '/candidates/pres_glauber.jpg',
-      coalition: 'Federação PSOL / REDE',
-    },
-  },
+
   {
     id: 'pres_leonardo',
     score: 94,

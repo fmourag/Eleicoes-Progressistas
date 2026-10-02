@@ -11,7 +11,7 @@ export const TSE_CONFIG = {
   API_BASE_URL: 'https://divulgacandcontas.tse.jus.br/divulga/rest/v1',
   PHOTO_BASE_URL: 'https://divulgacandcontas.tse.jus.br/divulgacand/rest/v1/candidatura/buscar/foto',
   FALLBACK_CSV_URL: 'https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2026.zip',
-  USER_AGENT: 'EleicoesProgressistas/2.2.3 (+https://eleicoes-progressistas.pages.dev; contato: fmourag@gmail.com)',
+  USER_AGENT: 'EleicoesProgressistas/2.2.21 (+https://eleicoes-progressistas.pages.dev; contato: fmourag@gmail.com)',
 
   // Defaults
   DEFAULT_ANO: 2026,
@@ -36,6 +36,10 @@ export const TSE_CONFIG = {
     { codigo: 5, nome: 'Senador' },
     { codigo: 6, nome: 'Deputado Federal' },
     { codigo: 7, nome: 'Deputado Estadual' },
-    { codigo: 8, nome: 'Deputado Distrital' },
+    { codigo: 8, nome: 'Deputado Distrital / Prefeito (conforme eleição)' },
+    { codigo: 11, nome: 'Vereador' },
+    { codigo: 12, nome: 'Vice-Presidente' },
+    { codigo: 13, nome: 'Vice-Governador' },
+    { codigo: 14, nome: 'Vice-Prefeito' },
   ],
 };

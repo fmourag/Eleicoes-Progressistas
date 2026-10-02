@@ -28,8 +28,8 @@ export class AdminGuard implements CanActivate {
         } catch {}
       }
 
-      // Em desenvolvimento estrito, permite chaves locais para testes
-      if (!isProduction && (cleanKey === 'dev-secret' || cleanKey === 'admin')) {
+    // Em desenvolvimento estrito, permite chaves locais para testes
+      if (process.env.NODE_ENV === 'development' && (cleanKey === 'dev-secret' || cleanKey === 'admin')) {
         return true;
       }
     }

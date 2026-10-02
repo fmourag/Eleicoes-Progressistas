@@ -46,7 +46,7 @@ Prefixo global `api` com exclusões SPA/estáticas em `apps/api/src/main.ts:80` 
 - Auth: `POST /api/auth/sync`, `GET /api/auth/me`, `POST /api/auth/dev-login` (tabela em `docs/DOCUMENTACAO_TECNICA.md:486`).
 - Matching: `POST /api/matching/rank` e alias `POST /api/matching/compute`, body `RankMatchDto { priority_pillars? ≤3, location? {uf, ibge_code}, includePending? }` (`docs/DOCUMENTACAO_TECNICA.md:493`). Stateless: `match_results` não recebe escrita nesse fluxo.
 - Candidates: `GET /api/candidates?state&municipality&cargo&party&search` (respeita circunscrição: PRESIDENTE nacional), `GET /api/candidates/tse/dados-abertos-search`, `GET /api/candidates/tse/live`, `GET /api/candidates/tse/source-info`, `GET /api/candidates/cargos/:level`, `GET /api/candidates/:id`, `GET /api/candidates/:id/raio-x` (ficha limpa, doações, votações, `justificativa` + gap por pilar).
-- Quiz: `GET /api/quiz/:version`, `POST /api/quiz/submit`.
+- Quiz: removido — unificado em `POST /api/matching/rank` (Consulta por Prioridades, até 3 pilares). Rotas legadas `/api/quiz/*` retornam 404.
 - Geo: `GET /api/geo/cep/:cep`.
 - Proposals: `POST /api/proposals/translate-batch`, `GET /api/proposals/translation-stats`.
 - Cola: `GET /api/cola/pdf`, `GET /api/cola/pdf/download`, `POST /api/cola/pdf` (PDFKit, ordem de urna Res. TSE 23.736/2024).

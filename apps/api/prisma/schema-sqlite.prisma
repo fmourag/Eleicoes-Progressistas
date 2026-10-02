@@ -51,15 +51,15 @@ enum TranslationStatus {
 // ─── Models ──────────────────────────────────────────
 
 model User {
-  id            String    @id @default(uuid()) 
-  email         String    @unique
-  passwordHash  String
-  cep           String
-  municipality  String
-  state         String
-  level         UserLevel @default(VOTER)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  cep          String
+  municipality String
+  state        String
+  level        UserLevel @default(VOTER)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   savedCandidates SavedCandidate[]
 
@@ -67,37 +67,41 @@ model User {
 }
 
 model Candidate {
-  id                  String            @id @default(uuid()) 
-  tseId               String
-  electionYear        Int               @default(2026)
-  name                String
-  socialName          String?
-  viceName            String?
-  party               String
-  partyNumber         Int
-  numeroUrna          String?
-  cargo               Cargo
-  level               ElectionLevel
-  candidaturaStatus   CandidaturaStatus @default(EM_ANALISE)
-  dataRegistro        DateTime          @default(now())
-  dataJuntaElectoral DateTime?
-  municipality        String
-  state               String
-  cpfHash             String
-  photoUrl            String?
-  fichaLimpa          Boolean           @default(false)
-  financedBy          Json?
-  votingHistory       Json?
-  proposals           Json?
-  governmentPlanUrl   String?
-  governmentPlanSummary String?
-  profileScores       Json?             // { p1: float, ..., p13: float }
-  coalition           String?
-  isProgressiveSupported Boolean          @default(false)
-  supportedBy         String?
-  electionResult      ElectionResult?
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
+  id                     String            @id @default(uuid())
+  tseId                  String
+  electionYear           Int               @default(2026)
+  name                   String
+  socialName             String?
+  viceName               String?
+  party                  String
+  partyNumber            Int
+  numeroUrna             String?
+  cargo                  Cargo
+  level                  ElectionLevel
+  candidaturaStatus      CandidaturaStatus @default(EM_ANALISE)
+  dataRegistro           DateTime          @default(now())
+  dataJuntaElectoral     DateTime?
+  municipality           String
+  state                  String
+  cpfHash                String
+  photoUrl               String?
+  fichaLimpa             Boolean           @default(false)
+  financedBy             Json?
+  votingHistory          Json?
+  proposals              Json?
+  governmentPlanUrl      String?
+  governmentPlanSummary  String?
+  profileScores          Json? // { p1: float, ..., p13: float }
+  coalition              String?
+  isProgressiveSupported Boolean           @default(false)
+  supportedBy            String?
+  electionResult         ElectionResult?
+  rawTseData             Json?
+  source                 String            @default("LEGACY")
+  tseValidated           Boolean           @default(false)
+  visible                Boolean           @default(true)
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
 
   matchResults    MatchResult[]
   savedCandidates SavedCandidate[]
@@ -117,14 +121,14 @@ model Candidate {
   @@map("candidates")
 }
 
-model MatchResult { // legado: sem escrita do /api/matching/rank (stateless)
-  id          String   @id @default(uuid()) 
-  deviceHash  String   // SHA-256 do dispositivo, NUNCA user_id
-  candidateId String   
+model MatchResult {
+  id          String   @id @default(uuid())
+  deviceHash  String // SHA-256 do dispositivo, NUNCA user_id
+  candidateId String
   score       Float
   createdAt   DateTime @default(now())
 
-  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  candidate Candidate @relation(fields: [candidateId], references: [id])
 
   @@index([deviceHash])
   @@index([candidateId, score(sort: Desc)])
@@ -133,21 +137,21 @@ model MatchResult { // legado: sem escrita do /api/matching/rank (stateless)
 }
 
 model SavedCandidate {
-  id          String   @id @default(uuid()) 
-  userId      String   
-  candidateId String   
+  id          String   @id @default(uuid())
+  userId      String
+  candidateId String
   savedAt     DateTime @default(now())
 
-  user        User      @relation(fields: [userId], references: [id])
-  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+  candidate Candidate @relation(fields: [candidateId], references: [id])
 
   @@unique([userId, candidateId])
   @@map("saved_candidates")
 }
 
 model Proposal {
-  id                String            @id @default(uuid()) 
-  candidateId       String            
+  id                String            @id @default(uuid())
+  candidateId       String
   pillar            String
   title             String
   description       String
@@ -158,7 +162,7 @@ model Proposal {
   version           Int               @default(1)
   createdAt         DateTime          @default(now())
 
-  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
 
   @@index([candidateId, pillar])
   @@index([translationStatus])
@@ -166,18 +170,18 @@ model Proposal {
 }
 
 model IntegrityFlag {
-  id          String    @id @default(uuid()) 
-  candidateId String    
-  source      String
-  flagType    String
-  description String
-  severity    String
-  date        DateTime?
-  resolved    Boolean   @default(false)
+  id           String    @id @default(uuid())
+  candidateId  String
+  source       String
+  flagType     String
+  description  String
+  severity     String
+  date         DateTime?
+  resolved     Boolean   @default(false)
   referenceUrl String?
-  createdAt   DateTime  @default(now())
+  createdAt    DateTime  @default(now())
 
-  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
 
   @@index([candidateId, source])
   @@map("integrity_flags")
@@ -196,8 +200,8 @@ model Advertiser {
   id              String           @id @default(uuid())
   name            String
   cnpj            String           @unique
-  category        String           // "ONG", "COOPERATIVA", "EMPRESA_SUSTENTAVEL", "SINDICATO", "INSTITUTO", etc.
-  pillarAlignment Json             // ["p3", "p5", "p12"] — pilares alinhados
+  category        String // "ONG", "COOPERATIVA", "EMPRESA_SUSTENTAVEL", "SINDICATO", "INSTITUTO", etc.
+  pillarAlignment Json // ["p3", "p5", "p12"] — pilares alinhados
   status          AdvertiserStatus @default(PROPOSTA)
   contactName     String?
   contactEmail    String?
@@ -206,45 +210,45 @@ model Advertiser {
   isApproved      Boolean          @default(false) // Requer aprovação manual
   startDate       DateTime         @default(now())
   endDate         DateTime?
-  contractValue   Float?           // Valor do contrato para transparência
+  contractValue   Float? // Valor do contrato para transparência
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   ads             Ad[]
-  
+
   @@index([isActive, isApproved])
   @@index([status])
   @@map("advertisers")
 }
 
 model Ad {
-  id            String   @id @default(uuid())
-  advertiserId  String
-  format        AdFormat
-  title         String
-  description   String
-  imageUrl      String?
-  targetUrl     String
-  pillar        String?  // Para PILAR_SPONSOR (ex: "p3")
-  screen        String?  // "matching", "search", "matching_result"
-  startDate     DateTime?
-  endDate       DateTime?
-  impressions   Int      @default(0)
-  clicks        Int      @default(0)
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  advertiser    Advertiser @relation(fields: [advertiserId], references: [id], onDelete: Cascade)
-  
+  id           String     @id @default(uuid())
+  advertiserId String
+  format       AdFormat
+  title        String
+  description  String
+  imageUrl     String?
+  targetUrl    String
+  pillar       String? // Para PILAR_SPONSOR (ex: "p3")
+  screen       String? // "matching", "search", "matching_result"
+  startDate    DateTime?
+  endDate      DateTime?
+  impressions  Int        @default(0)
+  clicks       Int        @default(0)
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  advertiser   Advertiser @relation(fields: [advertiserId], references: [id], onDelete: Cascade)
+
   @@index([format, isActive, screen])
   @@index([pillar, isActive])
   @@map("ads")
 }
 
 enum AdFormat {
-  CARD_APOIO      // Final da lista de matching (máx 1 por sessão)
-  BANNER          // Topo do feed de busca (80px altura)
-  PILAR_SPONSOR   // Contextual na tela de matching (1ª prioridade)
-  COLA_FOOTER     // Rodapé do PDF da colinha
+  CARD_APOIO // Final da lista de matching (máx 1 por sessão)
+  BANNER // Topo do feed de busca (80px altura)
+  PILAR_SPONSOR // Contextual na tela de matching (1ª prioridade)
+  COLA_FOOTER // Rodapé do PDF da colinha
 }
 
 model AdOptOut {
@@ -252,7 +256,7 @@ model AdOptOut {
   deviceHash String   @unique // SHA-256 do dispositivo
   optedOutAt DateTime @default(now())
   expiresAt  DateTime // 30 dias depois
-  
+
   @@index([deviceHash])
   @@index([expiresAt])
   @@map("ad_opt_outs")
@@ -275,15 +279,15 @@ enum ApiKeyTier {
 
 model ApiKey {
   id           String     @id @default(uuid())
-  keyHash      String     @unique          // SHA-256 da chave; chave plena só na criação
+  keyHash      String     @unique // SHA-256 da chave; chave plena só na criação
   tier         ApiKeyTier @default(FREE)
-  contactEmail String?                     // uso: gestão da chave/abuso; nunca exposto publicamente
-  purpose      String?                     // declaração de uso (pesquisa, jornalismo...)
-  dailyLimit   Int        @default(1000)   // FREE 1000 | PAID 10000
+  contactEmail String? // uso: gestão da chave/abuso; nunca exposto publicamente
+  purpose      String? // declaração de uso (pesquisa, jornalismo...)
+  dailyLimit   Int        @default(1000) // FREE 1000 | PAID 10000
   usageCount   Int        @default(0)
   usageResetAt DateTime   @default(now())
   isActive     Boolean    @default(true)
-  expiresAt    DateTime?                   // PAID: renovação mensal; FREE: null
+  expiresAt    DateTime? // PAID: renovação mensal; FREE: null
   createdAt    DateTime   @default(now())
 
   @@index([tier, isActive])
@@ -312,13 +316,13 @@ enum PledgeStatus {
 
 model LegislativeVote {
   id             String          @id @default(uuid())
-  house          String          // "CAMARA" | "SENADO"
+  house          String // "CAMARA" | "SENADO"
   externalId     String          @unique
   date           DateTime
   description    String
-  summaryUrl     String          // link oficial da votação (auditabilidade)
-  pillarMapping  Json?           // ["p3","p9"]
-  mappedBy       String?         // "LLM" | "ADMIN"
+  summaryUrl     String // link oficial da votação (auditabilidade)
+  pillarMapping  Json? // ["p3","p9"]
+  mappedBy       String? // "LLM" | "ADMIN"
   createdAt      DateTime        @default(now())
   candidateVotes CandidateVote[]
 
@@ -327,13 +331,13 @@ model LegislativeVote {
 }
 
 model CandidateVote {
-  id          String          @id @default(uuid())
+  id          String     @id @default(uuid())
   candidateId String
   voteId      String
   choice      VoteChoice
 
-  candidate   Candidate       @relation(fields: [candidateId], references: [id], onDelete: Cascade)
-  vote        LegislativeVote @relation(fields: [voteId], references: [id], onDelete: Cascade)
+  candidate Candidate       @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  vote      LegislativeVote @relation(fields: [voteId], references: [id], onDelete: Cascade)
 
   @@unique([candidateId, voteId])
   @@index([voteId])
@@ -350,7 +354,7 @@ model Pledge {
   updatedAt   DateTime     @updatedAt
   createdAt   DateTime     @default(now())
 
-  candidate   Candidate    @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
 
   @@index([candidateId, status])
   @@map("pledges")
@@ -368,9 +372,9 @@ model ReportProduct {
   slug          String        @unique
   title         String
   description   String
-  category      String        // "PRIORIDADES", "COMPROMETIMENTO", "PROMESSAS", "FINANCIAMENTO"
+  category      String // "PRIORIDADES", "COMPROMETIMENTO", "PROMESSAS", "FINANCIAMENTO"
   priceCents    Int
-  publicSummary String        // teaser público, só agregados
+  publicSummary String // teaser público, só agregados
   createdAt     DateTime      @default(now())
   orders        ReportOrder[]
 
@@ -381,9 +385,9 @@ model ReportOrder {
   id          String            @id @default(uuid())
   productId   String
   buyerOrg    String
-  buyerEmail  String            // contato B2B; finalidade: entrega e nota; nunca exposto
+  buyerEmail  String // contato B2B; finalidade: entrega e nota; nunca exposto
   status      ReportOrderStatus @default(SOLICITADO)
-  paymentRef  String?           // id da transação PIX confirmada offline
+  paymentRef  String? // id da transação PIX confirmada offline
   deliveredAt DateTime?
   createdAt   DateTime          @default(now())
   product     ReportProduct     @relation(fields: [productId], references: [id])
@@ -402,25 +406,23 @@ model AggregateCounter {
 }
 
 model Feedback {
-  id             Int      @id @default(autoincrement())
-  protocol       String   @unique
-  testerName     String?
-  nome           String?
-  email          String?
-  type           String   @default("APP_REVIEW")
+  id                Int      @id @default(autoincrement())
+  protocol          String   @unique
+  testerName        String?
+  nome              String?
+  email             String?
+  type              String   @default("APP_REVIEW")
   playTesterEmail   String?
   playTesterConsent Boolean?
-  device         String
-  androidVersion String?
-  appVersion     String   @default("2.2.2")
-  nps            Int
-  problema       String
-  descricao      String?
-  screenshotDesc String?
-  createdAt      DateTime @default(now())
+  device            String
+  androidVersion    String?
+  appVersion        String   @default("2.2.2")
+  nps               Int
+  problema          String
+  descricao         String?
+  screenshotDesc    String?
+  createdAt         DateTime @default(now())
 
   @@index([protocol])
   @@index([createdAt])
 }
-
-

@@ -6,9 +6,9 @@ last_updated: "2026-09-08"
 
 # Política de Privacidade — Eleições Progressistas
 
-**Mantenedora:** [NOME_DA_ENTIDADE_MANTENEDORA]  
-**Vigência:** [DATA_DE_VIGÊNCIA]  
-**Encarregado (DPO):** [EMAIL_DPO]  
+**Mantenedora:** Eleições Progressistas — Projeto Cívico Independente  
+**Vigência:** 2026-10-02  
+**Encarregado (DPO):** fmourag@gmail.com  
 
 > **Resumo:** Documento oficial sobre como os dados não-identificáveis são manipulados em conformidade com a LGPD e regras das App Stores, garantindo proteção por anonimização (Device Hash).
 
@@ -98,7 +98,7 @@ Como não coletamos nem tratamos dados cadastrais nem mantemos perfil de opiniõ
 - **Revogar consentimento** desinstalando o app (efeito imediato);
 - **Peticionar à ANPD** caso entenda haver violação.
 
-Para exercer direitos fora do app: envie e-mail para **[EMAIL_DPO]** informando o `device_hash` exibido em **Perfil > Privacidade** (opcional) ou solicite exclusão ampla do dispositivo atual. Responderemos em até 15 dias.
+Para exercer direitos fora do app: envie e-mail para **fmourag@gmail.com** informando o `device_hash` exibido em **Perfil > Privacidade** (opcional) ou solicite exclusão ampla do dispositivo atual. Responderemos em até 15 dias.
 
 ### 10. Segurança
 - TLS 1.2+ obrigatório (HSTS), criptografia em repouso no PostgreSQL/Supabase.
@@ -113,7 +113,8 @@ O app é de livre acesso e não direciona conteúdo a menores. Não coletamos da
 Hospedagem pode ocorrer fora do Brasil (ex: Supabase/AWS). Garantimos padrão de proteção compatível com a LGPD (art. 33) via cláusulas contratuais.
 
 ### 13. Google Play Data Safety — Resumo Declarado
-- **Coleta de dados:** Não coleta dados pessoais do usuário.
+- **Matching/Cola:** não coletam dados pessoais nem opinião política (stateless, cola 100% local).
+- **Opcionais com coleta:** Feedback voluntário (nome/e-mail/dispositivo) e Auth opcional (e-mail/CEP) — ver Data Safety completo.
 - **Compartilhamento:** Não compartilha dados com terceiros.
 - **Criptografia em trânsito:** Sim. **Exclusão solicitável:** Sim (Limpar Meus Dados).
 
@@ -121,5 +122,5 @@ Hospedagem pode ocorrer fora do Brasil (ex: Supabase/AWS). Garantimos padrão de
 Alterações serão comunicadas no app com 7 dias de antecedência. A continuidade do uso após a vigência implica concordância.
 
 ### 15. Contato
-Dúvidas ou solicitações: **[EMAIL_DPO]**  
-Mantenedora: **[NOME_DA_ENTIDADE_MANTENEDORA]** — **[ENDEREÇO/CNPJ, se aplicável]**
+Dúvidas ou solicitações: **fmourag@gmail.com**  
+Mantenedora: **Eleições Progressistas — Projeto Cívico Independente** — contato via e-mail do DPO

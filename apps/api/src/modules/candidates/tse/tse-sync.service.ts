@@ -348,7 +348,7 @@ export class TseSyncService {
           await this.delay(TSE_CONFIG.RATE_LIMIT_DELAY_MS);
           const localPhotoUrl = await this.photoService.downloadAndCachePhoto(
             cand.tseId,
-            String(cand.electionYear || TSE_CONFIG.DEFAULT_ELEICAO_ID),
+            TSE_CONFIG.DEFAULT_ELEICAO_ID,
             cand.photoUrl || undefined,
           );
 

@@ -76,6 +76,11 @@ scripts/sign-aab.py
 # Candidate cache
 apps/api/public/candidates/*.jpg
 
+# Stale tsc output inside src (build goes to dist/)
+packages/shared/src/*.js
+packages/shared/src/*.js.map
+packages/shared/src/*.d.ts
+
 # Temp and office documents
 *.docx
 ~$*

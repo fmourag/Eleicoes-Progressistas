@@ -5,22 +5,9 @@ import { CreatePublicKeyDto } from './dto/create-public-key.dto';
 import { AdminCreateKeyDto } from './dto/admin-create-key.dto';
 import { QueryPublicCandidatesDto } from './dto/query-candidates.dto';
 import * as crypto from 'crypto';
+import { PILLAR_DISPLAY_LIST } from '@np/shared';
 
-export const PUBLIC_PILLARS = [
-  { id: 'p1', label: 'Bem-Estar & Assistência Social', icon: '🏥', description: 'Garantia de segurança alimentar, saneamento básico, habitação popular digna e assistência social integrada.' },
-  { id: 'p2', label: 'Justiça Social & Direitos Humanos', icon: '⚖️', description: 'Combate às desigualdades de gênero, raça e defesa intransigente dos direitos civis.' },
-  { id: 'p3', label: 'Desenvolvimento Sustentável & Meio Ambiente', icon: '🌿', description: 'Transição energética verde, combate ao desmatamento e justiça climática.' },
-  { id: 'p4', label: 'Soberania & Valores Nacionais', icon: '🇧🇷', description: 'Defesa das riquezas estratégicas, fomento à cultura nacional e política externa altiva.' },
-  { id: 'p5', label: 'Reindustrialização & Tecnologia', icon: '🏭', description: 'Nova Indústria Brasil, inovação tecnológica sustentável e geração de empregos qualificados.' },
-  { id: 'p6', label: 'Distribuição Justa de Renda & Tributação Progressiva', icon: '💰', description: 'Tributação de grandes fortunas, valorização do salário mínimo e combate à pobreza.' },
-  { id: 'p7', label: 'Proteção do Vulnerável & Comunidades Tradicionais', icon: '🛡️', description: 'Segurança alimentar, inclusão de PcD, idosos, quilombolas e povos originários.' },
-  { id: 'p8', label: 'Governo Eficiente & Transparência', icon: '📊', description: 'Fiscalização republicana, controle social dos gastos e extinção de privilégios.' },
-  { id: 'p9', label: 'Saúde Integral, Universal & Fortalecimento do SUS', icon: '🩺', description: 'Acesso universal gratuito, saúde da família, valorização dos profissionais da saúde e ampliação da rede de atenção básica.' },
-  { id: 'p10', label: 'Segurança Cidadã, Direitos & Inteligência Policial', icon: '🚨', description: 'Inteligência contra o crime organizado, desmilitarização progressiva, respeito aos direitos humanos e prevenção social nas periferias.' },
-  { id: 'p11', label: 'Educação Pública Emancipatória & Valorização Docente', icon: '📚', description: 'Melhoria na qualidade do ensino através de maior investimento financeiro em escolas públicas, bolsas e valorização docente.' },
-  { id: 'p12', label: 'Trabalho Digno, Renda & Seguridade Trabalhista', icon: '👷', description: 'Valorização do trabalho formal, defesa dos direitos trabalhistas, combate à precarização, segurança jurídica nas relações laborais e qualificação profissional.' },
-  { id: 'p13', label: 'Economia Popular, Solidária & Microcrédito Produtivo', icon: '🤝', description: 'Incentivo aos microempreendedores individuais, desoneração fiscal orientada ao investimento e geração de empregos, desburocratização e microcrédito orientado.' },
-];
+export const PUBLIC_PILLARS = PILLAR_DISPLAY_LIST;
 
 // Registro em memória de downloads diários de CSV para evitar sobrecarga de banco
 const csvDownloadTracker = new Map<string, number>();

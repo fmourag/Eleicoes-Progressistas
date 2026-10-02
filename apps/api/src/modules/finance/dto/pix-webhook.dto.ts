@@ -12,5 +12,5 @@ export class PixWebhookDto {
 
   @IsOptional()
   @IsString()
-  secret?: string;
+  secret?: string; // @deprecated — use header x-webhook-secret; body será ignorado
 }

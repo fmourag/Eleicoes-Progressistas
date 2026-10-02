@@ -24,7 +24,7 @@ export class FinanceController {
     const isProduction = process.env.NODE_ENV === 'production';
 
     if (configuredSecret) {
-      const incomingSecret = secretHeader || dto.secret || '';
+      const incomingSecret = secretHeader || '';
       const secretBuf = Buffer.from(configuredSecret);
       const incomingBuf = Buffer.from(incomingSecret);
 
