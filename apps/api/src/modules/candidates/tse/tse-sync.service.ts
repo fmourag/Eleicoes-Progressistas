@@ -225,7 +225,7 @@ export class TseSyncService {
               }
 
               // Upsert idempotente no Prisma
-              const existing = await this.prisma.candidate.findUnique({
+              let existing = await this.prisma.candidate.findUnique({
                 where: {
                   tseId_electionYear: {
                     tseId: prismaData.tseId,
@@ -234,10 +234,22 @@ export class TseSyncService {
                 },
               });
 
+              if (!existing) {
+                existing = await this.prisma.candidate.findFirst({
+                  where: {
+                    name: prismaData.name,
+                    cargo: prismaData.cargo,
+                    state: prismaData.state,
+                    electionYear: prismaData.electionYear,
+                  },
+                });
+              }
+
               if (existing) {
                 await this.prisma.candidate.update({
                   where: { id: existing.id },
                   data: {
+                    tseId: prismaData.tseId,
                     name: prismaData.name,
                     socialName: prismaData.socialName,
                     party: prismaData.party,
@@ -544,7 +556,7 @@ export class TseSyncService {
         const prismaData = this.mapper.mapCsvRowToPrisma(record);
 
         if (!options.dryRun) {
-          const existing = await this.prisma.candidate.findUnique({
+          let existing = await this.prisma.candidate.findUnique({
             where: {
               tseId_electionYear: {
                 tseId: prismaData.tseId,
@@ -553,10 +565,22 @@ export class TseSyncService {
             },
           });
 
+          if (!existing) {
+            existing = await this.prisma.candidate.findFirst({
+              where: {
+                name: prismaData.name,
+                cargo: prismaData.cargo,
+                state: prismaData.state,
+                electionYear: prismaData.electionYear,
+              },
+            });
+          }
+
           if (existing) {
             await this.prisma.candidate.update({
               where: { id: existing.id },
               data: {
+                tseId: prismaData.tseId,
                 name: prismaData.name,
                 socialName: prismaData.socialName,
                 party: prismaData.party,

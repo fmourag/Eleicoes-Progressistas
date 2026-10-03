@@ -295,7 +295,7 @@ async function bootstrap() {
   });
   const GITHUB_RELEASE_APK_URL =
     process.env.GITHUB_RELEASE_APK_URL ||
-    'https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.21/eleicoes-progressistas-v2.2.21-beta.apk';
+    'https://github.com/fmourag/Eleicoes-Progressistas/releases/download/v2.2.22/eleicoes-progressistas-v2.2.22-beta.apk';
 
   expressApp.get(['/download/apk', '/download/apk/', '/app.apk', '/download/latest', '/download/apk-arm64'], (req: Request, res: Response) => {
     try {
