@@ -1237,60 +1237,7 @@ export class CandidatesService implements OnModuleInit {
       } catch {}
     }
 
-    const effectiveName = name || dbCandidate?.socialName || dbCandidate?.name;
-    const norm = (s?: string | null) =>
-      (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().replace(/\s+/g, ' ');
-
-    // 6. Wikipédia POR ÚLTIMO e somente com título EXATO (evita homônimo com 1-2 palavras).
-    if (effectiveName && norm(effectiveName).split(' ').length >= 2) {
-      try {
-        const encoded = encodeURIComponent(effectiveName);
-        const res = await fetch(`https://pt.wikipedia.org/w/api.php?action=query&titles=${encoded}&prop=pageimages&format=json&pithumbsize=500`);
-        if (res.ok) {
-          const json = await res.json();
-          const pages = json?.query?.pages;
-          if (pages) {
-            const firstPage = Object.values(pages)[0] as any;
-            const pageTitle = norm(firstPage?.title);
-            // Exige título idêntico ao nome pesquisado e página existente (sem "missing").
-            if (!firstPage?.missing && pageTitle === norm(effectiveName) && firstPage?.thumbnail?.source) {
-              const url = firstPage.thumbnail.source;
-              if (url.startsWith('http') && !url.includes('Replace_this_image')) {
-                if (tseId) {
-                  this.prisma.candidate.updateMany({
-                    where: { tseId },
-                    data: { photoUrl: url },
-                  }).catch(() => {});
-                }
-                return url;
-              }
-            }
-          }
-        }
-      } catch {}
-    }
-
-    // 7. Câmara POR ÚLTIMO e somente com nome EXATO (evita primeiro resultado parecido).
-    if (name && norm(name).split(' ').length >= 2) {
-      try {
-        const encoded = encodeURIComponent(name);
-        const res = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados?nome=${encoded}&ordem=ASC&ordenarPor=nome`);
-        if (res.ok) {
-          const json = await res.json();
-          const dados: any[] = Array.isArray(json?.dados) ? json.dados : [];
-          const exact = dados.find((d) => norm(d?.nome) === norm(name) || norm(d?.nomeCivil) === norm(name));
-          if (exact?.urlFoto) {
-            if (tseId) {
-              this.prisma.candidate.updateMany({
-                where: { tseId },
-                data: { photoUrl: exact.urlFoto },
-              }).catch(() => {});
-            }
-            return exact.urlFoto;
-          }
-        }
-      } catch {}
-    }
+    return null;
 
     return null;
   }
