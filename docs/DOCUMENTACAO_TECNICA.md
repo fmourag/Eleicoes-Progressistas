@@ -519,6 +519,18 @@ RankMatchDto {
 | GET | `/api/candidates/cargos/:level` | Não | `level` | `Cargo[]` aplicáveis ao nível |
 | GET | `/api/candidates/:id` | Não | `id` | `Candidate` |
 | GET | `/api/candidates/:id/raio-x` | Não | `id` | `RaioXData` (inclui ficha limpa, doações, votações e memória de cálculo `justificativa` + gap analysis para cada pilar) |
+| GET | `/api/candidates/photo-proxy?name=&state=&tseId=` | Não | `name, state, tseId` | Foto dinâmica com match **exato** de nome (Wikipedia/Câmara); `404` se não houver correspondência exata |
+
+#### Retratos Oficiais (pipeline de fotos TSE-primeiro)
+Ordem de resolução (`resolveCandidatePhotoFallbackChain` em `packages/shared/src/index.ts`, espelhada em `resolveCandidatePhotoDynamic` no backend):
+1. **TSE DivulgaCandContas** (`.../buscar/foto/2045202026/{sqCandidato}`) para `tseId` numérico — fonte primária;
+2. Cópia local espelhada `tse_{id}.jpg`;
+3. Mapeamento institucional por `tseId` **exato** (`KNOWN_PARLIAMENTARY_PHOTOS`, sem fuzzy por nome);
+4. Portais institucionais para IDs exatos (`dep_{n}` → Câmara `bandep`, `sen_{n}` → Senado);
+5. `photoUrl` não-TSE gravada e CDN espelho — somente após esgotado o TSE;
+6. `photo-proxy` **por último** (busca fuzzy por nome pode trazer homônimo; exige título/nome exato normalizado).
+
+Regras duras: nenhum alias pode apontar pessoas diferentes para o mesmo arquivo; `photoUrl` desconhecida é `''` (avatar de iniciais honesto, nunca foto alheia). Arquivos verificados (magic bytes + tamanho) vivem sincronizados nos 4 diretórios servidos — `apps/api/public/candidates/`, `apps/api/static/candidates/`, `apps/mobile/public/candidates/`, `static/candidates/` (qualquer divergência entre eles gera 404 só no Render ou só no Pages). Scripts: `scripts/backfill-missing-photos.ts` (`--dry-run`, `--download-only`, `--apply`, `--apply-db`), `scripts/merge-tse-photos.ts` (`--zip`, `--dry-run`, `--apply`, `--only`, `--limit/--offset`), `scripts/fix-wrong-photos.ts`, `scripts/sync-tse.ts`. Estado auditado em 03/10/2026: 302 candidatos, 294 com retrato verificado, 8 com avatar honesto (sem retrato público verificável em nenhuma fonte).
 
 #### Proposals
 | Método | Endpoint | Auth | Body/Query | Response |

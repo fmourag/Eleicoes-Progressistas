@@ -163,8 +163,10 @@ docker compose up -d
 docker compose down
 
 # Assets e Imagens dos Candidatos
-# Todas as fotos de campanha (TSE) e retratos parlamentares oficiais individuais (Câmara e Senado)
-# são armazenadas localmente em apps/mobile/public/candidates/ e copiadas para apps/mobile/dist/candidates/
+# Fotos de urna (TSE-primeiro) e retratos institucionais verificados vivem
+# sincronizados em apps/api/public|static/candidates/, apps/mobile/public/candidates/
+# e static/candidates/ (qualquer divergência entre eles = 404 em só um host).
+# Auditoria: npx tsx scripts/backfill-missing-photos.ts --dry-run
 npm run build:web -w @np/mobile
 
 # Tests

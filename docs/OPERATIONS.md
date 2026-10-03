@@ -37,6 +37,12 @@ npm run test:feedback
 .\scripts\emergency-scale.ps1
 ```
 
+### Auditoria de Fotos (retratos oficiais)
+```powershell
+npx tsx scripts/backfill-missing-photos.ts --dry-run   # lista fotos quebradas
+npx tsx scripts/merge-tse-photos.ts --dry-run          # match CSV oficial sem gravar
+```
+
 ---
 
 ## 🔗 Links Críticos

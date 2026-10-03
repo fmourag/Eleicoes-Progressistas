@@ -89,7 +89,7 @@ Este endpoint ignora a verificação do Supabase e retorna um JWT assinado com o
 - **Cache:** Utiliza um mapa em memória (`MemoryCacheAdapter`) ao invés do `RedisCacheAdapter`.
 - **Matching:** Roda o algoritmo de cálculo sincronamente em TypeScript (`MatchingLocalService`) ao invés de enviar um batch para o microsserviço Python via HTTP.
 - **Autenticação:** Valida as assinaturas JWT com o secret configurado (ou um default não-seguro de dev) localmente em vez do JWKS do Supabase.
-- **Fotos e Retratos Oficiais:** 100% dos candidatos contam com imagens oficiais salvas localmente em `apps/mobile/public/candidates/` e compiladas em `apps/mobile/dist/candidates/`, garantindo visualização sem dependência de internet ou CDNs externos.
+- **Fotos e Retratos Oficiais:** candidatos com retrato público verificável têm imagem oficial salva localmente em `apps/mobile/public/candidates/` (sincronizado com `apps/api/public|static/candidates/` e `static/candidates/`) e compilada em `apps/mobile/dist/candidates/`; sem retrato verificável, o app exibe avatar de iniciais (nunca foto alheia).
 - **Cola Eleitoral (PDFKit):** A compilação dos PDFs (`cola-eleitoral-2026.pdf`) roda de forma nativa e síncrona no processo Node.js local, consumindo as imagens e dados locais para visualização instantânea, download e impressão.
 - **Paridade de Segurança (Anti-Hacker):** A blindagem com `@nestjs/throttler`, `GlobalHttpExceptionFilter`, `helmet` e limitação de payload (512 KB) permanece integralmente ativa no modo leve, garantindo paridade absoluta com produção.
 

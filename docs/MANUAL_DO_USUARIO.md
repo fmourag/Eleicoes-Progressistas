@@ -193,7 +193,7 @@ Candidatos de partidos excluídos pelo filtro comportamental empírico e ilumini
 | Funciona em todo o Brasil? | Sim. Cobre todos os 27 estados da federação nas Eleições Gerais 2026. |
 | O que acontece com o app depois do dia da eleição? | O app se transforma no Observatório de Mandatos, permitindo que você fiscalize o mandato e as promessas dos candidatos eleitos durante toda a legislatura. |
 | Por que partidos como PL, Republicanos, PP, União Brasil, Avante, MDB, PSD, Podemos e NOVO não aparecem no match? | Por deliberação metodológica baseada no filtro empírico e iluminista. Partidos cujas bancadas votam sistematicamente contra consensos científicos e salvaguardas técnicas (ex.: liberação irrestrita de agrotóxicos sem ANVISA/IBAMA, enfraquecimento do licenciamento ambiental e marco temporal) ou que inserem dogmas religiosos em políticas públicas são excluídos das recomendações progressistas. |
-| De onde vêm as fotos dos candidatos? | Diretamente do repositório de fotos da urna do TSE (DivulgaCandContas) e dos retratos oficiais institucionais da Câmara e Senado. |
+| De onde vêm as fotos dos candidatos? | Da foto oficial de urna do TSE (DivulgaCandContas/CDN Hermes) e dos retratos oficiais institucionais da Câmara e Senado, sempre da pessoa certa. Se não houver retrato público verificável, aparece o avatar com as iniciais — nunca a foto de outra pessoa. |
 | Como auditar os dados? | Através do Portal de Dados Abertos do TSE (`https://dadosabertos.tse.jus.br/`) e dos portais de Dados Abertos da Câmara e do Senado. |
 
 ### 5. Suporte

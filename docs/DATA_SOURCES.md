@@ -64,7 +64,7 @@ A plataforma opera no modelo **Consulta por Prioridades (100% stateless e Coleta
 | `municipality` | TSE DivulgaCandContas | `descricao_ue` | Anual | Nome do município |
 | `state` | TSE DivulgaCandContas | `sigla_uf` | Anual | UF 2 chars |
 | `cpfHash` | TSE DivulgaCandContas | `cpf_candidato` | Anual | SHA-256(cpf + salt) |
-| `photoUrl` | TSE DivulgaCandContas / Câmara / Senado | `/arquivo/img/{eleicao}/{sqCand}/{uf}` ou `/bandep/{id}.jpg` / `senador{id}.jpg` | Anual | Download de fotos oficiais (urna/institucional sozinho) para `apps/mobile/public/candidates/` |
+| `photoUrl` | TSE (urna, primeiro) → Câmara/Senado institucionais → Wiki exata (último) | DivulgaCand `.../buscar/foto/2045202026/{sq}` ou CDN Hermes `.../eleicoes/2026/candidatos/{uf}/{sq}.jpg`; `bandep/{id}.jpg` / `fotos-oficiais/{id}.jpg`; Wiki só com título exato | Sob demanda | Download verificado (magic bytes + tamanho) para os 4 dirs sincronizados (`apps/api/public|static/candidates/`, `apps/mobile/public/candidates/`, `static/candidates/`); desconhecida = `''` (avatar honesto) |
 | `fichaLimpa` | CEIS + CNJ | CEIS: `situacao_pessoa`; CNJ: processo judicial | Mensal | `situacao_pessoa IN ('INIDÔNEA', 'PUNIDA') → false` |
 | `financedBy` | TSE DivulgaCandContas | `/prestador/consulta_candidato` | Anual | Agregar doações por fonte |
 | `votingHistory` | CEPESP + TSE Resultados | CEPESP: `/candidatos?ano={ano}&cargo={cargo}` | Anual | Série temporal de votos |

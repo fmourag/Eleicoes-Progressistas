@@ -99,6 +99,22 @@ npx tsx scripts/sync-tse.ts --photos-only --limit 500
 npx tsx scripts/sync-tse.ts --dry-run
 ```
 
+> **⚠️ WAF do TSE (verificado em 03/10/2026):** a API REST DivulgaCandContas responde `403` (Akamai) a listagens e fotos por script, inclusive `.../buscar/foto/...`. O CSV de Dados Abertos (`consulta_cand_2026.zip` em `cdn.tse.jus.br`) funciona normalmente, assim como a CDN Hermes de fotos de urna (`tribunapr.com.br/hermes-media/eleicoes/2026/candidatos/{uf}/{sq}.jpg`).
+
+---
+
+## 🔁 Merge Cirúrgico via CSV (fotos oficiais sem inserir linhas)
+
+`scripts/merge-tse-photos.ts` cruza o CSV oficial (`SQ_CANDIDATO`, `NM_CANDIDATO`, `NM_URNA_CANDIDATO`, `SG_UF`, `DS_CARGO`) com o banco por **match estrito** (nome completo ou urna normalizados + UF + cargo) e baixa a foto oficial de urna **somente** para candidatos sem foto válida. Nenhuma linha nova é inserida — zero risco de duplicatas (o upsert por `(tseId, electionYear)` jamais unificaria os `tseId` sintéticos curados com os numéricos do TSE).
+
+```powershell
+npx tsx scripts/merge-tse-photos.ts --dry-run                 # só diagnostica
+npx tsx scripts/merge-tse-photos.ts --apply --only dep_74848  # aplica em lista explícita
+npx tsx scripts/merge-tse-photos.ts --apply --limit 20 --offset 40  # aplica em fatias
+```
+
+Scripts vizinhos: `scripts/backfill-missing-photos.ts` (retratos institucionais/Wiki exata: `--dry-run`, `--download-only` + curadoria visual, `--apply-db` via `backfill-manifest.json`) e `scripts/fix-wrong-photos.ts` (limpa `photoUrl` trocada e remove duplicados: `--dry-run`, `--apply`).
+
 ---
 
 ## 📜 Citação da Fonte e Conformidade Legal

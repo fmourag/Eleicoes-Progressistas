@@ -35,7 +35,7 @@ A plataforma opera no modelo **Consulta por Prioridades (100% stateless e Coleta
 - [ ] **Monitoramento de Erros:** Telemetria técnica anônima configurada e testada no backend e cliente.
 - [ ] **Compliance Eleitoral (Blackout):** Regra de suspensão automática de anúncios entre 16/08 e 05/10 testada e operante.
 - [ ] **Carga de Dados Eleitorais:** Banco de dados populado com as candidaturas de 2026 das 27 UFs (`npm run db:seed`).
-- [ ] **Acervo de Imagens Oficiais:** Fotos oficiais da urna (TSE) e retratos parlamentares presentes em `public/candidates/` e compilados em `dist/candidates/`.
+- [ ] **Acervo de Imagens Oficiais:** Fotos oficiais de urna (TSE-primeiro) e retratos verificados byte-idênticos nos 4 diretórios (`apps/api/public|static/candidates/`, `apps/mobile/public/candidates/`, `static/candidates/`) e compilados em `dist/candidates/` (auditoria: `npx tsx scripts/backfill-missing-photos.ts --dry-run`).
 - [ ] **Geração de Cola Eleitoral (PDF):** Endpoint `/api/cola/pdf` testado com saída em meia-folha / folha A4 com caixas de dígitos grandes e dados do TSE.
 - [ ] **Blindagem Cibernética:** Rate limiting `@nestjs/throttler` (120 req/min), cabeçalhos Helmet (CSP/HSTS) e limite de corpo de 512 KB ativos.
 
