@@ -1,8 +1,8 @@
 @echo off
 chcp 65001 >nul
-title Eleicoes Progressistas v2.2.21 - Reiniciar (Lite)
+title Eleicoes Progressistas v2.2.22 - Reiniciar (Lite)
 echo ===================================================
-echo  Reiniciar v2.2.21 - Encerra processos e inicia Lite
+echo  Reiniciar v2.2.22 - Encerra processos e inicia Lite
 echo ===================================================
 
 echo [1/5] Matando processos antigos...

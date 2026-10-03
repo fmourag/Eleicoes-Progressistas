@@ -1,4 +1,4 @@
-# Operações — Eleições Progressistas v2.2.21
+# Operações — Eleições Progressistas v2.2.22
 
 ## 🚀 Comandos Rápidos
 

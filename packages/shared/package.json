@@ -1,6 +1,6 @@
 {
   "name": "@np/shared",
-  "version": "2.2.21",
+  "version": "2.2.22",
   "private": true,
   "main": "dist/index.js",
   "module": "dist/index.js",

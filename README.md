@@ -13,7 +13,7 @@ Plataforma cívica gratuita que conecta eleitores a candidatos progressistas aud
 
 ![API Status](https://img.shields.io/badge/API-LIVE-green)
 ![Web Status](https://img.shields.io/badge/Web-LIVE-green)
-![Version](https://img.shields.io/badge/Version-2.2.21-blue)
+![Version](https://img.shields.io/badge/Version-2.2.22-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ## 🚀 Acesso Rápido
@@ -75,6 +75,7 @@ npm install
 
 - [Índice Geral de Documentação (Markdown Index)](docs/MARKDOWN.md)
 - [Relatório Técnico de Atualizações v2.2.21](docs/RELATORIO_CORRECOES_V2.2.21.md)
+- [Relatório Técnico de Atualizações v2.2.22](docs/RELATORIO_CORRECOES_V2.2.22.md)
 - [Relatório Técnico de Atualizações v2.2.20](docs/RELATORIO_CORRECOES_V2.2.20.md)
 - [Política de Avaliações Google Play (Anti-Gating)](docs/PLAYSTORE_REVIEW_POLICY.md)
 - [Declaração de Segurança de Dados (Data Safety)](docs/PLAYSTORE_DATA_SAFETY.md)
