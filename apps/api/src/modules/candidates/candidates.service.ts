@@ -476,306 +476,83 @@ export class CandidatesService implements OnModuleInit {
         },
       });
 
-      // 3. Garantir presença de todos os Candidatos Presidenciais Progressistas e Democráticos
-      for (const p of OFFICIAL_PRESIDENTS) {
-        await this.prisma.candidate.upsert({
-          where: {
-            tseId_electionYear: {
-              tseId: p.tseId,
-              electionYear: p.electionYear || 2026,
-            },
-          },
-          update: {
-            name: p.name,
-            socialName: p.socialName,
-            viceName: p.viceName,
-            party: p.party,
-            partyNumber: p.partyNumber,
-            numeroUrna: p.numeroUrna,
-            cargo: p.cargo,
-            level: p.level,
-            candidaturaStatus: p.candidaturaStatus,
-            municipality: p.municipality,
-            state: p.state,
-            photoUrl: p.photoUrl,
-            coalition: p.coalition,
-            isProgressiveSupported: p.isProgressiveSupported,
-            supportedBy: p.supportedBy,
-            governmentPlanUrl: p.governmentPlanUrl,
-            governmentPlanSummary: p.governmentPlanSummary,
-            profileScores: p.profileScores,
-            proposals: p.proposals,
-            fichaLimpa: p.fichaLimpa,
-            visible: p.visible ?? true,
-          },
-          create: {
-            tseId: p.tseId,
-            electionYear: p.electionYear || 2026,
-            name: p.name,
-            socialName: p.socialName,
-            viceName: p.viceName,
-            party: p.party,
-            partyNumber: p.partyNumber,
-            numeroUrna: p.numeroUrna,
-            cargo: p.cargo,
-            level: p.level,
-            candidaturaStatus: p.candidaturaStatus,
-            municipality: p.municipality,
-            state: p.state,
-            cpfHash: p.cpfHash,
-            photoUrl: p.photoUrl,
-            coalition: p.coalition,
-            isProgressiveSupported: p.isProgressiveSupported,
-            supportedBy: p.supportedBy,
-            governmentPlanUrl: p.governmentPlanUrl,
-            governmentPlanSummary: p.governmentPlanSummary,
-            profileScores: p.profileScores,
-            proposals: p.proposals,
-            fichaLimpa: p.fichaLimpa,
-            visible: p.visible ?? true,
-          },
+      
+      const upsertOfficialCandidate = async (c: any) => {
+        const existing = await this.prisma.candidate.findFirst({
+          where: { name: c.name, party: c.party },
+          orderBy: { createdAt: 'asc' }
         });
+
+        const updateData = {
+          socialName: c.socialName,
+          viceName: c.viceName,
+          partyNumber: c.partyNumber,
+          numeroUrna: c.numeroUrna,
+          level: c.level,
+          candidaturaStatus: c.candidaturaStatus,
+          municipality: c.municipality,
+          state: c.state,
+          photoUrl: c.photoUrl,
+          coalition: c.coalition,
+          isProgressiveSupported: c.isProgressiveSupported,
+          supportedBy: c.supportedBy,
+          governmentPlanUrl: c.governmentPlanUrl,
+          governmentPlanSummary: c.governmentPlanSummary,
+          profileScores: c.profileScores,
+          proposals: c.proposals,
+          fichaLimpa: c.fichaLimpa,
+          visible: c.visible ?? true,
+        };
+
+        if (existing) {
+          const cargoPriority = { 'PRESIDENTE': 5, 'GOVERNADOR': 4, 'SENADOR': 3, 'DEPUTADO_FEDERAL': 2, 'DEPUTADO_ESTADUAL': 1 };
+          const existingPriority = cargoPriority[existing.cargo as keyof typeof cargoPriority] || 0;
+          const newPriority = cargoPriority[c.cargo as keyof typeof cargoPriority] || 0;
+
+          if (newPriority >= existingPriority) {
+            // Se o cargo oficial do arquivo for maior ou igual, atualiza o cargo e o tseId tambm
+            await this.prisma.candidate.update({
+              where: { id: existing.id },
+              data: {
+                ...updateData,
+                tseId: c.tseId,
+                cargo: c.cargo,
+              }
+            });
+          } else {
+            // Se j tiver um cargo maior (ex: Senador), mas o arquivo est tentando inserir como Deputado,
+            // ignora o cargo/tseId, mas atualiza propostas e etc.
+            await this.prisma.candidate.update({
+              where: { id: existing.id },
+              data: updateData
+            });
+          }
+        } else {
+          await this.prisma.candidate.create({
+            data: {
+              tseId: c.tseId,
+              electionYear: c.electionYear || 2026,
+              name: c.name,
+              cargo: c.cargo,
+              cpfHash: c.cpfHash || ('hash_tse_' + c.tseId + '_2026'),
+              ...updateData
+            }
+          });
+        }
+      };
+
+      const allOfficials = [
+        ...OFFICIAL_PRESIDENTS,
+        ...OFFICIAL_SENATORS,
+        ...OFFICIAL_GOVERNORS,
+        ...OFFICIAL_FEDERAL_DEPUTIES_RJ,
+        ...OFFICIAL_STATE_DEPUTIES_RJ
+      ];
+
+      for (const cand of allOfficials) {
+        await upsertOfficialCandidate(cand);
       }
 
-      // 4. Garantir presença de todos os 13 Candidatos Oficiais ao Senado pelo Rio de Janeiro
-      for (const s of OFFICIAL_SENATORS) {
-        await this.prisma.candidate.upsert({
-          where: {
-            tseId_electionYear: {
-              tseId: s.tseId,
-              electionYear: s.electionYear || 2026,
-            },
-          },
-          update: {
-            name: s.name,
-            socialName: s.socialName,
-            party: s.party,
-            partyNumber: s.partyNumber,
-            numeroUrna: s.numeroUrna,
-            cargo: s.cargo,
-            level: s.level,
-            candidaturaStatus: s.candidaturaStatus,
-            state: s.state,
-            municipality: s.municipality,
-            photoUrl: s.photoUrl,
-            coalition: s.coalition,
-            isProgressiveSupported: s.isProgressiveSupported,
-            supportedBy: s.supportedBy,
-            governmentPlanUrl: s.governmentPlanUrl,
-            governmentPlanSummary: s.governmentPlanSummary,
-            profileScores: s.profileScores,
-            proposals: s.proposals,
-            fichaLimpa: s.fichaLimpa,
-            visible: s.visible ?? true,
-          },
-          create: {
-            tseId: s.tseId,
-            electionYear: s.electionYear || 2026,
-            name: s.name,
-            socialName: s.socialName,
-            party: s.party,
-            partyNumber: s.partyNumber,
-            numeroUrna: s.numeroUrna,
-            cargo: s.cargo,
-            level: s.level,
-            candidaturaStatus: s.candidaturaStatus,
-            state: s.state,
-            municipality: s.municipality,
-            cpfHash: s.cpfHash,
-            photoUrl: s.photoUrl,
-            coalition: s.coalition,
-            isProgressiveSupported: s.isProgressiveSupported,
-            supportedBy: s.supportedBy,
-            governmentPlanUrl: s.governmentPlanUrl,
-            governmentPlanSummary: s.governmentPlanSummary,
-            profileScores: s.profileScores,
-            proposals: s.proposals,
-            fichaLimpa: s.fichaLimpa,
-            visible: s.visible ?? true,
-          },
-        });
-      }
-
-      // 5. Garantir presença de Governadores Progressistas
-      for (const g of OFFICIAL_GOVERNORS) {
-        await this.prisma.candidate.upsert({
-          where: {
-            tseId_electionYear: {
-              tseId: g.tseId,
-              electionYear: g.electionYear || 2026,
-            },
-          },
-          update: {
-            name: g.name,
-            socialName: g.socialName,
-            viceName: g.viceName,
-            party: g.party,
-            partyNumber: g.partyNumber,
-            numeroUrna: g.numeroUrna,
-            cargo: g.cargo,
-            level: g.level,
-            candidaturaStatus: g.candidaturaStatus,
-            state: g.state,
-            municipality: g.municipality,
-            photoUrl: g.photoUrl,
-            coalition: g.coalition,
-            isProgressiveSupported: g.isProgressiveSupported,
-            supportedBy: g.supportedBy,
-            governmentPlanUrl: g.governmentPlanUrl,
-            governmentPlanSummary: g.governmentPlanSummary,
-            profileScores: g.profileScores,
-            proposals: g.proposals,
-            fichaLimpa: g.fichaLimpa,
-            visible: g.visible ?? true,
-          },
-          create: {
-            tseId: g.tseId,
-            electionYear: g.electionYear || 2026,
-            name: g.name,
-            socialName: g.socialName,
-            viceName: g.viceName,
-            party: g.party,
-            partyNumber: g.partyNumber,
-            numeroUrna: g.numeroUrna,
-            cargo: g.cargo,
-            level: g.level,
-            candidaturaStatus: g.candidaturaStatus,
-            state: g.state,
-            municipality: g.municipality,
-            cpfHash: g.cpfHash,
-            photoUrl: g.photoUrl,
-            coalition: g.coalition,
-            isProgressiveSupported: g.isProgressiveSupported,
-            supportedBy: g.supportedBy,
-            governmentPlanUrl: g.governmentPlanUrl,
-            governmentPlanSummary: g.governmentPlanSummary,
-            profileScores: g.profileScores,
-            proposals: g.proposals,
-            fichaLimpa: g.fichaLimpa,
-            visible: g.visible ?? true,
-          },
-        });
-      }
-
-      // 6. Garantir presença de Deputados Federais Progressistas do RJ
-      for (const d of OFFICIAL_FEDERAL_DEPUTIES_RJ) {
-        await this.prisma.candidate.upsert({
-          where: {
-            tseId_electionYear: {
-              tseId: d.tseId,
-              electionYear: d.electionYear || 2026,
-            },
-          },
-          update: {
-            name: d.name,
-            socialName: d.socialName,
-            party: d.party,
-            partyNumber: d.partyNumber,
-            numeroUrna: d.numeroUrna,
-            cargo: d.cargo,
-            level: d.level,
-            candidaturaStatus: d.candidaturaStatus,
-            state: d.state,
-            municipality: d.municipality,
-            photoUrl: d.photoUrl,
-            coalition: d.coalition,
-            isProgressiveSupported: d.isProgressiveSupported,
-            supportedBy: d.supportedBy,
-            governmentPlanUrl: d.governmentPlanUrl,
-            governmentPlanSummary: d.governmentPlanSummary,
-            profileScores: d.profileScores,
-            fichaLimpa: d.fichaLimpa,
-            visible: d.visible ?? true,
-          },
-          create: {
-            tseId: d.tseId,
-            electionYear: d.electionYear || 2026,
-            name: d.name,
-            socialName: d.socialName,
-            party: d.party,
-            partyNumber: d.partyNumber,
-            numeroUrna: d.numeroUrna,
-            cargo: d.cargo,
-            level: d.level,
-            candidaturaStatus: d.candidaturaStatus,
-            state: d.state,
-            municipality: d.municipality,
-            cpfHash: d.cpfHash,
-            photoUrl: d.photoUrl,
-            coalition: d.coalition,
-            isProgressiveSupported: d.isProgressiveSupported,
-            supportedBy: d.supportedBy,
-            governmentPlanUrl: d.governmentPlanUrl,
-            governmentPlanSummary: d.governmentPlanSummary,
-            profileScores: d.profileScores,
-            fichaLimpa: d.fichaLimpa,
-            visible: d.visible ?? true,
-          },
-        });
-      }
-
-      // 7. Garantir presença de Deputados Estaduais Progressistas do RJ
-      for (const a of OFFICIAL_STATE_DEPUTIES_RJ) {
-        await this.prisma.candidate.upsert({
-          where: {
-            tseId_electionYear: {
-              tseId: a.tseId,
-              electionYear: a.electionYear || 2026,
-            },
-          },
-          update: {
-            name: a.name,
-            socialName: a.socialName,
-            party: a.party,
-            partyNumber: a.partyNumber,
-            numeroUrna: a.numeroUrna,
-            cargo: a.cargo,
-            level: a.level,
-            candidaturaStatus: a.candidaturaStatus,
-            state: a.state,
-            municipality: a.municipality,
-            photoUrl: a.photoUrl,
-            coalition: a.coalition,
-            isProgressiveSupported: a.isProgressiveSupported,
-            supportedBy: a.supportedBy,
-            governmentPlanUrl: a.governmentPlanUrl,
-            governmentPlanSummary: a.governmentPlanSummary,
-            profileScores: a.profileScores,
-            fichaLimpa: a.fichaLimpa,
-            visible: a.visible ?? true,
-          },
-          create: {
-            tseId: a.tseId,
-            electionYear: a.electionYear || 2026,
-            name: a.name,
-            socialName: a.socialName,
-            party: a.party,
-            partyNumber: a.partyNumber,
-            numeroUrna: a.numeroUrna,
-            cargo: a.cargo,
-            level: a.level,
-            candidaturaStatus: a.candidaturaStatus,
-            state: a.state,
-            municipality: a.municipality,
-            cpfHash: a.cpfHash,
-            photoUrl: a.photoUrl,
-            coalition: a.coalition,
-            isProgressiveSupported: a.isProgressiveSupported,
-            supportedBy: a.supportedBy,
-            governmentPlanUrl: a.governmentPlanUrl,
-            governmentPlanSummary: a.governmentPlanSummary,
-            profileScores: a.profileScores,
-            fichaLimpa: a.fichaLimpa,
-            visible: a.visible ?? true,
-          },
-        });
-      }
-
-      this.candidatesCache.clear();
-    } catch {
-      // Falha silenciosa em caso de tabela ainda não inicializada
-    }
-  }
 
   async findByLocation(municipality?: string, state?: string, cargo?: string, party?: string, search?: string) {
     const cacheKey = `cand:${municipality || ''}:${state || ''}:${cargo || ''}:${party || ''}:${search || ''}`;
