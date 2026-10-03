@@ -804,16 +804,17 @@ export function resolveCandidatePhotoFallbackChain(candidate: {
 
   const pushStatic = (p: string) => {
     if (!p) return;
+    const v = p.includes('?') ? '&v=2' : '?v=2';
     if (p.startsWith('http')) {
-      urls.push(p.replace(/^http:\/\//i, 'https://'));
+      urls.push(p.replace(/^http:\/\//i, 'https://') + v);
     } else {
       if (isWeb) {
-        urls.push(p);
-        if (clientOrigin) urls.push(`${clientOrigin}${p}`);
+        urls.push(p + v);
+        if (clientOrigin) urls.push(`${clientOrigin}${p}${v}`);
       }
-      urls.push(`${base}${p}`);
-      urls.push(`https://eleicoes-progressistas.pages.dev${p}`);
-      urls.push(`https://eleicoes-progressistas.onrender.com${p}`);
+      urls.push(`${base}${p}${v}`);
+      urls.push(`https://eleicoes-progressistas.pages.dev${p}${v}`);
+      urls.push(`https://eleicoes-progressistas.onrender.com${p}${v}`);
     }
   };
 
