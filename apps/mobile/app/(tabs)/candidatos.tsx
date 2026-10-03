@@ -18,6 +18,7 @@ import {
   getTseDadosAbertosSearchUrl,
   isCandidateAllowedInProgressiveRoll,
   OFFICIAL_PROGRESSIVE_PRESIDENTS,
+  normalizePartyName,
 } from '@np/shared';
 import { candidatesApi, retryWithBackoff, saveCandidateListToStorage, getCandidateListFromStorage } from '../../services/api';
 import { useMaxContentWidth, useResponsivePadding } from '../../utils/responsive';
@@ -143,6 +144,21 @@ const CARGO_PILLS = [
   { value: 'DEPUTADO_ESTADUAL', label: 'Dep. Estadual' },
 ];
 
+const PARTY_PILLS = [
+  { value: null, label: 'Todos os Partidos' },
+  { value: 'PT', label: 'PT' },
+  { value: 'PSOL', label: 'PSOL' },
+  { value: 'PCDOB', label: 'PCdoB' },
+  { value: 'PCB', label: 'PCB' },
+  { value: 'PSB', label: 'PSB' },
+  { value: 'PDT', label: 'PDT' },
+  { value: 'REDE', label: 'REDE' },
+  { value: 'PV', label: 'PV' },
+  { value: 'UP', label: 'UP' },
+  { value: 'PSTU', label: 'PSTU' },
+  { value: 'PCO', label: 'PCO' },
+];
+
 const ALL_BRAZILIAN_UFS = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
   'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
@@ -180,6 +196,27 @@ export default function CandidatosScreen() {
     const delta = direction === 'left' ? -220 : 220;
     const targetX = Math.max(0, cargoScrollX + delta);
     cargoScrollRef.current?.scrollTo({ x: targetX, animated: true });
+  }
+
+  // Rolagem Lateral de Partidos
+  const partyScrollRef = useRef<any>(null);
+  const [partyScrollX, setPartyScrollX] = useState(0);
+  const [canScrollPartyLeft, setCanScrollPartyLeft] = useState(false);
+  const [canScrollPartyRight, setCanScrollPartyRight] = useState(true);
+
+  function handlePartyScroll(e: any) {
+    const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
+    const x = contentOffset?.x ?? 0;
+    const max = (contentSize?.width ?? 0) - (layoutMeasurement?.width ?? 0);
+    setPartyScrollX(x);
+    setCanScrollPartyLeft(x > 10);
+    setCanScrollPartyRight(max > 10 && x < max - 10);
+  }
+
+  function scrollParty(direction: 'left' | 'right') {
+    const delta = direction === 'left' ? -220 : 220;
+    const targetX = Math.max(0, partyScrollX + delta);
+    partyScrollRef.current?.scrollTo({ x: targetX, animated: true });
   }
 
   // Mecanismo de Seleção de Local Integrado
@@ -431,6 +468,16 @@ function mergeWithOfficialPresidents(rawList: any[]): CandidateListItem[] {
     return counts;
   }, [byLocation]);
 
+  // Contagem de candidatos por partido na localização selecionada
+  const partyCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const c of byLocation) {
+      const p = normalizePartyName(c.party || '');
+      if (p) counts[p] = (counts[p] || 0) + 1;
+    }
+    return counts;
+  }, [byLocation]);
+
   // Filtro completo: Localização + Cargo + Partido + Busca Textual
   const filtered = useMemo(() => {
     let list = byLocation;
@@ -440,15 +487,21 @@ function mergeWithOfficialPresidents(rawList: any[]): CandidateListItem[] {
     }
 
     if (selectedParty) {
-      list = list.filter((c) => c.party === selectedParty);
+      list = list.filter(
+        (c) =>
+          c.party === selectedParty ||
+          (c.party && selectedParty && normalizePartyName(c.party) === normalizePartyName(selectedParty))
+      );
     }
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
+      const normQ = q.replace(/[^a-z0-9]/g, '');
       list = list.filter((c) => {
         const name = (c.name || '').toLowerCase();
         const socialName = (c.socialName || '').toLowerCase();
         const party = (c.party || '').toLowerCase();
+        const normParty = party.replace(/[^a-z0-9]/g, '');
         const numero = (c.numeroUrna || '').toLowerCase();
         const cargo = (c.cargo || '').toLowerCase();
         const state = (c.state || '').toLowerCase();
@@ -458,6 +511,7 @@ function mergeWithOfficialPresidents(rawList: any[]): CandidateListItem[] {
           name.includes(q) ||
           socialName.includes(q) ||
           party.includes(q) ||
+          (normQ.length >= 3 && normParty.includes(normQ)) ||
           numero.includes(q) ||
           cargo.includes(q) ||
           state.includes(q) ||
@@ -765,6 +819,76 @@ function mergeWithOfficialPresidents(rawList: any[]): CandidateListItem[] {
                 onPress={() => scrollCargo('right')}
                 activeOpacity={0.7}
                 accessibilityLabel="Rolar cargos para a direita"
+              >
+                <Text style={[styles.cargoNavBtnText, { color: colors.primary }]}>›</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Linha 4: Pílulas de Filtro por Partido com Rolagem Lateral */}
+          <View style={styles.cargoScrollWrapper}>
+            {canScrollPartyLeft && (
+              <TouchableOpacity
+                style={[styles.cargoNavBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
+                onPress={() => scrollParty('left')}
+                activeOpacity={0.7}
+                accessibilityLabel="Rolar partidos para a esquerda"
+              >
+                <Text style={[styles.cargoNavBtnText, { color: colors.primary }]}>‹</Text>
+              </TouchableOpacity>
+            )}
+
+            <View style={styles.cargoScrollContainer}>
+              <ScrollView
+                ref={partyScrollRef}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                onScroll={handlePartyScroll}
+                scrollEventThrottle={16}
+                contentContainerStyle={styles.cargoPillsScroll}
+                {...(Platform.OS === 'web'
+                  ? {
+                      onWheel: (e: any) => {
+                        if (e.deltaY) {
+                          const targetX = Math.max(0, partyScrollX + e.deltaY);
+                          partyScrollRef.current?.scrollTo({ x: targetX, animated: false });
+                        }
+                      },
+                    }
+                  : {})}
+              >
+                {PARTY_PILLS.map((p) => {
+                  const isSelected = selectedParty === p.value;
+                  const normP = p.value ? normalizePartyName(p.value) : '';
+                  const count = normP ? (partyCounts[normP] || 0) : byLocation.length;
+                  return (
+                    <TouchableOpacity
+                      key={p.label}
+                      style={[
+                        styles.cargoPill,
+                        {
+                          backgroundColor: isSelected ? colors.primary : colors.surfaceAlt,
+                          borderColor: isSelected ? colors.primary : colors.border,
+                        },
+                      ]}
+                      onPress={() => setSelectedParty(isSelected ? null : p.value)}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={[styles.cargoPillText, isSelected && { color: '#FFFFFF' }]} maxFontSizeMultiplier={1.15}>
+                        {p.label} <Text style={isSelected ? styles.countSelected : styles.countUnselected}>({count})</Text>
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </View>
+
+            {canScrollPartyRight && (
+              <TouchableOpacity
+                style={[styles.cargoNavBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
+                onPress={() => scrollParty('right')}
+                activeOpacity={0.7}
+                accessibilityLabel="Rolar partidos para a direita"
               >
                 <Text style={[styles.cargoNavBtnText, { color: colors.primary }]}>›</Text>
               </TouchableOpacity>

@@ -34,7 +34,7 @@ import { APP_GUARD } from '@nestjs/core';
       {
         name: 'default',
         ttl: minutes(1),
-        limit: 120, // 120 requisições por minuto por IP globalmente
+        limit: 800, // 120 requisições por minuto por IP globalmente
       },
     ]),
     PrismaModule,

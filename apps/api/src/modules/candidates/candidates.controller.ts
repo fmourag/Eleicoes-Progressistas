@@ -32,7 +32,7 @@ export class CandidatesController {
     if (tseId) {
       const localFile = path.join(TSE_CONFIG.PHOTO_STORAGE_DIR, `tse_${tseId}.jpg`);
       if (fs.existsSync(localFile) && fs.statSync(localFile).size > 1024) {
-        res.set('Content-Type', 'image/jpeg');
+        const ext = fs.readFileSync(localFile).slice(0, 4).toString() === 'RIFF' ? 'image/webp' : 'image/jpeg'; res.set('Content-Type', ext);
         res.set('Cache-Control', 'public, max-age=604800, s-maxage=2592000');
         res.set('Access-Control-Allow-Origin', '*');
         return res.sendFile(localFile);
