@@ -341,7 +341,6 @@ export class TseResultsService {
             });
             stats.senadores[uf] = senList;
           }
-          }
         })
       );
 
