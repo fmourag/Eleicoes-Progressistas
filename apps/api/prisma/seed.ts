@@ -1,5 +1,5 @@
 import { PrismaClient, Cargo, ElectionLevel, CandidaturaStatus } from '@prisma/client';
-import { resolveCandidatePhotoUrl } from '../../../packages/shared/src/index';
+import { resolveCandidatePhotoUrl, getNumeroUrna } from '../../../packages/shared/src/index';
 
 const prisma = new PrismaClient({
   datasources: {
@@ -1466,7 +1466,7 @@ async function main() {
   for (const fd of REAL_FEDERAL_DEPUTIES) {
     const scores = generateScores(fd.party, 'DEPUTADO_FEDERAL');
     const pNumber = getPartyNumber(fd.party);
-    const numeroUrna = (fd as any).numeroUrna || String(pNumber);
+    const numeroUrna = (fd as any).numeroUrna || getNumeroUrna({ cargo: 'DEPUTADO_FEDERAL', party: fd.party, partyNumber: pNumber, tseId: fd.tseId, name: fd.name });
     const photoUrl = resolveCandidatePhotoUrl({
       tseId: fd.tseId,
       photoUrl: fd.photoUrl,
@@ -1526,6 +1526,13 @@ async function main() {
       cargo: 'DEPUTADO_FEDERAL',
       name: d.nome,
     });
+    const numeroUrna = getNumeroUrna({
+      cargo: 'DEPUTADO_FEDERAL',
+      party,
+      partyNumber: getPartyNumber(party),
+      tseId,
+      name: d.nome,
+    });
 
     await prisma.candidate.create({
       data: {
@@ -1535,6 +1542,7 @@ async function main() {
         socialName: d.nome,
         party,
         partyNumber: getPartyNumber(party),
+        numeroUrna,
         cargo: 'DEPUTADO_FEDERAL' as Cargo,
         level: 'FEDERAL' as ElectionLevel,
         candidaturaStatus: 'DEFERIDO' as CandidaturaStatus,

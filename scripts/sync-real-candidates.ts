@@ -964,6 +964,13 @@ async function main() {
     const state = d.siglaUf || 'SP';
     const scores = generateScores(party, 'DEPUTADO_FEDERAL');
     const photoUrl = d.urlFoto || '';
+    const numeroUrna = getNumeroUrna({
+      cargo: 'DEPUTADO_FEDERAL',
+      party,
+      partyNumber: getPartyNumber(party),
+      tseId,
+      name: d.nome,
+    });
 
     await prisma.candidate.create({
       data: {
@@ -973,6 +980,7 @@ async function main() {
         socialName: d.nome,
         party,
         partyNumber: getPartyNumber(party),
+        numeroUrna,
         cargo: 'DEPUTADO_FEDERAL' as Cargo,
         level: 'FEDERAL' as ElectionLevel,
         candidaturaStatus: 'DEFERIDO' as CandidaturaStatus,
