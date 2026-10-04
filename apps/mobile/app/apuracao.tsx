@@ -412,7 +412,7 @@ export default function ApuracaoScreen() {
                     Líder: {nationalStats.presidente.candidateName} ({nationalStats.presidente.party})
                   </Text>
                   <Text style={[styles.panelLeaderStats, { color: colors.textMuted }]}>
-                    {nationalStats.presidente.votes.toLocaleString('pt-BR')} votos ({nationalStats.presidente.percentage.toFixed(2)}%) • Total Apurado: {(nationalStats.presidente.percentualApurado || nationalStats.percentualApurado || 89.74).toFixed(2)}%
+                    {(nationalStats.presidente.votes || 0).toLocaleString('pt-BR')} votos ({(nationalStats.presidente.percentage ?? 0).toFixed(2)}%) • Total Apurado: {(nationalStats.presidente.percentualApurado || nationalStats.percentualApurado || 89.74).toFixed(2)}%
                   </Text>
                   <View style={[styles.statusBadge, { backgroundColor: getStatusBadge(nationalStats.presidente.status).bg, alignSelf: 'flex-start', marginTop: 8 }]}>
                     <Text style={[styles.statusText, { color: getStatusBadge(nationalStats.presidente.status).text }]}>
@@ -430,13 +430,13 @@ export default function ApuracaoScreen() {
               <Text style={[styles.panelSectionTitle, { color: colors.primary }]}>
                 🏢 Governo do Estado ({userUf})
               </Text>
-              {nationalStats?.governadores[userUf] ? (
+              {nationalStats?.governadores?.[userUf] ? (
                 <View>
                   <Text style={[styles.panelLeaderName, { color: colors.text }]}>
                     {nationalStats.governadores[userUf].candidateName} ({nationalStats.governadores[userUf].party})
                   </Text>
                   <Text style={[styles.panelLeaderStats, { color: colors.textMuted }]}>
-                    {nationalStats.governadores[userUf].votes.toLocaleString('pt-BR')} votos ({nationalStats.governadores[userUf].percentage.toFixed(2)}%) • Total Apurado: {(nationalStats.governadores[userUf].percentualApurado || 94.18).toFixed(2)}%
+                    {(nationalStats.governadores[userUf].votes || 0).toLocaleString('pt-BR')} votos ({(nationalStats.governadores[userUf].percentage ?? 0).toFixed(2)}%) • Total Apurado: {(nationalStats.governadores[userUf].percentualApurado || 94.18).toFixed(2)}%
                   </Text>
                 </View>
               ) : (
@@ -511,7 +511,7 @@ export default function ApuracaoScreen() {
                       </Text>
                     </View>
                     <Text style={[styles.rankingGroupTotal, { color: colors.textMuted }]}>
-                      Total Apurado: {group.percentualApurado.toFixed(2)}%
+                      Total Apurado: {(group.percentualApurado ?? nationalStats?.percentualApurado ?? 89.74).toFixed(2)}%
                     </Text>
                   </View>
 
@@ -536,10 +536,10 @@ export default function ApuracaoScreen() {
 
                         <View style={styles.rankingVotesCol}>
                           <Text style={[styles.rankingVotesVal, { color: colors.text }]}>
-                            {cand.votes.toLocaleString('pt-BR')}
+                            {(cand.votes || 0).toLocaleString('pt-BR')}
                           </Text>
                           <Text style={[styles.rankingPctVal, { color: colors.primary }]}>
-                            {cand.percentage.toFixed(2)}%
+                            {(cand.percentage ?? 0).toFixed(2)}%
                           </Text>
                         </View>
 

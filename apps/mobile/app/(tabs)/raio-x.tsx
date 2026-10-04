@@ -785,7 +785,7 @@ export default function RaioXScreen() {
                             isCurrentCandidate && { fontWeight: '800' },
                           ]}
                         >
-                          {cand.percentual.toFixed(1).replace('.', ',')}%
+                          {(cand.percentual ?? 0).toFixed(1).replace('.', ',')}%
                         </Text>
                       </View>
 
@@ -918,7 +918,7 @@ export default function RaioXScreen() {
                     <View style={[styles.pollScientificBox, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                       <Text style={[styles.pollScientificLabel, { color: colors.textMuted }]}>Margem de Erro</Text>
                       <Text style={[styles.pollScientificNum, { color: '#059669' }]}>
-                        ± {data.pollResult.poll.margemErro.toFixed(1).replace('.', ',')}
+                        ± {(data.pollResult.poll.margemErro ?? 2.0).toFixed(1).replace('.', ',')}
                       </Text>
                       <Text style={[styles.pollScientificUnit, { color: colors.textSecondary }]}>pontos percentuais</Text>
                     </View>
