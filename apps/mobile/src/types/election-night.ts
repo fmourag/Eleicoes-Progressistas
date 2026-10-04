@@ -36,10 +36,28 @@ export interface ElectionResult {
   lastUpdate: number;
 }
 
+export interface CargoRankingItem {
+  position: number;
+  candidateName: string;
+  party: string;
+  numeroUrna: string;
+  votes: number;
+  percentage: number;
+  status: 'ELEITO' | 'SEGUNDO_TURNO' | 'NAO_ELEITO' | 'APURANDO';
+}
+
+export interface CargoRankingGroup {
+  cargo: string;
+  uf: string;
+  totalVotesApurados: number;
+  candidates: CargoRankingItem[];
+}
+
 export interface NationalStats {
   presidente: ElectionResult | null;
   governadores: Record<string, ElectionResult>; // UF -> eleito
   senadores: Record<string, ElectionResult[]>;   // UF -> até 2 eleitos
+  rankingsGerais?: CargoRankingGroup[];          // Ranking completo por cargo sem filtro ideologico
   percentualApurado: number;
   totalSecoes: number;
   secoesApuradas: number;

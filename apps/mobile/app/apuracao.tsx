@@ -362,6 +362,13 @@ export default function ApuracaoScreen() {
                           {pos ? `${pos}º` : '-'}
                         </Text>
                       </View>
+
+                      <View style={styles.metricCol}>
+                        <Text style={[styles.metricLabel, { color: colors.textMuted }]}>Total Apurado</Text>
+                        <Text style={[styles.metricVal, { color: colors.text }]}>
+                          {(res?.totalVotesApurados || 0).toLocaleString('pt-BR')}
+                        </Text>
+                      </View>
                     </View>
 
                     {/* Barra de Progresso */}
@@ -389,7 +396,7 @@ export default function ApuracaoScreen() {
                     Líder: {nationalStats.presidente.candidateName} ({nationalStats.presidente.party})
                   </Text>
                   <Text style={[styles.panelLeaderStats, { color: colors.textMuted }]}>
-                    {nationalStats.presidente.votes.toLocaleString('pt-BR')} votos ({nationalStats.presidente.percentage.toFixed(2)}%)
+                    {nationalStats.presidente.votes.toLocaleString('pt-BR')} votos ({nationalStats.presidente.percentage.toFixed(2)}%) • Total Apurado: {nationalStats.presidente.totalVotesApurados.toLocaleString('pt-BR')} votos
                   </Text>
                   <View style={[styles.statusBadge, { backgroundColor: getStatusBadge(nationalStats.presidente.status).bg, alignSelf: 'flex-start', marginTop: 8 }]}>
                     <Text style={[styles.statusText, { color: getStatusBadge(nationalStats.presidente.status).text }]}>
@@ -413,13 +420,80 @@ export default function ApuracaoScreen() {
                     {nationalStats.governadores[userUf].candidateName} ({nationalStats.governadores[userUf].party})
                   </Text>
                   <Text style={[styles.panelLeaderStats, { color: colors.textMuted }]}>
-                    {nationalStats.governadores[userUf].votes.toLocaleString('pt-BR')} votos ({nationalStats.governadores[userUf].percentage.toFixed(2)}%)
+                    {nationalStats.governadores[userUf].votes.toLocaleString('pt-BR')} votos ({nationalStats.governadores[userUf].percentage.toFixed(2)}%) • Total Apurado: {nationalStats.governadores[userUf].totalVotesApurados.toLocaleString('pt-BR')} votos
                   </Text>
                 </View>
               ) : (
                 <Text style={{ color: colors.textMuted }}>Aguardando apuração de {userUf}.</Text>
               )}
             </View>
+          </View>
+        )}
+
+        {/* Seção Geral: Ranking Percentual por Cargo (Independente de Filtro Ideológico) */}
+        {nationalStats?.rankingsGerais && nationalStats.rankingsGerais.length > 0 && (
+          <View style={styles.section}>
+            <View style={styles.rankingSectionHeader}>
+              <Text style={[styles.rankingSectionTitle, { color: colors.text }]}>
+                📊 Ranking Geral por Cargo (Sem Filtro Ideológico)
+              </Text>
+              <Text style={[styles.rankingSectionSubtitle, { color: colors.textMuted }]}>
+                Percentuais e votos apurados de todos os candidatos em disputa
+              </Text>
+            </View>
+
+            {nationalStats.rankingsGerais.map((group) => (
+              <View
+                key={group.cargo}
+                style={[styles.rankingGroupCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
+              >
+                <View style={styles.rankingGroupHeader}>
+                  <Text style={[styles.rankingGroupTitle, { color: colors.primary }]}>
+                    {group.cargo} {group.uf !== 'BR' ? `(${group.uf})` : '(Brasil)'}
+                  </Text>
+                  <Text style={[styles.rankingGroupTotal, { color: colors.textMuted }]}>
+                    Total Apurado: {group.totalVotesApurados.toLocaleString('pt-BR')} votos
+                  </Text>
+                </View>
+
+                {group.candidates.map((cand) => {
+                  const b = getStatusBadge(cand.status);
+                  return (
+                    <View key={`${group.cargo}-${cand.numeroUrna}-${cand.position}`} style={styles.rankingRow}>
+                      <View style={styles.rankingPosCol}>
+                        <Text style={[styles.rankingPosText, { color: colors.text }]}>
+                          {cand.position}º
+                        </Text>
+                      </View>
+
+                      <View style={styles.rankingNameCol}>
+                        <Text style={[styles.rankingCandName, { color: colors.text }]}>
+                          {cand.candidateName}
+                        </Text>
+                        <Text style={[styles.rankingCandParty, { color: colors.textMuted }]}>
+                          {cand.party} • Nº {cand.numeroUrna}
+                        </Text>
+                      </View>
+
+                      <View style={styles.rankingVotesCol}>
+                        <Text style={[styles.rankingVotesVal, { color: colors.text }]}>
+                          {cand.votes.toLocaleString('pt-BR')}
+                        </Text>
+                        <Text style={[styles.rankingPctVal, { color: colors.primary }]}>
+                          {cand.percentage.toFixed(2)}%
+                        </Text>
+                      </View>
+
+                      <View style={[styles.rankingBadge, { backgroundColor: b.bg }]}>
+                        <Text style={[styles.rankingBadgeText, { color: b.text }]}>
+                          {b.label}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            ))}
           </View>
         )}
 
@@ -829,5 +903,92 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#2E7D32',
     marginTop: 1,
+  },
+  // Seção Ranking Geral por Cargo
+  rankingSectionHeader: {
+    marginBottom: Spacing.md,
+    marginTop: Spacing.md,
+  },
+  rankingSectionTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+  },
+  rankingSectionSubtitle: {
+    fontSize: 13,
+    marginTop: 2,
+  },
+  rankingGroupCard: {
+    borderWidth: 1,
+    borderRadius: Radius.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
+  },
+  rankingGroupHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+    paddingBottom: 8,
+  },
+  rankingGroupTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
+  rankingGroupTotal: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  rankingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F9FAFB',
+  },
+  rankingPosCol: {
+    width: 32,
+    alignItems: 'center',
+  },
+  rankingPosText: {
+    fontSize: 14,
+    fontWeight: '800',
+  },
+  rankingNameCol: {
+    flex: 1,
+    paddingHorizontal: 8,
+  },
+  rankingCandName: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  rankingCandParty: {
+    fontSize: 11,
+    marginTop: 1,
+  },
+  rankingVotesCol: {
+    alignItems: 'flex-end',
+    marginRight: 8,
+  },
+  rankingVotesVal: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  rankingPctVal: {
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  rankingBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 8,
+    minWidth: 65,
+    alignItems: 'center',
+  },
+  rankingBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
   },
 });

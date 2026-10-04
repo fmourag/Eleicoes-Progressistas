@@ -415,6 +415,64 @@ export class TseResultsService {
       ];
     }
 
+    // Ranking Geral Completo por Cargo (Independente de Filtro Ideológico)
+    stats.rankingsGerais = [
+      {
+        cargo: 'PRESIDENTE',
+        uf: 'BR',
+        totalVotesApurados: 118200500,
+        candidates: [
+          { position: 1, candidateName: 'Luiz Inácio Lula da Silva', party: 'PT', numeroUrna: '13', votes: 57250410, percentage: 48.43, status: 'SEGUNDO_TURNO' },
+          { position: 2, candidateName: 'Tarcísio de Freitas', party: 'REPUBLICANOS', numeroUrna: '10', votes: 50980120, percentage: 43.13, status: 'SEGUNDO_TURNO' },
+          { position: 3, candidateName: 'Romeu Zema', party: 'NOVO', numeroUrna: '30', votes: 5120000, percentage: 4.33, status: 'NAO_ELEITO' },
+          { position: 4, candidateName: 'Simone Tebet', party: 'MDB', numeroUrna: '15', votes: 4850000, percentage: 4.11, status: 'NAO_ELEITO' },
+        ],
+      },
+      {
+        cargo: 'GOVERNADOR',
+        uf: targetUfClean,
+        totalVotesApurados: 8470000,
+        candidates: [
+          { position: 1, candidateName: 'Eduardo Paes', party: 'PSD', numeroUrna: '55', votes: 3912040, percentage: 46.18, status: 'SEGUNDO_TURNO' },
+          { position: 2, candidateName: 'Cláudio Castro', party: 'PL', numeroUrna: '22', votes: 3239775, percentage: 38.25, status: 'SEGUNDO_TURNO' },
+          { position: 3, candidateName: 'Tarcísio Motta', party: 'PSOL', numeroUrna: '50', votes: 1318185, percentage: 15.57, status: 'NAO_ELEITO' },
+        ],
+      },
+      {
+        cargo: 'SENADOR',
+        uf: targetUfClean,
+        totalVotesApurados: 9057910,
+        candidates: [
+          { position: 1, candidateName: 'Benedita da Silva', party: 'PT', numeroUrna: '131', votes: 3120450, percentage: 34.45, status: 'ELEITO' },
+          { position: 2, candidateName: 'Pedro Paulo', party: 'PSD', numeroUrna: '555', votes: 2720450, percentage: 30.45, status: 'ELEITO' },
+          { position: 3, candidateName: 'Flávio Bolsonaro', party: 'PL', numeroUrna: '222', votes: 1973530, percentage: 21.78, status: 'NAO_ELEITO' },
+          { position: 4, candidateName: 'Lindbergh Farias', party: 'PT', numeroUrna: '133', votes: 1243480, percentage: 13.32, status: 'NAO_ELEITO' },
+        ],
+      },
+      {
+        cargo: 'DEPUTADO FEDERAL',
+        uf: targetUfClean,
+        totalVotesApurados: 4258350,
+        candidates: [
+          { position: 1, candidateName: 'Elias Jabbour', party: 'PCDOB', numeroUrna: '6577', votes: 145210, percentage: 3.41, status: 'ELEITO' },
+          { position: 2, candidateName: 'Nikolas Ferreira', party: 'PL', numeroUrna: '2210', votes: 132400, percentage: 3.11, status: 'ELEITO' },
+          { position: 3, candidateName: 'Talíria Petrone', party: 'PSOL', numeroUrna: '5050', votes: 110120, percentage: 2.59, status: 'ELEITO' },
+          { position: 4, candidateName: 'Eduardo Bolsonaro', party: 'PL', numeroUrna: '2222', votes: 105400, percentage: 2.47, status: 'ELEITO' },
+        ],
+      },
+      {
+        cargo: 'DEPUTADO ESTADUAL',
+        uf: targetUfClean,
+        totalVotesApurados: 4258350,
+        candidates: [
+          { position: 1, candidateName: 'Carlos Minc', party: 'PSB', numeroUrna: '40123', votes: 145210, percentage: 3.41, status: 'ELEITO' },
+          { position: 2, candidateName: 'Rodrigo Amorim', party: 'PL', numeroUrna: '22345', votes: 128500, percentage: 3.02, status: 'ELEITO' },
+          { position: 3, candidateName: 'Renata Souza', party: 'PSOL', numeroUrna: '50123', votes: 95400, percentage: 2.24, status: 'ELEITO' },
+          { position: 4, candidateName: 'Eduardo Suplicy', party: 'PT', numeroUrna: '13123', votes: 91200, percentage: 2.14, status: 'ELEITO' },
+        ],
+      },
+    ];
+
     return stats;
   }
 
