@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { AppStorage } from '../src/storage/app-storage';
+import { geminiService } from '../services/gemini.service';
 
 export interface ColaCandidate {
   id: string;
@@ -50,6 +51,13 @@ interface ColaState {
   getCount: () => number;
   hasGeneratedPdfInSession: boolean;
   setHasGeneratedPdfInSession: (val: boolean) => void;
+  aiLoading: boolean;
+  aiStatusMessage: string | null;
+  aiError: string | null;
+  aiAnalysisResult: string | null;
+  setAiStatusMessage: (message: string | null) => void;
+  clearAiState: () => void;
+  generateAiAnalysisForCola: () => Promise<string | null>;
 }
 
 const STORAGE_KEY = 'np_cola_eleitoral_v2';
@@ -270,6 +278,57 @@ export const useColaStore = create<ColaState>((set, get) => ({
 
   getCount: () => {
     return Object.keys(get().selectedCandidates).length;
+  },
+
+  aiLoading: false,
+  aiStatusMessage: null,
+  aiError: null,
+  aiAnalysisResult: null,
+
+  setAiStatusMessage: (msg) => set({ aiStatusMessage: msg }),
+
+  clearAiState: () => set({ aiLoading: false, aiStatusMessage: null, aiError: null }),
+
+  generateAiAnalysisForCola: async () => {
+    const list = get().getSelectedList();
+    if (list.length === 0) {
+      set({ aiError: 'Sua cola está vazia. Adicione candidatos para analisar.' });
+      return null;
+    }
+
+    set({ aiLoading: true, aiError: null, aiStatusMessage: 'Iniciando análise com IA...' });
+
+    try {
+      const summaryText = list
+        .map((c) => `- ${c.cargo}: ${c.socialName || c.name} (${c.party} nº ${c.numeroUrna})`)
+        .join('\n');
+
+      const prompt = `Analise a seguinte cola eleitoral em formato simplificado para linguagem cidadã:\n${summaryText}\nForneça um resumo executivo de 2 frases focado nos temas principais defendidos por esses partidos/candidatos.`;
+
+      const result = await geminiService.generateContentWithRetryAndFallback({
+        prompt,
+        systemInstruction: 'Você é um especialista neutro em transparência eleitoral e dados abertos públicos.',
+        payloadContext: { totalCandidates: list.length },
+        onStatusUpdate: (msg) => {
+          set({ aiStatusMessage: msg });
+        },
+      });
+
+      set({
+        aiLoading: false,
+        aiStatusMessage: null,
+        aiAnalysisResult: result.text,
+      });
+
+      return result.text;
+    } catch (err: any) {
+      set({
+        aiLoading: false,
+        aiStatusMessage: null,
+        aiError: err?.message || 'Serviço temporariamente indisponível. Tente novamente em alguns momentos.',
+      });
+      return null;
+    }
   },
 }));
 

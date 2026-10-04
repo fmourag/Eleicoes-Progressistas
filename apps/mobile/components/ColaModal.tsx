@@ -46,6 +46,10 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
     setHasGeneratedPdfInSession,
     hydrateCola,
     saveCola,
+    aiStatusMessage,
+    aiLoading,
+    aiAnalysisResult,
+    generateAiAnalysisForCola,
   } = useColaStore();
   const { location } = useLocationStore();
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
@@ -265,6 +269,15 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
                 <Text style={[styles.copyNoticeText, { color: '#FFFFFF' }]}>✓ Cola eleitoral salva carregada!</Text>
               </View>
             )}
+
+            {aiStatusMessage ? (
+              <View style={[styles.copyNotice, { backgroundColor: '#0284C7', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }]}>
+                <ActivityIndicator size="small" color="#FFFFFF" />
+                <Text style={[styles.copyNoticeText, { color: '#FFFFFF', fontWeight: '700' }]}>
+                  {aiStatusMessage}
+                </Text>
+              </View>
+            ) : null}
 
             {/* Section Title */}
             <Text style={[styles.sectionTitle, { color: colors.text }]}>

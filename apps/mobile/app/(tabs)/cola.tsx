@@ -42,6 +42,9 @@ export default function ColaScreen() {
     clearCola,
     hydrateCola,
     saveCola,
+    aiStatusMessage,
+    aiLoading,
+    aiAnalysisResult,
   } = useColaStore();
   const { location } = useLocationStore();
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
@@ -375,6 +378,15 @@ export default function ColaScreen() {
               <Text style={[styles.copyNoticeText, { color: '#FFFFFF' }]}>✓ Cola eleitoral salva carregada!</Text>
             </View>
           )}
+
+          {aiStatusMessage ? (
+            <View style={[styles.copyNotice, { backgroundColor: '#0284C7', marginTop: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }]}>
+              <ActivityIndicator size="small" color="#FFFFFF" />
+              <Text style={[styles.copyNoticeText, { color: '#FFFFFF', fontWeight: '700' }]}>
+                {aiStatusMessage}
+              </Text>
+            </View>
+          ) : null}
 
           <View style={[styles.secondaryActionsGrid, { marginTop: 16 }]}>
             <TouchableOpacity
