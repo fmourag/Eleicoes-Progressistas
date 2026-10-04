@@ -24,7 +24,10 @@ export function isElectionPeriodActive(now: Date = new Date(), forceSimulation =
 export function useElectionNight(forceSimulation = false) {
   const { getSelectedList } = useColaStore();
   const { location } = useLocationStore();
-  const userUf = location?.uf || 'BR';
+  
+  const colaList = getSelectedList();
+  const ufDaCola = colaList.find(c => c.state && c.state !== 'BR')?.state || location?.uf || 'BR';
+  const userUf = ufDaCola;
 
   const [hasContributed, setHasContributed] = useState<boolean>(() => {
     return isApuracaoUnlocked();
