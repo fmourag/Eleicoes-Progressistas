@@ -665,9 +665,6 @@ export const KNOWN_PARLIAMENTARY_PHOTOS: Record<string, string> = {
   'pres_sofia': '/candidates/pres_sofia.jpg',
   'pres_veralucia': '/candidates/pres_veralucia.jpg',
   'pres_ruicosta': '/candidates/pres_ruicosta.jpg',
-  '280002551975': '/candidates/pres_sofia.jpg',
-  '280002538811': '/candidates/pres_leonardo.jpg',
-  '280002541457': '/candidates/pres_veralucia.jpg',
   '280002552487': '/candidates/pres_ruicosta.jpg',
 
   // Governadores

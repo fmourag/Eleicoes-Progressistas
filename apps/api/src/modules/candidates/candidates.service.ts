@@ -13,6 +13,7 @@ import {
   OFFICIAL_STATE_DEPUTIES_RJ,
 } from './data/official-candidates.data';
 import { TsePhotoPrefetchService } from './tse/tse-photo-prefetch.service';
+import { findInTseRoster, isInTseRoster } from './tse-roster';
 
 export function buildCandidateClassification(candidate: any): CandidateClassification {
   const scores: Record<string, number> = candidate.profileScores || {};
@@ -437,7 +438,7 @@ export class CandidatesService implements OnModuleInit {
       // Remove pres_glauber (Glauber Braga estava incorretamente como PRESIDENTE — é Dep. Federal)
       await this.prisma.candidate.deleteMany({
         where: {
-          tseId: { in: ['pres_glauber'] },
+          tseId: { in: ['pres_glauber', 'pres_ciro', 'pres_leonardo', 'pres_sofia', 'pres_veralucia', 'pres_edmilsoncosta'] },
         },
       });
        // Remove duplicatas do Lula: manter APENAS o canônico (tseId=pres_lula), deletar todos os demais
@@ -679,7 +680,18 @@ export class CandidatesService implements OnModuleInit {
         orderBy: { name: 'asc' },
       });
 
-      const result = candidates.map((c: any) => {
+      // FILTRO FINAL: somente candidaturas presentes no registro oficial do TSE (cargo + circunscrição).
+      const tseVerified = candidates.filter((c: any) => isInTseRoster(c));
+      if (tseVerified.length < candidates.length) {
+        this.logger.log(`[TSE] ${candidates.length - tseVerified.length} candidatura(s) fora do registro TSE ocultada(s).`);
+      }
+
+      const result = tseVerified.map((c: any) => {
+        const tse = findInTseRoster(c);
+        if (tse && c.cargo === 'PRESIDENTE') {
+          c.viceName = tse.vice || c.viceName;
+          c.numeroUrna = tse.nr || c.numeroUrna;
+        }
         const scores = c.profileScores || {};
         const vals = Object.values(scores).filter((v) => typeof v === 'number') as number[];
         let overallCommitmentScore = 88;
