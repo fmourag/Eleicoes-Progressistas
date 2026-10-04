@@ -132,14 +132,6 @@ export const OFFICIAL_PRESIDENTS: OfficialCandidateSeed[] = [
     visible: true,
   },
   
-    proposals: [
-      { pillar: 'p11', title: 'Revolução Educacional Inspirada no Modelo do Ceará', description: 'Escola em tempo integral e valorização massiva do magistério em todo o território nacional.' },
-      { pillar: 'p5', title: 'Reindustrialização e Soberania Tecnológica', description: 'Complexo econômico-industrial da saúde e investimentos pesados em energia renovável.' },
-      { pillar: 'p2', title: 'Renda Básica Universal e Renegociação de Dívidas', description: 'Linha de crédito e socorro a famílias superendividadas no SPC e Serasa.' },
-    ],
-    visible: true,
-  },
-  
   {
     tseId: 'pres_leonardo',
     electionYear: 2026,
@@ -2863,9 +2855,6 @@ export const OFFICIAL_STATE_DEPUTIES_RJ: OfficialCandidateSeed[] = [
     isProgressiveSupported: true,
     supportedBy: 'PCB Rio Grande do Sul',
     profileScores: { p1: 0.96, p2: 0.98, p3: 0.92, p4: 0.94, p5: 0.93, p6: 0.98, p7: 0.99, p8: 0.90, p9: 0.98, p10: 0.95, p11: 0.98, p12: 0.99, p13: 0.88 },
-    visible: true,
-  },
-  
     visible: true,
   },
   {
