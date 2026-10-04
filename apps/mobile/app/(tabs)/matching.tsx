@@ -43,24 +43,6 @@ const FALLBACK_CANDIDATES: MatchResult[] = [
       coalition: 'Brasil da Esperança (PT, PCdoB, PV, PSB, PSOL, Rede)',
     },
   },
-  {
-    id: 'pres_ciro',
-    score: 92,
-    candidate: {
-      id: 'pres_ciro',
-      name: 'Ciro Ferreira Gomes',
-      socialName: 'Ciro Gomes',
-      viceName: 'Ana Paula Matos',
-      party: 'PDT',
-      partyNumber: 12,
-      numeroUrna: '12',
-      tseId: 'pres_ciro',
-      cargo: 'PRESIDENTE',
-      fichaLimpa: true,
-      photoUrl: '/candidates/pres_ciro.jpg',
-      coalition: 'Trabalhismo e Desenvolvimento Nacional (PDT)',
-    },
-  },
 
   {
     id: 'pres_leonardo',
