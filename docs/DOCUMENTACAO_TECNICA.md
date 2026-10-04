@@ -1,7 +1,7 @@
 ---
 title: "Documentação Técnica"
-version: "2.2.22"
-last_updated: "2026-10-02"
+version: "2.2.23"
+last_updated: "2026-10-04"
 ---
 
 # Documentação Técnica
@@ -10,7 +10,7 @@ last_updated: "2026-10-02"
 
 ## Visão geral da aplicação
 - **Nome:** Eleições Progressistas
-- **Versão:** 2.2.22
+- **Versão:** 2.2.23
 - **Arquitetura:** Mobile (Expo React-Native) ↔ Supabase Auth ↔ NestJS API ↔ FastAPI Matching Service ↔ PostgreSQL
 - **Principais módulos:** Auth, Priorities Matching, Candidate Management, Geo, ETL, CI/CD, Cola Eleitoral, Watchdog (Observatório de Mandatos), Ads (Anúncios Éticos), Finance (Sustentabilidade PIX), Public-API (Tiered API), Reports (Relatórios B2B)
 

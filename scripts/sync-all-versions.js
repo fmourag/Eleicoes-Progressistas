@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const TARGET_VERSION = '2.2.22';
-const TARGET_TAG = 'v2.2.22';
-const TARGET_VERSION_CODE = 23;
+const TARGET_VERSION = '2.2.23';
+const TARGET_TAG = 'v2.2.23';
+const TARGET_VERSION_CODE = 24;
 const TARGET_APK = 'eleicoes-progressistas-v2.2.21-beta.apk';
 
 const rootDir = path.resolve(__dirname, '..');
