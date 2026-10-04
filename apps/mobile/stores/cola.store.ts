@@ -55,6 +55,7 @@ interface ColaState {
   aiStatusMessage: string | null;
   aiError: string | null;
   aiAnalysisResult: string | null;
+  aiIsCacheHit: boolean;
   setAiStatusMessage: (message: string | null) => void;
   clearAiState: () => void;
   generateAiAnalysisForCola: () => Promise<string | null>;
@@ -284,10 +285,11 @@ export const useColaStore = create<ColaState>((set, get) => ({
   aiStatusMessage: null,
   aiError: null,
   aiAnalysisResult: null,
+  aiIsCacheHit: false,
 
   setAiStatusMessage: (msg) => set({ aiStatusMessage: msg }),
 
-  clearAiState: () => set({ aiLoading: false, aiStatusMessage: null, aiError: null }),
+  clearAiState: () => set({ aiLoading: false, aiStatusMessage: null, aiError: null, aiIsCacheHit: false }),
 
   generateAiAnalysisForCola: async () => {
     const list = get().getSelectedList();
@@ -318,6 +320,7 @@ export const useColaStore = create<ColaState>((set, get) => ({
         aiLoading: false,
         aiStatusMessage: null,
         aiAnalysisResult: result.text,
+        aiIsCacheHit: result.isCacheHit,
       });
 
       return result.text;
@@ -325,6 +328,7 @@ export const useColaStore = create<ColaState>((set, get) => ({
       set({
         aiLoading: false,
         aiStatusMessage: null,
+        aiIsCacheHit: false,
         aiError: err?.message || 'Serviço temporariamente indisponível. Tente novamente em alguns momentos.',
       });
       return null;

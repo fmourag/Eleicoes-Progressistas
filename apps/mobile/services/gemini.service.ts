@@ -1,4 +1,5 @@
 import { APP_VERSION } from '../src/constants/app';
+import { aiCache, generateCacheKey, containsPii } from '../utils/ai-cache';
 
 export const GEMINI_CONFIG = {
   primaryModel: process.env.EXPO_PUBLIC_GEMINI_PRIMARY_MODEL || 'gemini-3.6-flash-medium',
@@ -12,6 +13,8 @@ export interface GeminiRequestOptions {
   systemInstruction?: string;
   temperature?: number;
   maxTokens?: number;
+  ttlMs?: number;
+  skipCache?: boolean;
   payloadContext?: Record<string, any>;
   onStatusUpdate?: (message: string) => void;
 }
@@ -21,6 +24,8 @@ export interface GeminiResponse {
   modelUsed: string;
   attemptsCount: number;
   usedFallback: boolean;
+  isCacheHit: boolean;
+  latencyMs: number;
 }
 
 export interface SentryErrorContext {
@@ -29,6 +34,7 @@ export interface SentryErrorContext {
     retryCount: number;
     fallbackTriggered: boolean;
     sanitizedPayload: any;
+    latencyMs?: number;
   };
   tags: {
     service: string;
@@ -91,6 +97,40 @@ export function sanitizePayloadForObservability(payload: any): any {
 }
 
 /**
+ * Registra métricas estruturadas de performance no Sentry para monitoramento em Dashboard
+ */
+export function logMetricsToSentry(context: {
+  isCacheHit: boolean;
+  modelUsed: string;
+  isFallback: boolean;
+  latencyMs: number;
+  attemptsCount: number;
+  payloadContext?: any;
+}): void {
+  const sanitized = sanitizePayloadForObservability(context.payloadContext);
+  const tags = {
+    ai_cache_hit: String(context.isCacheHit),
+    ai_model_used: context.modelUsed,
+    ai_is_fallback: String(context.isFallback),
+  };
+  const extra = {
+    ai_latency_ms: context.latencyMs,
+    ai_attempts_count: context.attemptsCount,
+    sanitizedPayload: sanitized,
+  };
+
+  try {
+    const globalObj = globalThis as any;
+    const Sentry = globalObj.Sentry || (typeof require !== 'undefined' ? (require('@sentry/react-native') || require('@sentry/browser')) : null);
+    if (Sentry && typeof Sentry.setContext === 'function') {
+      Sentry.setContext('ai_metrics', { ...tags, ...extra });
+    }
+  } catch {}
+
+  console.log(`[Sentry Metrics] CacheHit: ${context.isCacheHit} | Model: ${context.modelUsed} | Latency: ${context.latencyMs}ms`);
+}
+
+/**
  * Envia falha para o Sentry apenas quando TODAS as tentativas (inclusive fallback) falharem
  */
 export function logToSentry(
@@ -98,6 +138,7 @@ export function logToSentry(
   context: {
     model: string;
     attempts: number;
+    latencyMs?: number;
     payload: any;
     fallbackTriggered: boolean;
   }
@@ -108,6 +149,7 @@ export function logToSentry(
       attemptedModel: context.model,
       retryCount: context.attempts,
       fallbackTriggered: context.fallbackTriggered,
+      latencyMs: context.latencyMs,
       sanitizedPayload: sanitized,
     },
     tags: {
@@ -192,14 +234,51 @@ export class GeminiService {
   }
 
   /**
-   * Executa a chamada à API com Retry Exponencial e Fallback de Modelo
+   * Executa a chamada à API com Cache Dinâmico TTL, Retry Exponencial e Fallback de Modelo
    */
   public async generateContentWithRetryAndFallback(
     options: GeminiRequestOptions
   ): Promise<GeminiResponse> {
-    const { prompt, onStatusUpdate, payloadContext } = options;
+    const startTime = Date.now();
+    const { prompt, onStatusUpdate, payloadContext, ttlMs, skipCache } = options;
+    const primaryModel = GEMINI_CONFIG.primaryModel;
+
+    // 1. Geração da chave de cache e verificação de PII
+    const cacheKey = generateCacheKey(primaryModel, prompt, {
+      systemInstruction: options.systemInstruction,
+      temperature: options.temperature,
+    });
+
+    // 2. Verificação de Cache Hit (somente se não houver PII e skipCache = false)
+    if (!skipCache && !containsPii(prompt)) {
+      const cachedText = aiCache.getFromCache<string>(cacheKey);
+      if (cachedText) {
+        const latencyMs = Date.now() - startTime;
+        onStatusUpdate?.('Resposta recuperada do cache');
+
+        logMetricsToSentry({
+          isCacheHit: true,
+          modelUsed: primaryModel,
+          isFallback: false,
+          latencyMs,
+          attemptsCount: 0,
+          payloadContext,
+        });
+
+        return {
+          text: cachedText,
+          modelUsed: primaryModel,
+          attemptsCount: 0,
+          usedFallback: false,
+          isCacheHit: true,
+          latencyMs,
+        };
+      }
+    }
+
+    // 3. Em caso de Cache Miss, prossegue com a chamada resiliente à API
     let totalAttempts = 0;
-    let currentModel = GEMINI_CONFIG.primaryModel;
+    let currentModel = primaryModel;
     let usedFallback = false;
     let lastError: any = null;
 
@@ -214,12 +293,30 @@ export class GeminiService {
         }
 
         const text = await this.executeFetch(currentModel, prompt, options);
+        const latencyMs = Date.now() - startTime;
+
+        // Salva a resposta gerada no cache dinâmico com TTL
+        if (!containsPii(prompt)) {
+          aiCache.setInCache(cacheKey, text, currentModel, ttlMs);
+        }
+
+        logMetricsToSentry({
+          isCacheHit: false,
+          modelUsed: currentModel,
+          isFallback: false,
+          latencyMs,
+          attemptsCount: totalAttempts,
+          payloadContext,
+        });
+
         onStatusUpdate?.('');
         return {
           text,
           modelUsed: currentModel,
           attemptsCount: totalAttempts,
           usedFallback: false,
+          isCacheHit: false,
+          latencyMs,
         };
       } catch (err: any) {
         lastError = err;
@@ -245,12 +342,30 @@ export class GeminiService {
       onStatusUpdate?.(`Otimizando resposta via servidor auxiliar, aguarde um instante...`);
       try {
         const text = await this.executeFetch(currentModel, prompt, options);
+        const latencyMs = Date.now() - startTime;
+
+        // Salva no cache mesmo quando for gerado via fallback
+        if (!containsPii(prompt)) {
+          aiCache.setInCache(cacheKey, text, currentModel, ttlMs);
+        }
+
+        logMetricsToSentry({
+          isCacheHit: false,
+          modelUsed: currentModel,
+          isFallback: true,
+          latencyMs,
+          attemptsCount: totalAttempts,
+          payloadContext,
+        });
+
         onStatusUpdate?.('');
         return {
           text,
           modelUsed: currentModel,
           attemptsCount: totalAttempts,
           usedFallback: true,
+          isCacheHit: false,
+          latencyMs,
         };
       } catch (fallbackErr: any) {
         lastError = fallbackErr;
@@ -258,9 +373,11 @@ export class GeminiService {
     }
 
     // FASE 3: Observabilidade Sentry se TODAS as tentativas (inclusive fallback) falharem
+    const finalLatency = Date.now() - startTime;
     logToSentry(lastError, {
       model: currentModel,
       attempts: totalAttempts,
+      latencyMs: finalLatency,
       payload: payloadContext || { promptLength: prompt?.length },
       fallbackTriggered: usedFallback,
     });
