@@ -63,7 +63,7 @@ export function useElectionNight(forceSimulation = false) {
       const previousResults = electionNightStorage.getResults();
 
       // 1. Busca resultados específicos dos candidatos da cola (zero dados ao servidor)
-      const newResults = await tseResultsService.getResultsForCola(candidates);
+      const newResults = await tseResultsService.getResultsForCola(candidates, forceSimulation);
 
       // 2. Dispara notificações locais para candidatos cuja situação mudou
       if (pollingPrefs.notifications) {
@@ -84,7 +84,7 @@ export function useElectionNight(forceSimulation = false) {
       setResults(newResults);
 
       // 4. Busca estatísticas nacionais
-      const stats = await tseResultsService.fetchNationalStats(userUf);
+      const stats = await tseResultsService.fetchNationalStats(userUf, forceSimulation);
       if (stats) {
         electionNightStorage.saveNationalStats(stats);
         setNationalStats(stats);
@@ -94,7 +94,7 @@ export function useElectionNight(forceSimulation = false) {
     } finally {
       setLoading(false);
     }
-  }, [checkCivicAccess, getSelectedList, pollingPrefs.notifications, userUf]);
+  }, [checkCivicAccess, getSelectedList, pollingPrefs.notifications, userUf, forceSimulation]);
 
   const updatePollingPrefs = useCallback((newPrefs: Partial<PollingPreferences>) => {
     setPollingPrefsState((curr) => {
