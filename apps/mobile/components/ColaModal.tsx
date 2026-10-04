@@ -18,6 +18,7 @@ import { useThemeColors, Spacing, Radius, FontSize } from '../utils/theme';
 import { useIsDesktop } from '../utils/responsive';
 import { useColaStore, COLA_SLOTS } from '../stores/cola.store';
 import { useLocationStore } from '../stores/location.store';
+import { router } from 'expo-router';
 import { getCandidatePhotoUrl, API_URL } from '../services/api';
 import { PixApoio } from './PixApoio';
 import { ApoioVoluntarioBanner } from './ApoioVoluntarioBanner';
@@ -50,6 +51,7 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [loadSuccess, setLoadSuccess] = useState(false);
 
   // Garante a hidratação da cola gravada em disco sempre que o modal é aberto
   useEffect(() => {
@@ -122,6 +124,17 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
     setTimeout(() => setSaveSuccess(false), 2500);
   }
 
+  async function handleLoadSavedCola() {
+    await hydrateCola?.();
+    setLoadSuccess(true);
+    setTimeout(() => setLoadSuccess(false), 2500);
+  }
+
+  function handleOpenApuracao() {
+    onClose();
+    router.push('/apuracao');
+  }
+
   return (
     <Modal
       visible={visible}
@@ -174,7 +187,7 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
             {/* Quick Action Buttons Toolbar */}
             <View style={styles.actionToolbar}>
               <TouchableOpacity
-                style={[styles.primaryActionBtn, { backgroundColor: colors.primary, flex: 1, marginRight: 8 }]}
+                style={[styles.primaryActionBtn, { backgroundColor: colors.primary, flex: 1, minWidth: 140 }]}
                 onPress={handleShare}
                 activeOpacity={0.8}
                 disabled={selectedList.length === 0 || !!loadingAction}
@@ -185,8 +198,17 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
                   <Text style={styles.primaryActionBtnText}>📤 Compartilhar Cola (PDF)</Text>
                 )}
               </TouchableOpacity>
+
               <TouchableOpacity
-                style={[styles.secondaryActionBtn, { backgroundColor: saveSuccess ? '#047857' : colors.surfaceAlt, borderColor: saveSuccess ? '#047857' : colors.border, flex: 1 }]}
+                style={[
+                  styles.secondaryActionBtn,
+                  {
+                    backgroundColor: saveSuccess ? '#047857' : colors.surfaceAlt,
+                    borderColor: saveSuccess ? '#047857' : colors.border,
+                    flex: 1,
+                    minWidth: 110,
+                  },
+                ]}
                 onPress={handleSaveCola}
                 activeOpacity={0.8}
                 disabled={selectedList.length === 0}
@@ -194,6 +216,35 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
                 <Text style={[styles.secondaryActionBtnText, { color: saveSuccess ? '#FFFFFF' : colors.text }]}>
                   {saveSuccess ? '✅ Salvo!' : '💾 Salvar Cola'}
                 </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.secondaryActionBtn,
+                  {
+                    backgroundColor: loadSuccess ? '#047857' : colors.surfaceAlt,
+                    borderColor: loadSuccess ? '#047857' : colors.border,
+                    flex: 1,
+                    minWidth: 140,
+                  },
+                ]}
+                onPress={handleLoadSavedCola}
+                activeOpacity={0.8}
+              >
+                <Text style={[styles.secondaryActionBtnText, { color: loadSuccess ? '#FFFFFF' : colors.text }]}>
+                  {loadSuccess ? '✅ Carregado!' : '📂 Carregar Cola Salva'}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.primaryActionBtn,
+                  { backgroundColor: '#0284C7', flex: 1, minWidth: 140 },
+                ]}
+                onPress={handleOpenApuracao}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.primaryActionBtnText}>🗳️ Apuração On Line</Text>
               </TouchableOpacity>
             </View>
 
@@ -206,6 +257,12 @@ export function ColaModal({ visible, onClose, onSelectCargoToChoose }: ColaModal
             {saveSuccess && (
               <View style={[styles.copyNotice, { backgroundColor: '#047857' }]}>
                 <Text style={[styles.copyNoticeText, { color: '#FFFFFF' }]}>✓ Cola eleitoral salva no dispositivo!</Text>
+              </View>
+            )}
+
+            {loadSuccess && (
+              <View style={[styles.copyNotice, { backgroundColor: '#0369A1' }]}>
+                <Text style={[styles.copyNoticeText, { color: '#FFFFFF' }]}>✓ Cola eleitoral salva carregada!</Text>
               </View>
             )}
 

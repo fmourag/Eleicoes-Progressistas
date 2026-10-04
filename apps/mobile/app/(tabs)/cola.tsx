@@ -49,6 +49,13 @@ export default function ColaScreen() {
   const [benefitModalVisible, setBenefitModalVisible] = useState(false);
   const [promptedFullCola, setPromptedFullCola] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [loadSuccess, setLoadSuccess] = useState(false);
+
+  async function handleLoadSavedCola() {
+    await hydrateCola?.();
+    setLoadSuccess(true);
+    setTimeout(() => setLoadSuccess(false), 2500);
+  }
 
   // Hidrata a cola salva permanentemente no dispositivo
   useEffect(() => {
@@ -315,7 +322,7 @@ export default function ColaScreen() {
 
           <View style={styles.actionToolbar}>
             <TouchableOpacity
-              style={[styles.mainPdfBtn, { backgroundColor: colors.primary, flex: 1, marginRight: 8 }]}
+              style={[styles.mainPdfBtn, { backgroundColor: colors.primary, flex: 1, minWidth: 140 }]}
               onPress={handleShare}
               disabled={selectedList.length === 0 || !!loadingAction}
               activeOpacity={0.8}
@@ -328,7 +335,7 @@ export default function ColaScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.secondaryActionBtn, { backgroundColor: saveSuccess ? '#047857' : colors.surfaceAlt, borderColor: saveSuccess ? '#047857' : colors.border, flex: 1 }]}
+              style={[styles.secondaryActionBtn, { backgroundColor: saveSuccess ? '#047857' : colors.surfaceAlt, borderColor: saveSuccess ? '#047857' : colors.border, flex: 1, minWidth: 110 }]}
               onPress={handleSaveCola}
               activeOpacity={0.8}
               disabled={selectedList.length === 0}
@@ -337,11 +344,35 @@ export default function ColaScreen() {
                 {saveSuccess ? '✅ Salvo!' : '💾 Salvar Cola'}
               </Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.secondaryActionBtn, { backgroundColor: loadSuccess ? '#047857' : colors.surfaceAlt, borderColor: loadSuccess ? '#047857' : colors.border, flex: 1, minWidth: 140 }]}
+              onPress={handleLoadSavedCola}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.secondaryBtnLabel, { color: loadSuccess ? '#FFFFFF' : colors.text }]}>
+                {loadSuccess ? '✅ Carregado!' : '📂 Carregar Cola Salva'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.mainPdfBtn, { backgroundColor: '#0284C7', flex: 1, minWidth: 140 }]}
+              onPress={() => router.push('/apuracao')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.mainPdfBtnText}>🗳️ Apuração On Line</Text>
+            </TouchableOpacity>
           </View>
           
           {saveSuccess && (
             <View style={[styles.copyNotice, { backgroundColor: '#047857', marginTop: 12 }]}>
               <Text style={[styles.copyNoticeText, { color: '#FFFFFF' }]}>✓ Cola eleitoral salva no dispositivo!</Text>
+            </View>
+          )}
+
+          {loadSuccess && (
+            <View style={[styles.copyNotice, { backgroundColor: '#0369A1', marginTop: 12 }]}>
+              <Text style={[styles.copyNoticeText, { color: '#FFFFFF' }]}>✓ Cola eleitoral salva carregada!</Text>
             </View>
           )}
 
