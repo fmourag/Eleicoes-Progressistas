@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Switch,
+  Image,
 } from 'react-native';
 import { router } from 'expo-router';
 import { useThemeColors, Spacing, Radius } from '../utils/theme';
@@ -18,6 +19,7 @@ import { useElectionNight } from '../src/hooks/use-election-night';
 import { ElectionResult } from '../src/types/election-night';
 import { PIX_AMOUNT, PIX_KEY_DISPLAY } from '../src/constants/civic-support';
 import { isApuracaoUnlocked } from '../src/storage/civic-support-storage';
+import { generatePixQrDataUrl } from '../src/utils/pix-generator';
 
 export default function ApuracaoScreen() {
   const colors = useThemeColors();
@@ -30,6 +32,13 @@ export default function ApuracaoScreen() {
   const [civicModalVisible, setCivicModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<'cola' | 'brasil'>('cola');
   const [forceSim, setForceSim] = useState(false);
+  const [headerQrUrl, setHeaderQrUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    generatePixQrDataUrl(PIX_AMOUNT, { width: 180, margin: 1 })
+      .then(setHeaderQrUrl)
+      .catch(() => {});
+  }, []);
 
   const {
     hasContributed,
@@ -82,6 +91,31 @@ export default function ApuracaoScreen() {
             <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
               <Text style={[styles.backBtnText, { color: colors.primary }]}>← Voltar</Text>
             </TouchableOpacity>
+          </View>
+
+          {/* Banner do Eleições Progressistas com QR Code no Cabeçalho */}
+          <View style={styles.bannerContainer}>
+            <View style={styles.bannerLeft}>
+              <View style={styles.bannerBadge}>
+                <Text style={styles.bannerBadgeText}>🇧🇷 ELEIÇÕES PROGRESSISTAS 2026</Text>
+              </View>
+              <Text style={styles.bannerTitle}>Apuração em Tempo Real</Text>
+              <Text style={styles.bannerSubtitle}>
+                Resultados oficiais simplificados do Tribunal Superior Eleitoral (TSE)
+              </Text>
+            </View>
+
+            {headerQrUrl && (
+              <TouchableOpacity
+                style={styles.bannerQrCard}
+                onPress={() => setCivicModalVisible(true)}
+                activeOpacity={0.85}
+              >
+                <Image source={{ uri: headerQrUrl }} style={styles.bannerQrImage} />
+                <Text style={styles.bannerQrKeyText}>PIX: {PIX_KEY_DISPLAY}</Text>
+                <Text style={styles.bannerQrActionText}>💚 Apoio Cívico R$ {PIX_AMOUNT.toFixed(2)}</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           <View style={[styles.paywallCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
@@ -157,11 +191,29 @@ export default function ApuracaoScreen() {
           </View>
         </View>
 
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: colors.text }]}>Apuração em Tempo Real</Text>
-          <Text style={[styles.subtitle, { color: colors.textMuted }]}>
-            Resultados oficiais simplificados do Tribunal Superior Eleitoral
-          </Text>
+        {/* Banner do Eleições Progressistas com QR Code no Cabeçalho */}
+        <View style={styles.bannerContainer}>
+          <View style={styles.bannerLeft}>
+            <View style={styles.bannerBadge}>
+              <Text style={styles.bannerBadgeText}>🇧🇷 ELEIÇÕES PROGRESSISTAS 2026</Text>
+            </View>
+            <Text style={styles.bannerTitle}>Apuração em Tempo Real</Text>
+            <Text style={styles.bannerSubtitle}>
+              Resultados oficiais simplificados do Tribunal Superior Eleitoral (TSE)
+            </Text>
+          </View>
+
+          {headerQrUrl && (
+            <TouchableOpacity
+              style={styles.bannerQrCard}
+              onPress={() => setCivicModalVisible(true)}
+              activeOpacity={0.85}
+            >
+              <Image source={{ uri: headerQrUrl }} style={styles.bannerQrImage} />
+              <Text style={styles.bannerQrKeyText}>PIX: {PIX_KEY_DISPLAY}</Text>
+              <Text style={styles.bannerQrActionText}>💚 Apoio Cívico R$ {PIX_AMOUNT.toFixed(2)}</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Alerta de Período Eleitoral */}
@@ -707,5 +759,75 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '800',
     fontSize: 15,
+  },
+  // Banner Eleições Progressistas & QR Code
+  bannerContainer: {
+    backgroundColor: '#1B5E20',
+    borderRadius: Radius.lg,
+    padding: Spacing.md,
+    marginBottom: Spacing.base,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  bannerLeft: {
+    flex: 1,
+    minWidth: 200,
+  },
+  bannerBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: Radius.sm,
+    marginBottom: 6,
+  },
+  bannerBadgeText: {
+    color: '#E8F5E9',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  bannerTitle: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '800',
+  },
+  bannerSubtitle: {
+    color: '#C8E6C9',
+    fontSize: 12,
+    marginTop: 4,
+    lineHeight: 16,
+  },
+  bannerQrCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: Radius.md,
+    padding: 8,
+    alignItems: 'center',
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  bannerQrImage: {
+    width: 90,
+    height: 90,
+    borderRadius: 4,
+  },
+  bannerQrKeyText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#1B5E20',
+    marginTop: 4,
+  },
+  bannerQrActionText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#2E7D32',
+    marginTop: 1,
   },
 });

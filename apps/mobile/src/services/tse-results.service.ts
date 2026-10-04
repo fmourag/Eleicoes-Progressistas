@@ -113,10 +113,11 @@ export class TseResultsService {
       const tseData = forceSimulation ? null : await this.fetchByCargo(group.uf, group.cargoCode);
 
       if (!tseData || !Array.isArray(tseData.cand)) {
-        for (const cand of group.candidates) {
+        for (let idx = 0; idx < group.candidates.length; idx++) {
+          const cand = group.candidates[idx];
           const idKey = cand.tseId || cand.id;
           const upperCargo = (cand.cargo || '').toUpperCase().trim();
-          const num = parseInt(cand.numeroUrna || '13', 10);
+          const candNameUpper = (cand.socialName || cand.name || '').toUpperCase();
 
           let simPosition = 1;
           let simVotes = 145210;
@@ -131,13 +132,28 @@ export class TseResultsService {
             simVotes = 3912040;
             simPct = 46.18;
           } else if (upperCargo.includes('SENADOR')) {
-            simPosition = (num % 2) + 1; // 1º ou 2º eleitos para o Senado
-            simVotes = 3120450 - (simPosition * 200000);
-            simPct = parseFloat((38.45 - simPosition * 4).toFixed(2));
+            // Benedita da Silva (131) é a 1ª eleita no Senado (3.120.450 votos, 34.45%)
+            // Pedro Paulo (555) é o 2º eleito no Senado (2.720.450 votos, 30.45%)
+            const isBenedita = cand.numeroUrna === '131' || candNameUpper.includes('BENEDITA');
+            const isPedroPaulo = cand.numeroUrna === '555' || candNameUpper.includes('PEDRO PAULO');
+
+            if (isBenedita) {
+              simPosition = 1;
+              simVotes = 3120450;
+              simPct = 34.45;
+            } else if (isPedroPaulo) {
+              simPosition = 2;
+              simVotes = 2720450;
+              simPct = 30.45;
+            } else {
+              simPosition = idx + 1;
+              simVotes = Math.max(500000, 2720450 - (idx * 300000));
+              simPct = parseFloat(Math.max(5.0, 30.45 - (idx * 3.5)).toFixed(2));
+            }
           } else {
-            simPosition = (num % 2) + 1;
-            simVotes = 145210;
-            simPct = 3.41;
+            simPosition = idx + 1;
+            simVotes = Math.max(20000, 145210 - (idx * 15000));
+            simPct = parseFloat(Math.max(0.5, 3.41 - (idx * 0.3)).toFixed(2));
           }
 
           const status = this.resolveCandidateStatus({
