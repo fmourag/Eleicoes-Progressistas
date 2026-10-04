@@ -331,12 +331,23 @@ export function getNumeroUrna(candidate: {
   name?: string;
   numeroUrna?: string | number;
 }): string {
-  if (candidate.numeroUrna) {
-    return String(candidate.numeroUrna);
-  }
   const tseId = candidate.tseId || candidate.id || '';
+  const normName = (candidate.name || '').toLowerCase();
+  
+  if (tseId === 'sen_rj_benedita' || tseId === '190002548141' || normName.includes('benedita')) {
+    return '131';
+  }
+
   if (tseId && KNOWN_URNA_NUMBERS[tseId]) {
     return KNOWN_URNA_NUMBERS[tseId];
+  }
+
+  if (candidate.numeroUrna) {
+    const val = String(candidate.numeroUrna).trim();
+    if (val === '130' && (tseId.includes('benedita') || normName.includes('benedita'))) {
+      return '131';
+    }
+    return val;
   }
 
   const pNum = candidate.partyNumber || 13;

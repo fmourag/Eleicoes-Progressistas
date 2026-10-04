@@ -154,13 +154,13 @@ export function saveCandidatesToCache(candidates: Candidate[]) {
   }
   if (typeof window !== 'undefined' && window.sessionStorage) {
     try {
-      const existingStr = window.sessionStorage.getItem('np_cached_candidates_v2');
+      const existingStr = window.sessionStorage.getItem('np_cached_candidates_v4');
       const existing = existingStr ? JSON.parse(existingStr) : {};
       for (const c of candidates) {
         if (c.id) existing[c.id] = c;
         if (c.tseId) existing[c.tseId] = c;
       }
-      window.sessionStorage.setItem('np_cached_candidates_v2', JSON.stringify(existing));
+      window.sessionStorage.setItem('np_cached_candidates_v4', JSON.stringify(existing));
     } catch {
       // storage unavailable or quota exceeded
     }
@@ -173,7 +173,7 @@ export function getCachedCandidate(id: string): Candidate | undefined {
   }
   if (typeof window !== 'undefined' && window.sessionStorage) {
     try {
-      const existingStr = window.sessionStorage.getItem('np_cached_candidates_v2');
+      const existingStr = window.sessionStorage.getItem('np_cached_candidates_v4');
       if (existingStr) {
         const existing = JSON.parse(existingStr);
         if (existing[id]) {
@@ -191,13 +191,13 @@ export async function saveCandidateListToStorage(key: string, list: any[]): Prom
   saveCandidatesToCache(list);
   try {
     const payload = JSON.stringify({ timestamp: Date.now(), list });
-    await AppStorage.setItem(`np_cand_list_v2_${key || 'all'}`, payload);
+    await AppStorage.setItem(`np_cand_list_v4_${key || 'all'}`, payload);
   } catch {}
 }
 
 export async function getCandidateListFromStorage(key: string): Promise<any[] | null> {
   try {
-    const raw = await AppStorage.getItem(`np_cand_list_v2_${key || 'all'}`);
+    const raw = await AppStorage.getItem(`np_cand_list_v4_${key || 'all'}`);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     if (parsed && Array.isArray(parsed.list) && parsed.list.length > 0) {
