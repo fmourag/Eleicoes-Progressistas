@@ -167,7 +167,7 @@ export function CandidateCard({
           <View style={[styles.photoContainer, { backgroundColor: partyTheme.primary, borderColor: partyTheme.border || colors.primaryBorder }]}>
             {showImage ? (
               <Image
-                source={{ uri: currentPhoto }}
+                key={currentPhoto} source={{ uri: currentPhoto }}
                 style={styles.photoImage}
                 resizeMode="cover"
                 onError={handleImageError}
