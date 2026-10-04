@@ -1,5 +1,5 @@
 import { ELECTION_CONFIG } from '../constants/election-night';
-import { TseApiResponse, ElectionResult, NationalStats } from '../types/election-night';
+import { TseApiResponse, ElectionResult, NationalStats, CargoRankingGroup } from '../types/election-night';
 import { RateLimiter } from '../utils/rate-limiter';
 import { MemoryCache } from '../utils/memory-cache';
 import { ColaCandidate } from '../../stores/cola.store';
@@ -353,7 +353,7 @@ export class TseResultsService {
           uf: 'BR',
           tipo: 'FEDERAL',
           totalVotesApurados: brPresidente.vapt || 0,
-          percentualApurado: typeof brPresidente.pst === 'number' ? brPresidente.pst : parseFloat(String(brPresidente.pst || '0').replace(',', '.')),
+          percentualApurado: typeof (brPresidente as any).pst === 'number' ? (brPresidente as any).pst : parseFloat(String((brPresidente as any).pst || '0').replace(',', '.')),
           candidates: brPresidente.cand.slice(0, 10).map((c, idx) => {
             const votes = typeof c.v === 'number' ? c.v : parseInt(String(c.v || 0), 10);
             const percentage = typeof c.pv === 'number' ? c.pv : parseFloat(String(c.pv || '0').replace(',', '.'));
@@ -386,7 +386,7 @@ export class TseResultsService {
               uf: targetUfClean,
               tipo: cfg.tipo,
               totalVotesApurados: data.vapt || 0,
-              percentualApurado: typeof data.pst === 'number' ? data.pst : parseFloat(String(data.pst || '0').replace(',', '.')),
+              percentualApurado: typeof (data as any).pst === 'number' ? (data as any).pst : parseFloat(String((data as any).pst || '0').replace(',', '.')),
               candidates: data.cand.slice(0, 10).map((c, idx) => {
                 const votes = typeof c.v === 'number' ? c.v : parseInt(String(c.v || 0), 10);
                 const percentage = typeof c.pv === 'number' ? c.pv : parseFloat(String(c.pv || '0').replace(',', '.'));
