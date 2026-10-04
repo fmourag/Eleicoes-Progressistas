@@ -42,7 +42,7 @@ export const OFFICIAL_ELECTION_POLLS: ElectionPoll[] = [
     candidatos: [
       { candidateName: 'Luiz Inácio Lula da Silva', party: 'PT', percentual: 47.0 },
       { candidateName: 'Flávio Bolsonaro', party: 'PL', percentual: 32.0 },
-      { candidateName: 'Ciro Gomes', party: 'PDT', percentual: 6.0 },
+      { candidateName: 'Simone Tebet', party: 'MDB', percentual: 6.0 },
       { candidateName: 'Ronaldo Caiado', party: 'UNIÃO', percentual: 4.0 },
       { candidateName: 'Glauber Braga', party: 'PSOL', percentual: 2.5 },
       { candidateName: 'Léo Péricles', party: 'UP', percentual: 1.5 },
