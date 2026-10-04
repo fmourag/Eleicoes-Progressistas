@@ -216,7 +216,7 @@ const REAL_SENATORS = [
     name: 'Benedita Sousa da Silva Sampaio',
     socialName: 'Benedita da Silva',
     party: 'PT',
-    numeroUrna: '130',
+    numeroUrna: '131',
     state: 'RJ',
     municipality: 'Rio de Janeiro',
     photoUrl: '/candidates/sen_rj_benedita.jpg',

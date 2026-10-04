@@ -179,13 +179,6 @@ const REAL_PRESIDENTS = [
       { pillar: 'p3', title: 'Transição Energética Justa e Preservação Florestal', description: 'Meta de desmatamento zero e bioeconomia sustentável.' },
     ],
   },
-  
-    proposals: [
-      { pillar: 'p11', title: 'Revolução Educacional Inspirada no Modelo do Ceará', description: 'Escola em tempo integral e valorização massiva do magistério em todo o território nacional.' },
-      { pillar: 'p5', title: 'Reindustrialização e Soberania Tecnológica', description: 'Complexo econômico-industrial da saúde e investimentos pesados em energia renovável.' },
-      { pillar: 'p2', title: 'Renda Básica Universal e Renegociação de Dívidas', description: 'Linha de crédito e socorro a famílias superendividadas no SPC e Serasa.' },
-    ],
-  },
   {
     tseId: 'pres_leonardo',
     electionYear: 2026,
@@ -382,7 +375,7 @@ const REAL_SENATORS = [
     name: 'Benedita Sousa da Silva Sampaio',
     socialName: 'Benedita da Silva',
     party: 'PT',
-    numeroUrna: '130',
+    numeroUrna: '131',
     state: 'RJ',
     municipality: 'Rio de Janeiro',
     photoUrl: '/candidates/sen_rj_benedita.jpg',

@@ -207,8 +207,8 @@ export const KNOWN_URNA_NUMBERS: Record<string, string> = {
   'gov_to_mourao': '13',
   // Senadores RJ (13 Candidatos Oficiais no Pleito 2026)
   'sen_rj_portinho': '222',
-  'sen_rj_benedita': '130',
-  '190002548141': '130',
+  'sen_rj_benedita': '131',
+  '190002548141': '131',
   'sen_rj_jordy': '220',
   'sen_rj_heliosecco': '888',
   'sen_rj_lucianomattos': '280',
