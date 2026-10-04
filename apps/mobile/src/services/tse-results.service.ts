@@ -115,11 +115,37 @@ export class TseResultsService {
       if (!tseData || !Array.isArray(tseData.cand)) {
         for (const cand of group.candidates) {
           const idKey = cand.tseId || cand.id;
+          const upperCargo = (cand.cargo || '').toUpperCase().trim();
           const num = parseInt(cand.numeroUrna || '13', 10);
-          const baseVotes = Math.floor(125000 + ((num * 7321) % 850000));
-          const basePct = parseFloat(((num * 1.73) % 28 + 3.2).toFixed(2));
-          const isEleito = basePct > 20 || num % 5 === 0;
-          const isSecondTurn = !isEleito && (basePct > 12 || num % 2 === 0);
+
+          let simPosition = 1;
+          let simVotes = 145210;
+          let simPct = 3.41;
+
+          if (upperCargo === 'PRESIDENTE') {
+            simPosition = 1;
+            simVotes = 57250410;
+            simPct = 48.43;
+          } else if (upperCargo === 'GOVERNADOR') {
+            simPosition = 1;
+            simVotes = 3912040;
+            simPct = 46.18;
+          } else if (upperCargo.includes('SENADOR')) {
+            simPosition = (num % 2) + 1; // 1º ou 2º eleitos para o Senado
+            simVotes = 3120450 - (simPosition * 200000);
+            simPct = parseFloat((38.45 - simPosition * 4).toFixed(2));
+          } else {
+            simPosition = (num % 2) + 1;
+            simVotes = 145210;
+            simPct = 3.41;
+          }
+
+          const status = this.resolveCandidateStatus({
+            cargo: cand.cargo,
+            position: simPosition,
+            percentage: simPct,
+            votes: simVotes,
+          });
 
           resultMap.set(idKey, {
             tseId: idKey,
@@ -128,10 +154,10 @@ export class TseResultsService {
             party: cand.party,
             cargo: cand.cargo,
             uf: group.uf.toUpperCase(),
-            status: isEleito ? 'ELEITO' : isSecondTurn ? 'SEGUNDO_TURNO' : 'APURANDO',
-            votes: baseVotes,
-            percentage: basePct,
-            position: (num % 4) + 1,
+            status,
+            votes: simVotes,
+            percentage: simPct,
+            position: simPosition,
             totalCandidates: 12,
             totalVotesApurados: 4500000,
             lastUpdate: Date.now(),
@@ -158,7 +184,15 @@ export class TseResultsService {
           const match = sortedCands[matchIndex];
           const votes = typeof match.v === 'number' ? match.v : parseInt(String(match.v || 0), 10);
           const percentage = typeof match.pv === 'number' ? match.pv : parseFloat(String(match.pv || '0').replace(',', '.'));
-          const status = this.mapStatus(match.s, votes, tseData.vapt);
+          const position = matchIndex + 1;
+          const status = this.resolveCandidateStatus({
+            cargo: cand.cargo,
+            position,
+            percentage,
+            votes,
+            tseStatusRaw: match.s,
+            totalVotesApurados: tseData.vapt,
+          });
 
           resultMap.set(idKey, {
             tseId: idKey,
@@ -170,7 +204,7 @@ export class TseResultsService {
             status,
             votes,
             percentage,
-            position: matchIndex + 1,
+            position,
             totalCandidates: sortedCands.length,
             totalVotesApurados: tseData.vapt || 0,
             lastUpdate: Date.now(),
@@ -229,7 +263,7 @@ export class TseResultsService {
           party: leader.p,
           cargo: 'PRESIDENTE',
           uf: 'BR',
-          status: this.mapStatus(leader.s, votes, brPresidente.vapt),
+          status: this.mapStatus(leader.s, votes, brPresidente.vapt, 'PRESIDENTE', 1, percentage),
           votes,
           percentage,
           position: 1,
@@ -258,7 +292,7 @@ export class TseResultsService {
               party: leader.p,
               cargo: 'GOVERNADOR',
               uf,
-              status: this.mapStatus(leader.s, votes, govData.vapt),
+              status: this.mapStatus(leader.s, votes, govData.vapt, 'GOVERNADOR', 1, percentage),
               votes,
               percentage,
               position: 1,
@@ -280,7 +314,7 @@ export class TseResultsService {
                 party: sCand.p,
                 cargo: 'SENADOR',
                 uf,
-                status: this.mapStatus(sCand.s, votes, senData.vapt),
+                status: this.mapStatus(sCand.s, votes, senData.vapt, 'SENADOR', idx + 1, percentage),
                 votes,
                 percentage,
                 position: idx + 1,
@@ -368,21 +402,83 @@ export class TseResultsService {
     return stats;
   }
 
-  public mapStatus(s: string, votes: number, totalVotes: number): 'ELEITO' | 'SEGUNDO_TURNO' | 'NAO_ELEITO' | 'APURANDO' {
-    const raw = (s || '').toUpperCase().trim();
-    if (raw.includes('ELEITO') && !raw.includes('NÃO') && !raw.includes('NAO')) {
+  public resolveCandidateStatus(params: {
+    cargo?: string;
+    position: number;
+    percentage: number;
+    votes: number;
+    tseStatusRaw?: string;
+    totalVotesApurados?: number;
+  }): 'ELEITO' | 'SEGUNDO_TURNO' | 'NAO_ELEITO' | 'APURANDO' {
+    const { cargo, position, percentage, votes, tseStatusRaw, totalVotesApurados } = params;
+    const upperCargo = (cargo || '').toUpperCase().trim();
+
+    // Se temos status bruto do TSE, verificamos primeiro
+    if (tseStatusRaw) {
+      const raw = tseStatusRaw.toUpperCase().trim();
+
+      // Se o TSE já marca como Eleito (por QP, por média, ou diretamente)
+      if (raw.includes('ELEITO') && !raw.includes('NÃO') && !raw.includes('NAO')) {
+        return 'ELEITO';
+      }
+
+      // Se o TSE marca como 2º Turno, mas o cargo NÃO PERMITE 2º turno (Senador ou Deputado)
+      if (raw.includes('2º TURNO') || raw.includes('2 TURNO') || raw.includes('SEGUNDO TURNO')) {
+        if (upperCargo === 'PRESIDENTE' || upperCargo === 'GOVERNADOR') {
+          return 'SEGUNDO_TURNO';
+        }
+        // Para Senador / Deputado, 2º turno é legalmente impossível.
+        if (upperCargo.includes('SENADOR') && position <= 2) {
+          return 'ELEITO';
+        }
+        return position === 1 ? 'ELEITO' : 'NAO_ELEITO';
+      }
+
+      if (raw.includes('NÃO ELEITO') || raw.includes('NAO ELEITO')) {
+        return 'NAO_ELEITO';
+      }
+    }
+
+    // Regras por Cargo se o TSE raw for inconclusivo
+    if (upperCargo === 'PRESIDENTE' || upperCargo === 'GOVERNADOR') {
+      if (position === 1 && percentage > 50) {
+        return 'ELEITO';
+      }
+      if ((position === 1 || position === 2) && percentage <= 50) {
+        return 'SEGUNDO_TURNO';
+      }
+      return 'NAO_ELEITO';
+    }
+
+    if (upperCargo.includes('SENADOR')) {
+      // Em 2026, 2 vagas por estado no Senado (1º e 2º colocados são ELEITOS)
+      if (position === 1 || position === 2) {
+        return 'ELEITO';
+      }
+      return 'NAO_ELEITO';
+    }
+
+    // Deputados (Federal, Estadual, Distrital) - NUNCA 2º turno.
+    if (position === 1) {
       return 'ELEITO';
     }
-    if (raw.includes('2º TURNO') || raw.includes('2 TURNO') || raw.includes('SEGUNDO TURNO')) {
-      return 'SEGUNDO_TURNO';
-    }
-    if (raw.includes('NÃO ELEITO') || raw.includes('NAO ELEITO')) {
+
+    if (votes === 0 && (totalVotesApurados || 0) > 10000) {
       return 'NAO_ELEITO';
     }
-    if (votes === 0 && totalVotes > 10000) {
-      return 'NAO_ELEITO';
-    }
-    return 'APURANDO';
+
+    return 'NAO_ELEITO';
+  }
+
+  public mapStatus(s: string, votes: number, totalVotes: number, cargo?: string, position = 1, percentage = 0): 'ELEITO' | 'SEGUNDO_TURNO' | 'NAO_ELEITO' | 'APURANDO' {
+    return this.resolveCandidateStatus({
+      cargo,
+      position,
+      percentage,
+      votes,
+      tseStatusRaw: s,
+      totalVotesApurados: totalVotes,
+    });
   }
 
   public clearCache(): void {
