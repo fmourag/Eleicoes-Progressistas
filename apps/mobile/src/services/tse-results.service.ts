@@ -420,7 +420,9 @@ export class TseResultsService {
       {
         cargo: 'PRESIDENTE',
         uf: 'BR',
+        tipo: 'FEDERAL',
         totalVotesApurados: 118200500,
+        percentualApurado: 89.74,
         candidates: [
           { position: 1, candidateName: 'Luiz Inácio Lula da Silva', party: 'PT', numeroUrna: '13', votes: 57250410, percentage: 48.43, status: 'SEGUNDO_TURNO' },
           { position: 2, candidateName: 'Tarcísio de Freitas', party: 'REPUBLICANOS', numeroUrna: '10', votes: 50980120, percentage: 43.13, status: 'SEGUNDO_TURNO' },
@@ -431,7 +433,9 @@ export class TseResultsService {
       {
         cargo: 'GOVERNADOR',
         uf: targetUfClean,
+        tipo: 'ESTADUAL',
         totalVotesApurados: 8470000,
+        percentualApurado: 94.18,
         candidates: [
           { position: 1, candidateName: 'Eduardo Paes', party: 'PSD', numeroUrna: '55', votes: 3912040, percentage: 46.18, status: 'SEGUNDO_TURNO' },
           { position: 2, candidateName: 'Cláudio Castro', party: 'PL', numeroUrna: '22', votes: 3239775, percentage: 38.25, status: 'SEGUNDO_TURNO' },
@@ -441,7 +445,9 @@ export class TseResultsService {
       {
         cargo: 'SENADOR',
         uf: targetUfClean,
+        tipo: 'FEDERAL',
         totalVotesApurados: 9057910,
+        percentualApurado: 92.45,
         candidates: [
           { position: 1, candidateName: 'Benedita da Silva', party: 'PT', numeroUrna: '131', votes: 3120450, percentage: 34.45, status: 'ELEITO' },
           { position: 2, candidateName: 'Pedro Paulo', party: 'PSD', numeroUrna: '555', votes: 2720450, percentage: 30.45, status: 'ELEITO' },
@@ -452,7 +458,9 @@ export class TseResultsService {
       {
         cargo: 'DEPUTADO FEDERAL',
         uf: targetUfClean,
+        tipo: 'FEDERAL',
         totalVotesApurados: 4258350,
+        percentualApurado: 91.80,
         candidates: [
           { position: 1, candidateName: 'Elias Jabbour', party: 'PCDOB', numeroUrna: '6577', votes: 145210, percentage: 3.41, status: 'ELEITO' },
           { position: 2, candidateName: 'Nikolas Ferreira', party: 'PL', numeroUrna: '2210', votes: 132400, percentage: 3.11, status: 'ELEITO' },
@@ -463,7 +471,9 @@ export class TseResultsService {
       {
         cargo: 'DEPUTADO ESTADUAL',
         uf: targetUfClean,
+        tipo: 'ESTADUAL',
         totalVotesApurados: 4258350,
+        percentualApurado: 91.80,
         candidates: [
           { position: 1, candidateName: 'Carlos Minc', party: 'PSB', numeroUrna: '40123', votes: 145210, percentage: 3.41, status: 'ELEITO' },
           { position: 2, candidateName: 'Rodrigo Amorim', party: 'PL', numeroUrna: '22345', votes: 128500, percentage: 3.02, status: 'ELEITO' },

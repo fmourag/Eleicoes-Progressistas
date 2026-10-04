@@ -10,6 +10,7 @@ import {
   Image,
 } from 'react-native';
 import { router } from 'expo-router';
+import QRCode from 'qrcode';
 import { useThemeColors, Spacing, Radius } from '../utils/theme';
 import { useMaxContentWidth, useResponsivePadding } from '../utils/responsive';
 import { useColaStore } from '../stores/cola.store';
@@ -19,7 +20,6 @@ import { useElectionNight } from '../src/hooks/use-election-night';
 import { ElectionResult } from '../src/types/election-night';
 import { PIX_AMOUNT, PIX_KEY_DISPLAY } from '../src/constants/civic-support';
 import { isApuracaoUnlocked } from '../src/storage/civic-support-storage';
-import { generatePixQrDataUrl } from '../src/utils/pix-generator';
 
 export default function ApuracaoScreen() {
   const colors = useThemeColors();
@@ -33,9 +33,16 @@ export default function ApuracaoScreen() {
   const [activeTab, setActiveTab] = useState<'cola' | 'brasil'>('cola');
   const [forceSim, setForceSim] = useState(false);
   const [headerQrUrl, setHeaderQrUrl] = useState<string | null>(null);
+  const [rankingFilter, setRankingFilter] = useState<'todos' | 'federal' | 'estadual'>('todos');
+
+  const appWebUrl = 'https://eleicoes-progressistas.pages.dev';
 
   useEffect(() => {
-    generatePixQrDataUrl(PIX_AMOUNT, { width: 180, margin: 1 })
+    QRCode.toDataURL(appWebUrl, {
+      width: 180,
+      margin: 1,
+      color: { dark: '#1B5E20', light: '#FFFFFF' },
+    })
       .then(setHeaderQrUrl)
       .catch(() => {});
   }, []);
@@ -93,7 +100,7 @@ export default function ApuracaoScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Banner do Eleições Progressistas com QR Code no Cabeçalho */}
+          {/* Banner do Eleições Progressistas com QR Code do Endereço do App */}
           <View style={styles.bannerContainer}>
             <View style={styles.bannerLeft}>
               <View style={styles.bannerBadge}>
@@ -108,12 +115,16 @@ export default function ApuracaoScreen() {
             {headerQrUrl && (
               <TouchableOpacity
                 style={styles.bannerQrCard}
-                onPress={() => setCivicModalVisible(true)}
+                onPress={() => {
+                  if (typeof window !== 'undefined') {
+                    window.location.href = appWebUrl;
+                  }
+                }}
                 activeOpacity={0.85}
               >
                 <Image source={{ uri: headerQrUrl }} style={styles.bannerQrImage} />
-                <Text style={styles.bannerQrKeyText}>PIX: {PIX_KEY_DISPLAY}</Text>
-                <Text style={styles.bannerQrActionText}>💚 Apoio Cívico R$ {PIX_AMOUNT.toFixed(2)}</Text>
+                <Text style={styles.bannerQrKeyText}>eleicoes-progressistas.pages.dev</Text>
+                <Text style={styles.bannerQrActionText}>📲 Escaneie p/ acessar o app web</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -191,7 +202,7 @@ export default function ApuracaoScreen() {
           </View>
         </View>
 
-        {/* Banner do Eleições Progressistas com QR Code no Cabeçalho */}
+        {/* Banner do Eleições Progressistas com QR Code do Endereço do App */}
         <View style={styles.bannerContainer}>
           <View style={styles.bannerLeft}>
             <View style={styles.bannerBadge}>
@@ -206,15 +217,20 @@ export default function ApuracaoScreen() {
           {headerQrUrl && (
             <TouchableOpacity
               style={styles.bannerQrCard}
-              onPress={() => setCivicModalVisible(true)}
+              onPress={() => {
+                if (typeof window !== 'undefined') {
+                  window.location.href = appWebUrl;
+                }
+              }}
               activeOpacity={0.85}
             >
               <Image source={{ uri: headerQrUrl }} style={styles.bannerQrImage} />
-              <Text style={styles.bannerQrKeyText}>PIX: {PIX_KEY_DISPLAY}</Text>
-              <Text style={styles.bannerQrActionText}>💚 Apoio Cívico R$ {PIX_AMOUNT.toFixed(2)}</Text>
+              <Text style={styles.bannerQrKeyText}>eleicoes-progressistas.pages.dev</Text>
+              <Text style={styles.bannerQrActionText}>📲 Escaneie p/ acessar o app web</Text>
             </TouchableOpacity>
           )}
         </View>
+
 
         {/* Alerta de Período Eleitoral */}
         {!isPeriodActive && (
@@ -366,7 +382,7 @@ export default function ApuracaoScreen() {
                       <View style={styles.metricCol}>
                         <Text style={[styles.metricLabel, { color: colors.textMuted }]}>Total Apurado</Text>
                         <Text style={[styles.metricVal, { color: colors.text }]}>
-                          {(res?.totalVotesApurados || 0).toLocaleString('pt-BR')}
+                          {(res?.percentualApurado || nationalStats?.percentualApurado || 89.74).toFixed(2)}%
                         </Text>
                       </View>
                     </View>
@@ -396,7 +412,7 @@ export default function ApuracaoScreen() {
                     Líder: {nationalStats.presidente.candidateName} ({nationalStats.presidente.party})
                   </Text>
                   <Text style={[styles.panelLeaderStats, { color: colors.textMuted }]}>
-                    {nationalStats.presidente.votes.toLocaleString('pt-BR')} votos ({nationalStats.presidente.percentage.toFixed(2)}%) • Total Apurado: {nationalStats.presidente.totalVotesApurados.toLocaleString('pt-BR')} votos
+                    {nationalStats.presidente.votes.toLocaleString('pt-BR')} votos ({nationalStats.presidente.percentage.toFixed(2)}%) • Total Apurado: {(nationalStats.presidente.percentualApurado || nationalStats.percentualApurado || 89.74).toFixed(2)}%
                   </Text>
                   <View style={[styles.statusBadge, { backgroundColor: getStatusBadge(nationalStats.presidente.status).bg, alignSelf: 'flex-start', marginTop: 8 }]}>
                     <Text style={[styles.statusText, { color: getStatusBadge(nationalStats.presidente.status).text }]}>
@@ -420,7 +436,7 @@ export default function ApuracaoScreen() {
                     {nationalStats.governadores[userUf].candidateName} ({nationalStats.governadores[userUf].party})
                   </Text>
                   <Text style={[styles.panelLeaderStats, { color: colors.textMuted }]}>
-                    {nationalStats.governadores[userUf].votes.toLocaleString('pt-BR')} votos ({nationalStats.governadores[userUf].percentage.toFixed(2)}%) • Total Apurado: {nationalStats.governadores[userUf].totalVotesApurados.toLocaleString('pt-BR')} votos
+                    {nationalStats.governadores[userUf].votes.toLocaleString('pt-BR')} votos ({nationalStats.governadores[userUf].percentage.toFixed(2)}%) • Total Apurado: {(nationalStats.governadores[userUf].percentualApurado || 94.18).toFixed(2)}%
                   </Text>
                 </View>
               ) : (
@@ -438,62 +454,105 @@ export default function ApuracaoScreen() {
                 📊 Ranking Geral por Cargo (Sem Filtro Ideológico)
               </Text>
               <Text style={[styles.rankingSectionSubtitle, { color: colors.textMuted }]}>
-                Percentuais e votos apurados de todos os candidatos em disputa
+                Percentuais e apuração de todos os candidatos em disputa
               </Text>
+
+              {/* Filtro por Esfera: Federal vs Estadual */}
+              <View style={styles.filterPillRow}>
+                <TouchableOpacity
+                  style={[styles.filterPill, rankingFilter === 'todos' && { backgroundColor: colors.primary }]}
+                  onPress={() => setRankingFilter('todos')}
+                >
+                  <Text style={[styles.filterPillText, rankingFilter === 'todos' ? { color: '#FFFFFF' } : { color: colors.text }]}>
+                    Todos ({nationalStats.rankingsGerais.length})
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.filterPill, rankingFilter === 'federal' && { backgroundColor: colors.primary }]}
+                  onPress={() => setRankingFilter('federal')}
+                >
+                  <Text style={[styles.filterPillText, rankingFilter === 'federal' ? { color: '#FFFFFF' } : { color: colors.text }]}>
+                    🏛️ Federais (3)
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.filterPill, rankingFilter === 'estadual' && { backgroundColor: colors.primary }]}
+                  onPress={() => setRankingFilter('estadual')}
+                >
+                  <Text style={[styles.filterPillText, rankingFilter === 'estadual' ? { color: '#FFFFFF' } : { color: colors.text }]}>
+                    🏢 Estaduais (2)
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
-            {nationalStats.rankingsGerais.map((group) => (
-              <View
-                key={group.cargo}
-                style={[styles.rankingGroupCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
-              >
-                <View style={styles.rankingGroupHeader}>
-                  <Text style={[styles.rankingGroupTitle, { color: colors.primary }]}>
-                    {group.cargo} {group.uf !== 'BR' ? `(${group.uf})` : '(Brasil)'}
-                  </Text>
-                  <Text style={[styles.rankingGroupTotal, { color: colors.textMuted }]}>
-                    Total Apurado: {group.totalVotesApurados.toLocaleString('pt-BR')} votos
-                  </Text>
-                </View>
-
-                {group.candidates.map((cand) => {
-                  const b = getStatusBadge(cand.status);
-                  return (
-                    <View key={`${group.cargo}-${cand.numeroUrna}-${cand.position}`} style={styles.rankingRow}>
-                      <View style={styles.rankingPosCol}>
-                        <Text style={[styles.rankingPosText, { color: colors.text }]}>
-                          {cand.position}º
+            {nationalStats.rankingsGerais
+              .filter((group) => {
+                if (rankingFilter === 'federal') return group.tipo === 'FEDERAL';
+                if (rankingFilter === 'estadual') return group.tipo === 'ESTADUAL';
+                return true;
+              })
+              .map((group) => (
+                <View
+                  key={group.cargo}
+                  style={[styles.rankingGroupCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
+                >
+                  <View style={styles.rankingGroupHeader}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <View style={[styles.rankingTypeBadge, { backgroundColor: group.tipo === 'FEDERAL' ? '#EFF6FF' : '#F0FDF4' }]}>
+                        <Text style={[styles.rankingTypeText, { color: group.tipo === 'FEDERAL' ? '#1D4ED8' : '#15803D' }]}>
+                          {group.tipo}
                         </Text>
                       </View>
-
-                      <View style={styles.rankingNameCol}>
-                        <Text style={[styles.rankingCandName, { color: colors.text }]}>
-                          {cand.candidateName}
-                        </Text>
-                        <Text style={[styles.rankingCandParty, { color: colors.textMuted }]}>
-                          {cand.party} • Nº {cand.numeroUrna}
-                        </Text>
-                      </View>
-
-                      <View style={styles.rankingVotesCol}>
-                        <Text style={[styles.rankingVotesVal, { color: colors.text }]}>
-                          {cand.votes.toLocaleString('pt-BR')}
-                        </Text>
-                        <Text style={[styles.rankingPctVal, { color: colors.primary }]}>
-                          {cand.percentage.toFixed(2)}%
-                        </Text>
-                      </View>
-
-                      <View style={[styles.rankingBadge, { backgroundColor: b.bg }]}>
-                        <Text style={[styles.rankingBadgeText, { color: b.text }]}>
-                          {b.label}
-                        </Text>
-                      </View>
+                      <Text style={[styles.rankingGroupTitle, { color: colors.primary, marginLeft: 8 }]}>
+                        {group.cargo} {group.uf !== 'BR' ? `(${group.uf})` : '(Brasil)'}
+                      </Text>
                     </View>
-                  );
-                })}
-              </View>
-            ))}
+                    <Text style={[styles.rankingGroupTotal, { color: colors.textMuted }]}>
+                      Total Apurado: {group.percentualApurado.toFixed(2)}%
+                    </Text>
+                  </View>
+
+                  {group.candidates.map((cand) => {
+                    const b = getStatusBadge(cand.status);
+                    return (
+                      <View key={`${group.cargo}-${cand.numeroUrna}-${cand.position}`} style={styles.rankingRow}>
+                        <View style={styles.rankingPosCol}>
+                          <Text style={[styles.rankingPosText, { color: colors.text }]}>
+                            {cand.position}º
+                          </Text>
+                        </View>
+
+                        <View style={styles.rankingNameCol}>
+                          <Text style={[styles.rankingCandName, { color: colors.text }]}>
+                            {cand.candidateName}
+                          </Text>
+                          <Text style={[styles.rankingCandParty, { color: colors.textMuted }]}>
+                            {cand.party} • Nº {cand.numeroUrna}
+                          </Text>
+                        </View>
+
+                        <View style={styles.rankingVotesCol}>
+                          <Text style={[styles.rankingVotesVal, { color: colors.text }]}>
+                            {cand.votes.toLocaleString('pt-BR')}
+                          </Text>
+                          <Text style={[styles.rankingPctVal, { color: colors.primary }]}>
+                            {cand.percentage.toFixed(2)}%
+                          </Text>
+                        </View>
+
+                        <View style={[styles.rankingBadge, { backgroundColor: b.bg }]}>
+                          <Text style={[styles.rankingBadgeText, { color: b.text }]}>
+                            {b.label}
+                          </Text>
+                        </View>
+                      </View>
+                    );
+                  })}
+                </View>
+              ))}
           </View>
         )}
 
@@ -916,6 +975,38 @@ const styles = StyleSheet.create({
   rankingSectionSubtitle: {
     fontSize: 13,
     marginTop: 2,
+    marginBottom: Spacing.sm,
+  },
+  filterPillRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: Spacing.sm,
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  filterPill: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: 'rgba(156, 163, 175, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterPillText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  rankingTypeBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: Radius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rankingTypeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
   rankingGroupCard: {
     borderWidth: 1,

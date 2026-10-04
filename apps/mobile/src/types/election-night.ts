@@ -33,6 +33,7 @@ export interface ElectionResult {
   position: number;
   totalCandidates: number;
   totalVotesApurados: number;
+  percentualApurado?: number;
   lastUpdate: number;
 }
 
@@ -49,7 +50,9 @@ export interface CargoRankingItem {
 export interface CargoRankingGroup {
   cargo: string;
   uf: string;
+  tipo: 'FEDERAL' | 'ESTADUAL';
   totalVotesApurados: number;
+  percentualApurado: number;
   candidates: CargoRankingItem[];
 }
 
