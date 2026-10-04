@@ -42,7 +42,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "`n=====================================================================" -ForegroundColor Green
-Write-Host "  SUCESSO! Versao v2.2.22 publicada com exito em:" -ForegroundColor Green
+Write-Host "  SUCESSO! Versao v2.2.23 publicada com exito em:" -ForegroundColor Green
 Write-Host "  https://eleicoes-progressistas.pages.dev" -ForegroundColor Green
 Write-Host "=====================================================================`n" -ForegroundColor Green
 
