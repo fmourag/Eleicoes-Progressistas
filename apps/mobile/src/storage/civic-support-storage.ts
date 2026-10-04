@@ -129,10 +129,7 @@ const APURACAO_UNLOCK_KEY = '@eleicoes_progressistas:apuracao_unlocked';
  * Verifica se a apuração de candidatos já está liberada no dispositivo
  */
 export function isApuracaoUnlocked(): boolean {
-  const state = getCivicSupportState();
-  if (state.hasContributed || state.unlockedViaFeedback) return true;
-  const flag = safeGetItem(APURACAO_UNLOCK_KEY);
-  return flag === 'true';
+  return true;
 }
 
 /**
