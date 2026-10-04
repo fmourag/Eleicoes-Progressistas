@@ -534,6 +534,7 @@ export class CandidatesService implements OnModuleInit {
               electionYear: c.electionYear || 2026,
               name: c.name,
               cargo: c.cargo,
+              party: c.party,
               cpfHash: c.cpfHash || ('hash_tse_' + c.tseId + '_2026'),
               ...updateData
             }
@@ -552,6 +553,8 @@ export class CandidatesService implements OnModuleInit {
       for (const cand of allOfficials) {
         await upsertOfficialCandidate(cand);
       }
+    } catch (e) { this.logger.error(e); }
+  }
 
 
   async findByLocation(municipality?: string, state?: string, cargo?: string, party?: string, search?: string) {
