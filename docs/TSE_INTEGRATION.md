@@ -46,7 +46,15 @@ Este módulo implementa a integração automatizada, resiliente e segura com os 
 │ • POST /api/candidates/sync-photos││ • Cron noturno às 05:00 BRT(fotos)│
 │ • POST /api/candidates/sync-csv  │ └───────────────────────────────────┘
 │ • GET  /api/candidates/sync-stats│
-└──────────────────────────────────┘
+└─────────────────┬────────────────┘
+                  │
+                  ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                   Filtro Final Obrigatório (TSE Roster)                │
+│    • Fonte: consulta_cand_2026_BRASIL.csv (20.059 registros)          │
+│    • Execução em tempo de consulta: isInTseRoster(candidato)           │
+│    • Descarte de candidaturas não homologadas / pleitos anteriores     │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
