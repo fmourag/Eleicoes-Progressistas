@@ -373,7 +373,9 @@ export default function ApuracaoScreen() {
                       </View>
 
                       <View style={styles.metricCol}>
-                        <Text style={[styles.metricLabel, { color: colors.textMuted }]}>Posição</Text>
+                        <Text style={[styles.metricLabel, { color: colors.textMuted }]}>
+                          Posição ({cand.cargo?.toUpperCase() === 'PRESIDENTE' ? 'Nacional' : 'Estadual'})
+                        </Text>
                         <Text style={[styles.metricVal, { color: colors.text }]}>
                           {pos ? `${pos}º` : '-'}
                         </Text>
