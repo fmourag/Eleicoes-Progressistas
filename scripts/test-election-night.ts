@@ -95,7 +95,9 @@ async function runTests() {
 
   assert.strictEqual(tseService.mapStatus('ELEITO', 1000, 2000), 'ELEITO');
   assert.strictEqual(tseService.mapStatus('ELEITO POR QP', 1000, 2000), 'ELEITO');
-  assert.strictEqual(tseService.mapStatus('2º TURNO', 1000, 2000), 'SEGUNDO_TURNO');
+  // 2º turno só existe para PRESIDENTE/GOVERNADOR (regra TSE; deputados/senadores nunca)
+  assert.strictEqual(tseService.mapStatus('2º TURNO', 1000, 2000, 'PRESIDENTE', 1, 40.0), 'SEGUNDO_TURNO');
+  assert.strictEqual(tseService.mapStatus('2º TURNO', 1000, 2000, 'DEPUTADO FEDERAL', 3, 10.0), 'NAO_ELEITO');
   assert.strictEqual(tseService.mapStatus('NÃO ELEITO', 1000, 2000), 'NAO_ELEITO');
   assert.strictEqual(tseService.mapStatus('', 500, 2000), 'APURANDO');
 
@@ -181,6 +183,65 @@ async function runTests() {
   assert.strictEqual(isElectionPeriodActive(outsidePeriod, true), true, 'Modo simulação forçado deve retornar true');
 
   console.log('  ✅ Detecção de períodos eleitorais oficiais (1º e 2º turno) validada.');
+
+  // Test 8: Ranking Geral SEM filtro ideológico (todos os partidos do TSE entram)
+  console.log('\n[8/9] Testando ausência de filtro ideológico no ranking...');
+  const mkCand = (seq: string, nm: string, p: string, n: string, v: number, pv: number, s: string) => ({
+    seq, nm, p, n, v, pv, s, c: 1, dv: 1,
+  });
+  const mixedBr = {
+    cdabr: 'BR', cdc: '0001', cand: [
+      mkCand('s1', 'Cand A', 'PT', '13', 50000000, 48.0, 'ELEITO'),
+      mkCand('s2', 'Cand B', 'PL', '22', 40000000, 38.0, 'NÃO ELEITO'),
+      mkCand('s3', 'Cand C', 'NOVO', '30', 5000000, 4.5, 'NÃO ELEITO'),
+      mkCand('s4', 'Cand D', 'MDB', '15', 4000000, 3.5, 'NÃO ELEITO'),
+    ], vapt: 110000000, pst: 89.0,
+  };
+  const mixedRjGov = {
+    cdabr: 'RJ', cdc: '0003', cand: [
+      mkCand('g1', 'Gov A', 'PSD', '55', 3000000, 46.0, '2º TURNO'),
+      mkCand('g2', 'Gov B', 'PL', '22', 2500000, 38.0, '2º TURNO'),
+    ], vapt: 6500000, pst: 94.0,
+  };
+  (tseService as any).cache.set('br-0001', mixedBr);
+  (tseService as any).cache.set('rj-0003', mixedRjGov);
+  (tseService as any).cache.set('rj-0005', { cdabr: 'RJ', cdc: '0005', cand: [mkCand('s1', 'Sen A', 'PT', '131', 3000000, 34.0, 'ELEITO')], vapt: 8800000, pst: 92.0 });
+  (tseService as any).cache.set('rj-0006', { cdabr: 'RJ', cdc: '0006', cand: [mkCand('d1', 'Dep A', 'PSOL', '5050', 100000, 2.5, 'ELEITO')], vapt: 4000000, pst: 91.0 });
+  (tseService as any).cache.set('rj-0007', { cdabr: 'RJ', cdc: '0007', cand: [mkCand('e1', 'Est A', 'PSB', '40123', 90000, 2.1, 'ELEITO')], vapt: 4000000, pst: 91.0 });
+
+  const statsRJ = await tseService.fetchNationalStats('RJ', false);
+  assert(statsRJ.rankingsGerais && statsRJ.rankingsGerais.length === 5, 'Ranking RJ deve ter 5 grupos (presidente + 4 regionais)');
+  const allParties = new Set<string>();
+  for (const g of statsRJ.rankingsGerais!) for (const c of g.candidates) allParties.add(c.party);
+  for (const p of ['PT', 'PL', 'NOVO', 'MDB', 'PSD', 'PSOL', 'PSB']) {
+    assert(allParties.has(p), `Partido ${p} deve aparecer no ranking (sem filtro ideológico)`);
+  }
+  console.log('  ✅ Ranking inclui todos os partidos, sem filtro ideológico.');
+
+  // Test 9: Agrupamento por UF da cola (regionais) e nacional (presidente)
+  console.log('\n[9/9] Testando agrupamento UF da cola / nacional presidente...');
+  for (const g of statsRJ.rankingsGerais!) {
+    if (g.cargo === 'PRESIDENTE') {
+      assert.strictEqual(g.uf, 'BR', 'Presidente deve ser agrupado nacional (BR)');
+    } else {
+      assert.strictEqual(g.uf, 'RJ', `Grupo ${g.cargo} deve seguir a UF da cola (RJ)`);
+    }
+  }
+  // UF sem nomes de demonstração: só o grupo nacional entra no fallback
+  for (const k of ['sp-0003', 'sp-0005', 'sp-0006', 'sp-0007']) {
+    (tseService as any).cache.set(k, { cdabr: 'SP', cdc: k.split('-')[1], cand: [], vapt: 0, pst: 0 });
+  }
+  const statsSP = await tseService.fetchNationalStats('SP', false);
+  assert(statsSP.rankingsGerais && statsSP.rankingsGerais.length >= 1, 'Deve haver ao menos o grupo nacional');
+  for (const g of statsSP.rankingsGerais!) {
+    assert(
+      g.uf === 'BR' || g.uf === 'SP',
+      `Grupo ${g.cargo} com UF inesperada (${g.uf}): nunca rotular outra UF com nomes alheios`
+    );
+  }
+  const presSP = statsSP.rankingsGerais!.find((g) => g.cargo === 'PRESIDENTE');
+  assert(presSP && presSP.uf === 'BR', 'Presidente segue nacional mesmo com UF da cola diferente');
+  console.log('  ✅ Regionais agrupados pela UF da cola; presidente sempre nacional.');
 
   console.log('\n🎉 TODOS OS TESTES DO ELECTION NIGHT PASSARAM COM 100% DE SUCESSO!\n');
 }

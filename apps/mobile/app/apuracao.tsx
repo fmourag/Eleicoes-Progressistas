@@ -475,7 +475,7 @@ export default function ApuracaoScreen() {
                   onPress={() => setRankingFilter('federal')}
                 >
                   <Text style={[styles.filterPillText, rankingFilter === 'federal' ? { color: '#FFFFFF' } : { color: colors.text }]}>
-                    🏛️ Federais (3)
+                    🏛️ Federais ({nationalStats.rankingsGerais.filter((g) => g.tipo === 'FEDERAL').length})
                   </Text>
                 </TouchableOpacity>
 
@@ -484,7 +484,7 @@ export default function ApuracaoScreen() {
                   onPress={() => setRankingFilter('estadual')}
                 >
                   <Text style={[styles.filterPillText, rankingFilter === 'estadual' ? { color: '#FFFFFF' } : { color: colors.text }]}>
-                    🏢 Estaduais (2)
+                    🏢 Estaduais ({nationalStats.rankingsGerais.filter((g) => g.tipo === 'ESTADUAL').length})
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -498,7 +498,7 @@ export default function ApuracaoScreen() {
               })
               .map((group) => (
                 <View
-                  key={group.cargo}
+                  key={`${group.cargo}-${group.uf}`}
                   style={[styles.rankingGroupCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
                 >
                   <View style={styles.rankingGroupHeader}>

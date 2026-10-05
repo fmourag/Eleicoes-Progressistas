@@ -250,6 +250,15 @@ export class TseResultsService {
 
   /**
    * Estatísticas Nacionais e por Estado para o Dashboard do Election Night
+   *
+   * GARANTIAS DESTE MÉTODO (exigidas pelo app):
+   * 1. SEM FILTRO IDEOLÓGICO — todos os candidatos retornados pelo TSE entram
+   *    no ranking, de qualquer partido. Nenhum filtro por sigla em nenhum caminho
+   *    (real ou simulação). Ver testes 8/9 em scripts/test-election-night.ts.
+   * 2. AGRUPAMENTO POR UF DA COLA — cargos regionais (GOVERNADOR, SENADOR,
+   *    DEPUTADO FEDERAL/ESTADUAL) usam sempre a UF da cola do eleitor
+   *    (`userUf`, resolvida no hook a partir da cola, depois location);
+   *    PRESIDENTE é sempre nacional (`uf: 'BR'`).
    */
   public async fetchNationalStats(userUf?: string, forceSimulation = false): Promise<NationalStats> {
     const targetUfClean = (userUf || 'RJ').toUpperCase();
@@ -290,8 +299,9 @@ export class TseResultsService {
         stats.percentualApurado = percentage;
       }
 
-      // 2. Busca Estados prioritários
-      const targetUfs = [targetUfClean, 'SP', 'RJ', 'MG', 'BA', 'RS'];
+      // 2. Líderes por UF — somente a UF da cola (regionais seguem o eleitor;
+      // os painéis exibem apenas userUf, então buscar outras UFs seria desperdício).
+      const targetUfs = targetUfClean === 'BR' ? [] : [targetUfClean];
 
       await Promise.allSettled(
         targetUfs.map(async (uf) => {
@@ -483,9 +493,13 @@ export class TseResultsService {
       ];
     }
 
-    // Ranking Geral Completo por Cargo (Independente de Filtro Ideológico) - Somente fallback
+    // Ranking Geral Completo por Cargo (Independente de Filtro Ideológico) - Somente fallback.
+    // Os nomes regionais de demonstração abaixo são do RJ: para outra UF eles
+    // seriam exibidos sob o rótulo errado, então o fallback regional só entra
+    // quando a UF da cola é RJ (para as demais fica só o grupo nacional).
     if (!stats.rankingsGerais || stats.rankingsGerais.length === 0) {
-      stats.rankingsGerais = [
+      const fallbackRegionalRJ = targetUfClean === 'RJ';
+      const fallbackGroups: CargoRankingGroup[] = [
         {
           cargo: 'PRESIDENTE',
           uf: 'BR',
@@ -499,6 +513,8 @@ export class TseResultsService {
             { position: 4, candidateName: 'Simone Tebet', party: 'MDB', numeroUrna: '15', votes: 4850000, percentage: 4.11, status: 'NAO_ELEITO' },
           ],
         },
+        ...(fallbackRegionalRJ
+          ? ([
         {
           cargo: 'GOVERNADOR',
           uf: targetUfClean,
@@ -550,7 +566,10 @@ export class TseResultsService {
             { position: 4, candidateName: 'Eduardo Suplicy', party: 'PT', numeroUrna: '13123', votes: 91200, percentage: 2.14, status: 'ELEITO' },
           ],
         },
+            ] as CargoRankingGroup[])
+          : []),
       ];
+      stats.rankingsGerais = fallbackGroups;
     }
 
     return stats;
@@ -566,6 +585,12 @@ export class TseResultsService {
   }): 'ELEITO' | 'SEGUNDO_TURNO' | 'NAO_ELEITO' | 'APURANDO' {
     const { cargo, position, percentage, votes, tseStatusRaw, totalVotesApurados } = params;
     const upperCargo = (cargo || '').toUpperCase().trim();
+
+    // Sem status bruto do TSE não há o que classificar: segue apurando
+    // (evita declarar ELEITO por ausência de dados quando position omite cargo).
+    if (!tseStatusRaw || !tseStatusRaw.trim()) {
+      return 'APURANDO';
+    }
 
     // Se temos status bruto do TSE, verificamos primeiro
     if (tseStatusRaw) {
