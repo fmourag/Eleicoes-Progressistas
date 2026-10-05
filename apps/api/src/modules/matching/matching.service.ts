@@ -333,22 +333,41 @@ export class MatchingService {
         take: MAX_CANDIDATES,
       });
 
+      // Deduplica por identidade (nome/social normalizados + cargo + UF),
+      // ignorando tseId/partido: unifica seed curado + syncs posteriores.
+      // Prefere o registro mais rico (com profileScores). Ver
+      // scripts/merge-duplicate-candidates.ts.
+      const normId = (s: any) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().replace(/\s+/g, ' ');
+      const richness = (c: any) => (c.profileScores && typeof c.profileScores === 'object' ? Object.keys(c.profileScores).length : 0);
       const combinedMap = new Map<string, any>();
-      const dedupKey = (c: any) => {
-        const normName = (c.socialName || c.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().replace(/\s+/g, ' ');
-        // tseId numérico tem prioridade; ids sintéticos (pres_lula etc.) caem para nome+cargo+uf.
-        if (c.tseId && /^\d+$/.test(String(c.tseId))) return `tse:${c.tseId}|${c.cargo}`;
-        return `nom:${normName}|${c.cargo}|${c.state || ''}|${c.party || ''}`;
+      const keysOf = (c: any) => {
+        const out = new Set<string>();
+        for (const n of [c.socialName, c.name]) {
+          const nn = normId(n);
+          if (nn) out.add(`${c.cargo || ''}|${c.state || ''}|${nn}`);
+        }
+        return out;
+      };
+      const seenIds = new Set<string>();
+      const addDeduped = (c: any) => {
+        if (c?.id) seenIds.add(c.id);
+        let existing: any = null;
+        for (const k of keysOf(c)) {
+          if (combinedMap.has(k)) { existing = combinedMap.get(k); break; }
+        }
+        if (!existing) {
+          for (const k of keysOf(c)) combinedMap.set(k, c);
+        } else if (richness(c) > richness(existing)) {
+          for (const [k, v] of combinedMap) if (v === existing) combinedMap.set(k, c);
+          for (const k of keysOf(c)) combinedMap.set(k, c);
+        }
       };
       for (const c of [...presidentialCandidates, ...stateCandidates]) {
-        const k = dedupKey(c);
-        if (!Array.from(combinedMap.values()).some((e) => dedupKey(e) === k)) {
-          combinedMap.set((c as any).id, c);
-        }
+        addDeduped(c);
       }
 
       for (const cargo of upcomingCargos) {
-        const existingForCargo = Array.from(combinedMap.values()).filter((c) => c.cargo === cargo);
+        const existingForCargo = [...new Set(Array.from(combinedMap.values()).filter((c) => c.cargo === cargo))];
         if (existingForCargo.length < 3) {
           const extraForCargo = await this.prisma.candidate.findMany({
             where: {
@@ -357,7 +376,7 @@ export class MatchingService {
               electionYear: targetYear,
               candidaturaStatus: { in: allowedStatus as any },
               fichaLimpa: true,
-              id: { notIn: Array.from(combinedMap.keys()) },
+              id: { notIn: Array.from(seenIds) },
               ...progressivePartyFilter,
             } as any,
             select: {
@@ -384,12 +403,12 @@ export class MatchingService {
           });
 
           for (const c of extraForCargo) {
-            combinedMap.set((c as any).id, c);
+            addDeduped(c);
           }
         }
       }
 
-      return Array.from(combinedMap.values());
+      return [...new Set(Array.from(combinedMap.values()))];
     } catch (error) {
       this.logger.warn(`[MatchingService] Database error or offline: ${(error as Error).message}`);
       throw error;

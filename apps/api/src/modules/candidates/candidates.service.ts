@@ -724,16 +724,41 @@ export class CandidatesService implements OnModuleInit {
         };
       });
 
-      // Deduplica por tseId + cargo + nome normalizado (evita mesma pessoa 2x via seed + sync TSE).
-      const seen = new Set<string>();
-      const deduped: any[] = [];
+      // Deduplica por identidade (nome/social normalizados + cargo + UF).
+      // Ignora tseId/partido de propósito: unifica seed curado + syncs
+      // posteriores (slug/numérico). Prefere o registro mais rico e nunca
+      // exibe a mesma pessoa 2x. Ver scripts/merge-duplicate-candidates.ts.
+      const normId = (s: any) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().replace(/\s+/g, ' ');
+      const richness = (c: any) => {
+        const sc = c.profileScores && typeof c.profileScores === 'object' ? Object.keys(c.profileScores).length : 0;
+        const ph = !c.photoUrl ? 0 : /\/candidates\//.test(c.photoUrl) ? 2 : 1;
+        return sc * 100 + ph;
+      };
+      const keysOf = (c: any) => {
+        const out = new Set<string>();
+        for (const n of [c.socialName, c.name]) {
+          const nn = normId(n);
+          if (nn) out.add(`${c.cargo || ''}|${c.state || ''}|${nn}`);
+        }
+        return out;
+      };
+      const byKey = new Map<string, any>();
+      const order: any[] = [];
       for (const c of result) {
-        const normName = (c.socialName || c.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().replace(/\s+/g, ' ');
-        const key = `${c.tseId || ''}|${c.cargo || ''}|${normName}|${c.state || ''}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        deduped.push(c);
+        let existing: any = null;
+        for (const k of keysOf(c)) {
+          if (byKey.has(k)) { existing = byKey.get(k); break; }
+        }
+        if (!existing) {
+          for (const k of keysOf(c)) byKey.set(k, c);
+          order.push(c);
+        } else if (richness(c) > richness(existing)) {
+          for (const [k, v] of byKey) if (v === existing) byKey.set(k, c);
+          for (const k of keysOf(c)) byKey.set(k, c);
+          order[order.indexOf(existing)] = c;
+        }
       }
+      const deduped = order;
 
       // Ordena por ordem alfabética de nome de campanha (socialName ou name)
       deduped.sort((a: any, b: any) => {
