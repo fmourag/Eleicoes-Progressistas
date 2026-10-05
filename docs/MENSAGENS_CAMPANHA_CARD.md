@@ -1,7 +1,7 @@
-# 📣 Kit de Mensagens Curtas — Card Oficial (v2.2.21)
+# 📣 Kit de Mensagens Curtas — Card Oficial (v2.2.24)
 
-> **Data de Vigência:** 29 de Setembro de 2026  
-> **Versão Canônica:** `v2.2.21` (Build `22`)  
+> **Data de Vigência:** 05 de Outubro de 2026  
+> **Versão Canônica:** `v2.2.24` (Build `25`)  
 > **Card Oficial de Campanha:** `build_artifacts/store_assets/feature-graphic-1024x500.png`  
 > 📌 *Instrução Geral:* Anexar o card oficial `feature-graphic-1024x500.png` como imagem em todos os canais visuais indicados abaixo.
 

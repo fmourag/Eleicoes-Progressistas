@@ -72,8 +72,8 @@ const buildGradleContent = fs.readFileSync(buildGradlePath, 'utf8');
 const vCodeMatch = buildGradleContent.match(/versionCode\s+(\d+)/);
 const vNameMatch = buildGradleContent.match(/versionName\s+"([^"]+)"/);
 
-console.log(`🏷️ Manifest VersionCode: ${vCodeMatch ? vCodeMatch[1] : 'unknown'} (Expected: 22)`);
-console.log(`🏷️ Manifest VersionName: ${vNameMatch ? vNameMatch[1] : 'unknown'} (Expected: 2.2.21)`);
+console.log(`🏷️ Manifest VersionCode: ${vCodeMatch ? vCodeMatch[1] : 'unknown'} (Expected: 25)`);
+console.log(`🏷️ Manifest VersionName: ${vNameMatch ? vNameMatch[1] : 'unknown'} (Expected: 2.2.24)`);
 
 // Clean temp
 fs.rmSync(tempDir, { recursive: true, force: true });

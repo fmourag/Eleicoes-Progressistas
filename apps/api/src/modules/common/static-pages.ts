@@ -114,7 +114,7 @@ export const BETA_HTML = `
 </head>
 <body>
     <div class="header">
-        <span class="badge">HOMOLOGAÇÃO v2.2.23</span>
+        <span class="badge">HOMOLOGAÇÃO v2.2.24</span>
         <h1>Eleições Progressistas 2026</h1>
         <p class="subtitle">Acesso direto para cidadãos, testadores e auditores cívicos</p>
     </div>

@@ -102,7 +102,7 @@ Quando um novo APK for compilado via EAS Build:
 
 ### Endpoints de Diagnóstico:
 - **API Health:** `https://eleicoes-progressistas.onrender.com/api/health`
-- **Download do APK:** `https://eleicoes-progressistas.onrender.com/download/apk` (302 Redirect para GitHub Release v2.2.21)
+- **Download do APK:** `https://eleicoes-progressistas.onrender.com/download/apk` (302 Redirect para GitHub Release v2.2.24)
 - **Hash de Integridade:** `https://eleicoes-progressistas.onrender.com/download/apk/sha256`
 - **Aplicação Web (Cloudflare Pages):** `https://eleicoes-progressistas.pages.dev/` (com 301 Redirect a partir de `/` e `/web/`)
 - **Dashboard de Feedback:** `https://eleicoes-progressistas.onrender.com/feedback/painel` (alias legado `/feedback/dashboard` redireciona 301 para o canônico)

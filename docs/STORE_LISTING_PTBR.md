@@ -3,7 +3,7 @@
 **Aplicativo:** Eleições Progressistas  
 **Pacote:** `com.eleicoesprogressistas.app`  
 **Categoria Primária:** Livros e referência (Books & Reference)  
-**Versão:** 2.2.21 (versionCode 22)  
+**Versão:** 2.2.24 (versionCode 25)  
 
 ---
 

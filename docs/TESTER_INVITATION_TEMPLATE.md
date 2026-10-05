@@ -1,4 +1,4 @@
-# 📧 Template de Convite para Testers — Teste Fechado v2.2.21
+# 📧 Template de Convite para Testers — Teste Fechado v2.2.24
 
 **Assunto:** 🎉 Eleições Progressistas aprovado no Google Play — participe do teste fechado!
 
@@ -16,7 +16,7 @@ Olá [NOME],
    Clique em "Aceitar" ou "Tornar-se tester"
 
 3. **Instale/atualize o app:**
-   Abra a Play Store no seu Android e instale "Eleições Progressistas" (versão 2.2.21)
+   Abra a Play Store no seu Android e instale "Eleições Progressistas" (versão 2.2.24)
 
 ## ⏰ Importante:
 - Mantenha o app instalado por **pelo menos 14 dias** (requisito do Google)
