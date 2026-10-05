@@ -1,10 +1,10 @@
 ---
 title: "Checklist de Deploy e Lançamento Oficial"
-version: "2.2.22"
+version: "2.2.24"
 last_updated: "2026-10-02"
 ---
 
-# Checklist de Deploy e Pré-Lançamento — Eleições Progressistas v2.2.22
+# Checklist de Deploy e Pré-Lançamento — Eleições Progressistas v2.2.24
 
 Roteiro operacional obrigatório para validação técnica, jurídica e de infraestrutura antes da liberação do tráfego público de produção.
 
@@ -25,7 +25,7 @@ A plataforma opera no modelo **Consulta por Prioridades (100% stateless e Coleta
 
 ## 📋 1. Checklist Pré-Deploy
 
-- [ ] **Saneamento Documental:** Apenas documentos atualizados com a versão `v2.2.22` e data `2026-10-03`.
+- [ ] **Saneamento Documental:** Apenas documentos atualizados com a versão `v2.2.24` e data `2026-10-05`.
 - [ ] **Nota de Transparência:** Arquivo `docs/NOTA_TRANSPARENCIA_LANCAMENTO.md` e rota `/transparencia` linkada no perfil e rodapé.
 - [ ] **Módulo de Apuração Oficial:** Endpoint do TSE (`resultados.tse.jus.br`) testado com parsing resiliente e fallback offline.
 - [ ] **Apoio Cívico PIX Celular:** Chave PIX celular `(21) 97194-3298` (E.164 BACEN `+5521971943298`) e persistência 100% local no dispositivo.

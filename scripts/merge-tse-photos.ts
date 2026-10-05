@@ -17,7 +17,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const prisma = new PrismaClient({ datasources: { db: { url: process.env.DATABASE_URL } } });
 const agent = new https.Agent({ rejectUnauthorized: false, keepAlive: true });
-const UA = 'EleicoesProgressistas/2.2.22 (+https://eleicoes-progressistas.pages.dev)';
+const UA = 'EleicoesProgressistas/2.2.24 (+https://eleicoes-progressistas.pages.dev)';
 
 const DIRS = [
   path.resolve(process.cwd(), 'apps/api/public/candidates'),

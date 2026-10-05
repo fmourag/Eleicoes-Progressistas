@@ -1,6 +1,6 @@
 # Visão Geral — Eleições Progressistas (para IDEs/agentes)
 
-> Arquivo único de contexto. Fonte primária: código + `README.md`, `docs/PRD.md`, `docs/DOCUMENTACAO_TECNICA.md`, `docs/PRODUCTION_GUIDE.md`, `docs/BOOK_DE_PROJETO.md`, `docs/OPERATIONS.md`, `docs/SIDELOAD_KIT.md`. Versão do repo: `package.json:3` `2.2.22`, `apps/api/package.json:3` `2.2.22`, `apps/mobile/app.json:5` `2.2.22` (android `versionCode` 23 em `apps/mobile/app.json:31`).
+> Arquivo único de contexto. Fonte primária: código + `README.md`, `docs/PRD.md`, `docs/DOCUMENTACAO_TECNICA.md`, `docs/PRODUCTION_GUIDE.md`, `docs/BOOK_DE_PROJETO.md`, `docs/OPERATIONS.md`, `docs/SIDELOAD_KIT.md`. Versão do repo: `package.json:3` `2.2.24`, `apps/api/package.json:3` `2.2.24`, `apps/mobile/app.json:5` `2.2.24` (android `versionCode` 25 em `apps/mobile/app.json:31`).
 
 ## 1. O que é e para que serve
 
@@ -65,7 +65,7 @@ Prefixo global `api` com exclusões SPA/estáticas em `apps/api/src/main.ts:80` 
 
 - Postgres (`apps/api/prisma/schema.prisma:5`) vs SQLite Lite (`apps/api/prisma/schema-sqlite.prisma:1`). Entidades: `User`, `Candidate` (`tseId+electionYear` único, `profileScores Json p1..p13`, `fichaLimpa`, `candidaturaStatus`, `visible`, `source`, `tseValidated`, `electionResult`, `coalition`), `MatchResult` (legado), `SavedCandidate`, `Proposal` (tradução PENDING/TRANSLATED/FAILED), `IntegrityFlag`, `Advertiser/Ad/AdOptOut`, `DonationEvent`, `ApiKey` (SHA-256, tiers FREE/RESEARCH/PRO), `LegislativeVote/CandidateVote`, `Pledge`, `ReportProduct/ReportOrder`, `AggregateCounter` (chaves sem dispositivo), `Feedback`. Esquema completo em `docs/DOCUMENTACAO_TECNICA.md:63`.
 - ETL TSE: DivulgaCandContas + Dados Abertos (`dadosabertos.tse.jus.br`), Câmara/Senado, IBGE/ViaCEP (`docs/DATA_SOURCES.md:1`, `services/etl/src/extractors.ts:1`). Seed local gera 7.256 candidatos oficiais citados em `docs/SIDELOAD_KIT.md:27`.
-- Fotos: `apps/mobile/public/candidates/` → copiadas para `apps/mobile/dist/candidates/` no build (`iniciar.bat:161`, `docs/PRODUCTION_GUIDE.md:165`). Pipeline TSE-primeiro (`resolveCandidatePhotoFallbackChain` em `packages/shared/src/index.ts`): urna DivulgaCand/Hermes → cópia local `tse_` → mapeamento exato → Câmara/Senado → `photoUrl` não-TSE → `photo-proxy` exato por último; desconhecida = `''`. Os 4 dirs (`api/public|static`, `mobile/public`, `static`) devem estar byte-idênticos. Scripts: `scripts/backfill-missing-photos.ts`, `scripts/merge-tse-photos.ts`, `scripts/fix-wrong-photos.ts`, `scripts/sync-tse.ts` (REST TSE com 403 WAF; CSV + Hermes OK).
+- Fotos: `apps/mobile/public/candidates/` → copiadas para `apps/mobile/dist/candidates/` no build (`iniciar.bat:161`, `docs/PRODUCTION_GUIDE.md:165`). Pipeline TSE-primeiro (`resolveCandidatePhotoFallbackChain` em `packages/shared/src/index.ts`): urna DivulgaCand/Hermes → cópia local `tse_` → mapeamento exato → Câmara/Senado → `photoUrl` não-TSE → `photo-proxy` exato por último; desconhecida = `''`. Os 4 dirs (`api/public|static`, `mobile/public`, `static`) devem estar byte-idênticos. Scripts: `scripts/backfill-missing-photos.ts`, `scripts/merge-tse-photos.ts`, `scripts/fix-wrong-photos.ts`, `scripts/sync-tse.ts` (REST TSE com 403 WAF; CSV + Hermes OK). Dedup: `scripts/merge-duplicate-candidates.ts` + identidade em `findByLocation`/`findCandidates` (05/10: 0 duplicatas). Apuração client-side sem filtro ideológico: regionais na UF da cola, presidente nacional (`tse-results.service.ts`, testes 8–9).
 
 ## 9. Frontend — o que a IDE deve presumir
 
@@ -79,7 +79,7 @@ Prefixo global `api` com exclusões SPA/estáticas em `apps/api/src/main.ts:80` 
 - API Render `https://eleicoes-progressistas.onrender.com` (`docs/OPERATIONS.md:47`, `deploy/render.yaml:1` free, `startCommand node apps/api/dist/main.js`, healthcheck `/api/health`): versão viva e legível.
 - Web Cloudflare `https://eleicoes-progressistas.pages.dev` (`docs/OPERATIONS.md:46`): responde só `Eleições Progressistas` no fetch texto.
 - Play testing `https://play.google.com/apps/testing/com.eleicoesprogressistas.app` (`docs/OPERATIONS.md:56`): exige login Google, versão não raspável. Atenção: `app.json:27` declara package Android `eleicoes.progressistas`, enquanto docs citam trilha `com.eleicoesprogressistas.app` e `feedback.service.ts:93` cita `id=eleicoes.progressistas` — conferir antes de publicar.
-- Versão alvo do repo: **v2.2.22 / versionCode 23** (`docs/RELATORIO_CORRECOES_V2.2.22.md:1`). Artefatos estáticos atualizados. (Binário Play publicado permanece v2.2.21/build 22 — novo AAB pendente.)
+- Versão alvo do repo: **v2.2.24 / versionCode 25** (`docs/RELATORIO_CORRECOES_V2.2.24.md:1`). (Binário Play publicado: v2.2.24/build 25 na release GitHub; upload na Play Console é manual.)
 
 ## 11. Testes e validação
 

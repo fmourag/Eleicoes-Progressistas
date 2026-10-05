@@ -163,6 +163,13 @@ Candidatos de partidos excluídos pelo filtro comportamental empírico e ilumini
 ```
 > **Dica Legal:** Segundo as normas do TSE, o uso de aparelhos celulares na cabine de votação é proibido. Levar a **cola eleitoral impressa em papel** é expressamente permitido e recomendado pela Justiça Eleitoral para agilizar a votação!
 
+#### Passo 6.5 — Apuração em Tempo Real (sem filtro ideológico)
+```
+1. Abra "🗳️ Apuração On Line" (na cola ou no menu): resultados oficiais do TSE a cada 30s, 100% no seu aparelho.
+2. Aba "Meus Candidatos": só quem está na sua cola, com votos, % e posição (Estadual p/ regionais, Nacional p/ presidente).
+3. "Ranking Geral por Cargo": TODOS os candidatos em disputa, de todos os partidos — sem nenhum filtro ideológico. Cargos regionais agrupados pelo estado da sua cola; presidente sempre nacional.
+```
+
 #### Passo 7 — Observatório de Mandatos & Promessômetro (Pós-Eleição)
 ```
 1. Acesse o menu "🔭 Observatório" (na tela inicial ou no perfil).

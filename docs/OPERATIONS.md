@@ -1,4 +1,4 @@
-# Operações — Eleições Progressistas v2.2.22
+# Operações — Eleições Progressistas v2.2.24
 
 ## 🚀 Comandos Rápidos
 
@@ -41,6 +41,13 @@ npm run test:feedback
 ```powershell
 npx tsx scripts/backfill-missing-photos.ts --dry-run   # lista fotos quebradas
 npx tsx scripts/merge-tse-photos.ts --dry-run          # match CSV oficial sem gravar
+```
+
+### Auditoria de duplicatas e apuração
+```powershell
+npx tsx scripts/merge-duplicate-candidates.ts            # dry-run: grupos nome+cargo+UF
+npx tsx scripts/merge-duplicate-candidates.ts --apply   # arbitra pela urna oficial TSE
+npx tsx --tsconfig scripts/tsconfig.test.json scripts/test-election-night.ts  # 9 testes (sem filtro + UF da cola)
 ```
 
 ---

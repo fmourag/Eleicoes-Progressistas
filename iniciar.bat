@@ -1,13 +1,13 @@
 @echo off
 setlocal enabledelayedexpansion
 
-title Eleicoes Progressistas v2.2.22 - Inicializador Local
+title Eleicoes Progressistas v2.2.24 - Inicializador Local
 
 :: Garante execucao no diretorio raiz do projeto
 cd /d "%~dp0"
 
 echo ===============================================================================
-echo        ELEICOES PROGRESSISTAS v2.2.22 - INICIALIZADOR LOCAL LEVE
+echo        ELEICOES PROGRESSISTAS v2.2.24 - INICIALIZADOR LOCAL LEVE
 echo ===============================================================================
 echo.
 
@@ -194,7 +194,7 @@ if "!OPEN_BROWSER!"=="1" (
 
 echo.
 echo ===============================================================================
-echo  APLICACAO PRONTA E RODANDO! (v2.2.22)
+echo  APLICACAO PRONTA E RODANDO! (v2.2.24)
 echo.
 echo  Principal:      http://localhost:3000
 echo  Candidatos:     http://localhost:3000/candidatos

@@ -1,6 +1,6 @@
 ---
 title: "Documentação Técnica"
-version: "2.2.23"
+version: "2.2.24"
 last_updated: "2026-10-04"
 ---
 
@@ -10,7 +10,7 @@ last_updated: "2026-10-04"
 
 ## Visão geral da aplicação
 - **Nome:** Eleições Progressistas
-- **Versão:** 2.2.23
+- **Versão:** 2.2.24
 - **Arquitetura:** Mobile (Expo React-Native) ↔ Supabase Auth ↔ NestJS API ↔ FastAPI Matching Service ↔ PostgreSQL
 - **Principais módulos:** Auth, Priorities Matching, Candidate Management, Geo, ETL, CI/CD, Cola Eleitoral, Watchdog (Observatório de Mandatos), Ads (Anúncios Éticos), Finance (Sustentabilidade PIX), Public-API (Tiered API), Reports (Relatórios B2B)
 
@@ -531,6 +531,12 @@ Ordem de resolução (`resolveCandidatePhotoFallbackChain` em `packages/shared/s
 6. `photo-proxy` **por último** (busca fuzzy por nome pode trazer homônimo; exige título/nome exato normalizado).
 
 Regras duras: nenhum alias pode apontar pessoas diferentes para o mesmo arquivo; `photoUrl` desconhecida é `''` (avatar de iniciais honesto, nunca foto alheia). Arquivos verificados (magic bytes + tamanho) vivem sincronizados nos 4 diretórios servidos — `apps/api/public/candidates/`, `apps/api/static/candidates/`, `apps/mobile/public/candidates/`, `static/candidates/` (qualquer divergência entre eles gera 404 só no Render ou só no Pages). Scripts: `scripts/backfill-missing-photos.ts` (`--dry-run`, `--download-only`, `--apply`, `--apply-db`), `scripts/merge-tse-photos.ts` (`--zip`, `--dry-run`, `--apply`, `--only`, `--limit/--offset`), `scripts/fix-wrong-photos.ts`, `scripts/sync-tse.ts`. Estado auditado em 03/10/2026: 302 candidatos, 294 com retrato verificado, 8 com avatar honesto (sem retrato público verificável em nenhuma fonte).
+
+#### Deduplicação por identidade (05/10/2026)
+O sync TSE completo conviveu com linhas curadas (69 grupos `nome+cargo+UF`, ex. `dep_204492` + `airtonfaleiro`). `scripts/merge-duplicate-candidates.ts` arbitrou cada grupo pela **urna oficial** do CSV (`NR_CANDIDATO`), migrou scores/apoios/foto para a vencedora e excluiu a outra (68 exclusões; 1 par com partidos distintos preservado para revisão). `findByLocation` e `matching.findCandidates` deduplicam em tempo de consulta pela mesma chave de identidade (ignorando `tseId`/partido, preferindo o registro mais rico), de modo que futuros syncs não reduplicam na tela. Estado: **0 duplicatas** na API.
+
+#### Apuração Election Night (client-side, sem filtro ideológico)
+Toda a apuração roda no app (`tse-results.service.ts` + `use-election-night.ts` + `app/apuracao.tsx`): **nenhum filtro por partido em nenhum caminho** — o ranking consome o top-10 do TSE verbatim. Regionais (GOV/SEN/DEP) usam sempre a **UF da cola** (`cola → location → BR`); PRESIDENTE é sempre nacional (`BR`). Fallback com nomes do RJ só aparece sob rótulo RJ; `mapStatus` sem status bruto retorna `APURANDO`. Testes 8–9 em `scripts/test-election-night.ts` travam as duas garantias (rode com `npx tsx --tsconfig scripts/tsconfig.test.json scripts/test-election-night.ts`, shims em `scripts/test-shims/`).
 
 #### Proposals
 | Método | Endpoint | Auth | Body/Query | Response |

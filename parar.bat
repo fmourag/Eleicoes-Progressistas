@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 >nul
-title Parar - Eleicoes Progressistas v2.2.22
+title Parar - Eleicoes Progressistas v2.2.24
 echo [Parar] Encerrando processos Node/Python e liberando portas 3000, 8001, 8002, 8081...
 taskkill /F /IM node.exe /T >nul 2>&1
 taskkill /F /IM python.exe /T >nul 2>&1
